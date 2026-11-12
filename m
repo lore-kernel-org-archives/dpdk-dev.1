@@ -2,73 +2,99 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17307606A31C
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Nov 2026 16:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC639606A88C
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Nov 2026 16:30:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iol.unh.edu header.i=@iol.unh.edu header.a=rsa-sha256 header.s=unh-iol header.b=g38UcFeW
+	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=Aq2zkgC7;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=LQD17Ndi
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3A82540E32;
-	Thu, 12 Nov 2026 17:13:11 +0100 (CET)
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com
- [209.85.160.182])
- by mails.dpdk.org (Postfix) with ESMTPS id 5E7E040682
- for <dev@dpdk.org>; Thu, 12 Nov 2026 17:13:10 +0100 (CET)
-Received: by mail-qt1-f182.google.com with SMTP id
- d75a77b69052e-537548b811aso35699051cf.3
- for <dev@dpdk.org>; Thu, 12 Nov 2026 08:13:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1794499989; x=1795104789; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=GtMIH8H8ZRlNnYjoV8pbt93t9HB4XRPNI7JolEk5Onc=;
- b=g38UcFeW6pm3jv43H9WZbwRn3fU+ac2U7FwciOpmTsACbuv4UB2UbK7+0RFLrpke5L
- MPFqSuNlX5vdY21K4D7/lADRprn1j8EbFOql4nl0FtjIX134x3Qglxbe3+w/MMUqmhaz
- 4SntBJ86aQieZQdo5warEU1SZQRvt2+F72u4Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794499989; x=1795104789;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=GtMIH8H8ZRlNnYjoV8pbt93t9HB4XRPNI7JolEk5Onc=;
- b=QqlybPx4NFfRvsft9+/poYrT0PWaq1dAuXgHyHtx+XbKH2mRe7AZLQk0USswovYiDu
- ZjpTlgXGe6dAsTb8HxobAnuq8nOSkJeYMJOYbCymguGJNrNleEWTqe7sjINXqyBPf2SM
- mPJYUEeBEQ1yA4DaJ7/lQ87eeNwWQmciy/Vc7W20LZUxPlB3DU+gcDbIuAUmwG66P6wc
- Ht2ZnSS1pTIytPmAT77MoUGA3vWTWkaefKkGwXh2poPe+lYhCgFji7wqEIPZbppkTk5X
- SmQhdWUlZcaIf9JhNvyo0W/bQrhnZPs7HB9YRJiRB9/lBIGSvWgnUQDNpCcSDRdhjEpz
- wmiw==
-X-Gm-Message-State: APuU4Z8ORwbdaPZc0mjHJqkb4a8CyiQZLmSgga1WUnQTrNDMvzTrNqXz
- 2nVbeHje+SBze7DYTDPa+L7oHhp5PqJqo/hFCFNAONHVpyg1PswUJF1IchB6ahddIygB4ZMX6gN
- 7XqDe0zL3Nu4cP4ctLXyZVdfbpoQHzQ2qfXOhWMW8cMJ+3+fVRFOkLdGa93dfciRBudw803ZNvO
- gNpnvX3dxPI+IHtZ7bHO49ITeiORs=
-X-Gm-Gg: AYBFou3HwEhAdeL3kmuza/XhgPukBJdfpRb+I6wQSAQaKw/HkltPygUkO1q7sLh4G8a
- kq3oPpX0gPSW1LFecYghJpfZ9rSi4tgp/GPbDtLetu6pvLwK82EuPGnrfI6a2AHvWu9z2BB6FHV
- cUNuHBHzWFG4Ekynvi7oli0tTtXBTUuyXTLYKEYWz6H3SHY4YP92a+l06oGXhEwYqKDVAudMm8N
- /zjLoxttmmDrXNZK7zU8klBcbKpZACywSYK+NSuPM45+xYhFM7No6kCX0pcnOHKebcvcNb+ert/
- bgqXXz9f2m0/zzI7l1dFF1RrQ9Bj7Q2zSDhpVXfK+kjKs9/w68jWp65HEH/2QNL8lhbr94lffTw
- 28ayNSLJLbZ4PpCsOn8Eru45F+hE8YfwwQouXCRGnlLCwWVdOqh+sPCCzz5oWgAOhbDENQBNDzX
- SuXBp7z9O7AvHojcDTYJYDYxkPqAhAil5lXovKCWHC2vsEOXjLEwSxKqNDYhPMCIOG7G4tpHO82
- vUWW6gr/AWrN60gobbCgdL+n9A1FSr+y9Dk8FgGHpGGCEVA56FO6GB2EsmefmADOM0LyDUICnGW
- kN5XbIup01Sdn9UefBSf2ZIrm8rcZTyiCSdb6Y8GOMe2YC3E4MrJpM+Qfrez5s8kiqmmV5nP
-X-Received: by 2002:a05:622a:a15:b0:54d:ba24:fe2a with SMTP id
- d75a77b69052e-556c1b5b5famr83289011cf.74.1794499989052; 
- Thu, 12 Nov 2026 08:13:09 -0800 (PST)
-Received: from d121029.iol.unh.edu ([2606:4100:3880:1210::219])
- by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-91f02efa477sm50556736d6.16.2026.11.12.08.13.08
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 12 Nov 2026 08:13:08 -0800 (PST)
-From: Andrew Bailey <abailey@iol.unh.edu>
-To: dev@dpdk.org,
-	luca.vizzarro@arm.com,
-	patrickrobb1997@gmail.com
-Cc: knimoji@iol.unh.edu, dladd@iol.unh.edu, Andrew Bailey <abailey@iol.unh.edu>
-Subject: [PATCH v1] dts: resolve false reports for cryptodev latency
-Date: Thu, 12 Nov 2026 11:13:02 -0500
-Message-ID: <20261112161302.776617-1-abailey@iol.unh.edu>
-X-Mailer: git-send-email 2.56.0
+	by mails.dpdk.org (Postfix) with ESMTP id 6EBA8415D7;
+	Thu, 12 Nov 2026 17:30:07 +0100 (CET)
+Received: from fhigh-a3-smtp.messagingengine.com
+ (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+ by mails.dpdk.org (Postfix) with ESMTPS id CF7F040E32
+ for <dev@dpdk.org>; Thu, 12 Nov 2026 17:30:05 +0100 (CET)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id B13D414000CF
+ for <dev@dpdk.org>; Thu, 12 Nov 2026 11:30:04 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-03.internal (MEProxy); Thu, 12 Nov 2026 11:30:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1794501004;
+ x=1794587404; bh=tsaS7Ncen6LTwNEyin7eOKU/q0SirlQga8PYmQNOulY=; b=
+ Aq2zkgC7PGGeg4yzWqf1MLMfrqSUY+7igORiov4AF3WsjQdpCN5Dy/w7TfoMFNBV
+ FimCVSzTMks3jfOBUTiL5KCqdri9isAr2mYaSnD4sOB9E2qrXiWAP1IUGDTg/hDg
+ O7HWryzLKfancOItV6ysUdogL3q6AQZgYZmFX4njLSW4cSI+AlkjcVWeqSTzFcXu
+ W43MBbZvrzTmJc+C2bkuALeX/LGdl/oMItBS29Qh8Ivex9znvmCtGLJLQH0fmyYE
+ pvXLdcewaVwyR0XNG67MdJj/IW+K6fJFse8Ij6ij4xegR92qqLXTx1vcj6AYSvy7
+ GT08l1DE+tK1um7qoth1pw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1794501004; x=
+ 1794587404; bh=tsaS7Ncen6LTwNEyin7eOKU/q0SirlQga8PYmQNOulY=; b=L
+ QD17NdiqHeZLKiI9TKyQBJJdN+H7Xey4eJQrg2qqHnn5Jtb/aXTf8vyclxp1sHzM
+ yQhAeGIKun+7Xif2viUdWyvvcvZRtrTpc6i/vhGaNVTi2k58UNWstJgz1zh4LXFN
+ QE+4k7GLV6D0Q72NiQw8TomrEm/3FpFhspe/K9Sht7qHwTN0khUGuFkSBS46Rd9L
+ x7db4K2CYu4MozZhfySIvd57QntYP3U027OoFo8yOmNhvoU8IlPTjsElyZrRrsmW
+ ZmuE/U2XXl2rVOvcH/A7DunVrmc4O5gnXBI/KMZVT+yBCxV+olYhaDplOqckIi6d
+ ubxccQgeZ1zHQ4QNEVPoA==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+ repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+ action=sign d=monjalon.net a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1794501004; d=monjalon.net;
+ mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
+ s=fm3:rsa-sha256:wpH6M9/OuGnrwnnaTpDT5bMFAv2Zs/PMnnj+fFJFzsv+7wI
+ TP1oOYGpMqaYOLUYRHCd9DegP/A6WLyj+zUanrzkXibfzuAOBWGKJ3eSXPo7WjLn
+ kHaMcfvd1J+3wWvsM8IdSZHmLmaapgzo7h1kD+ldNMSg+Cs3CPRNj3uYi75h69yL
+ Ascw0nGbgNPFVtHBhPFlmnZBMSwjM+1J9+29iELnzzaMK16gszaKSyEev+bSuDfz
+ 7hePruVBO4Pp+0UukzdQPMwpwEGAljBk2eZ90EVNnJigmKeZQ/tDotD8k4M3HYEq
+ vBo+GMC08TGU5NFCUIkkcfiqXqSyx2exBdiXsOg==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+ repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+ action=mi-m=1; hc=12;
+ hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+ from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1;
+ h=sha256:4cM8o9ECtIsmXdcucptIywcZGTc+cSuAXJYpC7adziQ=:/m5+Rf7+eXfuKqU8803biHLUcACpROFtHE2VpmAz2cs=;
+X-ME-Sender: <xms:jOn1akvKS_eCWfEmlajvtnRFa90R8TOApLZVlfUfg9yZ87Fyl57E3g>
+ <xme:jOn1ancjvMISUjhE9iSo3w-ANVf2P1BpiLNwsAPTvwUuK_TlhvCR8Aw6l7rLVt_Ee
+ KrKGDNqSUVkqEX-jCVFi2CJnlnLOEBheKy1m_yB2y-O18je-ENv>
+X-ME-Received: <xmr:jOn1atb59AlYPQNkY2gz5T-zjMP6krZOaSDBW0RntYuua76ez90Z7Eu8EzZaCYBhxPFMNDXS50e9-uGaj4W4yNM>
+X-ME-Proxy-Cause: dmFkZTF8NQzZ76c/lpGiGb5lcLPxGjr477YZqK5aEVM5yadgB/L4HuiRE1Gq21b2a1I41v
+ 1J6cjP+/xlfNpCM1c+AV1S12vvANlxZkdWB22nkp7KKy+RnKlQMqObQlfF31tDpgN0ByJD
+ tgQ/DF2hacQymEMOi+kdB2vip453FOFj4YwXXSLuZ3BGojlGUecZxgrHOge6zdazXvAtee
+ LtgjF7evMpWIkwD1LCStOt/WWd7ntQpXRX3BFa/QAlsGWQNXqyOLD160n+5rxor/ZDVazm
+ 508mpX8fiRf7lbYlaCdOQXT8tuFdIu3UAqTpfti/jC902oCwbp7sRysMw1nrtKj1ogKGly
+ TCox4FsWKzj3/cVfBJtxFcVY/z3fMoaX1dZkfpy2wXInTY4s6t9FG89IqTTUJQwkfovsL+
+ GSGqTQvTUZC2xpiv8e5MXcxHNWO3iRtz4ANjeu8J20ch7ro6P+V/c6yTZNFAyw1Z2uMaTa
+ BjnfjiancghZ7kL1hYz3MO44ukggNw3+ntpUGfTc9ZHCRDXX3yTF0G7oKUaVBavswVf985
+ VSqWywL/Xjw3C1fj7BrvnCsxHil0s/uguQl61eUhCQIKrD05LtxwaqxjstJRIOQk4BTjsp
+ n3tojdRfUfvS0dQtV2ZUMO0AlcSyFqkTiWjlN2QKHyVA4SaJH6MnLoKDGqUg
+X-ME-Proxy: <xmx:jOn1aiXt5mJezXziF0uPhT1ON-ssMfBiDUv9lL0xbKj7s4Lcekr2ig>
+ <xmx:jOn1ani0RDOaM20IliXMwCaBpgSCDLs7Hmp8p29DkfHyPOeXuXucVw>
+ <xmx:jOn1aoWSnJpazKS5O8up_XsNB2WgoxbwP4hKhe7p_ahNEMIzLem4kw>
+ <xmx:jOn1amOTfsSK4MBu_GAdOcqtYL8hRIx9pS1UbZ9LnhvDM9weCzx55w>
+ <xmx:jOn1ajCL9QVF3thUi5SXilpQmHKaV-cU-JIxOrEkHE0YRL8_s-1qRLe7>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 12 Nov 2026 11:30:03 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Jack Bond-Preston <jack.bond-preston@foss.arm.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH 0/2] fix minsize build errors with GCC
+Date: Thu, 12 Nov 2026 17:30:00 +0100
+Message-ID: <Sue6eQoBTUaFYSgIltkaRw@monjalon.net>
+In-Reply-To: <20261015125740.47008-1-jack.bond-preston@foss.arm.com>
+References: <20261015125740.47008-1-jack.bond-preston@foss.arm.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -78,43 +104,17 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Previously, the crypto latency test suite would fail if a measurement
-was above the baseline and still within the given delta tolerance. The
-expected behavior is that it should fail if it is not within the delta
-tolerance. This commit resolves this issue.
+> Jack Bond-Preston (2):
+>   gpudev: fix minsize build
+>   net/bonding: fix minsize build
 
-Bugzilla ID: 2103
-Fixes: 2ca02cd2643c ("dts: refactor cryptodev latency test suite")
+Series applied, thanks.
 
-Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
----
- dts/tests/TestSuite_cryptodev_latency.py | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/dts/tests/TestSuite_cryptodev_latency.py b/dts/tests/TestSuite_cryptodev_latency.py
-index d4693b3d4c..8349a34b96 100644
---- a/dts/tests/TestSuite_cryptodev_latency.py
-+++ b/dts/tests/TestSuite_cryptodev_latency.py
-@@ -248,10 +248,10 @@ def _create_summary(
- 
-             # result did not meet the matching parameter, check if within delta.
-             if getattr(result, "avg_cycles") > expected_cycles:
--                if self.delta_tolerance > measured_delta_cycles:
-+                if self.delta_tolerance < measured_delta_cycles:
-                     test_result = False
-             if getattr(result, "avg_time_us") > expected_time:
--                if self.delta_tolerance > measured_delta_time:
-+                if self.delta_tolerance < measured_delta_time:
-                     test_result = False
- 
-             result_list.append(
--- 
-2.56.0
 
