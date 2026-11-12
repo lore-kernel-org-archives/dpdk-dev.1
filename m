@@ -2,95 +2,95 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C93606A321
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Nov 2026 11:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0BD8606A897
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Nov 2026 11:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=GVVke8uU;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=LyTv0PW/
+	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=0LMCfl5G;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=oM/14O5B
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 78277410F1;
-	Thu, 12 Nov 2026 12:10:53 +0100 (CET)
-Received: from fout-a6-smtp.messagingengine.com
- (fout-a6-smtp.messagingengine.com [103.168.172.149])
- by mails.dpdk.org (Postfix) with ESMTPS id C9BAC40E15
- for <dev@dpdk.org>; Thu, 12 Nov 2026 12:10:51 +0100 (CET)
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
- by mailfout.phl.internal (Postfix) with ESMTP id 00917EC0121
- for <dev@dpdk.org>; Thu, 12 Nov 2026 06:10:51 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-07.internal (MEProxy); Thu, 12 Nov 2026 06:10:50 -0500
+	by mails.dpdk.org (Postfix) with ESMTP id 521D040E15;
+	Thu, 12 Nov 2026 12:20:59 +0100 (CET)
+Received: from fhigh-a5-smtp.messagingengine.com
+ (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+ by mails.dpdk.org (Postfix) with ESMTPS id 6F4BD402A2
+ for <dev@dpdk.org>; Thu, 12 Nov 2026 12:20:57 +0100 (CET)
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 6125414000DD
+ for <dev@dpdk.org>; Thu, 12 Nov 2026 06:20:56 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-05.internal (MEProxy); Thu, 12 Nov 2026 06:20:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1794481850;
- x=1794568250; bh=QDE91pegxCsL4r93vxdEg2/nc2wL4hBIfblaEe8hCy0=; b=
- GVVke8uUW02HM2rUAFKs+RT5fvlGveYa3ke0DLTvq6lPjIg+hwboCd4u5QOc1odV
- usK1Hyjlx0vHyeGUSx+swRyzUXfDcUru8PgAMzoabqzGZbA5RMXClHxwkxsQmEZK
- afXS7rJg3iLYtk9xlF6w2xVkdXJMlNj8Hf/98sy53wbcRxtCOwaTgRVXpE0LEnp/
- VeciFnJ4zAAXHgBZCof1PlUVGx2nhWqHczP4ZvaFSHJHdcrv0d5DVw3BYq/6hDKG
- I+QAT/BSxaXcz3A2cK8+kx+wPAjIz1Z77lGXmGQ0PRDgqnJ2z9vHRiPe0/dJ1/Ji
- ZiY7eLemYZ6ldye8sB84YA==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1794482456;
+ x=1794568856; bh=TmO1ZLaWY+kPoJU+cOtcgzVkSbD3c3W0FT+eYV6kZG4=; b=
+ 0LMCfl5GGK1yKJcUzy92ufpqYRUZfulZHf0R/oZ0wmOJxlF7A9F1sGAA8tG9JaE9
+ AM2IYMR5KxZe54qPIOxFYHAlPZC8bB9+OfrRz6DTcy3jEWTxn/P5T761jB9CsKFW
+ eyF5gvfOBFKjLBnv3JKxsRNTg2uBlVb8plGuHn0k5OpJlYcq/oiFJsRX5YDsJmEn
+ rB2CqPRe4E3bFJZqBl2kTykz2Ar+GW2CGvTLYMjN9IJCUZs88mca6vVb01yW3XFz
+ wYZluIyDqfm6T8xCTRwZSthZMl8B8O7Oq6NU7EzpJfWsxwqDQe+G12PjmLY7mt4F
+ jwRgwDEH66oCUfthCBR0vQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1794481850; x=
- 1794568250; bh=QDE91pegxCsL4r93vxdEg2/nc2wL4hBIfblaEe8hCy0=; b=L
- yTv0PW/+l2S/MHrSEzVMD0rxHBGF4+p/EJ4Y3iNkFAg/2Fz6H88XEJYZfSUgWxNW
- G9xhNGkxQqEed0p2tT/4MPmxBcNiKu66ps4j8ebIdMbsJVSi8Ftivuv06p6X6TfJ
- cmGBVBSIptLEnII+RSGRAALcwXJ0OoZFtezgjXD8iMUtEWVPbtJ2NAMa116sNXi5
- ry6LQkiR2xP7TppdxhBxyiZ9BUYzl02MOv45+6SqLAQSRMQWxW7MjH7AtmZwOec6
- zd2fP3HGIioqN9MclLm4Vh2r+haJre6pj8h1ZzepYkeKQVBHDm04njSFZbRs4lcr
- Sy1HWuukI9r+VTGBfaaww==
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1794482456; x=
+ 1794568856; bh=TmO1ZLaWY+kPoJU+cOtcgzVkSbD3c3W0FT+eYV6kZG4=; b=o
+ M/14O5BVRAcYTxXYaMAhptz6Gv2ggAmWZYVZzAqGbie7LCzFFvPLzNhpFAS1jGeg
+ lFHUtjbsopcVX0OX2Z3yAVYwDL+fiDPfA7ufUSwm4g2SxISQ9n7kwioIpKPkJFrw
+ KlPZZK5Utt/4XHWlYeT2cfYpJ8yyStoCZKOLBh75go8yy3Tosc0EQksGps9vl0fu
+ kQbJDVK0hFXmAxfSYt/i6fTnTbIUJvWTcv84Qdq9bzvOl+x6MeWovSZ3fB0Hwls9
+ AHI97UqSOAdOeJfW930Wnf35xISyMA7kingGO4d/47ZuIUrVu1e9C+vDp3rxQFFI
+ bcY9J+rcaTSxMd3p7NVLg==
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
  repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
  action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1794481850; d=monjalon.net;
+DKIM2-Signature: i=1; m=1; t=1794482456; d=monjalon.net;
  mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm3:rsa-sha256:iWV9BStRMxbTpAO+h5ZgaemzlsV+GZweFfGsf+SoJlYB/65
- twBLuJUBWALqm/jx7VWSU5Ekcn+s/LeGGrbgiC4lFCV3aib3x2AEAikmIbd70Egx
- xXnx4J1TyE+0r5CBZZB0AYjgbIAt2TtsVt8fnCE738qKlaGradoEu3WuAFo91kPZ
- +BBI/XLgm6MDjQT3Qndgqgtud7lFtWz5QbGEvIlHB/HPRKOKEoTuKK5u4/ANMlZb
- fuLWuGQQj09HCImdy66IM4kh6xpNvv70sbCSr2UBpCOhPqE8rf2NHA2iBJiDrRCp
- b1E0FrseyadtI/q/omZFHuolisp+v3qJs3MGGSA==;
+ s=fm3:rsa-sha256:UlHpKlN0oK06PkEK6djCau5vqTAC/WC6KIzjydvANakZDH1
+ ijUm05laKUAe2AGwZw0vJBZFcT1fo3Rsp5nB3Y3ufwb5HrLV+ivWRJVbcJy8gpcO
+ Bk+ANF2StDnzq1REGddLxIRh/54kj3CTg+8a4MnNkBDyPAaaQHXZDMbRKAwBxmXl
+ q0/nsgE70WPqY+gAmKIefGJlyhfGhFkFs6rCtSm0co836Eia+jRY+QmnzHGigU6d
+ N8O8dp0WsobWmouMRYJZIcoQhSKV+xMHQa13diLov6Iff4QO92nFJZFJahB//V5P
+ Or67jsytaW61hY9i4E/Jjo9tyNKD0PQvcbWgTIg==;
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
  repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
  action=mi-m=1; hc=12;
  hn=cc,content-transfer-encoding,content-type,date,feedback-id,
  from,in-reply-to,message-id,mime-version,references,subject,to;
 Message-Instance: m=1;
- h=sha256:GW5G8IB1op8Yrt8GQ9jhOZLiYguCf0/+TwVbxz/QmIY=:nHBry+VwVP5JGNNg3dpHkS4sCGjLENdY7bvJXga/P7U=;
-X-ME-Sender: <xms:up71atG1Q2fv3QDf3is_8jzVJRDNuHblbXfVpLPTeGnXKbdInj65DQ>
- <xme:up71amobckU4fTnGvBjDF5MW-xLcgLua6S1lO1ITa_T3SF-THtL9Z3V_1keCsnM3g
- aXc6IoLV-rFq9IrZF-ieEjwabyrz9c7qaJ0UQM2_0bLOpUrys7fjfh2>
-X-ME-Received: <xmr:up71auSagyMdz-EUgjI5jQB8QjePAK2Itp8rzzDJMk59bTIUbMPPgGzlhk8obVDRDcJiDiCv6DY77Amvfhn27vM>
-X-ME-Proxy-Cause: dmFkZTGUHKAU45ZbthFq/AgeBv0i2iaCbtJPg/j64uO7vjIe2iT2lxV09fZfHbYfB96H17
- wsl/B5oIHWhr7B90tKoENY0DdW28YmRzMfJFxODTPI1Sla5fLNNqazQcjVFHXTm2iCdNDq
- RDjI2//fUfIFPqp3Conp8WMONIcspW6GP40fB2df6LOZCLxzXKvD/RD8DDpR+773okaljl
- fXmf+hOV4EW2p9S3C4dAQW6XZJYOukcopFI8sc3xO+E4HbbzguJq+yBvnTakg0t99QgJnB
- c6Op22OCQG87VNdvwah0GnmVlYuwEDePdvb7Dr8MVZ64X2S5tocaUhZvLcFFD5MY2KosfT
- bm4LsoLcecPeXEB5njk9r7W4IwuA8FYFx1qCauh/1JwDnCS/wWbM9LmjE1TVU5Rz52ovAI
- U59HmFlUKyJb/JYWjDq+mR6rluuqt29pjrerXOyBDaJJU1eTub0r4hpE10jj73OSKwD9w6
- UmVUTE6clnfthi2AwNcfnhxRvZmIBbkid/Kvuoo51/5Yv0ojiidFu54FnnNRPApqS23igh
- pzbK6o8/Rvt59qvXuKgxC5kwXwim/J+HhCAY9qDQgwDDh77Lzr3iQXRF1z5cvc1cXlU8wR
- jIAZcrv0wKaIo2r/QRYIvKFvgkEO6+kTM75/iDzJkAK66aoMVnHcZUe3Aosw
-X-ME-Proxy: <xmx:up71arPCM5B_VTuReSIRjteS8D16glNvgXsw_iLOtaOBsHUp4L3RHw>
- <xmx:up71apPAeNIb-_M7jSx5VPmSk3cPTEVCL9t2irO69VV5wt7pJmEaaw>
- <xmx:up71ajuUvAR0BjTIGYhPGpS7uuA6tyvoXrBBRexbSCwUI7ryhB-mTQ>
- <xmx:up71arWaPawJzXYZRVGmTisZU3EWkWhww3OxX-rz_JfrlZGbewbT6Q>
- <xmx:up71agOr-1oz8t4pVEIHUBPGyueeFRyayrdmApr7kYOBXUTDhQZTPMjC>
+ h=sha256:N+7Fx1HMcagWiK9B9x9T7mpvJd1BwJo4cIU/qjJc5T4=:fbvKR6oCPsVs5zo4YpJukZA5328tBtOZ4+mm/X6Tlqg=;
+X-ME-Sender: <xms:GKH1alAVI5yVL7LsrID7ikVQRtYx-SKP66xCoqJDFTTCFSXDC9Y77Q>
+ <xme:GKH1ajp0ZxBGo-8pybVAaMh4ad2wNDrOdQsipBKzqTvDk80XmpbqHGqpl3SQkGIc0
+ UyZusITtcrAuGnE9I2IyxHpi-2Bjc9K6godk4KNGlLZfNYFufAV2D8>
+X-ME-Received: <xmr:GKH1aoiiw80KU0y1wNf_ldYVtcC1M8lGeWkBCJVgzm6RvFeIoWWa5Av6NmPsfYlydt0gkV9zRnelXec5EPn-sTk>
+X-ME-Proxy-Cause: dmFkZTGd0MKKGxmBqpiR+YRymZ/+AhKoMXIB6IJ3i5HTvs3o7q0bf6L3zdOuvkT5xyrt3A
+ qYpQh8uSLd30mRmM8UXW/+wVWbo1SmMrDfCLg8t71sLoHF5Q60N4FydKa1DJSnaH6Uevp2
+ OWgVi7LdQ5jNB9G6sG6t1z8Und686EV6eQJ7NMfafigtO2ZyUO2jGmBLcBYHHNf4p1Nc6N
+ EVK+Jc3hdpNp6HYxrla4fMZ7jhCJj8HsGTXQU88K/qWulmjLJ12EimMxhTufOoKGJpjBs1
+ 2JRW64mCVfSarPLlap8KNuALBPtKaeVZpOMHzEtH7Sl20UeZl5EyUvkJft/DGjbhetrXpP
+ +QcNko1hnswz1751mhmlsip+nwT63iIbWGGipWBQ5RBRa5wBn0nYnXhi1vDDVdIgMS72ms
+ LV5Zpz0BILHLsxh8LKfWuzaW2l//caAWPbfzHjBBXHbMOduPnlWTziVuag/kqF4/q1r4Vc
+ JE37WrzpYDx4P+65wStX2KI3+BQaRJyP3lLEfcWABf5tlS1p6Hxv+LhXfTgL60AzsjtJaq
+ WNs2N3JnbvV6MbCfkP2NDhZnL3gIYgipO/srRFRAtLmSQPXFhLIASnlQHBSzhoj76O47sU
+ JibvCiNYajIqIjG/z1JaPbHWaC+ve2h1CLRMIUEIh9+SOhehNeiqiEMQaiZw
+X-ME-Proxy: <xmx:GKH1aoAk4Yh6I-99Cvm8efbjdTlhxpVeOkU8Sl67boo_PM6xxHSPRA>
+ <xmx:GKH1alGYkaKmk8LSBpQdrDq1u_pwG_3IlC7r5ohDxJ3QjYimlRPi4g>
+ <xmx:GKH1aoKuooi3n-BpFocMC9Mvfl1h_ovKEjOVBF9CkGEWB0XLrxaK-g>
+ <xmx:GKH1ahlPJp9hqGZjIi79JttoQLq8y4_-w8cnnr33XXvvG9YT38EUfg>
+ <xmx:GKH1akBgYa59TRz1KboVQuSypURcrhl9hR1cIYZKSCldhXCAVpeQWBdh>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 12 Nov 2026 06:10:50 -0500 (EST)
+ 12 Nov 2026 06:20:55 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: Andrey Mokrushin <a.mokrushin@ideco.ru>
-Cc: dev@dpdk.org, stable@dpdk.org
-Subject: Re: [PATCH] net: fix tunnel parsing of non-IP packets
-Date: Thu, 12 Nov 2026 12:10:48 +0100
-Message-ID: <6RD3s_sNTiOQb4LPi95WEQ@monjalon.net>
-In-Reply-To: <20261109133712.152780-1-a.mokrushin@ideco.ru>
-References: <20261109133712.152780-1-a.mokrushin@ideco.ru>
+Cc: dev@dpdk.org, Jiayu Hu <hujiayu.hu@foxmail.com>, stable@dpdk.org
+Subject: Re: [PATCH] gso: fix segmentation of unsupported tunnel packets
+Date: Thu, 12 Nov 2026 12:20:53 +0100
+Message-ID: <mo_JScwtQ8mnxNg-1Y6qHA@monjalon.net>
+In-Reply-To: <20261109092742.77701-1-a.mokrushin@ideco.ru>
+References: <20261109092742.77701-1-a.mokrushin@ideco.ru>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
@@ -111,22 +111,27 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-09/11/2026 14:37, Andrey Mokrushin:
-> When the EtherType is neither IPv4 nor IPv6, rte_net_get_ptype()
-> skips the L3 parsing but then calls ptype_tunnel_without_udp() with
-> the EtherType still in proto. This function compares proto with IP
-> protocol numbers, so on little-endian EtherType 0x0400 (also an 802.3
-> length field), 0x2900 and 0x2F00 are taken as IPIP, IPv6 and GRE:
-> the packet is reported as an IP tunnel, and the data after the
-> Ethernet header is parsed as the inner packet.
+09/11/2026 10:27, Andrey Mokrushin:
+> IS_IPV4_TCP() and IS_IPV4_UDP() do not check the tunnel type bits.
+> A tunnel packet that does not match any of the tunnel cases (IPIP,
+> GENEVE, IPv6 outer header, VXLAN or GRE without its type in gso_types)
+> is segmented as a plain TCP/IPv4 or UDP/IPv4 packet. For a tunnel
+> packet, l2_len, l3_len and l4_len describe the inner headers, so the
+> segments get wrong header boundaries, and the IPv4 and TCP header
+> updates overwrite the outer Ethernet and IPv4 headers. When the bytes
+> read as fragment offset are not zero, the packet is returned
+> unsegmented instead.
 > 
-> Return after L2 for non-IP packets.
+> Return -ENOTSUP for such packets, as documented for protocols that
+> can not be segmented.
 > 
-> Fixes: d21d855464ff ("net: support GRE in software packet type parser")
+> Fixes: 119583797b6a ("gso: support TCP/IPv4 GSO")
+> Fixes: b166d4f30b66 ("gso: support UDP/IPv4 fragmentation")
 > Cc: stable@dpdk.org
 > 
 > Signed-off-by: Andrey Mokrushin <a.mokrushin@ideco.ru>
 
 Applied, thanks.
+
 
 
