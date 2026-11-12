@@ -2,40 +2,40 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F471606CFCD
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Nov 2026 17:38:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0673A606A8A2
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Nov 2026 17:39:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B6872415D7;
-	Thu, 12 Nov 2026 18:38:18 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A788A415D7;
+	Thu, 12 Nov 2026 18:39:05 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTPS id 0851E40E32
- for <dev@dpdk.org>; Thu, 12 Nov 2026 18:38:17 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id 7E3E2415D7
+ for <dev@dpdk.org>; Thu, 12 Nov 2026 18:39:04 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 026384D172; Thu, 12 Nov 2026 18:38:17 +0100 (CET)
+ id 78D254CC7E; Thu, 12 Nov 2026 18:39:04 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/core Bug 2111] eal: rte_dev_probe() rollback can call
- local_dev_remove(NULL)
-Date: Thu, 12 Nov 2026 17:38:17 +0000
+Subject: [DPDK/other Bug 2112] compressdev: rte_compressdev_capability_get()
+ assumes capabilities is set
+Date: Thu, 12 Nov 2026 17:39:04 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: core
+X-Bugzilla-Component: other
 X-Bugzilla-Version: 26.11
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: minor
 X-Bugzilla-Who: stephen@networkplumber.org
 X-Bugzilla-Status: UNCONFIRMED
 X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
+X-Bugzilla-Priority: Low
 X-Bugzilla-Assigned-To: dev@dpdk.org
 X-Bugzilla-Target-Milestone: ---
 X-Bugzilla-Flags: 
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-2111-3@https.bugs.dpdk.org/>
+Message-ID: <bug-2112-3@https.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: https://bugs.dpdk.org/
@@ -57,31 +57,29 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D2111
+https://bugs.dpdk.org/show_bug.cgi?id=3D2112
 
-            Bug ID: 2111
-           Summary: eal: rte_dev_probe() rollback can call
-                    local_dev_remove(NULL)
+            Bug ID: 2112
+           Summary: compressdev: rte_compressdev_capability_get() assumes
+                    capabilities is set
            Product: DPDK
            Version: 26.11
           Hardware: All
                 OS: All
             Status: UNCONFIRMED
           Severity: minor
-          Priority: Normal
-         Component: core
+          Priority: Low
+         Component: other
           Assignee: dev@dpdk.org
           Reporter: stephen@networkplumber.org
   Target Milestone: ---
 
-local_dev_probe() sets *new_dev =3D NULL (lib/eal/common/eal_common_dev.c:1=
-86)
-and can return at :252 without setting it. rte_dev_probe() continues on -EE=
-XIST
-(:321); if the secondary sync then fails it reaches rollback: and calls
-local_dev_remove(dev) (:369) with dev =3D=3D NULL, which dereferences it (:=
-405).
-Narrow path.
+rte_compressdev_info_get() zeroes dev_info and returns early when the PMD h=
+as
+no dev_infos_get (lib/compressdev/rte_compressdev.c:685).
+rte_compressdev_capability_get() (:59) then dereferences dev_info.capabilit=
+ies.
+No in-tree PMD triggers it.
 
 --=20
 You are receiving this mail because:
