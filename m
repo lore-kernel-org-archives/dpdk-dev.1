@@ -2,76 +2,75 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F496606A32E
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Nov 2026 15:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFDD606A891
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Nov 2026 15:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=kYKW3wT2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=H+KIT+om
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 944D842797;
-	Thu, 12 Nov 2026 16:44:13 +0100 (CET)
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com
- [209.85.219.53])
- by mails.dpdk.org (Postfix) with ESMTPS id 4F3524270A
- for <dev@dpdk.org>; Thu, 12 Nov 2026 16:44:10 +0100 (CET)
-Received: by mail-qv1-f53.google.com with SMTP id
- 6a1803df08f44-91ec396c93dso51741446d6.1
- for <dev@dpdk.org>; Thu, 12 Nov 2026 07:44:10 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 50B7A4279C;
+	Thu, 12 Nov 2026 16:44:14 +0100 (CET)
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com
+ [209.85.219.41])
+ by mails.dpdk.org (Postfix) with ESMTPS id 3A9944270A
+ for <dev@dpdk.org>; Thu, 12 Nov 2026 16:44:11 +0100 (CET)
+Received: by mail-qv1-f41.google.com with SMTP id
+ 6a1803df08f44-91eb449364cso49291866d6.2
+ for <dev@dpdk.org>; Thu, 12 Nov 2026 07:44:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1794498249; x=1795103049; darn=dpdk.org;
+ d=gmail.com; s=20260707; t=1794498250; x=1795103050; darn=dpdk.org;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=+VgTf6ZqYLKlxfRly2aUkbpXG0LRk1/oqbLeIQnpz8w=;
- b=kYKW3wT2xt6NdnyTauqORp2IUcMMenEOIm0qEyBbihYdP1ctxMwcxLxibi0EO2ofW+
- nhLAhgNM3OlK6G2/knePFPl1+T/tCc5VP34r837caXf4/t+s6HnDgRg2AxsrKwisGfUu
- uU9YTlQ8iGuF7TJRwHcQLYU1WKvgALK/bogCxdoJxCqzfSIHqd1WyzPzXITaxmb6gpEs
- q8MPS7xiQVKcHF6fgbCe6ylLgrJMZm3nnqcM+pOBEK5gvi6Jz2ERYL1H/i9Dfmsdk1cG
- 6LeRYaz7r7pPoSboaH7N0NGIoDAy2AWtQHcyAQfUM8IZ4Y0VS1GP6NvPhrmaT6bZoaIQ
- sGcQ==
+ bh=v2nr0irbPLtwUqwFIwCL8edIha6ZZ1dUc5Xabiv97Is=;
+ b=H+KIT+omxHbUV3fKCQdfyjs+iqL70MZ79t6gu0aNaicNmeb0mLRCXh4uX7McqXyx7j
+ WXWzhFW++RoHmwLygPWOaiaa0BJYkr8Oddjwe+urQezr4zYxxqC8R7FvYhGjkgZFYaGs
+ CjouyAU5k5Kk9yP2jjwGGnlihpO9s++KztyuCMlI0uBPULonG+GHt96t0S4QVjkcE0W7
+ skH/O1Ig904rUUWTcICT8dwd1Y6LPgyVm+2AxJCzQpjLR39Y0rU2FO7wmSTSupx1SIE5
+ 9ZW+zfJkaZWF12SqBPdSeA3XlbcX8lX+O7Kdge9KTdMqiDMmfXE8Vb3aMfu0Hfwq8W67
+ AgKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794498249; x=1795103049;
+ d=1e100.net; s=20260707; t=1794498250; x=1795103050;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=+VgTf6ZqYLKlxfRly2aUkbpXG0LRk1/oqbLeIQnpz8w=;
- b=vmZN1+K+2SUQCn+K3wJmvuuvH/yVVRrOSOEheg5HPchMS8F/ygVgD4Rshi7btT07sV
- i1pj4KpzHx1a4BOOsW5a0zZwoAYOUuCd2pCguwLD1C0OoVi34YB4vtxJxuniZ0aC2TJu
- 5rJg60jETOTKJz5LKFZd3xCe6JpxButs14tV1dcxLrE4hJtYXn0+7LTNSc7brcqw218r
- tQwLgdS8fQv8LxMf7FhArCnAXjIKe4L4m0hhazsdc0D23Tp/MwOrvxOZMwKif5pDaNVc
- i2bmG8k7nL0IK4Sntzzq0ZqKu1R7jGIpSxYY1MVQzHQ4hmJAXz9fiOpI0Zsapk1iD+qo
- xVjQ==
-X-Gm-Message-State: APuU4Z/LAlZhOHGMDQUTTbPrbgzChTehohg/IqVvbdKfO/MaY5K+MQU1
- janeEBZRZwT0baBXUwAaDzrKHi3q4CT6emoTdXScS06hG51DwZfxq9jgdDwS+Vad
-X-Gm-Gg: AYBFou3bduSH/zfYU+p8AkUNAkpFoQHDdwVQefHNCk8Kvq1KYPPglvXXT+10nqmrbai
- 7fKLIq8yLzG2E/FSL9gDQHV4JH9QIsBUZpPhZNT21ojuiMz/Nn/EXpa2XT4CIEDqih3Wd2YQ1IN
- ADuXqlOqtBqDIpngVL3QSU2Q9++CDSRr6qYBb1uToxstpwH488EFQOr69XCuOSr8UneeSc331v2
- e4X4qHr1sv/ufHQBEnkri3WCpMO7QcVFu4w+w5uhSDwQj8mjnyucI4P9pOWKte1P74VG1c66D+5
- vzpXNn9Gd1J6gxLnbM762VflvWCDcRu5NeVSPscyMzso+cjvAfTyyb/eDivPgfMezfBfTWGGcyV
- n6e65T2/YPzTMIW/2X9BOezxUD5L7Beq+ujIQVByBy4WaVuT/bAyaPgdcG6Wk1spKMaMPRBo4f2
- NJDvFZBKMtYrA/YLghq8VgSF/1VxvE/Adu9vgmNAzHH53fGhyB85itGtEWMhrlK1HmbZaGJRH9v
- +6ALlxZ8NcgdQg4jlD1svQWYRLZiV1UfNtIogmFEUsd6S6iS4xNlA06usMkwLXGvZf5/bLRbBCt
- 009RghwRSvM+82IoBpYdKidgMRWWyc9eNvpn6H/ZYlyETK15VItLe4kGShSOXCTituQZNFAqVPT
- BihSqlBJ6wIEMN6w531329GWHnDG+mfoUP1/1JfAh5K15ua4+enf0Y9T7ndGifWi84c1L9cTk4D
- w=
-X-Received: by 2002:a05:6214:d6d:b0:91e:7ede:63fc with SMTP id
- 6a1803df08f44-91f0416e81fmr108715706d6.51.1794498248821; 
- Thu, 12 Nov 2026 07:44:08 -0800 (PST)
+ bh=v2nr0irbPLtwUqwFIwCL8edIha6ZZ1dUc5Xabiv97Is=;
+ b=TWP1oCmG9W3QKuLUSQur3UXli9s6Cg3QYM1P2S3j9rZVGKM38gTxsNNS4e7o/OZr1w
+ ByxfzAQo3KcdhnYelCV9t8Tpfb0LgfNa7hdYWdHh1b6/JQLn+crV80xt+smSnLM6DIDu
+ +Hy8Y9d/DbATWdJ9zvWMOx08fLRIoNBsFRf2bC2mIzJX+I9Y+UPhhiWRAH/oGuNbGZ3d
+ Ufi7Rt4KmrfDtrsEF+X+494Fyeua2JSmLjMPjxnkiKsUz15m2si5xpACiypYcAzercXu
+ evZtWVNskkK4e/s0KmdHi7JylKzqkTlrculer+Xhn1/NT7YcAS0UGGkbaHedK0DnTfKW
+ vaIg==
+X-Gm-Message-State: APuU4Z+aTjrN4MqMgp3tIe3bqDOtIDLN/Npz/cvqVjg5xL1QC8lfYa95
+ O2yk01QZjEOQdmRslI23YnBxNRvPZHDsa7QEt8OdpcwSr2+o2YH38uAyZYp/URVX
+X-Gm-Gg: AYBFou2k365gvh9tl6+cqqGF5TJJrFfms/2vwwmcNTpKkxJTns7BtxvH5DDV0Wi/314
+ 9tcQPsNqVSSyZyGXDUlD0x+jWNupwLEmviHP5ke9J/FMXISkHN37ickoq5cgv23N13Fihh6e4qD
+ PTiXpl1tAW34G2sOg1zmYC0h2dM66mbGXzBkpgGgrds3cqMJPKdcehXawg8+Z5EWFSnBVsNXPYS
+ r3L1tuY1/Q1OiEmSxJ3NJzI8VOt3ETnIlbsN9B7OQ/gyZYBQ358O/yqj9L+nk5K22FFYAkkNkX7
+ /GOS8RVBKoQ9Z2Efv6aEha6qzrq1bPoVcdccLPvQOiBGDcgwBiIKrs8ocB6aHVHX2QXoLz6qFjQ
+ 6gXVZmhxKFAJT7g1eAFYVGXR9I7zRqH0TlwReQxJ3ZktgoEv0rOZS43980qFegQgXz7LTfKRyU6
+ mgktzKNIim+QX1e1egb5CqDPlxeNkPJIr5ZT9aLHm/KOga8A9/iOiZXPg1aRV2R3LdLP4q7MmWu
+ CatWMo20T05K9YKeWbpLEp2pJaRjFap8F9Mrc4M/5+qKGWhInLJIr7354FOokgmgby9y8JO7pV2
+ YklpP9MEKS0sQ9Q5rmQhADXYzVCkmgN3HG6BVpw5BFAKBVrkdlU5MHTVg/dtfpXM0nPy4j6YTMa
+ tV/UwcoedOJkBx3tW/DHDzC6trNRmBgrs0aG8/9sicC+IfjYVnPfvPMkfwuxtaHs1+Y0e9/8i2O
+ 7D
+X-Received: by 2002:a05:6214:398d:b0:91e:aa6d:d408 with SMTP id
+ 6a1803df08f44-91f03e88ff2mr103183056d6.7.1794498249870; 
+ Thu, 12 Nov 2026 07:44:09 -0800 (PST)
 Received: from bos-lhvwah.bos01.corp.akamai.com
  (g2001-4878-8037-0700-526b-8dff-fef6-cfbf.deploy.static.akamaitechnologies.com.
  [2001:4878:8037:700:526b:8dff:fef6:cfbf])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-91f02df714csm50400586d6.28.2026.11.12.07.44.07
+ 6a1803df08f44-91f02df714csm50400586d6.28.2026.11.12.07.44.08
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 12 Nov 2026 07:44:07 -0800 (PST)
+ Thu, 12 Nov 2026 07:44:09 -0800 (PST)
 From: Robert Sanford <rsanford2@gmail.com>
 To: dev@dpdk.org
 Cc: andrew.rybchenko@oktetlabs.ru, mb@smartsharesystems.com,
- olivier.matz@6wind.com, Robert Sanford <rsanford@akamai.com>,
- stable@dpdk.org
-Subject: [PATCH v4 2/3] mempool: fix dump of unpopulated pool
-Date: Thu, 12 Nov 2026 10:43:41 -0500
-Message-Id: <20261112154342.1484709-3-rsanford2@gmail.com>
+ olivier.matz@6wind.com, Robert Sanford <rsanford@akamai.com>
+Subject: [PATCH v4 3/3] test/mempool: add list walk race test
+Date: Thu, 12 Nov 2026 10:43:42 -0500
+Message-Id: <20261112154342.1484709-4-rsanford2@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261112154342.1484709-1-rsanford2@gmail.com>
 References: <20261109144054.3784583-1-rsanford2@gmail.com>
@@ -99,202 +98,193 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Robert Sanford <rsanford@akamai.com>
 
-rte_mempool_create_empty() adds a mempool to the mempool list before
-the mempool has a store. The store is allocated, and
-RTE_MEMPOOL_F_POOL_CREATED is set, by the first populate call. In
-between, rte_mempool_dump() queries the mempool driver for the number
-of objects in the store. With the ring driver this dereferences a NULL
-ring, and the process crashes. rte_mempool_list_dump() calls
-rte_mempool_dump() for every mempool on the list, so it crashes when
-another thread has created a mempool but not populated it yet. The
-telemetry /mempool/info handler has the same problem: its
-rte_mempool_walk() callback queries the driver for the same count.
+Walk, look up and dump the mempool list on some lcores while other
+lcores create and free mempools, in two phases of 500 ms. In the
+first phase, mempools are created and freed as fast as possible. In
+the second phase, every other mempool is created empty and populated
+after a short delay, so that the walkers also find mempools that are
+not populated yet. In that phase, the walk callback also dumps each
+mempool, and it checks rte_mempool_is_created() before querying the
+mempool driver, as documented for rte_mempool_walk().
 
-Add rte_mempool_is_created(), which tests RTE_MEMPOOL_F_POOL_CREATED.
-In rte_mempool_dump() and in the telemetry callback, query the mempool
-driver only when it returns true, and report a common
-pool count of 0 otherwise, since the mempool has no objects yet. The
-rest of the mempool information is still reported. In statistics
-builds, rte_mempool_dump() also skips rte_mempool_ops_get_info() for
-such a mempool. The info is now zeroed first; it was left uninitialized
-for drivers without a get_info operation.
-
-The populating thread sets the flag without holding a lock, so set it
-with an atomic fetch-or with release ordering, and test it with an
-atomic load with acquire ordering. A reader that sees the flag then
-also sees the store.
-
-rte_mempool_walk() still passes mempools that are not populated yet to
-its callback. Document that the callback must check
-rte_mempool_is_created() before querying the mempool driver.
-
-Fixes: 449c49b93a6b ("mempool: support handler operations")
-Fixes: ab8a1cc4e3d8 ("mempool: add object usage counts in telemetry")
-Cc: stable@dpdk.org
+Without either of the two previous patches, the test crashes. It
+needs at least 3 lcores and is skipped otherwise. It adds about one
+second to mempool_autotest.
 
 Signed-off-by: Robert Sanford <rsanford@akamai.com>
 Acked-by: Morten Brørup <mb@smartsharesystems.com>
 ---
- doc/guides/rel_notes/release_26_11.rst |  7 +++++
- lib/mempool/rte_mempool.c              | 37 +++++++++++++++++++++++---
- lib/mempool/rte_mempool.h              | 26 ++++++++++++++++++
- 3 files changed, 66 insertions(+), 4 deletions(-)
+ app/test/test_mempool.c | 150 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 150 insertions(+)
 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index e62f273aad..2f50a602e8 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -82,6 +82,13 @@ New Features
-   but objects within each bulk are not ordered as expected by a stack.
-   Furthermore, it is not strictly bounded by its size, but might hold more objects.
+diff --git a/app/test/test_mempool.c b/app/test/test_mempool.c
+index 0a4d794346..0edb691b56 100644
+--- a/app/test/test_mempool.c
++++ b/app/test/test_mempool.c
+@@ -839,6 +839,152 @@ test_mempool_flag_non_io_unset_when_populated_with_valid_iova(void)
  
-+* **Added function to check if a mempool is created.**
+ #pragma pop_macro("RTE_TEST_TRACE_FAILURE")
+ 
++/*
++ * Walk, look up and dump the mempool list on some lcores while other lcores
++ * create and free mempools. In the first phase the creators free mempools as
++ * fast as possible. In the second phase every other mempool is created empty
++ * and populated after a short delay, so that the walkers also find mempools
++ * that are not populated yet, and dump them.
++ */
++#define LIST_RACE_PHASE_MS	500
++#define LIST_RACE_NB_OBJ	63
++#define LIST_RACE_ELT_SIZE	64
 +
-+  Added the ``rte_mempool_is_created()`` function
-+  to check whether the store of a mempool has been created.
-+  ``rte_mempool_walk()`` callbacks can use it to skip mempools
-+  that are not populated yet before querying the mempool driver.
++#ifndef RTE_EXEC_ENV_WINDOWS
++#define LIST_RACE_DUMP_FILE	"/dev/null"
++#else
++#define LIST_RACE_DUMP_FILE	"NUL"
++#endif
 +
- * **Added unplug operation support to DPAA bus.**
- 
-   Implemented device unplug operation to allow runtime removal of DPAA devices.
-diff --git a/lib/mempool/rte_mempool.c b/lib/mempool/rte_mempool.c
-index d9f339a3c2..6dc0f146a1 100644
---- a/lib/mempool/rte_mempool.c
-+++ b/lib/mempool/rte_mempool.c
-@@ -294,6 +294,22 @@ rte_mempool_free_memchunks(struct rte_mempool *mp)
- 	}
- }
- 
-+RTE_EXPORT_SYMBOL(rte_mempool_is_created)
-+bool
-+rte_mempool_is_created(const struct rte_mempool *mp)
++static RTE_ATOMIC(uint32_t) list_race_stop;
++static int list_race_populate_later;
++static FILE *list_race_dump;
++
++static int
++test_mempool_list_race_create(__rte_unused void *arg)
 +{
-+	/*
-+	 * Mempools are on the mempool list before the store is allocated, so
-+	 * rte_mempool_dump() and rte_mempool_walk() callbacks can find them
-+	 * while another thread populates them.
-+	 * Acquire: pairs with the release in mempool_ops_alloc_once().
-+	 */
-+	return (rte_atomic_load_explicit(
-+			(const RTE_ATOMIC(unsigned int) *)&mp->flags,
-+			rte_memory_order_acquire) &
-+		RTE_MEMPOOL_F_POOL_CREATED) != 0;
++	char name[RTE_MEMPOOL_NAMESIZE];
++	struct rte_mempool *mp;
++	int populate_later = 0;
++
++	snprintf(name, sizeof(name), "test_list_race_%u", rte_lcore_id());
++	while (rte_atomic_load_explicit(&list_race_stop,
++			rte_memory_order_relaxed) == 0) {
++		if (populate_later) {
++			mp = rte_mempool_create_empty(name, LIST_RACE_NB_OBJ,
++				LIST_RACE_ELT_SIZE, 0, 0, SOCKET_ID_ANY, 0);
++			if (mp == NULL)
++				RET_ERR();
++			rte_delay_us(100);
++			if (rte_mempool_set_ops_byname(mp,
++					rte_mbuf_best_mempool_ops(), NULL) < 0 ||
++					rte_mempool_populate_default(mp) < 0) {
++				rte_mempool_free(mp);
++				RET_ERR();
++			}
++		} else {
++			mp = rte_mempool_create(name, LIST_RACE_NB_OBJ,
++				LIST_RACE_ELT_SIZE, 0, 0, NULL, NULL, NULL, NULL,
++				SOCKET_ID_ANY, 0);
++			if (mp == NULL)
++				RET_ERR();
++		}
++		rte_mempool_free(mp);
++		if (list_race_populate_later)
++			populate_later = !populate_later;
++	}
++	return 0;
++}
++
++static void
++test_mempool_list_race_walk_cb(struct rte_mempool *mp, void *arg)
++{
++	unsigned int *count = arg;
++
++	/* rte_mempool_dump() must handle mempools that are not populated yet */
++	if (list_race_dump != NULL)
++		rte_mempool_dump(list_race_dump, mp);
++
++	/* as documented for rte_mempool_walk(), check this first */
++	if (!rte_mempool_is_created(mp))
++		return;
++	/* access the store */
++	*count += mp->size + rte_mempool_avail_count(mp);
++}
++
++static int
++test_mempool_list_race_walk(__rte_unused void *arg)
++{
++	unsigned int count = 0;
++
++	while (rte_atomic_load_explicit(&list_race_stop,
++			rte_memory_order_relaxed) == 0) {
++		rte_mempool_walk(test_mempool_list_race_walk_cb, &count);
++		if (rte_mempool_lookup("test_list_race_none") != NULL)
++			RET_ERR();
++		if (list_race_dump != NULL)
++			rte_mempool_list_dump(list_race_dump);
++	}
++	return 0;
++}
++
++static int
++test_mempool_list_race_phase(int populate_later, FILE *dump)
++{
++	unsigned int nb_creators = (rte_lcore_count() - 1) / 2;
++	unsigned int lcore_id, i = 0;
++	int ret = 0;
++
++	list_race_populate_later = populate_later;
++	list_race_dump = dump;
++	rte_atomic_store_explicit(&list_race_stop, 0, rte_memory_order_relaxed);
++	RTE_LCORE_FOREACH_WORKER(lcore_id) {
++		lcore_function_t *func = i++ < nb_creators ?
++			test_mempool_list_race_create :
++			test_mempool_list_race_walk;
++
++		if (rte_eal_remote_launch(func, NULL, lcore_id) != 0)
++			ret = -1;
++	}
++
++	rte_delay_ms(LIST_RACE_PHASE_MS);
++	rte_atomic_store_explicit(&list_race_stop, 1, rte_memory_order_relaxed);
++
++	RTE_LCORE_FOREACH_WORKER(lcore_id) {
++		if (rte_eal_wait_lcore(lcore_id) < 0)
++			ret = -1;
++	}
++	return ret;
++}
++
++static int
++test_mempool_list_race(void)
++{
++	FILE *f;
++	int ret;
++
++	if (rte_lcore_count() < 3) {
++		printf("%s skipped: needs at least 3 lcores\n", __func__);
++		return 0;
++	}
++
++	/* mempools freed while the list is walked */
++	ret = test_mempool_list_race_phase(0, NULL);
++	if (ret != 0) {
++		LOG_ERR();
++		return ret;
++	}
++
++	/* mempools not populated yet while the list is walked and dumped */
++	f = fopen(LIST_RACE_DUMP_FILE, "w");
++	ret = test_mempool_list_race_phase(1, f);
++	if (f != NULL)
++		fclose(f);
++	if (ret != 0)
++		LOG_ERR();
++	return ret;
 +}
 +
  static int
- mempool_ops_alloc_once(struct rte_mempool *mp)
+ test_mempool(void)
  {
-@@ -304,7 +320,13 @@ mempool_ops_alloc_once(struct rte_mempool *mp)
- 		ret = rte_mempool_ops_alloc(mp);
- 		if (ret != 0)
- 			return ret;
--		mp->flags |= RTE_MEMPOOL_F_POOL_CREATED;
-+		/*
-+		 * Release: make the store visible before the flag, see
-+		 * rte_mempool_is_created().
-+		 */
-+		rte_atomic_fetch_or_explicit(
-+			(RTE_ATOMIC(unsigned int) *)&mp->flags,
-+			RTE_MEMPOOL_F_POOL_CREATED, rte_memory_order_release);
- 	}
- 	return 0;
- }
-@@ -1283,10 +1305,14 @@ rte_mempool_dump(FILE *f, struct rte_mempool *mp)
- 	unsigned common_count;
- 	unsigned cache_count;
- 	size_t mem_len = 0;
-+	bool created;
+@@ -1105,6 +1251,10 @@ test_mempool(void)
+ 	if (test_mempool_flag_non_io_unset_when_populated_with_valid_iova() < 0)
+ 		GOTO_ERR(ret, err);
  
- 	RTE_ASSERT(f != NULL);
- 	RTE_ASSERT(mp != NULL);
- 
-+	/* the mempool driver can only be queried once the store exists */
-+	created = rte_mempool_is_created(mp);
++	/* test walking the mempool list while mempools are created and freed */
++	if (test_mempool_list_race() < 0)
++		GOTO_ERR(ret, err);
 +
- 	fprintf(f, "mempool <%s>@%p\n", mp->name, mp);
- 	fprintf(f, "  flags=%x\n", mp->flags);
- 	fprintf(f, "  socket_id=%d\n", mp->socket_id);
-@@ -1318,14 +1344,16 @@ rte_mempool_dump(FILE *f, struct rte_mempool *mp)
- 	}
+ 	rte_mempool_list_dump(stdout);
  
- 	cache_count = rte_mempool_dump_cache(f, mp);
--	common_count = rte_mempool_ops_get_count(mp);
-+	common_count = created ? rte_mempool_ops_get_count(mp) : 0;
- 	if ((cache_count + common_count) > mp->size)
- 		common_count = mp->size - cache_count;
- 	fprintf(f, "  common_pool_count=%u\n", common_count);
- 
- 	/* sum and dump statistics */
- #ifdef RTE_LIBRTE_MEMPOOL_STATS
--	rte_mempool_ops_get_info(mp, &info);
-+	memset(&info, 0, sizeof(info));
-+	if (created)
-+		rte_mempool_ops_get_info(mp, &info);
- 	memset(&sum, 0, sizeof(sum));
- 	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE + 1; lcore_id++) {
- 		sum.put_bulk += mp->stats[lcore_id].put_bulk;
-@@ -1653,7 +1681,8 @@ mempool_info_cb(struct rte_mempool *mp, void *arg)
- 			cache_count += cache->len;
- 	}
- 	rte_tel_data_add_dict_uint(info->d, "total_cache_count", cache_count);
--	common_count = rte_mempool_ops_get_count(mp);
-+	/* the mempool driver can only be queried once the store exists */
-+	common_count = rte_mempool_is_created(mp) ? rte_mempool_ops_get_count(mp) : 0;
- 	if ((cache_count + common_count) > mp->size)
- 		common_count = mp->size - cache_count;
- 	rte_tel_data_add_dict_uint(info->d, "common_pool_count", common_count);
-diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
-index bd58d8a9d5..9bf1220b71 100644
---- a/lib/mempool/rte_mempool.h
-+++ b/lib/mempool/rte_mempool.h
-@@ -1325,6 +1325,9 @@ void rte_mempool_stats_reset(struct rte_mempool *mp);
- /**
-  * Dump the status of the mempool to a file.
-  *
-+ * For a mempool that is not populated yet, the mempool driver is not
-+ * queried, and the common pool count is reported as 0.
-+ *
-  * @param f
-  *   A pointer to a file for output
-  * @param mp
-@@ -1791,6 +1794,24 @@ rte_mempool_get_contig_blocks(struct rte_mempool *mp,
- 	return ret;
- }
- 
-+/**
-+ * Check if the mempool driver has created the store of a mempool.
-+ *
-+ * rte_mempool_create_empty() adds a mempool to the mempool list, and
-+ * assigns the default mempool driver, before the store exists. The
-+ * mempool driver can still be changed with rte_mempool_set_ops_byname()
-+ * until the store is created by the first populate call. Functions that
-+ * query the mempool driver, such as rte_mempool_avail_count(), must only
-+ * be called for a mempool that is created. rte_mempool_walk() callbacks
-+ * can see mempools that are not created yet.
-+ *
-+ * @param mp
-+ *   A pointer to the mempool structure.
-+ * @return
-+ *   true if the store has been created, false otherwise.
-+ */
-+bool rte_mempool_is_created(const struct rte_mempool *mp);
-+
- /**
-  * Return the number of entries in the mempool.
-  *
-@@ -1950,6 +1971,11 @@ uint32_t rte_mempool_calc_obj_size(uint32_t elt_size, uint32_t flags,
-  * The mempool list is locked while the iterator function runs, so the
-  * iterator function must not create or free a mempool.
-  *
-+ * The iterator function is also called for mempools that are not
-+ * populated yet. Such a mempool has no store yet, so the iterator function
-+ * must check rte_mempool_is_created() before calling functions that query
-+ * the mempool driver, such as rte_mempool_avail_count().
-+ *
-  * @param func
-  *   Iterator function
-  * @param arg
+ 	ret = 0;
 -- 
 2.34.1
 
