@@ -2,95 +2,39 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0A2606A33A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Nov 2026 19:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.a=rsa-sha256 header.s=google header.b=FEPGs5Vr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ABF9606A327
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Nov 2026 20:14:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 595CC4028E;
-	Fri, 13 Nov 2026 20:45:29 +0100 (CET)
-Received: from mail-pj1-f98.google.com (mail-pj1-f98.google.com
- [209.85.216.98])
- by mails.dpdk.org (Postfix) with ESMTPS id 7D5BF40264
- for <dev@dpdk.org>; Fri, 13 Nov 2026 20:45:27 +0100 (CET)
-Received: by mail-pj1-f98.google.com with SMTP id
- 98e67ed59e1d1-3ae6b4c669fso1537057a91.0
- for <dev@dpdk.org>; Fri, 13 Nov 2026 11:45:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794599126; x=1795203926;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=WS+XYzFVTnNlU7a/zYTUGg0jdspe6g0f+TARBqRYb3U=;
- b=UEmjHdItrAx12aCoYudoFUDGHMVVTD2OtpdnXKgIVi54P3S9+/ajK5uDpGoZdVPDi5
- dl7vAkZ6BOXUXVIVPVMEBPcMYmL5RZneT42trSzp7LIKUEkHayeVgbBlLmPhnonoWoJ2
- h5HLL5f+wsm6TPoCWo4W4VWmgefs0lEP00MqofkfJYXhy39WPAoz3SJQkffVOqDVsmcq
- p/WPHF3CZ0U6bt/ikQlm9G53FXOHWY9t51mJH2csaUnKAMOfo06rSq+AFu1c6SByflu3
- FmwGbmQ15qrTIoy4JXqXT+G/i+DjsfBqQKrXcJsCiuqbweTnZYjoX4cN3MOyJTntnvSj
- 8+mQ==
-X-Gm-Message-State: APuU4Z/oeYAKnD1U9wXw/Ox/HcS9t2fLkpDgNntm7FechK0RQ4ZHyuXM
- H24hzShNY7vJS+YN5pj2bHJEm6cIflHC9yqt9AHOHJEdo/gcyfVyVdNnRPPitVBa1P7GEquWlmJ
- zAiLP4U3vW0Woy9CKo4Na2ccOmgZB2z8dR+fUu/nJJfyALN4g8ce9/fIMIaxVeDOcsoVgtPMfZA
- 5zy1Wv0eBQVgcHNRhx8EWVmaViwWc9DFjIGeYvvg3XK8j9rgfRe+fpAwS9VNDP0xNXY5Na0sZg0
- IxfjA==
-X-Gm-Gg: AYBFou2BEkqw43yE4+51giQPhIOwyEismnNeVt4GsOhRWwgcNtkHATyvFsIiKRAMdNz
- w//To9Wura8h+ULpxfhM2SNazQ+7gNrb9aYFgjJ7bJKfXNq8v9D5HLfPRoUQ4uWWw2rnVnfg0Li
- HKLj1dppxsJ2jaWg34vuveV72wUMtklilOiP0QOaNyInz8lOnNoIbTOPMg3AoS3twzDQ7Mv4fyq
- kBMJOyK3XIUbE6ycbM4Uo5DmUQuBpoz4pSo6pvBurKou7XzP30wazIUN4mviNlqJZCVaava7mkm
- BVWAClWF+d2hrLNqVwVEugRUDvvEztzJa6Z0yjb5uE7JoGJgBucducYTFEYva3LLQ9t/WMZ5Gvd
- /NOH3VB3ChjSlUT4eQ1IyT7auV5nG+Ecy4EWluTKIiFHZY7OzguNMaVXVvIGku3DYY4DNPkuZHy
- 8R6SkJnZpG5jobiyaI6IpeuJh0HenF2dUTf7mNfqXxotZFJA==
-X-Received: by 2002:a17:90b:3a47:b0:3ac:860e:1af9 with SMTP id
- 98e67ed59e1d1-3b1b0d7e539mr2502720a91.41.1794599125830; 
- Fri, 13 Nov 2026 11:45:25 -0800 (PST)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-119.dlp.protect.broadcom.com. [144.49.247.119])
- by smtp-relay.gmail.com with ESMTPS id
- 98e67ed59e1d1-3b1b3fbf607sm1933872a91.4.2026.11.13.11.45.25
- for <dev@dpdk.org>
- (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Fri, 13 Nov 2026 11:45:25 -0800 (PST)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-qk1-f197.google.com with SMTP id
- af79cd13be357-93cb93c874bso487587585a.0
- for <dev@dpdk.org>; Fri, 13 Nov 2026 11:45:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1794599077; x=1795203877; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=WS+XYzFVTnNlU7a/zYTUGg0jdspe6g0f+TARBqRYb3U=;
- b=FEPGs5VrdL95DBY0yj077tjhf9YeBehRMAYDx/6PXNbktUQ5320Eqa3iUYI4VbwhDM
- kigm92rhJ5mibfC639GeP+a1xq7QGsCkz7ACUe50wGUZv4OuCoUHL9xmSPYDPeRbg4C0
- sbtmQ2icvqy9UVdkNSY1NBK+mqlRyAWE1p2Ns=
-X-Received: by 2002:a05:620a:688f:b0:93b:d7a4:9d4b with SMTP id
- af79cd13be357-9494bbeb2damr549086785a.30.1794599077219; 
- Fri, 13 Nov 2026 11:44:37 -0800 (PST)
-X-Received: by 2002:a05:620a:688f:b0:93b:d7a4:9d4b with SMTP id
- af79cd13be357-9494bbeb2damr549082785a.30.1794599076705; 
- Fri, 13 Nov 2026 11:44:36 -0800 (PST)
-Received: from accvda5707.acc.broadcom.net ([192.19.144.250])
- by smtp.gmail.com with ESMTPSA id
- af79cd13be357-9494c870f31sm257145185a.27.2026.11.13.11.44.36
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 13 Nov 2026 11:44:36 -0800 (PST)
-From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-To: dev@dpdk.org
-Cc: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
- Aman Singh <aman.deep.singh@intel.com>
-Subject: [PATCH v2 3/3] doc: update mempool cache description
-Date: Fri, 13 Nov 2026 14:44:28 -0500
-Message-ID: <20261113194428.1954550-3-kishore.padmanabha@broadcom.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20261113194428.1954550-1-kishore.padmanabha@broadcom.com>
-References: <20261113194428.1954550-1-kishore.padmanabha@broadcom.com>
+	by mails.dpdk.org (Postfix) with ESMTP id DB9D6427B1;
+	Fri, 13 Nov 2026 21:14:35 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTPS id 8A84540264;
+ Fri, 13 Nov 2026 21:14:32 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 272E420972;
+ Fri, 13 Nov 2026 21:14:32 +0100 (CET)
+Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
+ smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
+ Fri, 13 Nov 2026 21:14:31 +0100
+From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+To: dev@dpdk.org,
+	Thomas Monjalon <thomas@monjalon.net>
+Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
+ stable@dpdk.org
+Subject: [PATCH v6] examples/l3fwd: fix RFC 1812 checks
+Date: Fri, 13 Nov 2026 20:14:23 +0000
+Message-ID: <20261113201423.596856-1-mb@smartsharesystems.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260915105822.988106-1-mb@smartsharesystems.com>
+References: <20260915105822.988106-1-mb@smartsharesystems.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+X-OriginalArrivalTime: 13 Nov 2026 20:14:31.0840 (UTC)
+ FILETIME=[980A5A00:01DD73AB]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -100,44 +44,229 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The programmer's guide still described the maximum cache size as a
-compile time constant. Describe how the cache size is specified, and how
-the cache is flushed and refilled.
+Five bug fixes and two enhancements.
 
-Fixes: b815acfdfc48 ("mempool: remove cache size limit")
-Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Reviewed-by: Morten Brorup <mb@smartsharesystems.com>
+1.
+If the PMD didn't check the IP header checksum, the
+offload value is RTE_MBUF_F_RX_IP_CKSUM_UNKNOWN,
+not RTE_MBUF_F_RX_IP_CKSUM_NONE.
+CKSUM_NONE means that the packet integrity is good, but the checksum
+field has not been set.
+CKSUM_UNKNOWN means that the checksum has not been investigated.
+(BTW, no PMD currently sets RTE_MBUF_F_RX_IP_CKSUM_NONE, so this part
+of the check was effectively dead code.)
+
+Fixed this by processing all four RTE_MBUF_F_RX_IP_CKSUM enum values.
+All four values may not actually occur in this application,
+but it serves an educational purpose.
+
+2.
+When checking the checksum, the checksum field in the packet was zeroed
+for calculating the checksum.
+If the checksum was correct, the zero value remained in the packet.
+
+Fixed this by simply calculating the checksum of the packet without
+modifying the checksum field.
+If the calculated checksum is zero, the checksum is correct.
+
+3.
+When checking the Link Layer length of an IP packet, the length did
+not omit the length of the preceding Layer 2 headers.
+
+Fixed this by subtracting the Ethernet header length when calling the
+IPv4 validation function.
+
+4.
+In the 5th bullet check,
+"5. The IP total length field must be large enough to hold the IP
+datagram header, whose length is specified in the IP header length
+field."
+the comparison did not use the IP header length field, but the size
+of the IP header structure, which did not account for IP header
+options.
+
+Fixed this by using the IP header length field instead of the
+size of the structure.
+
+5.
+Calculating the checkum in the 2nd bullet check uses rte_ipv4_cksum(),
+which gets its length from the IP header length field.
+If the IP header length exceeded the Link Layer length, it would read
+out of bounds.
+
+Fixed this by moving the 2nd bullet check down after the length checks,
+and adding a comment describing the reason for its position.
+
+6.
+Added the additional check recommended in RFC 1812 section 5.2.2,
+verifying that the packet length reported by the Link Layer is at least
+as large as the IP total length recorded in the packet's IP header.
+
+7.
+Different negative values are returned on failure, but they are not used
+by any callers of this function.
+This is unnecessary, and may be confusing.
+Changed all negative return values to -1.
+
+Fixes: 4b01cabfb09b ("examples/l3fwd: add option to relax Rx offload")
+Fixes: af75078fece3 ("first public release")
+Cc: stable@dpdk.org
+
+Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
 ---
+v6:
+* Rebased.
+* Moved checksum check down, to prevent potential out-of-bounds read in
+  rte_ipv4_cksum(). (Thomas' AI)
+* Tx offload is not configured to update the checksum, so for CKSUM_NONE,
+  set it instead of forwarding the unset value. (Thomas' AI)
+* Changed all negative return values to -1.
+v5:
+* Use rte_be_to_cpu_16(), not rte_cpu_to_be_16(), for reading
+  IP header total_length field. (AI)
+v4:
+* When CKSUM_NONE, don't update checksum field. (AI)
+v3:
+* Simplified the checksum check. No need to modify the packet for
+  checking the checksum.
 v2:
-* Changed "number of objects in the pool" to "size of the pool".
-* Changed "pool's ring" to "pool's driver".
-* Dropped the sentence about requests larger than half the cache size.
+* Rebased.
+* Improved (1): Process all four checksum offload enum values, not just
+  CKSUM_UNKNOWN instead of CKSUM_NONE.
+* Added (2): Restore checksum field value in packet after checking.
+* Added (3): Subtract Layer 2 header length when passing Link Layer
+  length.
+* Added (4): Fix IP header Total Length vs. IP Header Length check.
+* Added (5): Link Layer length vs. IP header Total Length check.
+* Added the Fixes tag going back to the first public release.
+---
+ examples/l3fwd/l3fwd.h     | 52 ++++++++++++++++++++++++++------------
+ examples/l3fwd/l3fwd_em.h  |  3 ++-
+ examples/l3fwd/l3fwd_lpm.h |  3 ++-
+ 3 files changed, 40 insertions(+), 18 deletions(-)
 
- doc/guides/prog_guide/mempool_lib.rst | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/doc/guides/prog_guide/mempool_lib.rst b/doc/guides/prog_guide/mempool_lib.rst
-index 0bb85fb68d3e..ef025ded3b0d 100644
---- a/doc/guides/prog_guide/mempool_lib.rst
-+++ b/doc/guides/prog_guide/mempool_lib.rst
-@@ -96,7 +96,9 @@ the speed at which a core can access its own cache for a specific memory pool wi
- The cache is composed of a small, per-core table of pointers and its length (used as a stack).
- This internal cache can be enabled or disabled at creation of the pool.
+diff --git a/examples/l3fwd/l3fwd.h b/examples/l3fwd/l3fwd.h
+index 20c457ee7f..9aebf369a8 100644
+--- a/examples/l3fwd/l3fwd.h
++++ b/examples/l3fwd/l3fwd.h
+@@ -104,7 +104,7 @@ extern uint32_t hash_entry_number;
  
--The maximum size of the cache is static and is defined at compilation time (RTE_MEMPOOL_CACHE_MAX_SIZE).
-+The size of the cache is specified at pool creation, up to the size of the pool.
-+When the cache is full, half of it is flushed to the pool's driver,
-+and when it is empty, half of it is refilled from the pool's driver.
+ extern xmm_t val_eth[RTE_MAX_ETHPORTS];
  
- :numref:`mempool_figure_cache` shows a cache in operation.
+-extern struct lcore_conf *lcore_conf[RTE_MAX_LCORE];
++extern struct lcore_conf lcore_conf[RTE_MAX_LCORE];
  
+ extern struct parm_cfg parm_config;
+ 
+@@ -169,38 +169,58 @@ is_valid_ipv4_pkt(struct rte_ipv4_hdr *pkt, uint32_t link_len, uint64_t ol_flags
+ 	if (link_len < sizeof(struct rte_ipv4_hdr))
+ 		return -1;
+ 
+-	/* 2. The IP checksum must be correct. */
+-	/* if this is not checked in H/W, check it. */
+-	if ((ol_flags & RTE_MBUF_F_RX_IP_CKSUM_MASK) == RTE_MBUF_F_RX_IP_CKSUM_NONE) {
+-		uint16_t actual_cksum, expected_cksum;
+-		actual_cksum = pkt->hdr_checksum;
+-		pkt->hdr_checksum = 0;
+-		expected_cksum = rte_ipv4_cksum(pkt);
+-		if (actual_cksum != expected_cksum)
+-			return -2;
+-	}
+-
+ 	/*
+ 	 * 3. The IP version number must be 4. If the version number is not 4
+ 	 * then the packet may be another version of IP, such as IPng or
+ 	 * ST-II.
+ 	 */
+ 	if (((pkt->version_ihl) >> 4) != 4)
+-		return -3;
++		return -1;
+ 	/*
+ 	 * 4. The IP header length field must be large enough to hold the
+ 	 * minimum length legal IP datagram (20 bytes = 5 words).
+ 	 */
+ 	if ((pkt->version_ihl & 0xf) < 5)
+-		return -4;
++		return -1;
+ 
+ 	/*
+ 	 * 5. The IP total length field must be large enough to hold the IP
+ 	 * datagram header, whose length is specified in the IP header length
+ 	 * field.
+ 	 */
+-	if (rte_cpu_to_be_16(pkt->total_length) < sizeof(struct rte_ipv4_hdr))
+-		return -5;
++	if (rte_be_to_cpu_16(pkt->total_length) < rte_ipv4_hdr_len(pkt))
++		return -1;
++
++	/*
++	 * Additionally, the router SHOULD verify that the packet length
++	 * reported by the Link Layer is at least as large as the IP total
++	 * length recorded in the packet's IP header.
++	 */
++	if (link_len < rte_be_to_cpu_16(pkt->total_length))
++		return -1;
++
++	/*
++	 * 2. The IP checksum must be correct.
++	 * Note: This check is performed after the length checks,
++	 * to prevent rte_ipv4_cksum() from reading out of bounds
++	 * if the IP header length exceeds the packet length.
++	 */
++	switch (ol_flags & RTE_MBUF_F_RX_IP_CKSUM_MASK) {
++	case RTE_MBUF_F_RX_IP_CKSUM_UNKNOWN:
++		/* Not checked in H/W; check it. */
++		if (rte_ipv4_cksum(pkt) != 0)
++			return -1;
++		break;
++	case RTE_MBUF_F_RX_IP_CKSUM_GOOD:
++		break;
++	case RTE_MBUF_F_RX_IP_CKSUM_BAD:
++		return -1;
++	case RTE_MBUF_F_RX_IP_CKSUM_NONE:
++		/* Packet integrity known good, checksum field unset; set it. */
++		pkt->hdr_checksum = 0;
++		pkt->hdr_checksum = rte_ipv4_cksum(pkt);
++		break;
++	}
+ 
+ 	return 0;
+ }
+diff --git a/examples/l3fwd/l3fwd_em.h b/examples/l3fwd/l3fwd_em.h
+index 1fee2e2e6c..34801fba2b 100644
+--- a/examples/l3fwd/l3fwd_em.h
++++ b/examples/l3fwd/l3fwd_em.h
+@@ -20,7 +20,8 @@ l3fwd_em_handle_ipv4(struct rte_mbuf *m, uint16_t portid,
+ 
+ #ifdef DO_RFC_1812_CHECKS
+ 	/* Check to make sure the packet is valid (RFC1812) */
+-	if (is_valid_ipv4_pkt(ipv4_hdr, m->pkt_len, m->ol_flags) < 0) {
++	if (is_valid_ipv4_pkt(ipv4_hdr, m->pkt_len - sizeof(struct rte_ether_hdr),
++			m->ol_flags) < 0) {
+ 		rte_pktmbuf_free(m);
+ 		return BAD_PORT;
+ 	}
+diff --git a/examples/l3fwd/l3fwd_lpm.h b/examples/l3fwd/l3fwd_lpm.h
+index 4ee61e8d88..1731ebb2a8 100644
+--- a/examples/l3fwd/l3fwd_lpm.h
++++ b/examples/l3fwd/l3fwd_lpm.h
+@@ -22,7 +22,8 @@ l3fwd_lpm_simple_forward(struct rte_mbuf *m, uint16_t portid,
+ 
+ #ifdef DO_RFC_1812_CHECKS
+ 		/* Check to make sure the packet is valid (RFC1812) */
+-		if (is_valid_ipv4_pkt(ipv4_hdr, m->pkt_len, m->ol_flags) < 0) {
++		if (is_valid_ipv4_pkt(ipv4_hdr, m->pkt_len - sizeof(struct rte_ether_hdr),
++				m->ol_flags) < 0) {
+ 			rte_pktmbuf_free(m);
+ 			return;
+ 		}
 -- 
-2.54.0
+2.43.0
 
