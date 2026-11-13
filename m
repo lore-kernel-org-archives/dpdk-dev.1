@@ -2,58 +2,91 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2156606A8A4
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Nov 2026 13:49:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C4D606A88B
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Nov 2026 15:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=RmGSfUuV
+	dkim=pass (1024-bit key, unprotected) header.d=broadcom.com header.i=@broadcom.com header.a=rsa-sha256 header.s=google header.b=dBHwZ4K9
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C2AA6427C1;
-	Fri, 13 Nov 2026 14:49:12 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTPS id E0800427C1;
- Fri, 13 Nov 2026 14:49:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1794577751; x=1826113751;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=E1lckHVrPDqHA8oqSx3tFBd6APxhJqX67SHVAMSXeJY=;
- b=RmGSfUuVh4CVB8J3piCE52D9GCikNTqRGhKN7peWAaNtuS5wcy81GePP
- H2NpaflgZP8Fh5THwFkV/riwMxQuIYmeXRr96BYsnpQq7n2YIWpb4yFzA
- sI5F2vysxCLj8Z7AiPu61ELcCcTsvEjhfmK+d5LE5U8IMMhFGmPbGOdpn
- VBgZGACyQBlWz6Uo371eEZDH8ZbVVfW+aQl1x7vOLUTAIdhdyVrytBMoU
- s5rAmpwN1FxkzcMCaOYbTKW/bx3mnNr7xoTvi0cvzDdWRuJCMpzF60qLh
- Vg5/nubNnNxxdEjiY4W6FxDS6v+wDz0eWvvHgXkUP8RNmytasTvz0Y4oI A==;
-X-CSE-ConnectionGUID: w7v7QkA4TvqwJPMdBsCvLA==
-X-CSE-MsgGUID: oE8OmtQnS1iWXCCID9EX0Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11965"; a="3375582"
-X-IronPort-AV: E=Sophos;i="6.27,211,1787036400"; 
-   d="scan'208";a="3375582"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
- by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Nov 2026 05:49:11 -0800
-X-CSE-ConnectionGUID: cNBc3YPKQTeQ4ForXZPpEg==
-X-CSE-MsgGUID: bP+9MbTtTXSI6k98KHvI2Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,211,1787036400"; 
-   d="scan'208";a="8819866"
-Received: from pae-31.iind.intel.com ([10.49.105.68])
- by orviesa004.jf.intel.com with ESMTP; 13 Nov 2026 05:49:08 -0800
-From: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id E0F16402A4;
+	Fri, 13 Nov 2026 16:56:50 +0100 (CET)
+Received: from mail-pj1-f100.google.com (mail-pj1-f100.google.com
+ [209.85.216.100])
+ by mails.dpdk.org (Postfix) with ESMTPS id 11A954028E
+ for <dev@dpdk.org>; Fri, 13 Nov 2026 16:56:50 +0100 (CET)
+Received: by mail-pj1-f100.google.com with SMTP id
+ 98e67ed59e1d1-3acb11973c3so1776487a91.3
+ for <dev@dpdk.org>; Fri, 13 Nov 2026 07:56:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1794585408; x=1795190208;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=EHvkC+MqDIJ2jA88kzOxsgnh1u49a8hNLi3p4DAigOE=;
+ b=Gr2AKyzdDcP6cjwYPzPfwUUa7dH/W8/8QqzQVHbgyj0YjETvVHIyMQOtyApiyA5H46
+ p/hppW+lGorcbXa+SzGUKUkMPArb/j/j+Xu+McqjjNrRoyLkVub6QaDcS03C6HfJ3vkH
+ dZASb+1Xp4QvhPTZOEkA/KxW5sSdK9cJyyZTE1sR3h//QR6dMXzh3mAxjatAXAx6wh9U
+ fKl4hhglAbZZ9zSZNUgFATQ6ropjgGlGmkLqE7fCQHAnO5nk5Ng1kEqX0kTFK3wZ0cSk
+ zk7wrngPI/tOr2wcI+wmmDpAPnvOV/W/7XLkvZbxZ4uDUdwbtdKUZ1UHPEjtue5Ie5sV
+ LOhA==
+X-Gm-Message-State: APuU4Z8RkkkZqoBsJYCCO/C5Sz23elfTB7bHVWUSlnpdVZ5C+Z9Cg51m
+ rqTBigzBDXUrreIbmMWZxxJrAXZ2QqY32nR0ANg78md/cdvR4qmtr1Fls3gnVGbRNZIsRtTaWWA
+ MJRgifo3PK4u/nNWlwkH6+lAabzd/5/e4xYhCcGl/vSTXpfBnbf/3mJ52o4GYUPob8CCJNEjpr3
+ 0YXDBC18JH6+oLV+HN4H2QkZN8KJKDrhJAbRg0bV8nXt4WaCfIpIl7j9JXpvFcgeE8QBavcJP8W
+ fTMpA==
+X-Gm-Gg: AYBFou0KQL2POnII1RGqPRGx/4pEfpVyrolLZIgpaTzaY7vb5VCQva2xFS7zsPP3LY9
+ c+tVw0PEaj+mQormbRTu8kaXrkKvbMHq6m3b+IbYkQCgkVXJsEbmpuvanN+fRhhp/uix/PTpFDT
+ UcLxpoPlF6hCSkRcfZ9/CbaZubRFyAHYoR9j9pg+0tZm2dL2Qi+Rh2wHk+d3Pc7OgjpBghbzNPF
+ 3cEaqPxQp1Dyzhg/490CRPSU7aatCLFGc1USCj+zQ8JLXU9v80dXyo8scLKOZg6X2hmqGv71RGH
+ lITcTNVBP4nyJY43A5cYnC227QXYNNgZApnp4utizuopZpwrPqa7nQo+I0UJe0GEOEM/EG2FIeO
+ h0qrFI3dTABfFqmLneuCQJifyuTRn6aIjNJYuH6+3Vju5A9KIj3E//fxGOHBdnfWNhV31Ss/NvO
+ ndOU/21yD2a7oRpkqYGVOdS5zMglJK0hnp30Fen6RyiK0=
+X-Received: by 2002:a17:90b:390f:b0:3ac:8446:c1b5 with SMTP id
+ 98e67ed59e1d1-3b1b0a0fdaemr2679993a91.31.1794585407964; 
+ Fri, 13 Nov 2026 07:56:47 -0800 (PST)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
+ (address-144-49-247-28.dlp.protect.broadcom.com. [144.49.247.28])
+ by smtp-relay.gmail.com with ESMTPS id
+ 98e67ed59e1d1-3b197a330f9sm7354411a91.0.2026.11.13.07.56.47
+ for <dev@dpdk.org>
+ (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+ Fri, 13 Nov 2026 07:56:47 -0800 (PST)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-dl1-f70.google.com with SMTP id
+ a92af1059eb24-16bc6f3fdb1so534103c88.0
+ for <dev@dpdk.org>; Fri, 13 Nov 2026 07:56:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=broadcom.com; s=google; t=1794585406; x=1795190206; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=EHvkC+MqDIJ2jA88kzOxsgnh1u49a8hNLi3p4DAigOE=;
+ b=dBHwZ4K97gU9g79vI2tyakJDNSw1itJNWrVvkDelOEWRp8d+nLWbu29DbRIzny6iXj
+ YlPMoaQ6Cqf0TjKL0BPs9kUUqOQYNcj9+SmWafbWU68kKzsKRRyR8cLI+tgc1YhvVmx+
+ 0Syk4ElToVpvSvr5d7vMUOSqymGc55+qSIkOI=
+X-Received: by 2002:a05:7022:3a06:b0:184:19ee:1fdd with SMTP id
+ a92af1059eb24-1b503068266mr2996056c88.5.1794585405774; 
+ Fri, 13 Nov 2026 07:56:45 -0800 (PST)
+X-Received: by 2002:a05:7022:3a06:b0:184:19ee:1fdd with SMTP id
+ a92af1059eb24-1b503068266mr2996013c88.5.1794585404971; 
+ Fri, 13 Nov 2026 07:56:44 -0800 (PST)
+Received: from accvda5707.acc.broadcom.net ([192.19.144.250])
+ by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-1b5031b98e5sm8386190c88.14.2026.11.13.07.56.43
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 13 Nov 2026 07:56:44 -0800 (PST)
+From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, anatoly.burakov@intel.com,
- vladimir.medvedkin@intel.com, brian.johnson@intel.com,
- Sandeep Penigalapati <sandeep.penigalapati@intel.com>, stable@dpdk.org
-Subject: [PATCH 4/4] doc: fix intel VF guide
-Date: Fri, 13 Nov 2026 20:50:34 +0000
-Message-Id: <20261113205034.173313-5-sandeep.penigalapati@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20261113205034.173313-1-sandeep.penigalapati@intel.com>
-References: <20261113205034.173313-1-sandeep.penigalapati@intel.com>
+Cc: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
+ Aman Singh <aman.deep.singh@intel.com>
+Subject: [PATCH 1/3] mempool: remove assumptions on maximum cache size
+Date: Fri, 13 Nov 2026 10:56:31 -0500
+Message-ID: <20261113155633.1883479-1-kishore.padmanabha@broadcom.com>
+X-Mailer: git-send-email 2.54.0
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -63,107 +96,72 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	DATE_IN_FUTURE_06_12,DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Correct several errors in the Intel VF guide:
+Since the cache size limit was removed, a mempool cache can be created
+with any size up to the number of objects in the mempool.
+RTE_MEMPOOL_CACHE_MAX_SIZE is therefore no longer an upper bound for
+the cache size, nor for the number of objects in the cache.
 
-- correct the kernel module file names in the insmod examples
-  (fm10k.ko, ixgbe.ko, igb.ko).
-- correct the qemu-system-x86_64 command name.
-- correct the "8 TX and 8 RX queues" description.
-- correct the rss_lut_vf_attr sysfs attribute name.
-- minor spacing and hyphenation fixes (SR-IOV).
+The put and get functions still passed assumptions derived from this
+constant to the compiler. They are wrong for a cache larger than
+RTE_MEMPOOL_CACHE_MAX_SIZE, and violating a compiler assumption is
+undefined behavior.
 
-Fixes: a49ae04e853f ("doc: update fm10k prog guide")
-Cc: stable@dpdk.org
+Remove the assumptions based on the constant, and assume that the number
+of objects in the cache does not exceed the cache size instead.
 
-Signed-off-by: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
+Fixes: b815acfdfc48 ("mempool: remove cache size limit")
+Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 ---
- doc/guides/nics/intel_vf.rst | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ lib/mempool/rte_mempool.h | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/doc/guides/nics/intel_vf.rst b/doc/guides/nics/intel_vf.rst
-index 0d715cc048..e7463c5852 100644
---- a/doc/guides/nics/intel_vf.rst
-+++ b/doc/guides/nics/intel_vf.rst
-@@ -10,7 +10,7 @@ Supported Intel® Ethernet Controllers (see the *DPDK Release Notes* for details
- support the following modes of operation in a virtualized environment:
+diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
+index b34cd893b1b6..fa2b9f00d516 100644
+--- a/lib/mempool/rte_mempool.h
++++ b/lib/mempool/rte_mempool.h
+@@ -1433,9 +1433,6 @@ rte_mempool_do_generic_put(struct rte_mempool *mp, void * const *obj_table,
+ 	RTE_MEMPOOL_CACHE_STAT_ADD(cache, put_bulk, 1);
+ 	RTE_MEMPOOL_CACHE_STAT_ADD(cache, put_objs, n);
  
- *   **SR-IOV mode**: Involves direct assignment of part of the port resources to different guest operating systems
--    using the PCI-SIG Single Root I/O Virtualization (SR IOV) standard,
-+    using the PCI-SIG Single Root I/O Virtualization (SR-IOV) standard,
-     also known as "native mode" or "pass-through" mode.
-     In this chapter, this mode is referred to as IOV mode.
+-	__rte_assume(cache->size <= RTE_MEMPOOL_CACHE_MAX_SIZE);
+-	__rte_assume(cache->size / 2 <= RTE_MEMPOOL_CACHE_MAX_SIZE / 2);
+-	__rte_assume(cache->len <= RTE_MEMPOOL_CACHE_MAX_SIZE);
+ 	__rte_assume(cache->len <= cache->size);
+ 	if (likely(cache->len + n <= cache->size)) {
+ 		/* Sufficient room in the cache for the objects. */
+@@ -1575,7 +1572,7 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
+ 	/* The cache is a stack, so copy will be in reverse order. */
+ 	cache_objs = &cache->objs[cache->len];
  
-@@ -157,7 +157,7 @@ Intel\ |reg| E800 Series Ethernet devices:
+-	__rte_assume(cache->len <= RTE_MEMPOOL_CACHE_MAX_SIZE);
++	__rte_assume(cache->len <= cache->size);
+ 	if (likely(n <= cache->len)) {
+ 		/* The entire request can be satisfied from the cache. */
+ 		RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_bulk, 1);
+@@ -1600,7 +1597,6 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
+ 		*obj_table++ = *--cache_objs;
  
- * When using the Intel out-of-tree "ice" PF/kernel driver v1.13.7 or later,
-   to create VFs with >16 queues (aka. "large VFs"),
--  it is necessary to change the rss_lut_vf_addr setting in sysfs from the default of 64 to 512.
-+  it is necessary to change the rss_lut_vf_attr setting in sysfs from the default of 64 to 512.
-   This can be done using the following command for the first VF on an interface:
-   ``echo 512 > /sys/class/net/<PF interface>/device/virtfn0/rss_lut_vf_attr``
+ 	/* Dequeue below would exceed the cache bounce buffer limit? */
+-	__rte_assume(cache->size / 2 <= RTE_MEMPOOL_CACHE_MAX_SIZE / 2);
+ 	if (unlikely(remaining > cache->size / 2))
+ 		goto driver_dequeue;
  
-@@ -177,7 +177,7 @@ For example,
-     .. code-block:: console
+@@ -1619,8 +1615,6 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
+ 	RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_bulk, 1);
+ 	RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_objs, n);
  
-         rmmod fm10k (To remove the fm10k module)
--        insmod fm0k.ko max_vfs=2,2 (To enable two Virtual Functions per port)
-+        insmod fm10k.ko max_vfs=2,2 (To enable two Virtual Functions per port)
- 
- Virtual Function enumeration is performed in the following sequence by the Linux* pci driver for a dual-port NIC.
- When you enable the four Virtual Functions with the above command, the four enabled functions have a Function#
-@@ -250,7 +250,7 @@ For example,
-     .. code-block:: console
- 
-         rmmod ixgbe (To remove the ixgbe module)
--        insmod ixgbe max_vfs=2,2 (To enable two Virtual Functions per port)
-+        insmod ixgbe.ko max_vfs=2,2 (To enable two Virtual Functions per port)
- 
- *   Using the DPDK PMD PF ixgbe driver, bind the PF device to ``vfio_pci`` or ``igb_uio`` and
-     create VF devices. See :ref:`linux_gsg_binding_kernel`.
-@@ -318,7 +318,7 @@ A pool is a group of queue pairs for assignment to the same VF, used for transmi
- The controller has eight pools, with each pool containing two queue pairs, that is, two TX and two RX queues assigned to each VF.
- 
- In a virtualized environment, an Intel® Ethernet Controller I350 family device serves up to eight virtual machines (VMs) per port.
--The eight queues can be accessed by eight different VMs if configured correctly (the i350 has 4x1GbE ports each with 8T X and 8 RX queues),
-+The eight queues can be accessed by eight different VMs if configured correctly (the i350 has 4x1GbE ports each with 8 TX and 8 RX queues),
- that means, one Transmit and one Receive queue assigned to each VF.
- 
- For example,
-@@ -328,7 +328,7 @@ For example,
-     .. code-block:: console
- 
-         rmmod igb (To remove the igb module)
--        insmod igb max_vfs=2,2 (To enable two Virtual Functions per port)
-+        insmod igb.ko max_vfs=2,2 (To enable two Virtual Functions per port)
- 
- *   Using the DPDK PMD PF igb driver, bind the PF device to ``vfio_pci`` or ``igb_uio`` and
-     create VF devices. See :ref:`linux_gsg_binding_kernel`.
-@@ -365,7 +365,7 @@ The validated hypervisor is:
- 
- However, the hypervisor is bypassed to configure the Virtual Function devices using the Mailbox interface,
- the solution is hypervisor-agnostic.
--Xen* and VMware* (when SR- IOV is supported) will also be able to support the DPDK with Virtual Function driver support.
-+Xen* and VMware* (when SR-IOV is supported) will also be able to support the DPDK with Virtual Function driver support.
- 
- Expected Guest Operating System in Virtual Machine
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@@ -571,7 +571,7 @@ The setup procedure is as follows:
- .. note::
- 
-     If you are unable to compile the DPDK and you are getting "error: CPU you selected does not support x86-64 instruction set",
--    power off the Guest OS and start the virtual machine with the correct -cpu option in the qemu- system-x86_64 command as shown in step 9.
-+    power off the Guest OS and start the virtual machine with the correct -cpu option in the qemu-system-x86_64 command as shown in step 9.
-     You must select the best x86_64 cpu_model to emulate or you can select host option if available.
- 
- .. note::
+-	__rte_assume(cache->size / 2 <= RTE_MEMPOOL_CACHE_MAX_SIZE / 2);
+-	__rte_assume(remaining <= RTE_MEMPOOL_CACHE_MAX_SIZE / 2);
+ 	__rte_assume(remaining <= cache->size / 2);
+ 	cache_objs = &cache->objs[cache->size / 2];
+ 	cache->len = cache->size / 2 - remaining;
 -- 
-2.34.1
+2.54.0
 
