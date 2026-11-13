@@ -2,30 +2,31 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6976606A321
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Nov 2026 10:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52CB4606A8BC
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Nov 2026 10:53:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 52A9B427D4;
-	Fri, 13 Nov 2026 11:48:02 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id C35414281D;
+	Fri, 13 Nov 2026 11:53:20 +0100 (CET)
 Received: from tortuga.telka.sk (tortuga.telka.sk [185.14.234.118])
- by mails.dpdk.org (Postfix) with ESMTPS id BDE93402A4
- for <dev@dpdk.org>; Fri, 13 Nov 2026 11:48:00 +0100 (CET)
-Received: (qmail 2359 invoked from network); 13 Nov 2026 10:48:00 -0000
+ by mails.dpdk.org (Postfix) with ESMTPS id C6379427D4
+ for <dev@dpdk.org>; Fri, 13 Nov 2026 11:53:19 +0100 (CET)
+Received: (qmail 2713 invoked from network); 13 Nov 2026 10:53:19 -0000
 Received: from telcontar.in.telka.sk (HELO telcontar) (marcel@10.0.0.10)
  by tortuga.telka.sk with ESMTPSA (DHE-RSA-AES256-GCM-SHA384 encrypted);
- 13 Nov 2026 10:48:00 -0000
-Date: Fri, 13 Nov 2026 11:47:58 +0100
+ 13 Nov 2026 10:53:19 -0000
+Date: Fri, 13 Nov 2026 11:53:18 +0100
 From: Marcel Telka <marcel@telka.sk>
 To: dev@dpdk.org
 Cc: stable@dpdk.org
-Subject: [PATCH v2] net/ice: fix trailing bytes drop in get_module_eeprom()
-Message-ID: <avbq3hRC0CYC4f_q@telcontar>
+Subject: [PATCH v3] net/ice: fix trailing bytes drop in get_module_eeprom()
+Message-ID: <avbsHttyFMKKCcmj@telcontar>
 References: <avXWJrAYifpAF9nJ@telcontar>
+ <avbq3hRC0CYC4f_q@telcontar>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <avXWJrAYifpAF9nJ@telcontar>
+In-Reply-To: <avbq3hRC0CYC4f_q@telcontar>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,7 +51,7 @@ the trailing length % 8 bytes are silently returned as zero instead of
 the real EEPROM content, with no error indication to the caller.
 
 Bugzilla ID: 2091
-Fixes: 5256925658 (net/ice: support module EEPROM)
+Fixes: 52569256583a ("net/ice: support module EEPROM")
 Cc: stable@dpdk.org
 
 Signed-off-by: Marcel Telka <marcel@telka.sk>
