@@ -2,79 +2,91 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B483606A64B
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Nov 2026 18:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDBC606A335
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Nov 2026 19:44:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=FaY0FJsv
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.a=rsa-sha256 header.s=google header.b=OH4Ow4Qq
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1A5F9402A4;
-	Fri, 13 Nov 2026 19:47:17 +0100 (CET)
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com
- [209.85.215.174])
- by mails.dpdk.org (Postfix) with ESMTPS id 9992C4003C
- for <dev@dpdk.org>; Fri, 13 Nov 2026 19:47:14 +0100 (CET)
-Received: by mail-pg1-f174.google.com with SMTP id
- 41be03b00d2f7-cdadf7e248aso518132a12.3
- for <dev@dpdk.org>; Fri, 13 Nov 2026 10:47:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1794595633;
- x=1795200433; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=MzuS+bCTFXqNSv6gH3+MtYqpdk5d3mC45+nPZ1haAXI=;
- b=FaY0FJsv/Kq1+YSxC6dU2bCNa6h9f76SDxz0cpsSB4pRbrMTYcPT0a1FmdQpEi1mgF
- QwKVXiiefTK64JwkWX4iLjK58fHSi0Gh+lt0o0dQ5pzP7V55JAxFKsYV5uIaDSWJGKSY
- 3eqHoina8PBqAnR6gnD5r7etf9oyl7F2Tb01HC/x5vrTIE97Jc33Fq0Pz+iS4Vp8+kTn
- mSknbLOd8GMaJvKzazLVBaA+FnC72AVBZyTx+7/Bf7mzelp5bb0esA6OqqMmwAZKfD5i
- qxTXn4+LUl0cp+k90yzOwG/uC/g5gmMjsEJ96K6auCNXxC2xH/Su3/QqMlyzCSVJjZuS
- cjfg==
+	by mails.dpdk.org (Postfix) with ESMTP id 6921E4028E;
+	Fri, 13 Nov 2026 20:44:36 +0100 (CET)
+Received: from mail-vs1-f99.google.com (mail-vs1-f99.google.com
+ [209.85.217.99])
+ by mails.dpdk.org (Postfix) with ESMTPS id 7629240264
+ for <dev@dpdk.org>; Fri, 13 Nov 2026 20:44:35 +0100 (CET)
+Received: by mail-vs1-f99.google.com with SMTP id
+ ada2fe7eead31-7cc1cf48a39so397920137.1
+ for <dev@dpdk.org>; Fri, 13 Nov 2026 11:44:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794595633; x=1795200433;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=MzuS+bCTFXqNSv6gH3+MtYqpdk5d3mC45+nPZ1haAXI=;
- b=jkp+yVD2bt3gDTzMVI0gpUWJuZ3sMtxUox9PQJHoWSqzTjOZn3a1NLE2YUZ1lfDKES
- LJ6//nx70bYzc7v/2Q2Xonj8MDwpB6aDrcl9rzeayBhWau1kQg15U4TFH34RiHRo9+aM
- zaIdzSVwJhASKLekR9OGg6kgVts+RqKwNVGKe/+6wZdaLhczoMlh2nqfh+SyoXQu4NHX
- pJxU2ghXlKZcPlT8g0fY0KOkuvj1+MLWQI2La5ODGHJmYT7hGNVCnKmMYEnWpsP9Gb42
- P3dyGzdJIhX2NV5i2HjGEYHtLpQtSW3wzVJQz3cY4nCy/FpmhBVao3YS5RgxGBIgVzQl
- qPlA==
-X-Gm-Message-State: APuU4Z8IcQ585HKgWhVOJXdQs81/Vf7Uq3CTw8X5L8Zq7OWOKJK2LUVi
- +go6aIfbqopTI4ICkoiquJYRZoXIvhh1s5j8uR1hbChh4jiUZlLHt0jdYAsyHWEffsY=
-X-Gm-Gg: AYBFou13Sn3T01y8qAdtaTichKy8rjJLX+eedw1somHCOHejrkaOvAm2UD1L4TvVeHP
- 6PbOT/WlI9u63almR66sDgOW60qmHROZKeHS+tJ/mOm8IYK/ygfywz1bCJZJuLfgRS4q78xoZNS
- 8/rCBksWhLfLr/NvzW8P8HO5lonwwQtDcBQU00UQHUr9jGcMmG5nIDKMbPA/Tsgr5QlmPKtf1mo
- j49HErkScTDBapSotStai/pb1Z1ACUOB3xBD4Vqh4601BaxIeFQhRImNTdDFXzWF/rl96nzNVPc
- 0uW5huNJq+jC95WdcyN2XH1yePgC/YFP2xrh/AUCZbwuhCz0q6N4pfSDjVWzmlzcEmC8aqu3PZY
- YkWP2pRG80vr/z9L/xQ9fQiJ5QF8wb2aPYIiE6eMO2N6FoFkey1kiqTR8eUvsZKSUI0wPazoSjN
- sZsaxu6x1woZPLnz/SKHCBCy59cmzxd2be8gE0zL4bKh6mNi07K4cQgYqvAT4dW4zRUi3doqCqd
- 5sSgDvwBmFg3oOw1nqBNa9IzdK9zaBmr+THVNjFRyfGtcLlxNe9nxd9P8+o1yXVHQfZWXZjbEax
- zKmGj90qdpGdfVkFuTNdU2ssrn8q1FLpMXZFw8zlgZX9AAEdyVghoi/hQvTQ/MHP/sPG/LabnA=
- =
-X-Received: by 2002:a17:90b:1846:b0:3a4:6f38:f2a2 with SMTP id
- 98e67ed59e1d1-3b1b0a3e7bemr2790568a91.25.1794595632998; 
- Fri, 13 Nov 2026 10:47:12 -0800 (PST)
-Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ d=1e100.net; s=20260707; t=1794599074; x=1795203874;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=tzJqW1F4ao15+a0Led8oKSFHtrOOIvH6TdTDKWQ1KII=;
+ b=z9LbOe/2KpgrYHBbmNAiWBJYbxXsybFEDQUkGRfvshm+eeUtuBEvHmaTnu7mmU6c4m
+ NC3z6oQK/HgrbYKNNTvnrSsILeMoOA5ozJBFC+bjjdZAJDZz0uR1k6jhQFvE9GTjjKwL
+ mwBIO7gLXdiLaqIn2dnwL3u7w6s4DInVabioWzxFaoY73y1q3ylLGNpSCoxF7ANh3/Ui
+ sfVTgZsgN5S6fbnJrRSH19zWQysDaEn6HUqoWlCL272y60B0yz1ai576ngE+2cu9WtJM
+ H94HMXbaSMXT2rYmbxPqLcZwXjqxEoTzD7u3zdT/N1ohc5Wnq2jWL66zvij9nLPya3tg
+ 2JMA==
+X-Gm-Message-State: APuU4Z9yW00s1y2L9Lgx9j42dx9icmapOLB+PF0G+DIwodAt2geHcXKv
+ G/OnUNSyi9/lDgp4hZwKRqSCoiNO6+V+1tvuHG0+AvCOH+O8xfmznc1dtCbsa3GAquxkon5kgHu
+ HzOmgB1Go3cnyo0RUEtUIYqDUbLhhs0EkQr6U66IvUavE9oebgYoxQ9jC8oU6NrLIv7cLokFawp
+ xoT1domsep5TlPSGvu9qAt5oNyXV/GEK4gP/tMmqtOwW/vwovoHHCCjIrOCAFceOEto+mS/GXog
+ dtIWw==
+X-Gm-Gg: AYBFou3rRKu4XGVRg3pLrrkjsO5cQ2sijhYwjIKnLfPBnvJnftyH5GiLNbwTT1r3IPP
+ 4Bdivvq9vcvokXtHBntlxQwOrUt5uiJly6FQ2r0kp/W3YzsdTE0tsDOOz7HZgPCW/eGjm5+CW2e
+ sLnBx0Mr/rRdRDkh/UvccRQ5/z7vCtT7t5r/bJOodmqKxhCVksqrOApoU4W9VPy0MuQyHLJ+IQD
+ pCgctgWI1numOXOX7E8Soy1OkQS0GAbqcZhsuR0Jc9Q8od9Ey/4NkcP0PfvjQlLyXtaJEZWwaoN
+ wLJ6IhlpDObXoO6Vzyo4tUEyqPSDL+/Cl2wBlE7SH3+ZlggYrIjdWeGOKUOflntmUaw6AWb/M/y
+ +UtPQvaKDS77cOIj3/9kShmnaa5ccFXx0FUBsaTE3l3LOZX1K7eAytwNXKvkz6JLqdNnAudK2KA
+ tMN70ivtmWjfLxmJvbGiMtxtZhj9JmZsAP/iEZzdNg4IzoZw==
+X-Received: by 2002:a05:6102:54a3:b0:7d2:7266:2c71 with SMTP id
+ ada2fe7eead31-7d64d12f547mr1172456137.0.1794599073898; 
+ Fri, 13 Nov 2026 11:44:33 -0800 (PST)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
+ (address-144-49-247-121.dlp.protect.broadcom.com. [144.49.247.121])
+ by smtp-relay.gmail.com with ESMTPS id
+ ada2fe7eead31-7d64c4cc5aesm95426137.20.2026.11.13.11.44.33
+ for <dev@dpdk.org>
+ (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+ Fri, 13 Nov 2026 11:44:33 -0800 (PST)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-qk1-f197.google.com with SMTP id
+ af79cd13be357-945b0154705so224779985a.3
+ for <dev@dpdk.org>; Fri, 13 Nov 2026 11:44:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=broadcom.com; s=google; t=1794599073; x=1795203873; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=tzJqW1F4ao15+a0Led8oKSFHtrOOIvH6TdTDKWQ1KII=;
+ b=OH4Ow4QquOLaFU2SSaBVvCu/HmozdkA6H5MVbkbKuDQ/dK+5iMY7d66r1zeU9IJhaJ
+ T9lVHLVimxcQoR4wUNxNUJ06GCrcn9oCWlpeJm+15ur4/vMEfB0q88K7UYy86C/+lU7W
+ BmyndTaJGOtRK8K1XHazB6tlvvOeWkK4taPfs=
+X-Received: by 2002:a05:620a:28c9:b0:940:ed10:aedb with SMTP id
+ af79cd13be357-9494bac431amr590448485a.30.1794599072745; 
+ Fri, 13 Nov 2026 11:44:32 -0800 (PST)
+X-Received: by 2002:a05:620a:28c9:b0:940:ed10:aedb with SMTP id
+ af79cd13be357-9494bac431amr590444785a.30.1794599072107; 
+ Fri, 13 Nov 2026 11:44:32 -0800 (PST)
+Received: from accvda5707.acc.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3b1b2133c5dsm2435624a91.0.2026.11.13.10.47.12
+ af79cd13be357-9494c870f31sm257145185a.27.2026.11.13.11.44.31
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 13 Nov 2026 10:47:12 -0800 (PST)
-Date: Fri, 13 Nov 2026 10:47:09 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v2 0/3] deprecate unneeded build options/support
-Message-ID: <20261113104709.5538f414@phoenix.local>
-In-Reply-To: <20261104201506.4091374-1-bruce.richardson@intel.com>
-References: <20260602090847.905721-1-bruce.richardson@intel.com>
- <20261104201506.4091374-1-bruce.richardson@intel.com>
+ Fri, 13 Nov 2026 11:44:31 -0800 (PST)
+From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+To: dev@dpdk.org
+Cc: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
+ Aman Singh <aman.deep.singh@intel.com>
+Subject: [PATCH v2 1/3] mempool: remove assumptions on maximum cache size
+Date: Fri, 13 Nov 2026 14:44:26 -0500
+Message-ID: <20261113194428.1954550-1-kishore.padmanabha@broadcom.com>
+X-Mailer: git-send-email 2.54.0
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,39 +96,76 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Wed,  4 Nov 2026 20:15:03 +0000
-Bruce Richardson <bruce.richardson@intel.com> wrote:
+Since the cache size limit was removed, a mempool cache can be created
+with any size up to the number of objects in the mempool.
+RTE_MEMPOOL_CACHE_MAX_SIZE is therefore no longer an upper bound for
+the cache size, nor for the number of objects in the cache.
 
-> Having unnecessary build options just makes things confusing for
-> the user, and expands the set of potential builds. This set
-> deprecates 3 build options, including deprecating all HPET support,
-> and marks them for future removal.
-> 
-> ---
-> v2: rather than always building HPET to remove the option, deprecate
->     all HPET support, which will also allow option removal in future.
-> 
-> Bruce Richardson (3):
->   build: deprecate kernel dir option
->   build: deprecate standalone tests option
->   build: deprecate HPET support
-> 
->  app/meson.build                      |  6 +-----
->  doc/guides/linux_gsg/enable_func.rst | 32 ----------------------------
->  doc/guides/linux_gsg/sys_reqs.rst    |  3 ---
->  doc/guides/rel_notes/deprecation.rst | 11 ++++++++++
->  meson_options.txt                    |  6 +++---
->  5 files changed, 15 insertions(+), 43 deletions(-)
-> 
-> --
-> 2.55.0
-> 
+The put and get functions still passed assumptions derived from this
+constant to the compiler. They are wrong for a cache larger than
+RTE_MEMPOOL_CACHE_MAX_SIZE, and violating a compiler assumption is
+undefined behavior.
 
-Series-acked-by: Stephen Hemminger <stephen@networkplumber.org>
+Remove the assumptions based on the constant, and assume that the number
+of objects in the cache does not exceed the cache size instead.
+
+Fixes: b815acfdfc48 ("mempool: remove cache size limit")
+Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Reviewed-by: Morten Brorup <mb@smartsharesystems.com>
+---
+v2:
+* Added Reviewed-by tag, no code change.
+
+ lib/mempool/rte_mempool.h | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
+index b34cd893b1b6..fa2b9f00d516 100644
+--- a/lib/mempool/rte_mempool.h
++++ b/lib/mempool/rte_mempool.h
+@@ -1433,9 +1433,6 @@ rte_mempool_do_generic_put(struct rte_mempool *mp, void * const *obj_table,
+ 	RTE_MEMPOOL_CACHE_STAT_ADD(cache, put_bulk, 1);
+ 	RTE_MEMPOOL_CACHE_STAT_ADD(cache, put_objs, n);
+ 
+-	__rte_assume(cache->size <= RTE_MEMPOOL_CACHE_MAX_SIZE);
+-	__rte_assume(cache->size / 2 <= RTE_MEMPOOL_CACHE_MAX_SIZE / 2);
+-	__rte_assume(cache->len <= RTE_MEMPOOL_CACHE_MAX_SIZE);
+ 	__rte_assume(cache->len <= cache->size);
+ 	if (likely(cache->len + n <= cache->size)) {
+ 		/* Sufficient room in the cache for the objects. */
+@@ -1575,7 +1572,7 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
+ 	/* The cache is a stack, so copy will be in reverse order. */
+ 	cache_objs = &cache->objs[cache->len];
+ 
+-	__rte_assume(cache->len <= RTE_MEMPOOL_CACHE_MAX_SIZE);
++	__rte_assume(cache->len <= cache->size);
+ 	if (likely(n <= cache->len)) {
+ 		/* The entire request can be satisfied from the cache. */
+ 		RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_bulk, 1);
+@@ -1600,7 +1597,6 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
+ 		*obj_table++ = *--cache_objs;
+ 
+ 	/* Dequeue below would exceed the cache bounce buffer limit? */
+-	__rte_assume(cache->size / 2 <= RTE_MEMPOOL_CACHE_MAX_SIZE / 2);
+ 	if (unlikely(remaining > cache->size / 2))
+ 		goto driver_dequeue;
+ 
+@@ -1619,8 +1615,6 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
+ 	RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_bulk, 1);
+ 	RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_objs, n);
+ 
+-	__rte_assume(cache->size / 2 <= RTE_MEMPOOL_CACHE_MAX_SIZE / 2);
+-	__rte_assume(remaining <= RTE_MEMPOOL_CACHE_MAX_SIZE / 2);
+ 	__rte_assume(remaining <= cache->size / 2);
+ 	cache_objs = &cache->objs[cache->size / 2];
+ 	cache->len = cache->size / 2 - remaining;
+-- 
+2.54.0
+
