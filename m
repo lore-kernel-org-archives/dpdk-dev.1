@@ -2,26 +2,26 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49434606A327
-	for <dpdk-dev@archiver.kernel.org>; Sat, 14 Nov 2026 17:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E18606A323
+	for <dpdk-dev@archiver.kernel.org>; Sat, 14 Nov 2026 18:38:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 558354025A;
-	Sat, 14 Nov 2026 18:47:26 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 304384025A;
+	Sat, 14 Nov 2026 19:38:18 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTPS id BA0884021E
- for <dev@dpdk.org>; Sat, 14 Nov 2026 18:47:24 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id 508464021E
+ for <dev@dpdk.org>; Sat, 14 Nov 2026 19:38:16 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 8B41C4C6E3; Sat, 14 Nov 2026 18:47:24 +0100 (CET)
+ id 2B4C14C1EC; Sat, 14 Nov 2026 19:38:16 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 2127] net/e1000: igb PF never removes VF multicast
- hashes from shared MTA
-Date: Sat, 14 Nov 2026 17:47:24 +0000
+Subject: [DPDK/cryptodev Bug 2130] crypto/openssl: 3DES-CTR reads past
+ segment that ends at cipher offset
+Date: Sat, 14 Nov 2026 18:38:15 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: ethdev
+X-Bugzilla-Component: cryptodev
 X-Bugzilla-Version: 26.11
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: normal
@@ -35,7 +35,7 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone attachments.created
-Message-ID: <bug-2127-3@https.bugs.dpdk.org/>
+Message-ID: <bug-2130-3@https.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: https://bugs.dpdk.org/
@@ -57,11 +57,11 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D2127
+https://bugs.dpdk.org/show_bug.cgi?id=3D2130
 
-            Bug ID: 2127
-           Summary: net/e1000: igb PF never removes VF multicast hashes
-                    from shared MTA
+            Bug ID: 2130
+           Summary: crypto/openssl: 3DES-CTR reads past segment that ends
+                    at cipher offset
            Product: DPDK
            Version: 26.11
           Hardware: All
@@ -69,277 +69,319 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D2127
             Status: UNCONFIRMED
           Severity: normal
           Priority: Normal
-         Component: ethdev
+         Component: cryptodev
           Assignee: dev@dpdk.org
           Reporter: stephen@networkplumber.org
   Target Milestone: ---
 
-Created attachment 463
-  --> https://bugs.dpdk.org/attachment.cgi?id=3D463&action=3Dedit
+Created attachment 464
+  --> https://bugs.dpdk.org/attachment.cgi?id=3D464&action=3Dedit
 AI proposed patch
 
-Reported by Anthropic OSS Scanner ANT-2026-YE47Z1IV
+Reported by Anthropic OSS (ANT-2026-CUYNXISN)
 
-In the igb PF driver, multicast hash bits that a VF asks for are added to t=
-he
-port's shared multicast filter (MTA) but never removed. Over time that filt=
-er
-only widens, and every pool that accepts hash-matched multicast (all VFs and
-the PF pool) receives multicast frames nobody subscribed to. The reverse al=
-so
-happens: when the PF application calls `rte_eth_dev_set_mc_addr_list()`, the
-table is rebuilt from the PF's list alone and every VF silently loses the
-multicast groups it registered.
+The crypto_openssl PMD returns wrong data for 3DES-CTR ops that use a chain=
+ed
+source mbuf and a contiguous destination (out of place) when the cipher ran=
+ge
+starts exactly at the end of a source segment, or when the range includes a
+zero-length segment. The op still completes with
+`RTE_CRYPTO_OP_STATUS_SUCCESS`, but instead of the payload in the next mbuf,
+the driver ciphers whatever memory follows the current segment's data. That=
+ is
+usually leftovers from an earlier packet in the same mbuf, or the neighbour=
+ing
+mempool object when the range is longer than the tailroom.
 
-The cause is in `igb_vf_set_multicast()` in `drivers/net/intel/e1000/igb_pf=
-.c`.
-The VF driver sends its complete list on every update, but the handler ORs =
-the
-hash values into `MTA` rather than replacing that VF's previous bits. It al=
-so
-saves the list into `vfinfo[0]` whichever VF sent it, and that saved list is
-never read back to rebuild the table. `igb_vf_reset_event()` only zeroes a
-counter, so neither an empty list nor a VF reset clears anything. Only a
-PF-side multicast list update or a port restart does, and both drop the VFs'
-entries. The attached reproducer runs the unmodified PF code on RAM-backed
-82576 registers with two VFs. After VF1 sends 137 lists of up to 30 hash
-values, all 4096 `MTA` bits are set, and they stay set after VF1 sends an e=
-mpty
-list and resets. A well-behaved VF that replaces a 2-entry list with a 1-en=
-try
-list likewise leaves 5 bits set instead of 3. There is no crash or memory
-effect, and the effect on frame delivery is inferred from register meaning
-rather than observed on hardware. A patch is attached that rebuilds `MTA` f=
-rom
-the PF's shadow list plus each VF's saved list, following the Linux igb dri=
-ver.
+The problem is in `process_openssl_cipher_des3ctr()` in
+`drivers/crypto/openssl/rte_openssl_pmd.c`. The segment-selection loop uses
+`offset > rte_pktmbuf_data_len(m)`, so an offset equal to a segment's length
+stops on that segment with `l =3D 0` bytes left. The byte loop reads `*src`
+before checking `l`, then decrements it to -1. Because `!l` never becomes t=
+rue
+again, the switch to `m->next` never happens and all `cipher.data.length` b=
+ytes
+are read linearly.
 
-This is an ordinary bug, not a security issue: a VF can already choose any =
-30
-multicast hash bits and change them at
-will, and can already make every other pool receive frames by sending
-broadcast, so a multicast filter that stops
-narrowing gives it nothing it did not have.
+The PMD accepts this layout, since it advertises
+`RTE_CRYPTODEV_FF_OOP_SGL_IN_LB_OUT` and only rejects a segmented destinati=
+on.
+An application that always puts the header and the payload in separate mbufs
+will therefore get wrong output on every packet. AES-CTR and the other
+EVP-based ciphers in the same driver handle the same op correctly. No libra=
+ry
+or example in the tree submits such ops.
+
+The attached reproducer builds a 16-byte header plus a 31-byte payload in t=
+wo
+chained mbufs and encrypts it with `cipher.data.offset =3D 16`. With the fi=
+rst
+segment split at 20 bytes, the decrypted result is the original payload. Wi=
+th
+the split at 16 bytes, the result is 31 `S` bytes from a previously freed
+packet. No crash or ASan report occurs. A patch that advances to the next
+non-empty segment before reading each byte is attached, along with two new
+blockcipher test cases.
 
 ## Details
 
-`igb_vf_set_multicast()` handles a VF's `E1000_VF_SET_MULTICAST` mailbox
-message by ORing the VF's hash values into
-`MTA`, the one multicast hash filter of the port, which the PF and all VFs
-share. Nothing takes a VF's bits out again,
-so the limit of 30 hash values, which is what fits in one mailbox message
-(`base/e1000_vf.c:386`), applies to one
-message, not to what a VF has accumulated
-(`drivers/net/intel/e1000/igb_pf.c:335`):
+This is an ordinary bug, not a security issue: the mbuf layout and cipher
+offset that trigger it are chosen by the
+application itself, and no library, example or guest-facing path in the tree
+builds such an op.
+
+`process_openssl_cipher_des3ctr()` keeps reading from the first source segm=
+ent
+when the cipher range starts exactly at
+the end of that segment: it never moves to the next mbuf of the chain. The =
+op
+completes with
+`RTE_CRYPTO_OP_STATUS_SUCCESS`, but what was ciphered is the memory behind =
+the
+segment's data, not the payload.
+
+Shown on `crypto_openssl` at commit 9a45341f18 (default build): a packet of=
+ a
+16-byte header and a 31-byte payload,
+held in two chained mbufs, is encrypted out of place into a contiguous mbuf
+with `cipher.data.offset =3D 16`,
+`cipher.data.length =3D 31`, and the result is decrypted again as the peer =
+would
+do.
+
+| cipher | first segment | peer decrypts |
+|---|---|---|
+| `RTE_CRYPTO_CIPHER_AES_CTR` | 16 bytes | `the payload of this very packet=
+` |
+| `RTE_CRYPTO_CIPHER_3DES_CTR` | 20 bytes | `the payload of this very packe=
+t` |
+| `RTE_CRYPTO_CIPHER_3DES_CTR` | 16 bytes | `SSSSSSSSSSSSSSSSSSSSSSSSSSSSSS=
+S` |
+
+`S` is the content of an unrelated packet that used the first mbuf before a=
+nd
+was freed.
+
+The code, `drivers/crypto/openssl/rte_openssl_pmd.c:1181`:
 
 ```c
-        /* only so many hash values supported */
-        entries =3D RTE_MIN(entries, E1000_MAX_VF_MC_ENTRIES);
+        for (m =3D mbuf_src; m !=3D NULL && offset > rte_pktmbuf_data_len(m=
+);
+                        m =3D m->next)
+                offset -=3D rte_pktmbuf_data_len(m);
         =E2=80=A6
-        vfinfo->num_vf_mc_hashes =3D (uint16_t)entries;
+        src =3D rte_pktmbuf_mtod_offset(m, uint8_t *, offset);
+        l =3D rte_pktmbuf_data_len(m) - offset;
         =E2=80=A6
-        for (i =3D 0; i < vfinfo->num_vf_mc_hashes; i++) {
-                vector_reg =3D (vfinfo->vf_mc_hashes[i] >> 5) & 0x7F;
-                vector_bit =3D vfinfo->vf_mc_hashes[i] & 0x1F;
-                mta_reg =3D E1000_READ_REG_ARRAY(hw, E1000_MTA, vector_reg);
-                mta_reg |=3D (1 << vector_bit);
-                E1000_WRITE_REG_ARRAY(hw, E1000_MTA, vector_reg, mta_reg);
+        for (n =3D 0; n < srclen; n++) {
+                =E2=80=A6
+                dst[n] =3D *(src++) ^ ebuf[n % 8];        /* 1205 */
+
+                l--;
+                if (!l) {
+                        m =3D m->next;
+                        if (m) {
+                                src =3D rte_pktmbuf_mtod(m, uint8_t *);
+                                l =3D rte_pktmbuf_data_len(m);
+                        }
+                }
         }
 ```
 
-Running this code unmodified on RAM-backed registers (commit 9a45341f18,
-default gcc build; see Reproducing): VF1 sends
-137 `E1000_VF_SET_MULTICAST` messages of at most 30 hash values each. `MTA`=
- has
-30 bits set after the first message and
-all 4096 after the last. VF1 then sends an empty list and `E1000_VF_RESET`;
-4096 bits stay set.
+The first loop compares with `>`, so with `offset =3D=3D data_len` it stops=
+ on the
+segment that ends at the offset: `src`
+points one byte past that segment's data and `l`, the number of bytes left =
+in
+the segment, is 0. The byte loop reads
+`*src` before it looks at `l`, then decrements `l` to -1, and `!l` is never
+true again. All `srclen` bytes are taken
+linearly from `src`; nothing bounds the read to the mbuf's buffer.
 
-The message reaches the handler without any per-VF state check. `ICR.VMMB`
-makes `eth_igb_interrupt_action()` call
-`igb_pf_mbx_process()` (`igb_ethdev.c:3011`), and `igb_rcv_msg_from_vf()`
-copies the 16 mailbox words
-(`igb_pf.c:431`), dispatches on `msgbuf[0] & 0xFFFF` (`igb_pf.c:450`) and c=
-alls
-`igb_vf_set_multicast()`
-(`igb_pf.c:455`). The entry count is bits 16-23 of word 0 and the hash valu=
-es
-are the 30 16-bit halves of words 1-15,
-all written by the VF.
+In the example the offset 16 equals the length of the first segment, so the=
+ 31
+bytes come from the tailroom of the
+header mbuf, which still holds the previous packet. With the first segment =
+20
+bytes long, `l` starts at 4, reaches 0
+after four bytes and the switch to the second mbuf happens as intended.
 
-On the VF side the message carries the complete list:
-`e1000_update_mc_addr_list_vf()` (`base/e1000_vf.c:376`) sends
-every hash value on each update. The PF handler treats it as "add these". I=
-ts
-comment says the list is saved "for
-later use to restore when the PF multi cast list changes" (`igb_pf.c:338`),=
- but
-`vf_mc_hashes` is read nowhere except
-in the loop above, and the save itself goes to `vfinfo[0]` whichever VF sent
-the message (`vfinfo->=E2=80=A6`; the `vf`
-argument is `__rte_unused`). So a well-behaved VF leaves bits behind too: in
-the same setup, VF0 holding 2 hash values
-and VF1 replacing a list of 2 with a list of 1 leaves 5 bits set, not 3.
+Two more observations with the same program, adapted to other segment layou=
+ts:
 
-A VF reset does not help. `igb_vf_reset_event()` only zeroes a counter
-(`igb_pf.c:247`):
+- A zero-length segment inside the range has the same effect, because the i=
+nner
+assignment
+  `l =3D rte_pktmbuf_data_len(m)` also produces `l =3D 0`: with segments of=
+ 20, 0
+and 27 bytes the peer gets `the ` followed
+  by 27 bytes that are not the payload.
+- With a 3000-byte range and the default 2048-byte data room, the output is=
+ the
+3000 bytes of memory that follow the
+  header in the first mbuf; 968 of them lie beyond the end of that mbuf's
+buffer (`buf_addr + buf_len`), in the
+  neighbouring object of the mempool. No crash results.
 
-```c
-        /* reset multicast table array for vf */
-        vfinfo[vf].num_vf_mc_hashes =3D 0;
-```
+The other segment walkers of this file (`process_openssl_encryption_update(=
+)`
+at line 974 and its siblings) start with
+the same `offset > data_len` loop, but they pass `l` as a length to
+`EVP_*Update()` and then advance with
+`for (m =3D m->next; =E2=80=A6)`, so `l =3D 0` is harmless there. That is w=
+hy AES-CTR gives
+the right result on the same op.
 
-`MTA` bits are cleared in two places only, both driven by the PF applicatio=
-n:
-`e1000_update_mc_addr_list_generic()`
-(`base/e1000_mac.c:583`), reached from `rte_eth_dev_set_mc_addr_list()`,
-rewrites the table from the PF's own list,
-and `e1000_init_hw_base()` (`base/e1000_base.c:72`) zeroes it when the port=
- is
-started. Neither includes the VFs'
-saved lists, so the opposite also happens: when the PF application calls
-`rte_eth_dev_set_mc_addr_list()`, every VF
-silently loses its multicast groups (3 VF groups before, 0 after, in the sa=
-me
-RAM-register setup).
-
-A set bit is not private to the VF that set it. A pool accepts frames that
-match `MTA` when its `VMOLR.ROMPE` is set
-(`base/e1000_82575.h:283`), and the PF sets that for every VF at reset
-(`igb_pf.c:241`) and for its own pool whenever
-the port is not in promiscuous or all-multicast mode (`igb_pf.c:217`).
-`E1000_VF_SET_PROMISC` is not implemented in
-`igb_pf.c`: it has no case in the dispatcher and is answered with a NACK
-(`igb_pf.c:463`). The ixgbe PF grants
-all-multicast to any VF that asks (`ixgbe_pf.c:760`).
+The layout is one the PMD accepts. `process_openssl_cipher_op()` only rejec=
+ts a
+segmented destination
+(`rte_openssl_pmd.c:1699`); a chained `m_src` with a contiguous `m_dst` goe=
+s on
+to `process_openssl_cipher_des3ctr()`
+at line 1724, and the device advertises `RTE_CRYPTODEV_FF_OOP_SGL_IN_LB_OUT`
+(line 4185). The op's offset and length
+are consistent with the mbuf chain.
 
 ## Impact
 
-Affected: an 82576 or I350 port whose PF is driven by the DPDK igb PMD with=
- VFs
-enabled. Default build, no offload or
-devarg.
+Affected are applications that give `crypto_openssl` a 3DES-CTR op (cipher =
+only
+or chained with auth, both go through
+`process_openssl_cipher_op()`) with a chained source and a contiguous
+destination, when the cipher range starts at
+the beginning of a segment or spans an empty segment. No devargs or build
+options are involved; the default build is
+affected. The mbuf layout and the offset are the application's own choice.
+Nothing in `lib/` or `examples/` submits
+such ops: `lib/ipsec` and `lib/pdcp` do not accept 3DES-CTR, vhost crypto
+always builds a single-segment source,
+`l2fwd-crypto` works in place and `test-crypto-perf` uses cipher offset 0.
 
-The port's multicast hash filter only grows while VFs are in use. Every tim=
-e a
-VF driver changes its multicast list,
-the hash bits of the old list stay set, so over time every pool with `ROMPE`
-(all VFs and the PF pool) is handed
-multicast frames nobody subscribed to, which costs Rx descriptors and CPU a=
-nd
-has to be dropped in software. A VF that
-sends many lists (137, in the reproducer) opens the filter completely. The
-stale bits outlive the VF: an empty list or
-a VF reset does not clear them; only the PF application rewriting its multi=
-cast
-list or restarting the port does. The
-problem users are more likely to notice is the reverse: a call to
-`rte_eth_dev_set_mc_addr_list()` on the PF drops
-every VF's multicast groups, and the VFs stop receiving the multicast traff=
-ic
-they asked for.
+Where the layout puts the boundary at the cipher offset by design, e.g. a
+header mbuf followed by a payload mbuf, the
+op goes wrong on every packet, with a success status. On encryption the out=
+put
+is the keystream XORed with whatever
+sits behind the first segment's data (leftovers of earlier packets in that
+mbuf, and the neighbouring mempool object
+when the range is longer than the tailroom), so the receiver never gets the
+payload. On decryption the application
+receives bytes derived from that memory instead of the plaintext. The
+destination is written correctly sized; there
+is no out-of-bounds write, and no crash was observed. The ASan build returns
+the same bytes without a report, because
+all mbufs of a pool sit in one allocation.
 
-None of this gives a VF more than it already has. It may pick any 30 hash b=
-its
-and replace them at will, so it can
-already listen to any group it names; the 30 is the mailbox size, not a quo=
-ta.
-It can already load every other pool by
-sending broadcast, since the PF enables VF-to-VF loopback (`igb_pf.c:151`) =
-and
-broadcast accept for every VF pool
-(`igb_pf.c:241`). There is no memory effect, no crash, and no effect on uni=
-cast
-or VLAN filtering. The effect on frame
-delivery follows from the register state; it was not observed on hardware.
+3DES-CTR together with out-of-place operation on chained mbufs is an uncomm=
+on
+combination; an application that uses
+it with such a layout sees wrong output on its first test. AES-CTR and the
+other EVP-based ciphers of the same PMD are
+not affected.
 
 ## Reproducing
 
-There is no 82576 or I350 in the test image, so the reproducer runs the
-driver's own PF code on a register file in RAM
-and reads the registers back. It uses the default gcc build (`/src/build`) =
-and
-takes about a second.
+`repro` compiles `repro.d/encrypt_chained_packet.c` with gcc against the sh=
+ared
+libraries of the default build
+`/src/build` (`pkg-config` from `meson-uninstalled`), then runs it twice wi=
+th
+`--no-huge -m 512 --no-pci --vdev crypto_openssl`, loading
+`librte_mempool_ring.so` and `librte_crypto_openssl.so`
+with `-d`. No devargs, build options or source changes are involved.
 
 Files:
 
-* `repro.d/igb_pf_on_ram_bar0.c` (setup: the PF). Links `igb_pf.c` and the
-e1000 base code unmodified from the
-  already built `/src/build/drivers/librte_net_e1000.a`, points `hw->hw_add=
-r`
-at a 128 KB array and brings up an
-  82576 PF with two VFs through `igb_pf_host_init()` and
-`igb_pf_host_configure()`, as `eth_igb_dev_init()` and
-  `eth_igb_start()` do. It then reads one step per stdin line. `vf<N> <word=
-s>`
-writes the words to `VMBMEM(N)`, sets
-  the VF's request bit in `MBVFICR` as the NIC would, calls
-`igb_pf_mbx_process()` (what the `ICR.VMMB` interrupt
-  does) and answers with word 0 of the PF's reply. `mta` answers with the
-number of bits set in `MTA`. `rompe` lists
-  the pools that have `VMOLR.ROMPE`.
-* `repro.d/start_igb_pf.py` (setup). Compiles that program with gcc against=
- the
-build and starts it.
-* `repro` (VF1's messages, plus the check). Both VFs first send
-`E1000_VF_RESET`, as any VF driver does. VF1 then
-  sends 137 `E1000_VF_SET_MULTICAST` messages: the entry count in bits 16-2=
-3 of
-word 0, then the 16-bit hash values two
-  per word. Each message holds at most 30 values (136 with 30, one with 16),
-and together they cover hash values
-  0 to 4095. VF1 then sends an empty list and `E1000_VF_RESET`. If the PF d=
-oes
-not ACK a message, the script stops
-  there.
+- `repro` (setup and verdict): builds the application, runs it once as a
+control and once on the boundary layout,
+  prints both results and decides.
+- `repro.d/encrypt_chained_packet.c` (the application developer's part): an
+ordinary cryptodev user. It checks that
+  the device advertises `RTE_CRYPTODEV_FF_OOP_SGL_IN_LB_OUT`, creates a
+cipher-only `RTE_CRYPTO_CIPHER_3DES_CTR`
+  session, and lets one packet of another flow (256 `S` bytes) pass through=
+ an
+mbuf that it then frees. It builds the
+  packet, 16 `H` header bytes followed by the payload from the command line=
+, in
+two chained mbufs split after the
+  number of bytes given on the command line; the first of these mbufs is the
+one the other flow just freed. It
+  encrypts the packet out of place into a contiguous mbuf with
+`cipher.data.offset =3D 16` and
+  `cipher.data.length =3D strlen(payload)`, decrypts that mbuf with the same
+session as the peer would, and prints
+  `peer decrypts: <payload bytes>`. Every op must complete with
+`RTE_CRYPTO_OP_STATUS_SUCCESS`, or the program exits
+  with an error.
 
-Expected output on 9a45341f18:
+The payload is `the payload of this very packet` (31 bytes). The two runs
+differ only in where the packet is split:
+
+- control: first segment of 20 bytes (header plus 4 payload bytes); the peer
+must get the payload back, otherwise
+  the script stops with an error because the setup is broken;
+- trigger: first segment of 16 bytes, so the segment ends exactly at
+`cipher.data.offset`.
+
+Expected output on the affected tree:
 
 ```
-CONTROL MTA bits set before any VF list: 0
-CONTROL MTA bits set after VF1's first list of 30: 30
-OBSERVED MTA bits set after 137 lists from VF1: 4096 of 4096 (correct: 16,
-VF1's last list)
-OBSERVED MTA bits set after VF1's empty list: 4096 (correct: 0)
-OBSERVED MTA bits set after VF1's reset: 4096 (correct: 0)
-OBSERVED pools that accept multicast frames matching the MTA (VMOLR.ROMPE):=
- VF0
-VF1 PF
+CONTROL  3des-ctr, first segment 20 bytes: peer decrypts 'the payload of th=
+is
+very packet'
+OBSERVED 3des-ctr, first segment 16 bytes: peer decrypts
+'SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS'
 BUG
 ```
 
-The `correct` value is the PF's own bits (none) plus the list VF1 currently
-holds. `BUG` is printed when VF1's lists
-have set all 4096 bits, the bits are still set after the empty list and aft=
-er
-the reset, and VF0 and the PF pool have
-`ROMPE` (so they receive frames that match those bits). With the attached p=
-atch
-applied and `igb_pf.c` linked in place
-of the archive member, the same run shows 30, 16, 0 and 0 bits and prints `=
-OK`.
+`BUG` is printed when the trigger run returns only `S` bytes: the 31 bytes
+behind the header in the first mbuf, left
+there by the freed packet, were encrypted instead of the payload in the sec=
+ond
+mbuf. With the attached patch applied
+(rebuilding `drivers/librte_crypto_openssl.so.27.0`) both runs return the
+payload and the script prints `OK`. It takes
+about 2.5 seconds.
 
 ## Suggested fix
 
-The attached patch (`drivers/net/intel/e1000/igb_pf.c`) treats `MTA` as der=
-ived
-state. It adds a static helper,
-`igb_pf_restore_mta()`, that rewrites the whole table from `hw->mac.mta_sha=
-dow`
-(the PF's own list, maintained by
-`e1000_update_mc_addr_list_generic()`) ORed with the saved list of every VF,
-the way `igb_restore_vf_multicasts()` does
-in the Linux igb driver. `igb_vf_set_multicast()` now stores the list in
-`vfinfo[vf]` instead of `vfinfo[0]` (the `vf`
-argument loses `__rte_unused`), drops its OR loop and calls the helper, so a
-new list replaces the VF's old one.
-`igb_vf_reset_event()` calls the helper after zeroing the VF's count. With =
-it
-the reproducer shows 30, 16, 0 and 0 bits
-and VF0's bits survive a reset of VF1; it was not run on hardware. The tabl=
-e is
-now rewritten (128 register writes) on
-each VF multicast message and VF reset, which is control path only.
+The attached patch changes `process_openssl_cipher_des3ctr()` in
+`drivers/crypto/openssl/rte_openssl_pmd.c` to move
+to the next segment before reading a byte instead of after. At the top of t=
+he
+byte loop a `while (l =3D=3D 0)` advances
+`m` to the next mbuf that still holds data and resets `src` and `l` from it=
+; if
+the chain ends before `srclen` bytes
+were processed it jumps to `process_cipher_des3ctr_err`, so the op fails wi=
+th
+`RTE_CRYPTO_OP_STATUS_ERROR`. The old
+switch after `l--` is removed. This covers the boundary case, empty segment=
+s,
+and a range that runs past the end of
+the chain, which the current loop also reads linearly and reports as succes=
+s;
+that case now fails instead. Valid
+input is ciphered as before. The other segment walkers of the file pass `l`=
+ as
+a length to OpenSSL and are left
+alone.
+
+The patch also adds two blockcipher test cases to
+`app/test/test_cryptodev_des_test_vectors.h`: 3DES-128-CTR
+encryption and decryption, out of place with an SGL source and a linear
+destination, two segments of 256 bytes and
+`cipher_offset =3D 256`, with the IV advanced by the 32 skipped blocks so t=
+he
+existing ciphertext vector applies. Both
+fail on the unpatched driver and pass with the fix in
+`cryptodev_openssl_autotest`.
+
+```
+Fixes: 8f675fc72d5c ("crypto/openssl: support scatter-gather")
+Cc: stable@dpdk.org
+```
 
 --=20
 You are receiving this mail because:
