@@ -2,26 +2,26 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2376606A329
-	for <dpdk-dev@archiver.kernel.org>; Sat, 14 Nov 2026 17:37:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49434606A327
+	for <dpdk-dev@archiver.kernel.org>; Sat, 14 Nov 2026 17:47:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 901684025A;
-	Sat, 14 Nov 2026 18:37:47 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 558354025A;
+	Sat, 14 Nov 2026 18:47:26 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTPS id 60E694021E
- for <dev@dpdk.org>; Sat, 14 Nov 2026 18:37:46 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id BA0884021E
+ for <dev@dpdk.org>; Sat, 14 Nov 2026 18:47:24 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 4E6EF4C18B; Sat, 14 Nov 2026 18:37:46 +0100 (CET)
+ id 8B41C4C6E3; Sat, 14 Nov 2026 18:47:24 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/cryptodev Bug 2126]
- drivers/crypto/openssl/rte_openssl_pmd.c:2268 in process_openssl_modexp_op()
-Date: Sat, 14 Nov 2026 17:37:46 +0000
+Subject: [DPDK/ethdev Bug 2127] net/e1000: igb PF never removes VF multicast
+ hashes from shared MTA
+Date: Sat, 14 Nov 2026 17:47:24 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: cryptodev
+X-Bugzilla-Component: ethdev
 X-Bugzilla-Version: 26.11
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: normal
@@ -34,8 +34,8 @@ X-Bugzilla-Target-Milestone: ---
 X-Bugzilla-Flags: 
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-2126-3@https.bugs.dpdk.org/>
+ target_milestone attachments.created
+Message-ID: <bug-2127-3@https.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: https://bugs.dpdk.org/
@@ -57,11 +57,11 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D2126
+https://bugs.dpdk.org/show_bug.cgi?id=3D2127
 
-            Bug ID: 2126
-           Summary: drivers/crypto/openssl/rte_openssl_pmd.c:2268  in
-                    process_openssl_modexp_op()
+            Bug ID: 2127
+           Summary: net/e1000: igb PF never removes VF multicast hashes
+                    from shared MTA
            Product: DPDK
            Version: 26.11
           Hardware: All
@@ -69,56 +69,277 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D2126
             Status: UNCONFIRMED
           Severity: normal
           Priority: Normal
-         Component: cryptodev
+         Component: ethdev
           Assignee: dev@dpdk.org
           Reporter: stephen@networkplumber.org
   Target Milestone: ---
 
-Reported-by Anthropic OSS Scanner ANT-2026-71V1RCLL
+Created attachment 463
+  --> https://bugs.dpdk.org/attachment.cgi?id=3D463&action=3Dedit
+AI proposed patch
 
-Every modexp and modinv op processed by the `crypto_openssl` PMD permanently
-adds two BIGNUMs to the session's `BN_CTX`. A long-lived session therefore
-grows the process heap by a fixed amount per op (1124 bytes per 2048-bit
-modexp, 628 per modinv) until the session is freed. An application that kee=
-ps
-one of these sessions and runs many ops on it will eventually see ops compl=
-ete
-with `RTE_CRYPTO_OP_STATUS_ERROR` once allocation fails inside `BN_mod_exp(=
-)`,
-or the kernel kills the process if no memory limit is set.
+Reported by Anthropic OSS Scanner ANT-2026-YE47Z1IV
 
-The cause is in `process_openssl_modexp_op()` and `process_openssl_modinv_o=
-p()`
-in `drivers/crypto/openssl/rte_openssl_pmd.c`. Each calls `BN_CTX_get()` tw=
-ice
-on the session context without its own `BN_CTX_start()`/`BN_CTX_end()` pair.
-The only open frame on that context is the one
-`openssl_set_asym_session_parameters()` opens at session creation, and
-`openssl_reset_asym_session()` closes it at session release, so every op ta=
-kes
-two new entries from the pool and none are ever reused. `BN_clear()` only
-zeroes the values. The default build is affected, no special input is invol=
-ved,
-and ASan/LSan report nothing because the memory is released with the sessio=
-n.
-The attached reproducer runs 2 =C3=97 10000 modexp ops on one session and s=
-hows
-about 11 MB of growth per batch, nearly all of it returned by
-`rte_cryptodev_asym_session_free()`. `dpdk-test-crypto-perf --optype modex
---total-ops 1000000` peaks around 631 MiB RSS for the same reason. The atta=
-ched
-patch wraps each op in its own nested `BN_CTX_start()`/`BN_CTX_end()` frame,
-which brings per-op growth to zero. It would carry `Fixes: 3e9d6bd447fb` and
-`Cc: stable`, like the earlier per-op leak fixes in this driver.
+In the igb PF driver, multicast hash bits that a VF asks for are added to t=
+he
+port's shared multicast filter (MTA) but never removed. Over time that filt=
+er
+only widens, and every pool that accepts hash-matched multicast (all VFs and
+the PF pool) receives multicast frames nobody subscribed to. The reverse al=
+so
+happens: when the PF application calls `rte_eth_dev_set_mc_addr_list()`, the
+table is rebuilt from the PF's list alone and every VF silently loses the
+multicast groups it registered.
 
-This is an ordinary bug, not a security issue: the ops that trigger it are
-well-formed, nothing in DPDK lets an
-outside party drive modexp or modinv ops on a `crypto_openssl` session, and=
- an
-application's own ordinary load hits
-it just the same.
+The cause is in `igb_vf_set_multicast()` in `drivers/net/intel/e1000/igb_pf=
+.c`.
+The VF driver sends its complete list on every update, but the handler ORs =
+the
+hash values into `MTA` rather than replacing that VF's previous bits. It al=
+so
+saves the list into `vfinfo[0]` whichever VF sent it, and that saved list is
+never read back to rebuild the table. `igb_vf_reset_event()` only zeroes a
+counter, so neither an empty list nor a VF reset clears anything. Only a
+PF-side multicast list update or a port restart does, and both drop the VFs'
+entries. The attached reproducer runs the unmodified PF code on RAM-backed
+82576 registers with two VFs. After VF1 sends 137 lists of up to 30 hash
+values, all 4096 `MTA` bits are set, and they stay set after VF1 sends an e=
+mpty
+list and resets. A well-behaved VF that replaces a 2-entry list with a 1-en=
+try
+list likewise leaves 5 bits set instead of 3. There is no crash or memory
+effect, and the effect on frame delivery is inferred from register meaning
+rather than observed on hardware. A patch is attached that rebuilds `MTA` f=
+rom
+the PF's shadow list plus each VF's saved list, following the Linux igb dri=
+ver.
 
-#
+This is an ordinary bug, not a security issue: a VF can already choose any =
+30
+multicast hash bits and change them at
+will, and can already make every other pool receive frames by sending
+broadcast, so a multicast filter that stops
+narrowing gives it nothing it did not have.
+
+## Details
+
+`igb_vf_set_multicast()` handles a VF's `E1000_VF_SET_MULTICAST` mailbox
+message by ORing the VF's hash values into
+`MTA`, the one multicast hash filter of the port, which the PF and all VFs
+share. Nothing takes a VF's bits out again,
+so the limit of 30 hash values, which is what fits in one mailbox message
+(`base/e1000_vf.c:386`), applies to one
+message, not to what a VF has accumulated
+(`drivers/net/intel/e1000/igb_pf.c:335`):
+
+```c
+        /* only so many hash values supported */
+        entries =3D RTE_MIN(entries, E1000_MAX_VF_MC_ENTRIES);
+        =E2=80=A6
+        vfinfo->num_vf_mc_hashes =3D (uint16_t)entries;
+        =E2=80=A6
+        for (i =3D 0; i < vfinfo->num_vf_mc_hashes; i++) {
+                vector_reg =3D (vfinfo->vf_mc_hashes[i] >> 5) & 0x7F;
+                vector_bit =3D vfinfo->vf_mc_hashes[i] & 0x1F;
+                mta_reg =3D E1000_READ_REG_ARRAY(hw, E1000_MTA, vector_reg);
+                mta_reg |=3D (1 << vector_bit);
+                E1000_WRITE_REG_ARRAY(hw, E1000_MTA, vector_reg, mta_reg);
+        }
+```
+
+Running this code unmodified on RAM-backed registers (commit 9a45341f18,
+default gcc build; see Reproducing): VF1 sends
+137 `E1000_VF_SET_MULTICAST` messages of at most 30 hash values each. `MTA`=
+ has
+30 bits set after the first message and
+all 4096 after the last. VF1 then sends an empty list and `E1000_VF_RESET`;
+4096 bits stay set.
+
+The message reaches the handler without any per-VF state check. `ICR.VMMB`
+makes `eth_igb_interrupt_action()` call
+`igb_pf_mbx_process()` (`igb_ethdev.c:3011`), and `igb_rcv_msg_from_vf()`
+copies the 16 mailbox words
+(`igb_pf.c:431`), dispatches on `msgbuf[0] & 0xFFFF` (`igb_pf.c:450`) and c=
+alls
+`igb_vf_set_multicast()`
+(`igb_pf.c:455`). The entry count is bits 16-23 of word 0 and the hash valu=
+es
+are the 30 16-bit halves of words 1-15,
+all written by the VF.
+
+On the VF side the message carries the complete list:
+`e1000_update_mc_addr_list_vf()` (`base/e1000_vf.c:376`) sends
+every hash value on each update. The PF handler treats it as "add these". I=
+ts
+comment says the list is saved "for
+later use to restore when the PF multi cast list changes" (`igb_pf.c:338`),=
+ but
+`vf_mc_hashes` is read nowhere except
+in the loop above, and the save itself goes to `vfinfo[0]` whichever VF sent
+the message (`vfinfo->=E2=80=A6`; the `vf`
+argument is `__rte_unused`). So a well-behaved VF leaves bits behind too: in
+the same setup, VF0 holding 2 hash values
+and VF1 replacing a list of 2 with a list of 1 leaves 5 bits set, not 3.
+
+A VF reset does not help. `igb_vf_reset_event()` only zeroes a counter
+(`igb_pf.c:247`):
+
+```c
+        /* reset multicast table array for vf */
+        vfinfo[vf].num_vf_mc_hashes =3D 0;
+```
+
+`MTA` bits are cleared in two places only, both driven by the PF applicatio=
+n:
+`e1000_update_mc_addr_list_generic()`
+(`base/e1000_mac.c:583`), reached from `rte_eth_dev_set_mc_addr_list()`,
+rewrites the table from the PF's own list,
+and `e1000_init_hw_base()` (`base/e1000_base.c:72`) zeroes it when the port=
+ is
+started. Neither includes the VFs'
+saved lists, so the opposite also happens: when the PF application calls
+`rte_eth_dev_set_mc_addr_list()`, every VF
+silently loses its multicast groups (3 VF groups before, 0 after, in the sa=
+me
+RAM-register setup).
+
+A set bit is not private to the VF that set it. A pool accepts frames that
+match `MTA` when its `VMOLR.ROMPE` is set
+(`base/e1000_82575.h:283`), and the PF sets that for every VF at reset
+(`igb_pf.c:241`) and for its own pool whenever
+the port is not in promiscuous or all-multicast mode (`igb_pf.c:217`).
+`E1000_VF_SET_PROMISC` is not implemented in
+`igb_pf.c`: it has no case in the dispatcher and is answered with a NACK
+(`igb_pf.c:463`). The ixgbe PF grants
+all-multicast to any VF that asks (`ixgbe_pf.c:760`).
+
+## Impact
+
+Affected: an 82576 or I350 port whose PF is driven by the DPDK igb PMD with=
+ VFs
+enabled. Default build, no offload or
+devarg.
+
+The port's multicast hash filter only grows while VFs are in use. Every tim=
+e a
+VF driver changes its multicast list,
+the hash bits of the old list stay set, so over time every pool with `ROMPE`
+(all VFs and the PF pool) is handed
+multicast frames nobody subscribed to, which costs Rx descriptors and CPU a=
+nd
+has to be dropped in software. A VF that
+sends many lists (137, in the reproducer) opens the filter completely. The
+stale bits outlive the VF: an empty list or
+a VF reset does not clear them; only the PF application rewriting its multi=
+cast
+list or restarting the port does. The
+problem users are more likely to notice is the reverse: a call to
+`rte_eth_dev_set_mc_addr_list()` on the PF drops
+every VF's multicast groups, and the VFs stop receiving the multicast traff=
+ic
+they asked for.
+
+None of this gives a VF more than it already has. It may pick any 30 hash b=
+its
+and replace them at will, so it can
+already listen to any group it names; the 30 is the mailbox size, not a quo=
+ta.
+It can already load every other pool by
+sending broadcast, since the PF enables VF-to-VF loopback (`igb_pf.c:151`) =
+and
+broadcast accept for every VF pool
+(`igb_pf.c:241`). There is no memory effect, no crash, and no effect on uni=
+cast
+or VLAN filtering. The effect on frame
+delivery follows from the register state; it was not observed on hardware.
+
+## Reproducing
+
+There is no 82576 or I350 in the test image, so the reproducer runs the
+driver's own PF code on a register file in RAM
+and reads the registers back. It uses the default gcc build (`/src/build`) =
+and
+takes about a second.
+
+Files:
+
+* `repro.d/igb_pf_on_ram_bar0.c` (setup: the PF). Links `igb_pf.c` and the
+e1000 base code unmodified from the
+  already built `/src/build/drivers/librte_net_e1000.a`, points `hw->hw_add=
+r`
+at a 128 KB array and brings up an
+  82576 PF with two VFs through `igb_pf_host_init()` and
+`igb_pf_host_configure()`, as `eth_igb_dev_init()` and
+  `eth_igb_start()` do. It then reads one step per stdin line. `vf<N> <word=
+s>`
+writes the words to `VMBMEM(N)`, sets
+  the VF's request bit in `MBVFICR` as the NIC would, calls
+`igb_pf_mbx_process()` (what the `ICR.VMMB` interrupt
+  does) and answers with word 0 of the PF's reply. `mta` answers with the
+number of bits set in `MTA`. `rompe` lists
+  the pools that have `VMOLR.ROMPE`.
+* `repro.d/start_igb_pf.py` (setup). Compiles that program with gcc against=
+ the
+build and starts it.
+* `repro` (VF1's messages, plus the check). Both VFs first send
+`E1000_VF_RESET`, as any VF driver does. VF1 then
+  sends 137 `E1000_VF_SET_MULTICAST` messages: the entry count in bits 16-2=
+3 of
+word 0, then the 16-bit hash values two
+  per word. Each message holds at most 30 values (136 with 30, one with 16),
+and together they cover hash values
+  0 to 4095. VF1 then sends an empty list and `E1000_VF_RESET`. If the PF d=
+oes
+not ACK a message, the script stops
+  there.
+
+Expected output on 9a45341f18:
+
+```
+CONTROL MTA bits set before any VF list: 0
+CONTROL MTA bits set after VF1's first list of 30: 30
+OBSERVED MTA bits set after 137 lists from VF1: 4096 of 4096 (correct: 16,
+VF1's last list)
+OBSERVED MTA bits set after VF1's empty list: 4096 (correct: 0)
+OBSERVED MTA bits set after VF1's reset: 4096 (correct: 0)
+OBSERVED pools that accept multicast frames matching the MTA (VMOLR.ROMPE):=
+ VF0
+VF1 PF
+BUG
+```
+
+The `correct` value is the PF's own bits (none) plus the list VF1 currently
+holds. `BUG` is printed when VF1's lists
+have set all 4096 bits, the bits are still set after the empty list and aft=
+er
+the reset, and VF0 and the PF pool have
+`ROMPE` (so they receive frames that match those bits). With the attached p=
+atch
+applied and `igb_pf.c` linked in place
+of the archive member, the same run shows 30, 16, 0 and 0 bits and prints `=
+OK`.
+
+## Suggested fix
+
+The attached patch (`drivers/net/intel/e1000/igb_pf.c`) treats `MTA` as der=
+ived
+state. It adds a static helper,
+`igb_pf_restore_mta()`, that rewrites the whole table from `hw->mac.mta_sha=
+dow`
+(the PF's own list, maintained by
+`e1000_update_mc_addr_list_generic()`) ORed with the saved list of every VF,
+the way `igb_restore_vf_multicasts()` does
+in the Linux igb driver. `igb_vf_set_multicast()` now stores the list in
+`vfinfo[vf]` instead of `vfinfo[0]` (the `vf`
+argument loses `__rte_unused`), drops its OR loop and calls the helper, so a
+new list replaces the VF's old one.
+`igb_vf_reset_event()` calls the helper after zeroing the VF's count. With =
+it
+the reproducer shows 30, 16, 0 and 0 bits
+and VF0's bits survive a reset of VF1; it was not run on hardware. The tabl=
+e is
+now rewritten (128 register writes) on
+each VF multicast message and VF reset, which is control path only.
 
 --=20
 You are receiving this mail because:
