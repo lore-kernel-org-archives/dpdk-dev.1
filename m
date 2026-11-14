@@ -2,58 +2,57 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5763606A338
-	for <dpdk-dev@archiver.kernel.org>; Sat, 14 Nov 2026 00:55:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDBB606A32D
+	for <dpdk-dev@archiver.kernel.org>; Sat, 14 Nov 2026 00:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=BMuo7zFY
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Cze5ouYV
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5A2E740DC9;
-	Sat, 14 Nov 2026 01:55:47 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 4D77A427BF;
+	Sat, 14 Nov 2026 01:55:48 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTPS id A4FC24025F;
- Sat, 14 Nov 2026 01:55:42 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id D547E40A70;
+ Sat, 14 Nov 2026 01:55:44 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1794617743; x=1826153743;
+ t=1794617746; x=1826153746;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=fyscUzRQZ1hOli3deKm65jMFCMvZWTkJXwb1gIY+X6s=;
- b=BMuo7zFYP4+5UcHIZM4vWHAjtchmOyhIFUJzlX2ulqgbgz/LxYDMmTGU
- rMZ5Qx/jbvEZyzZcHjd8ZYWIXpv9P0wn2S6DnfcjaoiiAct4GImY8duMB
- cAab0C3BXEfRdNO5z7ZtYWjtQaNx3EUvTGct5PKXleU6SyiTQiJPxiEwz
- OOUIlWjA7z5+rgpP+AfnwG017/2emRpoK4wR+RifkyjAgQotv4toR3L3V
- Oty3K/1nyVlTG9bMX65MIzcS7ElIIpnLTVR3+dEVbBACP6yGTbbmWpTtx
- Vd/IiVO75XTteN+6HnNnrAugyp1z7RHILE+VkmdnF3iq1wj0EpP9RzKbV Q==;
-X-CSE-ConnectionGUID: MvQO6IftQ5Cxuey5g1XiVw==
-X-CSE-MsgGUID: M1L/3aUMSiC5/m6mbRvErg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11965"; a="3471591"
+ bh=P8VVYdCx50J0mmNuzBceNBVO83H3CH/GEn+nKPv5skY=;
+ b=Cze5ouYV5DLhmbPu2+7PcAAtwX3IeL1sWQhK1Z8CbMF/mZNbFw/Mjiva
+ IyUuLAZgcaPQXdak0Ac36pKFhk75PRXzKEY+87fe0R6nO1iOE+MZv4aBR
+ sx1+oXuzuM1ZPkbDgrGhaUhJKE2SXeHQoRiuX7TM/sIA9aI7gBfCSdYoH
+ gBovlg1CBNhRTUjiOy6ON2bfsW7fEHpkr5RMLqk2099bbvUzRLxsI7JQB
+ iXjF+wPSkAumauMMzN2jQpEUzDXKEko3v3hkNDloN781Fl6tv+OKE+H5k
+ Qp9TU+xxTkiP8uFvHAuNpr3cfw1Y9bjic3CxicZhK2oXSBboFFPwPPcs6 Q==;
+X-CSE-ConnectionGUID: oQwA77gOSvSuqFnFOzEKBQ==
+X-CSE-MsgGUID: MUGLQtIpQ1+W6hgGz7sg9w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11965"; a="3471594"
 X-IronPort-AV: E=Sophos;i="6.27,212,1787036400"; 
-   d="scan'208";a="3471591"
+   d="scan'208";a="3471594"
 Received: from fmviesa008.fm.intel.com ([10.60.135.148])
  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Nov 2026 16:55:43 -0800
-X-CSE-ConnectionGUID: 42ecQOZrQNCvlKUl/LKmMA==
-X-CSE-MsgGUID: j6FdkA1eRa6VbrN8leQ9NQ==
+ 13 Nov 2026 16:55:45 -0800
+X-CSE-ConnectionGUID: QK1NY8XhSB+W93CiKPLEyw==
+X-CSE-MsgGUID: OEM81UfNT7a8sGYsD4yNJQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,212,1787036400"; 
-   d="scan'208";a="9315575"
+   d="scan'208";a="9315583"
 Received: from pae-31.iind.intel.com ([10.49.105.68])
- by fmviesa008.fm.intel.com with ESMTP; 13 Nov 2026 16:55:41 -0800
+ by fmviesa008.fm.intel.com with ESMTP; 13 Nov 2026 16:55:43 -0800
 From: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com, anatoly.burakov@intel.com,
  vladimir.medvedkin@intel.com, brian.johnson@intel.com,
  Sandeep Penigalapati <sandeep.penigalapati@intel.com>, stable@dpdk.org
-Subject: [PATCH v2 1/4] doc: fix ice guide
-Date: Sat, 14 Nov 2026 07:57:29 +0000
-Message-Id: <20261114075732.183996-2-sandeep.penigalapati@intel.com>
+Subject: [PATCH v2 2/4] doc: fix i40e guide
+Date: Sat, 14 Nov 2026 07:57:30 +0000
+Message-Id: <20261114075732.183996-3-sandeep.penigalapati@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261114075732.183996-1-sandeep.penigalapati@intel.com>
 References: <20261113205034.173313-1-sandeep.penigalapati@intel.com>
  <20261114075732.183996-1-sandeep.penigalapati@intel.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -72,120 +71,103 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Correct several errors in the ice guide:
+Correct several errors in the i40e guide:
 
-- correct the DDP Technology Guide title (617015 is the generic guide,
-  not a telecommunications one) and add the missing Wireless Edge DDP
-  reference (637554).
-- rename the Comms guide reference from "Package" to the actual
-  "Technology Guide" title.
-- use "proto_xtr" (the actual devarg name) instead of "proto_ext".
-- drop a duplicate assignment in the raw-flow C example.
-- add a missing literal-block marker for the "acl=off" example.
-- remove a stray space inside the IP address in the scapy example.
+- use the full "Malicious Driver Detection" feature name.
+- correct the queue region device argument description ("serves for"
+  wording, the "off" entry formatting, and the "commits"/"cleans"/
+  "restores" grammar).
+- describe "set vf allmulti" as all-multicast mode instead of the
+  copy-pasted promiscuous-mode description.
 - minor grammar and spacing fixes.
 
-Fixes: 7564d5509611 ("net/ice: add DCF hardware initialization")
-Fixes: e89aebf3b597 ("doc: update ice user guide")
-Fixes: c2e129698dd6 ("doc: fix some statements for ice vector PMD")
-Fixes: 9e984bc53bc9 ("net/ice: add option to disable ACL engine in DCF")
-Fixes: df539aaf35cb ("net/ice: refactor flex descriptor protocol field extraction")
-Fixes: e6ef76212b28 ("doc: add generic flow in ice guide")
-Fixes: b060d3157751 ("doc: explain protocol agnostic filtering in ice guide")
+Fixes: 04c8542f96f7 ("net/i40e: set TC strict priority mode")
+Fixes: 0982ef81a665 ("doc: add DDP in i40e guide")
+Fixes: 9accffad6593 ("net/i40e: add PF MDD event handler")
+Fixes: 94b3c1a72507 ("net/i40e: move testpmd commands")
 Cc: stable@dpdk.org
 
 Signed-off-by: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
 ---
- doc/guides/nics/ice.rst | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+ doc/guides/nics/i40e.rst | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/doc/guides/nics/ice.rst b/doc/guides/nics/ice.rst
-index faebfdcb63..a8ec27e745 100644
---- a/doc/guides/nics/ice.rst
-+++ b/doc/guides/nics/ice.rst
-@@ -26,11 +26,14 @@ Linux Prerequisites
- - Please follow the matching list to download specific kernel driver, firmware and DDP package from
-   `https://www.intel.com/content/www/us/en/search.html?ws=text#q=e810&t=Downloads&layout=table`.
+diff --git a/doc/guides/nics/i40e.rst b/doc/guides/nics/i40e.rst
+index 29234dbf0f..1df006333b 100644
+--- a/doc/guides/nics/i40e.rst
++++ b/doc/guides/nics/i40e.rst
+@@ -43,7 +43,7 @@ Features of the i40e PMD are:
+ - Dynamic Device Personalization (DDP)
+ - Queue region configuration
+ - Virtual Function Port Representors
+-- Malicious Device Drive event catch and notify
++- Malicious Driver Detection event catch and notify
+ - Generic flow API
  
--- To understand what is DDP package and how it works, please review `Intel® Ethernet Controller E810 Dynamic
--  Device Personalization (DDP) for Telecommunications Technology Guide <https://cdrdv2.intel.com/v1/dl/getContent/617015>`_.
-+- To understand what is DDP package and how it works, please review `Intel® Ethernet 800 Series Dynamic
-+  Device Personalization (DDP) Technology Guide <https://cdrdv2.intel.com/v1/dl/getContent/617015>`_.
+ Linux Prerequisites
+@@ -537,7 +537,7 @@ Display information about a GTP profile:
  
--- To understand DDP for COMMs usage with DPDK, please review `Intel® Ethernet 800 Series Telecommunication (Comms)
--  Dynamic Device Personalization (DDP) Package <https://cdrdv2.intel.com/v1/dl/getContent/618651>`_.
-+- To understand DDP for Comms usage with DPDK, please review `Intel® Ethernet 800 Series
-+  DDP for Comms Technology Guide <https://cdrdv2.intel.com/v1/dl/getContent/618651>`_.
-+
-+- To understand DDP for Wireless Edge usage with DPDK, please review `Intel® Ethernet 800 Series
-+  DDP for Wireless Edge Technology Guide <https://cdrdv2.intel.com/v1/dl/getContent/637554>`_.
+ Input set configuration
+ ~~~~~~~~~~~~~~~~~~~~~~~
+-Input set for any PCTYPE can be configured with user defined configuration,
++Input set for any PCTYPE can be configured with user defined configuration.
+ For example, to use only 48bit prefix for IPv6 src address for IPv6 TCP RSS:
  
- Windows Prerequisites
- ---------------------
-@@ -191,7 +194,7 @@ Runtime Configuration
-   ``field_name`` is the name of mbuf dynamic field for protocol extraction data.
-   ``field_offs`` and ``field_name`` will be checked whether it is valid. If invalid,
-   an error print will be returned: ``Invalid field offset or name, no match dynfield``,
--  and the proto_ext function will not be enabled.
-+  and the ``proto_xtr`` function will not be enabled.
+ .. code-block:: console
+@@ -669,7 +669,7 @@ If a TC is set to strict priority mode, it can consume unlimited bandwidth.
+ It means if APP has set the max bandwidth for that TC, it comes to no
+ effect.
+ It's suggested to set the strict priority mode for a TC that is latency
+-sensitive but no consuming much bandwidth.
++sensitive but not consuming much bandwidth.
  
-   Protocol is : ``vlan, ipv4, ipv6, ipv6_flow, tcp, ip_offset``.
+ DCB function
+ ~~~~~~~~~~~~
+@@ -721,7 +721,7 @@ Set flowtype mapping on a RSS queue region on a port::
  
-@@ -386,7 +389,7 @@ are chosen based on 2 conditions.
-   is set to 512, AVX512 paths will be chosen.
+ where:
  
- - ``Offload features``
--  The supported HW offload features are described in the document ice.ini,
-+  The supported HW offload features are described in the document ``ice.ini``.
-   A value "P" means the offload feature is not supported by vector path.
-   If any not supported features are used, ICE vector PMD is disabled and the
-   normal paths are chosen.
-@@ -625,7 +628,7 @@ Generic Flow Support
+-* For the flowtype(pctype) of packet,the specific index for each type has
++* For the flowtype(pctype) of packet, the specific index for each type has
+   been defined in file i40e_type.h as enum i40e_filter_pctype.
  
- The ice PMD provides support for the Generic Flow API (RTE_FLOW), enabling
- users to offload various flow classification tasks to the E810 NIC.
--The E810 NIC's  packet processing pipeline consists of the following stages:
-+The E810 NIC's packet processing pipeline consists of the following stages:
+ Set user priority mapping on a RSS queue region on a port::
+@@ -734,13 +734,13 @@ Flush all queue region related configuration on a port::
  
- Switch: Supports exact match and limited wildcard matching with a large flow
- capacity.
-@@ -679,7 +682,7 @@ Raw patterns consist of two key components:
- **Pattern Mask**
-   An ASCII hexadecimal string of the same length as the spec
-   that determines which specific fields within the packet will be extracted and used for matching.
--  The mask control field extraction without affecting the packet type identification.
-+  The mask controls field extraction without affecting the packet type identification.
+ where:
  
- .. note::
+-* ``on``: is just an enable function which server for other configuration,
++* ``on``: is just an enable function which serves for other configuration,
+   it is for all configuration about queue region from up layer,
+   at first will only keep in DPDK software stored in driver,
+-  only after "flush on", it commit all configuration to HW.
++  only after "flush on", it commits all configuration to HW.
  
-@@ -868,7 +871,7 @@ Equivalent C code using the flow API:
-    };
+-* ``"off``: is just clean all configuration about queue region just now,
+-  and restore all to DPDK i40e driver default config when start up.
++* ``off``: cleans all configuration about queue region just now,
++  and restores all to DPDK i40e driver default config when start up.
  
-    struct rte_flow_error error;
--   struct rte_flow *flow = flow = rte_flow_create(port_id, &attr, pattern, actions, &error);
-+   struct rte_flow *flow = rte_flow_create(port_id, &attr, pattern, actions, &error);
+ Show all queue region related configuration info on a port::
  
- To use masked bits (IPv4 source/destination addresses) to distribute such packets via RSS:
+@@ -765,7 +765,7 @@ set allmulticast (for VF)
  
-@@ -941,6 +944,7 @@ Additional Options
-   By default, all flow engines are enabled. But if user does not need the
-   ACL engine related functions, user can set ``devargs`` parameter
-   ``acl=off`` to disable the ACL engine and shorten the startup time.
-+  For example::
+ Set the multicast promiscuous mode for a VF from PF.
+ It's supported by Intel i40e NICs now.
+-In promiscuous mode packets are not dropped if they aren't for the specified MAC address::
++In all-multicast mode all multicast packets are received regardless of the multicast address filter::
  
-     -a 18:01.0,cap=dcf,acl=off
+    testpmd> set vf allmulti (port_id) (vf_id) (on|off)
  
-@@ -971,8 +975,8 @@ Additional Options
+@@ -858,7 +858,7 @@ where:
  
- #. Send the packet, and it should be displayed on tcpdump::
+ * ``target``: A specific software ptype or a mask to represent a group of software ptypes.
  
--      sendp(Ether(src='3c:fd:fe:aa:bb:78', dst='00:00:00:01:02:03')/IP(src=' \
--      192.168.0.2', dst="192.168.0.3")/TCP(flags='S')/Raw(load='XXXXXXXXXX'), \
-+      sendp(Ether(src='3c:fd:fe:aa:bb:78', dst='00:00:00:01:02:03')/ \
-+      IP(src='192.168.0.2', dst='192.168.0.3')/TCP(flags='S')/Raw(load='XXXXXXXXXX'), \
-       iface="enp24s0f0", count=10)
+-* ``mask``: A flag indicate if "target" is a specific software ptype(=0) or a ptype mask(=1).
++* ``mask``: A flag indicates if "target" is a specific software ptype(=0) or a ptype mask(=1).
  
- Per-Queue Tx Rate Limiting
+ * ``pkt_type``: The new software ptype to replace the old ones.
+ 
 -- 
 2.34.1
 
