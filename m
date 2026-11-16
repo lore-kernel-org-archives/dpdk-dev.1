@@ -2,47 +2,45 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9B7606A31C
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Nov 2026 14:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C251C606A323
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Nov 2026 14:29:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=dressler.pro header.i=@dressler.pro header.a=rsa-sha256 header.s=uddkim-202310 header.b=brsp5FIq
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=foss.arm.com header.i=@foss.arm.com header.a=rsa-sha256 header.s=main header.b=mCXc/A+r
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C4D2F40294;
-	Mon, 16 Nov 2026 15:17:49 +0100 (CET)
-Received: from smtp01-ext2.udag.de (smtp01-ext2.udag.de [62.146.106.18])
- by mails.dpdk.org (Postfix) with ESMTPS id 1BD7840150;
- Mon, 16 Nov 2026 15:17:49 +0100 (CET)
-Received: from [192.168.0.40] (unknown [37.228.226.247])
- by smtp01-ext2.udag.de (Postfix) with ESMTPA id CEDCCE0621;
- Mon, 16 Nov 2026 15:17:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dressler.pro;
- s=uddkim-202310; t=1794838668;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=2iBQgMDFjZlgkAyteR60DMy8oQ7o71PQO6Xguv3TDKI=;
- b=brsp5FIq8orHdf7VXT8AvJlH/SvqXuS9f2uzIlcoyfI1hJEisk9wgTuEFDzet11lz+aTwj
- mi0GXVBqEKsGZD8blWRqmjQou2aWj4qmpBIGeUp4RMUEicF0/81oFrJBIZUULey6EitXSD
- qt2eFGPLwMQBPXHej0uiIJgqz4GYZrjxQCC/2XzIRcdEJcwWHwU0UxUAob4xxlIowNso5g
- 7VGnKUx3N02Dz2lkbVkncnvRscFVxuNkKZb/fqAIAaeIgAve3CUwJ6w493dhKicY02BzKW
- ZYJUaMz7JOLW5/IqvdgyN+6r1uR5FjTyZpaPsz3GLAXaEXye0sFC517NZftveg==
-Authentication-Results: smtp01-ext2.udag.de;
- auth=pass smtp.auth=dressler-pro-0001 smtp.mailfrom=frank@dressler.pro
-Message-ID: <13f69bf5-43a7-4433-abf2-65b87e60f8a2@dressler.pro>
-Date: Mon, 16 Nov 2026 14:17:46 +0000
+	by mails.dpdk.org (Postfix) with ESMTP id 214D140294;
+	Mon, 16 Nov 2026 15:29:10 +0100 (CET)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mails.dpdk.org (Postfix) with ESMTP id DCD5A40150;
+ Mon, 16 Nov 2026 15:29:08 +0100 (CET)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 32EB61713;
+ Mon, 16 Nov 2026 06:29:05 -0800 (PST)
+Received: from KDFJ2LQKPJ.cambridge.arm.com (KDFJ2LQKPJ.cambridge.arm.com
+ [10.2.197.124])
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0CEFF3F763;
+ Mon, 16 Nov 2026 06:29:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=foss.arm.com; s=main;
+ t=1794839348; bh=2mMKdumNAqK83U80xJ0wIcsqOsJ78O4YeY28jmFQLNY=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=mCXc/A+rHAEZvwmGVyNplIOZrHWeNx4IaP7CMYbaNfGrCm2KXxBPha/SFRBfjJC7Y
+ XFlcZJBTnz9VkfOzwo8VOCJM03Cqr3dMJKffZ/Zohjs3qHXjdCqZGpmYxwcFa0hzOW
+ s8wfMOQCnTws5cw1RUwuEoUAUYv+I49e6V0d0Bb4=
+From: Jack Bond-Preston <jack.bond-preston@foss.arm.com>
+To: Bruce Richardson <bruce.richardson@intel.com>,
+ Ferruh Yigit <ferruh.yigit@amd.com>,
+ =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>
+Cc: dev@dpdk.org, Jack Bond-Preston <jack.bond-preston@arm.com>,
+ stable@dpdk.org, Mark Bulatov <ms.bulatov7@gmail.com>
+Subject: [PATCH v2] bitops: document max input value for rte_align[32,64]pow2
+Date: Mon, 16 Nov 2026 14:27:58 +0000
+Message-ID: <20261116142759.48440-1-jack.bond-preston@foss.arm.com>
+X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20261113141307.4727-1-ms.bulatov7@gmail.com>
+References: <20261113141307.4727-1-ms.bulatov7@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] net/af_packet: fix accidental fanout group ID reuse
-From: Frank Dressler <frank@dressler.pro>
-To: stephen@networkplumber.org
-Cc: dev@dpdk.org, stable@dpdk.org
-References: <20261110190626.519592-1-frank@dressler.pro>
- <20261111104536.248312-1-frank@dressler.pro>
-Content-Language: en-US
-In-Reply-To: <20261111104536.248312-1-frank@dressler.pro>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -53,138 +51,80 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-16.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,PDS_PRO_TLD,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Hi, this patch has been marked “Changes Requested” in Patchwork but I 
-cannot find a request. Is there anything I need to do?
+From: Jack Bond-Preston <jack.bond-preston@arm.com>
 
-- List: 
-https://inbox.dpdk.org/dev/20261111104536.248312-1-frank@dressler.pro/
-- Patchwork: 
-https://patches.dpdk.org/project/dpdk/patch/20261111104536.248312-1-frank@dressler.pro/
+rte_align32pow2 and rte_align62pow2 will overflow and return incorrect
+values for input values exceeding 1<<31 and 1<<63, respectively. There
+is no way to return a valid result here: the next power of two above
+these values is unrepresentable with 32/64 bit unsigned integers.
 
-On 11/11/26 10:45, Frank Dressler wrote:
-> This fix ensures that the queues of an AF_PACKET vdev do not
-> accidentally join an already existing fanout group in the same netns.
-> Joining such a group would make each member receive only a fraction of
-> the packets.
-> 
-> It sets the PACKET_FANOUT_FLAG_UNIQUEID flag for the first queue which
-> asks the kernel to allocate a new, unique fanout group ID, then asks the
-> kernel for that queue's fanout configuration which includes this
-> generated ID but not the flag anymore (the flag is ephemeral) and then
-> uses it for subsequent queues to make them join the same fanout group.
-> 
-> The bug exists since the PMD's introduction in 2014:
-> 
->    # 2014 DPDK:
->    $ git show 364e08f2bb:lib/librte_pmd_af_packet/rte_eth_af_packet.c |
->        grep getpid
->      fanout_arg = (getpid() ^ (*internals)->if_index) & 0xffff;
-> 
->    # v26.07:
->    $ git show v26.07:drivers/net/af_packet/rte_eth_af_packet.c |
->        grep getpid
->      return (getpid() ^ if_index) & 0xffff;
-> 
-> The chance for a collision might look low initially as it requires PIDs
-> to be equal mod 65536. But the chance is high for applications running
-> in containers having individual pidns but a shared netns, which can be
-> the case in a k8s pod, or also with manually started containers, e.g.
-> `--network ns:<path>` in Podman. The individual pidns increase the
-> chance of different processes having the same PID.
-> 
-> To quickly reproduce the issue, you can start multiple AF_PACKET DPDK
-> applications with qpairs greater than 1, prefixing them with
-> `unshare --fork -p` to have each one get the same PID as if they were
-> executed in a container. Each one then only receives a fraction of
-> the traffic.
-> 
-> The used UNIQUEID fanout flag is available since Linux v4.12, while DPDK
-> currently requires Linux v5.4 or newer. The change is also compatible
-> with RHEL 8.
-> 
-> Fixes: 364e08f2bbc0 ("af_packet: add PMD for AF_PACKET-based virtual devices")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Frank Dressler <frank@dressler.pro>
-> ---
-> v2:
-> - remove unnecessary getsockopt length check
-> 
->   drivers/net/af_packet/rte_eth_af_packet.c | 27 +++++++++++++++--------
->   1 file changed, 18 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
-> index 44f82c0309..fb75bdc6fe 100644
-> --- a/drivers/net/af_packet/rte_eth_af_packet.c
-> +++ b/drivers/net/af_packet/rte_eth_af_packet.c
-> @@ -839,12 +839,6 @@ open_packet_iface(const char *key __rte_unused,
->   
->   #define PACKET_FANOUT_INVALID -1
->   
-> -static int
-> -get_fanout_group_id(int if_index)
-> -{
-> -	return (getpid() ^ if_index) & 0xffff;
-> -}
-> -
->   static int
->   get_fanout_mode(const char *fanout_mode)
->   {
-> @@ -877,11 +871,11 @@ get_fanout_mode(const char *fanout_mode)
->   }
->   
->   static int
-> -get_fanout(const char *fanout_mode, int if_index)
-> +get_fanout(const char *fanout_mode)
->   {
->   	int load_balance = get_fanout_mode(fanout_mode);
->   	if (load_balance != PACKET_FANOUT_INVALID)
-> -		return get_fanout_group_id(if_index) | (load_balance << 16);
-> +		return load_balance << 16;
->   	else
->   		return PACKET_FANOUT_INVALID;
->   }
-> @@ -996,11 +990,12 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
->   	sockaddr.sll_protocol = htons(ETH_P_ALL);
->   	sockaddr.sll_ifindex = (*internals)->if_index;
->   
-> -	fanout_arg = get_fanout(fanout_mode, (*internals)->if_index);
-> +	fanout_arg = get_fanout(fanout_mode);
->   	if (fanout_arg == PACKET_FANOUT_INVALID) {
->   		PMD_LOG(ERR, "Invalid fanout mode: %s", fanout_mode);
->   		goto error;
->   	}
-> +	fanout_arg |= PACKET_FANOUT_FLAG_UNIQUEID << 16;
->   
->   	/*
->   	 * Set the flag opportunistically if multiple queues are requested.
-> @@ -1142,6 +1137,20 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
->   					name, pair->value);
->   				goto error;
->   			}
-> +
-> +			/* read back the fanout arg so later queues join the same fanout group */
-> +			if (q == 0) {
-> +				socklen_t fanout_arg_len = sizeof(fanout_arg);
-> +				rc = getsockopt(qsockfd, SOL_PACKET, PACKET_FANOUT, &fanout_arg,
-> +						&fanout_arg_len);
-> +				if (rc == -1) {
-> +					PMD_LOG_ERRNO(ERR,
-> +						"%s: could not get PACKET_FANOUT "
-> +						"on AF_PACKET socket for %s",
-> +						name, pair->value);
-> +					goto error;
-> +				}
-> +			}
->   		}
->   	}
->   
+Adjust the documentation for these functions to clarify that input
+values above these limits will return invalid results, and thus should
+not be provided to these functions. Additionally, document an existing
+edge case of the implementation: when the input is 0, it returns 0 (not
+a power of 2).
+
+Fixes: 7253e3d2a5 ("bitops: move bit count functions")
+Cc: stable@dpdk.org
+
+Reported-by: Mark Bulatov <ms.bulatov7@gmail.com>
+Signed-off-by: Jack Bond-Preston <jack.bond-preston@foss.arm.com>
+Acked-by: Morten Brørup <mb@smartsharesystems.com>
+---
+ lib/eal/include/rte_bitops.h | 22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
+
+diff --git a/lib/eal/include/rte_bitops.h b/lib/eal/include/rte_bitops.h
+index 45255b68aa..eb404a3dd4 100644
+--- a/lib/eal/include/rte_bitops.h
++++ b/lib/eal/include/rte_bitops.h
+@@ -1261,10 +1261,17 @@ rte_is_power_of_2(uint32_t n)
+  * Aligns input parameter to the next power of 2
+  *
+  * @param x
+- *   The integer value to align
++ *   The integer value to align. Must be less than or equal to 1 << 31
++ *   (0x80000000).
+  *
+  * @return
+- *   The smallest power of 2 which is greater than or equal to @c x.
++ *   The smallest power of 2 which is greater than or equal to @c x, or 0 if
++ *   @c x is 0.
++ *
++ * @note If the input parameter exceeds 1 << 31 (0x80000000), then the expected
++ *       result is unrepresentable and the return value is invalid.
++ * @note For the input value 0, this function returns 0, which is not a power of
++ *       2.
+  */
+ static inline uint32_t
+ rte_align32pow2(uint32_t x)
+@@ -1296,10 +1303,17 @@ rte_align32prevpow2(uint32_t x)
+  * Aligns 64b input parameter to the next power of 2
+  *
+  * @param v
+- *   The 64b value to align
++ *   The 64b value to align. Must be less than or equal to 1 << 63
++ *   (0x8000000000000000).
+  *
+  * @return
+- *   The smallest power of 2 which is greater than or equal to @c v.
++ *   The smallest power of 2 which is greater than or equal to @c v, or 0 if
++ *   @c v is 0.
++ *
++ * @note If the input parameter exceeds 1 << 63 (0x8000000000000000), then the
++ *       expected result is unrepresentable and the return value is invalid.
++ * @note For the input value 0, this function returns 0, which is not a power of
++ *       2.
+  */
+ static inline uint64_t
+ rte_align64pow2(uint64_t v)
+-- 
+2.54.0 (Apple Git-157)
 
