@@ -2,49 +2,50 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36AA9606A31C
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Nov 2026 16:10:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8B6606A31C
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Nov 2026 16:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=ZoAjQSd6
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=P9dwLB5v
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7845F402DF;
-	Mon, 16 Nov 2026 17:09:46 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 47BB8402F0;
+	Mon, 16 Nov 2026 17:09:47 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
- by mails.dpdk.org (Postfix) with ESMTPS id 0F94240299
- for <dev@dpdk.org>; Mon, 16 Nov 2026 17:09:42 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id DA47C40299
+ for <dev@dpdk.org>; Mon, 16 Nov 2026 17:09:43 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1794845383; x=1826381383;
+ t=1794845384; x=1826381384;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=davtEk6SrG/YxBPuMlBM4/2pax9nZeGWt1mD9S0O+YY=;
- b=ZoAjQSd6JdbzG56YzseYJ2lz/oLnbIYaADCDyvzhrFU1HaY1YUNfwikH
- miF9Fzxt2yJknv6sL76CYq+WfK/XUaOxcO//qVUx/YMDo9lnD83+xwqCY
- s/uooVy6rdV4k129Iki8TebUuEOa4fxwoU1wBtTP2pi1RBYz1IgMBwQjg
- bRy8kmUj6A+/Y2NQGwDtLKMrqx40U+xzhDWpgCpRLxEnACi9l6uKwRFEZ
- c261+n3auzw288SLCBe+IC4N26IZHSZd5vaTIZwIJvUyZSCcgIOrIawpJ
- PUY0qsP0pgz+N2nGUMaV4qBeDyOu4lxjpb1X0wa/b508fjLT0eT7asrxe w==;
-X-CSE-ConnectionGUID: 7QthbJeyRuiPAhnrTndd9g==
-X-CSE-MsgGUID: 9hx5NVivQsiyvOCi5Tdm9g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11968"; a="3481865"
+ bh=lCIN1/Oha5SABEPElOX7a2X6mpiywpohcD9lTJl9mlE=;
+ b=P9dwLB5vXBm2gFYT+Y0szFqAOCqbmHtQS2JrsT7iWYwCYT6WXiqtnTFe
+ 9WhkMxGIydwoTFa1dRuCn9XWpsuoRKrcT712x/QPNCMUmjdYLepd0xqXT
+ azE0yax8DnmDOMnjM0p03CO8kO/fydDvtHoUQ7rXkOm9Pnq2hHB6mXodk
+ hyNOWdt/AyyGEG5nVrqrtcSPelI7Wa5I3aWQkJjt7hEusMAU9h+7ztUqr
+ 6Ce9oZ5giDBJP+qBE6jfWAeYREX1bezgD4ShkVGeDn6llfYK+lmzklDco
+ AkRETqVxS8Mkd0KLmtGrqc//xkVflhSV//kA93XnPHEGwUO5lI1wqki7x A==;
+X-CSE-ConnectionGUID: t9dXWyYaRbO5VZL+jH88ZQ==
+X-CSE-MsgGUID: i+SBFf86SAab+mxPo87nNA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11968"; a="3481866"
 X-IronPort-AV: E=Sophos;i="6.27,217,1787036400"; 
-   d="scan'208";a="3481865"
+   d="scan'208";a="3481866"
 Received: from fmviesa009.fm.intel.com ([10.60.135.149])
  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Nov 2026 08:09:42 -0800
-X-CSE-ConnectionGUID: GP++CuoTSiOGMLuTfGimfQ==
-X-CSE-MsgGUID: wp8tFdB9QWaoGa0XBLm/6Q==
+ 16 Nov 2026 08:09:43 -0800
+X-CSE-ConnectionGUID: fgd5oH34QA6f/tuwG4u/dQ==
+X-CSE-MsgGUID: G3YDPMd+Saam6V+gt0jjkg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,217,1787036400"; 
-   d="scan'208";a="9926995"
+   d="scan'208";a="9927001"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa009.fm.intel.com with ESMTP; 16 Nov 2026 08:09:41 -0800
+ by fmviesa009.fm.intel.com with ESMTP; 16 Nov 2026 08:09:42 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH 27.03 4/6] net/idpf: use stack storage for virtchnl messages
-Date: Mon, 16 Nov 2026 16:09:30 +0000
-Message-ID: <20261116160932.1006354-5-bruce.richardson@intel.com>
+Subject: [PATCH 27.03 5/6] net/cpfl: use stack storage for function-local
+ buffers
+Date: Mon, 16 Nov 2026 16:09:31 +0000
+Message-ID: <20261116160932.1006354-6-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261116160932.1006354-1-bruce.richardson@intel.com>
 References: <20261116160932.1006354-1-bruce.richardson@intel.com>
@@ -60,320 +61,238 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-14.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Rather than using malloc and free for virtchnl message buffers whose
-maximum size is known at compile time, define them on the stack using
-RTE_DEFINE_FLEX. This removes the allocation failure and cleanup paths.
+Rather than using malloc and free for virtchnl and control queue buffers
+used only within a single function, define them on the stack, using
+RTE_DEFINE_FLEX for those structures ending in a variable-length array.
+This removes the allocation failure and cleanup paths.
 
-As part of this, the queue chunks in idpf_vc_queues_ena_dis() are now
-filled sequentially rather than indexed by queue type.
+Where the number of elements used depends on runtime values, add checks
+that those values do not exceed the buffer sizes.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/idpf/idpf_common_device.c   | 27 ++-----
- drivers/net/intel/idpf/idpf_common_virtchnl.c | 77 +++++++------------
- 2 files changed, 36 insertions(+), 68 deletions(-)
+ drivers/net/intel/cpfl/cpfl_fxp_rule.c    | 20 ++++-------
+ drivers/net/intel/cpfl/cpfl_representor.c | 15 +++++----
+ drivers/net/intel/cpfl/cpfl_vchnl.c       | 41 +++++++++--------------
+ 3 files changed, 32 insertions(+), 44 deletions(-)
 
-diff --git a/drivers/net/intel/idpf/idpf_common_device.c b/drivers/net/intel/idpf/idpf_common_device.c
-index 1586dae96c..d3cb74f4a8 100644
---- a/drivers/net/intel/idpf/idpf_common_device.c
-+++ b/drivers/net/intel/idpf/idpf_common_device.c
-@@ -157,23 +157,15 @@ idpf_init_mbx(struct idpf_hw *hw)
- static int
- idpf_get_pkt_type(struct idpf_adapter *adapter)
+diff --git a/drivers/net/intel/cpfl/cpfl_fxp_rule.c b/drivers/net/intel/cpfl/cpfl_fxp_rule.c
+index d1c992dfe4..c522dde6d8 100644
+--- a/drivers/net/intel/cpfl/cpfl_fxp_rule.c
++++ b/drivers/net/intel/cpfl/cpfl_fxp_rule.c
+@@ -13,23 +13,21 @@ int
+ cpfl_send_ctlq_msg(struct idpf_hw *hw, struct idpf_ctlq_info *cq, u16 num_q_msg,
+ 		   struct idpf_ctlq_msg q_msg[])
  {
--	struct virtchnl2_get_ptype_info *req_ptype_info;
--	struct virtchnl2_get_ptype_info *recv_ptype_info;
-+	struct virtchnl2_get_ptype_info req_ptype_msg = {0};
-+	struct virtchnl2_get_ptype_info *req_ptype_info = &req_ptype_msg;
-+	RTE_DEFINE_FLEX_BYTES(struct virtchnl2_get_ptype_info, recv_ptype_info,
-+			IDPF_DFLT_MBX_BUF_SIZE);
- 	uint16_t recv_num_ptypes = 0;
- 	uint16_t ptype_offset, i, j;
- 	uint16_t start_ptype_id = 0;
- 	int ret;
+-	struct idpf_ctlq_msg **msg_ptr_list;
++	struct idpf_ctlq_msg *msg_ptr_list[CPFL_FLOW_BATCH_SIZE] = {0};
+ 	u16 clean_count = 0;
+ 	int num_cleaned = 0;
+ 	int retries = 0;
+ 	int ret = 0;
  
--	req_ptype_info = rte_zmalloc("req_ptype_info", IDPF_DFLT_MBX_BUF_SIZE, 0);
--	if (req_ptype_info == NULL)
--		return -ENOMEM;
--
--	recv_ptype_info = rte_zmalloc("recv_ptype_info", IDPF_DFLT_MBX_BUF_SIZE, 0);
--	if (recv_ptype_info == NULL) {
+-	msg_ptr_list = calloc(num_q_msg, sizeof(struct idpf_ctlq_msg *));
+-	if (!msg_ptr_list) {
+-		PMD_INIT_LOG(ERR, "no memory for cleaning ctlq");
 -		ret = -ENOMEM;
--		goto free_req_ptype_info;
--	}
--
- 	while (start_ptype_id < IDPF_MAX_PKT_TYPE) {
- 		memset(req_ptype_info, 0, sizeof(*req_ptype_info));
- 		memset(recv_ptype_info, 0, sizeof(*recv_ptype_info));
-@@ -188,13 +180,13 @@ idpf_get_pkt_type(struct idpf_adapter *adapter)
- 		ret = idpf_vc_ptype_info_query(adapter, req_ptype_info, recv_ptype_info);
- 		if (ret != 0) {
- 			DRV_LOG(ERR, "Fail to query packet type information");
--			goto free_recv_ptype_info;
-+			goto out;
- 		}
- 
- 		recv_num_ptypes += rte_le_to_cpu_16(recv_ptype_info->num_ptypes);
- 		if (recv_num_ptypes > IDPF_MAX_PKT_TYPE) {
- 			ret = -EINVAL;
--			goto free_recv_ptype_info;
-+			goto out;
- 		}
- 
- 		start_ptype_id = rte_le_to_cpu_16(req_ptype_info->start_ptype_id) +
-@@ -213,7 +205,7 @@ idpf_get_pkt_type(struct idpf_adapter *adapter)
- 			ptype_offset += IDPF_GET_PTYPE_SIZE(ptype);
- 			if (ptype_offset > IDPF_DFLT_MBX_BUF_SIZE) {
- 				ret = -EINVAL;
--				goto free_recv_ptype_info;
-+				goto out;
- 			}
- 
- 			for (j = 0; j < ptype->proto_id_count; j++) {
-@@ -374,10 +366,7 @@ idpf_get_pkt_type(struct idpf_adapter *adapter)
- 		}
+-		goto err;
++	if (num_q_msg > RTE_DIM(msg_ptr_list)) {
++		PMD_INIT_LOG(ERR, "too many messages for ctlq: %u", num_q_msg);
++		return -EINVAL;
  	}
  
--free_recv_ptype_info:
--	rte_free(recv_ptype_info);
--free_req_ptype_info:
--	rte_free(req_ptype_info);
-+out:
- 	clear_cmd(adapter);
+ 	ret = cpfl_vport_ctlq_send(hw, cq, num_q_msg, q_msg);
+ 	if (ret) {
+ 		PMD_INIT_LOG(ERR, "cpfl_vport_ctlq_send() failed with error: 0x%4x", ret);
+-		goto send_err;
++		return ret;
+ 	}
+ 
+ 	while (retries <= CTLQ_SEND_RETRIES) {
+@@ -38,7 +36,7 @@ cpfl_send_ctlq_msg(struct idpf_hw *hw, struct idpf_ctlq_info *cq, u16 num_q_msg,
+ 					       &msg_ptr_list[num_cleaned]);
+ 		if (ret) {
+ 			PMD_INIT_LOG(ERR, "clean ctlq failed: 0x%4x", ret);
+-			goto send_err;
++			return ret;
+ 		}
+ 
+ 		num_cleaned += clean_count;
+@@ -50,13 +48,9 @@ cpfl_send_ctlq_msg(struct idpf_hw *hw, struct idpf_ctlq_info *cq, u16 num_q_msg,
+ 
+ 	if (retries > CTLQ_SEND_RETRIES) {
+ 		PMD_INIT_LOG(ERR, "timed out while polling for completions");
+-		ret = -1;
+-		goto send_err;
++		return -1;
+ 	}
+ 
+-send_err:
+-	free(msg_ptr_list);
+-err:
  	return ret;
  }
-diff --git a/drivers/net/intel/idpf/idpf_common_virtchnl.c b/drivers/net/intel/idpf/idpf_common_virtchnl.c
-index 4befd5fc83..2159dd9ad1 100644
---- a/drivers/net/intel/idpf/idpf_common_virtchnl.c
-+++ b/drivers/net/intel/idpf/idpf_common_virtchnl.c
-@@ -463,15 +463,15 @@ int
- idpf_vc_rss_key_set(struct idpf_vport *vport)
- {
- 	struct idpf_adapter *adapter = vport->adapter;
--	struct virtchnl2_rss_key *rss_key;
-+	RTE_DEFINE_FLEX(struct virtchnl2_rss_key, rss_key, key, IDPF_RSS_KEY_LEN - 1);
- 	struct idpf_cmd_info args;
- 	int len, err;
  
-+	if (vport->rss_key_size > IDPF_RSS_KEY_LEN)
-+		return -EINVAL;
-+
- 	len = sizeof(*rss_key) + sizeof(rss_key->key[0]) *
- 		(vport->rss_key_size - 1);
--	rss_key = rte_zmalloc("rss_key", len, 0);
--	if (rss_key == NULL)
+diff --git a/drivers/net/intel/cpfl/cpfl_representor.c b/drivers/net/intel/cpfl/cpfl_representor.c
+index bb28c0b989..91bbb3af48 100644
+--- a/drivers/net/intel/cpfl/cpfl_representor.c
++++ b/drivers/net/intel/cpfl/cpfl_representor.c
+@@ -558,14 +558,11 @@ cpfl_repr_create(struct rte_pci_device *pci_dev, struct cpfl_adapter_ext *adapte
+ 	uint32_t iter = 0;
+ 	const struct cpfl_repr_id *repr_id;
+ 	const struct cpfl_vport_id *vp_id;
+-	struct cpchnl2_get_vport_list_response *vlist_resp;
++	RTE_DEFINE_FLEX_BYTES(struct cpchnl2_get_vport_list_response, vlist_resp,
++			IDPF_DFLT_MBX_BUF_SIZE);
+ 	struct cpchnl2_get_vport_info_response vinfo_resp;
+ 	int ret;
+ 
+-	vlist_resp = rte_zmalloc(NULL, IDPF_DFLT_MBX_BUF_SIZE, 0);
+-	if (vlist_resp == NULL)
 -		return -ENOMEM;
+-
+ 	rte_spinlock_lock(&adapter->repr_lock);
  
- 	rss_key->vport_id = vport->vport_id;
- 	rss_key->key_len = vport->rss_key_size;
-@@ -489,7 +489,6 @@ idpf_vc_rss_key_set(struct idpf_vport *vport)
- 	if (err != 0)
- 		DRV_LOG(ERR, "Failed to execute command of VIRTCHNL2_OP_SET_RSS_KEY");
+ 	while (rte_hash_iterate(adapter->repr_allowlist_hash,
+@@ -603,6 +600,13 @@ cpfl_repr_create(struct rte_pci_device *pci_dev, struct cpfl_adapter_ext *adapte
+ 			PMD_INIT_LOG(WARNING, "No matched vport for representor %s", name);
+ 			continue;
+ 		}
++		if (vlist_resp->nof_vports > (IDPF_DFLT_MBX_BUF_SIZE - sizeof(*vlist_resp)) /
++				sizeof(vlist_resp->vports[0])) {
++			PMD_INIT_LOG(ERR, "Invalid vport count %u for representor %s",
++				     vlist_resp->nof_vports, name);
++			ret = -EINVAL;
++			goto err;
++		}
  
--	rte_free(rss_key);
- 	return err;
+ 		/* get all vport info for the port representor */
+ 		for (i = 0; i < vlist_resp->nof_vports; i++) {
+@@ -657,6 +661,5 @@ cpfl_repr_create(struct rte_pci_device *pci_dev, struct cpfl_adapter_ext *adapte
+ 
+ err:
+ 	rte_spinlock_unlock(&adapter->repr_lock);
+-	rte_free(vlist_resp);
+ 	return ret;
  }
- 
-@@ -781,15 +780,13 @@ idpf_vc_ena_dis_one_queue(struct idpf_vport *vport, uint16_t qid,
- 			  uint32_t type, bool on)
- {
- 	struct idpf_adapter *adapter = vport->adapter;
--	struct virtchnl2_del_ena_dis_queues *queue_select;
-+	struct virtchnl2_del_ena_dis_queues queue_select_msg = {0};
-+	struct virtchnl2_del_ena_dis_queues *queue_select = &queue_select_msg;
- 	struct virtchnl2_queue_chunk *queue_chunk;
- 	struct idpf_cmd_info args;
- 	int err, len;
- 
- 	len = sizeof(struct virtchnl2_del_ena_dis_queues);
--	queue_select = rte_zmalloc("queue_select", len, 0);
--	if (queue_select == NULL)
--		return -ENOMEM;
- 
- 	queue_chunk = queue_select->chunks.chunks;
- 	queue_select->chunks.num_chunks = 1;
-@@ -810,7 +807,6 @@ idpf_vc_ena_dis_one_queue(struct idpf_vport *vport, uint16_t qid,
- 		DRV_LOG(ERR, "Failed to execute command of VIRTCHNL2_OP_%s_QUEUES",
- 			on ? "ENABLE" : "DISABLE");
- 
--	rte_free(queue_select);
- 	return err;
- }
- 
-@@ -819,15 +815,13 @@ int
- idpf_vc_ena_dis_one_queue_vcpf(struct idpf_adapter *adapter, uint16_t qid,
- 			  uint32_t type, bool on)
- {
--	struct virtchnl2_del_ena_dis_queues *queue_select;
-+	struct virtchnl2_del_ena_dis_queues queue_select_msg = {0};
-+	struct virtchnl2_del_ena_dis_queues *queue_select = &queue_select_msg;
- 	struct virtchnl2_queue_chunk *queue_chunk;
- 	struct idpf_cmd_info args;
- 	int err, len;
- 
- 	len = sizeof(struct virtchnl2_del_ena_dis_queues);
--	queue_select = rte_zmalloc("queue_select", len, 0);
--	if (queue_select == NULL)
--		return -ENOMEM;
- 
- 	queue_chunk = queue_select->chunks.chunks;
- 	queue_select->chunks.num_chunks = 1;
-@@ -848,7 +842,6 @@ idpf_vc_ena_dis_one_queue_vcpf(struct idpf_adapter *adapter, uint16_t qid,
- 		DRV_LOG(ERR, "Failed to execute command of VIRTCHNL2_OP_%s_QUEUES",
- 			on ? "ENABLE" : "DISABLE");
- 
--	rte_free(queue_select);
- 	return err;
- }
- 
-@@ -893,16 +886,18 @@ idpf_vc_queue_switch(struct idpf_vport *vport, uint16_t qid,
- }
- 
- #define IDPF_RXTX_QUEUE_CHUNKS_NUM	2
-+#define IDPF_RXTX_QUEUE_CHUNKS_MAX	(IDPF_RXTX_QUEUE_CHUNKS_NUM + 2)
- RTE_EXPORT_INTERNAL_SYMBOL(idpf_vc_queues_ena_dis)
+diff --git a/drivers/net/intel/cpfl/cpfl_vchnl.c b/drivers/net/intel/cpfl/cpfl_vchnl.c
+index 593516f700..6a4e4dac1b 100644
+--- a/drivers/net/intel/cpfl/cpfl_vchnl.c
++++ b/drivers/net/intel/cpfl/cpfl_vchnl.c
+@@ -147,18 +147,16 @@ vcpf_add_queues(struct cpfl_adapter_ext *adapter)
  int
- idpf_vc_queues_ena_dis(struct idpf_vport *vport, bool enable)
+ vcpf_del_queues(struct cpfl_adapter_ext *adapter)
  {
- 	struct idpf_adapter *adapter = vport->adapter;
--	struct virtchnl2_del_ena_dis_queues *queue_select;
-+	RTE_DEFINE_FLEX(struct virtchnl2_del_ena_dis_queues, queue_select, chunks.chunks,
-+			IDPF_RXTX_QUEUE_CHUNKS_MAX - 1);
- 	struct virtchnl2_queue_chunk *queue_chunk;
- 	uint32_t type;
+-	struct virtchnl2_del_ena_dis_queues *del_cfgq;
++	RTE_DEFINE_FLEX(struct virtchnl2_del_ena_dis_queues, del_cfgq, chunks.chunks,
++			VCPF_CFGQ_NUM - 1);
+ 	u16 num_chunks;
  	struct idpf_cmd_info args;
--	uint16_t num_chunks;
-+	uint16_t num_chunks, idx = 0;
- 	int err, len;
+-	int i, err, size;
++	int i, err;
  
- 	num_chunks = IDPF_RXTX_QUEUE_CHUNKS_NUM;
-@@ -913,38 +908,35 @@ idpf_vc_queues_ena_dis(struct idpf_vport *vport, bool enable)
- 
- 	len = sizeof(struct virtchnl2_del_ena_dis_queues) +
- 		sizeof(struct virtchnl2_queue_chunk) * (num_chunks - 1);
--	queue_select = rte_zmalloc("queue_select", len, 0);
--	if (queue_select == NULL)
--		return -ENOMEM;
- 
- 	queue_chunk = queue_select->chunks.chunks;
- 	queue_select->chunks.num_chunks = num_chunks;
- 	queue_select->vport_id = vport->vport_id;
- 
- 	type = VIRTCHNL_QUEUE_TYPE_RX;
--	queue_chunk[type].type = type;
--	queue_chunk[type].start_queue_id = vport->chunks_info.rx_start_qid;
--	queue_chunk[type].num_queues = vport->num_rx_q;
-+	queue_chunk[idx].type = type;
-+	queue_chunk[idx].start_queue_id = vport->chunks_info.rx_start_qid;
-+	queue_chunk[idx++].num_queues = vport->num_rx_q;
- 
- 	type = VIRTCHNL2_QUEUE_TYPE_TX;
--	queue_chunk[type].type = type;
--	queue_chunk[type].start_queue_id = vport->chunks_info.tx_start_qid;
--	queue_chunk[type].num_queues = vport->num_tx_q;
-+	queue_chunk[idx].type = type;
-+	queue_chunk[idx].start_queue_id = vport->chunks_info.tx_start_qid;
-+	queue_chunk[idx++].num_queues = vport->num_tx_q;
- 
- 	if (vport->rxq_model == VIRTCHNL2_QUEUE_MODEL_SPLIT) {
- 		type = VIRTCHNL2_QUEUE_TYPE_RX_BUFFER;
--		queue_chunk[type].type = type;
--		queue_chunk[type].start_queue_id =
-+		queue_chunk[idx].type = type;
-+		queue_chunk[idx].start_queue_id =
- 			vport->chunks_info.rx_buf_start_qid;
--		queue_chunk[type].num_queues = vport->num_rx_bufq;
-+		queue_chunk[idx++].num_queues = vport->num_rx_bufq;
+ 	num_chunks = adapter->cfgq_in.cfgq_add->chunks.num_chunks;
+-	size = idpf_struct_size(del_cfgq, chunks.chunks, (num_chunks - 1));
+-	del_cfgq = rte_zmalloc("del_cfgq", size, 0);
+-	if (!del_cfgq) {
+-		PMD_DRV_LOG(ERR, "Failed to allocate virtchnl2_del_ena_dis_queues");
+-		err = -ENOMEM;
+-		return err;
++	if (num_chunks > VCPF_CFGQ_NUM) {
++		PMD_DRV_LOG(ERR, "Too many config queue chunks: %u", num_chunks);
++		return -EINVAL;
  	}
  
- 	if (vport->txq_model == VIRTCHNL2_QUEUE_MODEL_SPLIT) {
- 		type = VIRTCHNL2_QUEUE_TYPE_TX_COMPLETION;
--		queue_chunk[type].type = type;
--		queue_chunk[type].start_queue_id =
-+		queue_chunk[idx].type = type;
-+		queue_chunk[idx].start_queue_id =
- 			vport->chunks_info.tx_compl_start_qid;
--		queue_chunk[type].num_queues = vport->num_tx_complq;
-+		queue_chunk[idx++].num_queues = vport->num_tx_complq;
- 	}
+ 	del_cfgq->vport_id = rte_cpu_to_le_32(VCPF_CFGQ_VPORT_ID);
+@@ -183,7 +181,6 @@ vcpf_del_queues(struct cpfl_adapter_ext *adapter)
+ 	args.out_size = IDPF_DFLT_MBX_BUF_SIZE;
  
- 	args.ops = enable ? VIRTCHNL2_OP_ENABLE_QUEUES :
-@@ -958,7 +950,6 @@ idpf_vc_queues_ena_dis(struct idpf_vport *vport, bool enable)
- 		DRV_LOG(ERR, "Failed to execute command of VIRTCHNL2_OP_%s_QUEUES",
- 			enable ? "ENABLE" : "DISABLE");
- 
--	rte_free(queue_select);
- 	return err;
- }
- 
-@@ -1044,7 +1035,8 @@ int
- idpf_vc_rxq_config(struct idpf_vport *vport, struct idpf_rx_queue *rxq)
+ 	err = idpf_vc_cmd_execute(&adapter->base, &args);
+-	rte_free(del_cfgq);
+ 	if (err) {
+ 		PMD_DRV_LOG(ERR,
+ 			    "Failed to execute command VIRTCHNL2_OP_DEL_QUEUES");
+@@ -210,7 +207,7 @@ int
+ cpfl_config_ctlq_rx(struct cpfl_adapter_ext *adapter)
  {
- 	struct idpf_adapter *adapter = vport->adapter;
+ 	struct cpfl_vport *vport = &adapter->ctrl_vport;
 -	struct virtchnl2_config_rx_queues *vc_rxqs = NULL;
-+	RTE_DEFINE_FLEX(struct virtchnl2_config_rx_queues, vc_rxqs, qinfo,
-+			IDPF_RXQ_PER_GRP + IDPF_RX_BUFQ_PER_GRP - 1);
++	RTE_DEFINE_FLEX(struct virtchnl2_config_rx_queues, vc_rxqs, qinfo, CPFL_RX_CFGQ_NUM - 1);
  	struct virtchnl2_rxq_info *rxq_info;
  	struct idpf_cmd_info args;
  	uint16_t num_qs;
-@@ -1057,12 +1049,6 @@ idpf_vc_rxq_config(struct idpf_vport *vport, struct idpf_rx_queue *rxq)
+@@ -225,15 +222,13 @@ cpfl_config_ctlq_rx(struct cpfl_adapter_ext *adapter)
+ 	}
+ 
+ 	num_qs = adapter->num_rx_cfgq;
++	if (num_qs > CPFL_RX_CFGQ_NUM) {
++		PMD_DRV_LOG(ERR, "Too many Rx config queues: %u", num_qs);
++		return -EINVAL;
++	}
  
  	size = sizeof(*vc_rxqs) + (num_qs - 1) *
  		sizeof(struct virtchnl2_rxq_info);
 -	vc_rxqs = rte_zmalloc("cfg_rxqs", size, 0);
--	if (vc_rxqs == NULL) {
--		DRV_LOG(ERR, "Failed to allocate virtchnl2_config_rx_queues");
+-	if (!vc_rxqs) {
+-		PMD_DRV_LOG(ERR, "Failed to allocate virtchnl2_config_rx_queues");
 -		err = -ENOMEM;
 -		return err;
 -	}
- 	vc_rxqs->vport_id = vport->vport_id;
- 	vc_rxqs->num_qinfo = num_qs;
- 	if (vport->rxq_model == VIRTCHNL2_QUEUE_MODEL_SINGLE) {
-@@ -1122,7 +1108,6 @@ idpf_vc_rxq_config(struct idpf_vport *vport, struct idpf_rx_queue *rxq)
+ 
+ 	if (idpf_is_vf_device(&adapter->base.hw))
+ 		vc_rxqs->vport_id = rte_cpu_to_le_32(VCPF_CFGQ_VPORT_ID);
+@@ -264,7 +259,6 @@ cpfl_config_ctlq_rx(struct cpfl_adapter_ext *adapter)
  	args.out_size = IDPF_DFLT_MBX_BUF_SIZE;
  
- 	err = idpf_vc_cmd_execute(adapter, &args);
+ 	err = idpf_vc_cmd_execute(&adapter->base, &args);
 -	rte_free(vc_rxqs);
- 	if (err != 0)
- 		DRV_LOG(ERR, "Failed to execute command of VIRTCHNL2_OP_CONFIG_RX_QUEUES");
+ 	if (err)
+ 		PMD_DRV_LOG(ERR, "Failed to execute command of VIRTCHNL2_OP_CONFIG_RX_QUEUES");
  
-@@ -1170,7 +1155,8 @@ int
- idpf_vc_txq_config(struct idpf_vport *vport, struct ci_tx_queue *txq)
+@@ -275,7 +269,7 @@ int
+ cpfl_config_ctlq_tx(struct cpfl_adapter_ext *adapter)
  {
- 	struct idpf_adapter *adapter = vport->adapter;
+ 	struct cpfl_vport *vport = &adapter->ctrl_vport;
 -	struct virtchnl2_config_tx_queues *vc_txqs = NULL;
-+	RTE_DEFINE_FLEX(struct virtchnl2_config_tx_queues, vc_txqs, qinfo,
-+			IDPF_TXQ_PER_GRP + IDPF_TX_COMPLQ_PER_GRP - 1);
++	RTE_DEFINE_FLEX(struct virtchnl2_config_tx_queues, vc_txqs, qinfo, CPFL_TX_CFGQ_NUM - 1);
  	struct virtchnl2_txq_info *txq_info;
  	struct idpf_cmd_info args;
  	uint16_t num_qs;
-@@ -1183,12 +1169,6 @@ idpf_vc_txq_config(struct idpf_vport *vport, struct ci_tx_queue *txq)
+@@ -290,15 +284,13 @@ cpfl_config_ctlq_tx(struct cpfl_adapter_ext *adapter)
+ 	}
+ 
+ 	num_qs = adapter->num_tx_cfgq;
++	if (num_qs > CPFL_TX_CFGQ_NUM) {
++		PMD_DRV_LOG(ERR, "Too many Tx config queues: %u", num_qs);
++		return -EINVAL;
++	}
  
  	size = sizeof(*vc_txqs) + (num_qs - 1) *
  		sizeof(struct virtchnl2_txq_info);
 -	vc_txqs = rte_zmalloc("cfg_txqs", size, 0);
--	if (vc_txqs == NULL) {
--		DRV_LOG(ERR, "Failed to allocate virtchnl2_config_tx_queues");
+-	if (!vc_txqs) {
+-		PMD_DRV_LOG(ERR, "Failed to allocate virtchnl2_config_tx_queues");
 -		err = -ENOMEM;
 -		return err;
 -	}
- 	vc_txqs->vport_id = vport->vport_id;
- 	vc_txqs->num_qinfo = num_qs;
  
-@@ -1230,7 +1210,6 @@ idpf_vc_txq_config(struct idpf_vport *vport, struct ci_tx_queue *txq)
+ 	if (idpf_is_vf_device(&adapter->base.hw))
+ 		vc_txqs->vport_id = rte_cpu_to_le_32(VCPF_CFGQ_VPORT_ID);
+@@ -325,7 +317,6 @@ cpfl_config_ctlq_tx(struct cpfl_adapter_ext *adapter)
  	args.out_size = IDPF_DFLT_MBX_BUF_SIZE;
  
- 	err = idpf_vc_cmd_execute(adapter, &args);
+ 	err = idpf_vc_cmd_execute(&adapter->base, &args);
 -	rte_free(vc_txqs);
- 	if (err != 0)
- 		DRV_LOG(ERR, "Failed to execute command of VIRTCHNL2_OP_CONFIG_TX_QUEUES");
+ 	if (err)
+ 		PMD_DRV_LOG(ERR, "Failed to execute command of VIRTCHNL2_OP_CONFIG_TX_QUEUES");
  
 -- 
 2.55.0
