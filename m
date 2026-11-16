@@ -2,63 +2,46 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12BA606A31C
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Nov 2026 11:44:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6659606A332
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Nov 2026 14:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zte.com.cn header.i=@zte.com.cn header.a=rsa-sha256 header.s=z202610 header.b=P6Zl3yUk
+	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=foss.arm.com header.i=@foss.arm.com header.a=rsa-sha256 header.s=main header.b=rpNgEN+c
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CA73C40609;
-	Mon, 16 Nov 2026 12:43:14 +0100 (CET)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
- by mails.dpdk.org (Postfix) with ESMTPS id B5D9C40685;
- Mon, 16 Nov 2026 12:43:12 +0100 (CET)
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mxct.zte.com.cn (FangMail) with ESMTPS id 4jSmFg1jQfz52SG8;
- Mon, 16 Nov 2026 19:43:03 +0800 (CST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=zte.com.cn;
- s=z202610; t=1794829383;
- bh=CX+o4uo2NEzuLnlo0uagmcdygEwq78SFxlzE5GvL4Hc=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=P6Zl3yUkC2ALgQ/EI15swXMxUKFZs15KnaMCqtRz8KP+MQ46dDTYxyrTKFs5IZKAc
- ADk8HxtrpNvFnx7NPaeIKbeX7G4gFI66A1uSYSEDgGAIK4ZviQa0RkDAzur0Srn0Mx
- f9KDbKdq+/Q7VunmqyVG6RiBXphSG0/yPWnx0pL9fe5vAOfuLiZzN++xUo4HDft+Dc
- oUaBbea5Up/zKs5bMMKe80oxdGKIX0xLm8MmN31IqeFJf/2kzgkfwmp3WgqOOG20oM
- fIZ9xm0E9MPcLzQQNt9dJezfyxmJ7ZeVRSwrVvWWkKGlLvAy8adQGP8mZGxKcAm7ar
- AwNv83v505J+A==
-Received: from szxl2zmapp06.zte.com.cn ([10.1.32.108])
- by mse-fl2.zte.com.cn with SMTP id 6AGBghRD019584;
- Mon, 16 Nov 2026 19:42:43 +0800 (+08)
- (envelope-from wang.junlong1@zte.com.cn)
-Received: from localhost.localdomain (unknown [192.168.6.15])
- by smtp (Zmail) with SMTP; Mon, 16 Nov 2026 19:42:45 +0800
-X-Zmail-TransId: 3e816afaec3502d-f9d2b
-X-Zmail-LocalSMTP: 1
-X-Zmail-RealSender: wang.junlong1@zte.com.cn
-From: Junlong Wang <wang.junlong1@zte.com.cn>
-To: stephen@networkplumber.org
-Cc: dev@dpdk.org, Junlong Wang <wang.junlong1@zte.com.cn>, stable@dpdk.org
-Subject: [PATCH v3 7/8] net/zxdh: check full 16-bit module id of recv msg
-Date: Mon, 16 Nov 2026 19:30:59 +0800
-Message-ID: <20261116113100.3369948-8-wang.junlong1@zte.com.cn>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261116113100.3369948-1-wang.junlong1@zte.com.cn>
-References: <20261112102650.3162875-1-wang.junlong1@zte.com.cn>
- <20261116113100.3369948-1-wang.junlong1@zte.com.cn>
+	by mails.dpdk.org (Postfix) with ESMTP id 2309040150;
+	Mon, 16 Nov 2026 15:09:11 +0100 (CET)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 063BB400EF;
+ Mon, 16 Nov 2026 15:09:08 +0100 (CET)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 164001A25;
+ Mon, 16 Nov 2026 06:09:00 -0800 (PST)
+Received: from [10.2.197.124] (KDFJ2LQKPJ.cambridge.arm.com [10.2.197.124])
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CE8E13F763;
+ Mon, 16 Nov 2026 06:09:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=foss.arm.com; s=main;
+ t=1794838143; bh=LelRC23jPuN2SadUCcJtRjL9RDPFcvzrg+isGOdobpM=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=rpNgEN+cqibnrItHDVkwtEaJq2d9fhn9MbCf8R7Q9QrmhRlCfGG24kZH9jsjtsks2
+ 7p8fc+/ISfrC2GgzOyZZ7uyBDBBsIHMKrobYAxC20ySNraq0drVLnGAbGddtO5tYXG
+ MOz8xRi85EDBOzwSzfEWiwBM+CX45MbDcBFskjck=
+Message-ID: <50581e90-ba05-40cc-89e5-004be6690284@foss.arm.com>
+Date: Mon, 16 Nov 2026 14:09:00 +0000
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] bitops: fix integer overflow in align64pow2
+To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>,
+ Bulatov Mark <ms.bulatov7@gmail.com>, Ferruh Yigit <ferruh.yigit@amd.com>,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, stable@dpdk.org, Alexey Simakov <bigalex934@gmail.com>
+References: <20261113141307.4727-1-ms.bulatov7@gmail.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65B0C@smartserver.smartshare.dk>
+Content-Language: en-GB
+From: Jack Bond-Preston <jack.bond-preston@foss.arm.com>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65B0C@smartserver.smartshare.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: multipart/mixed;
-	boundary="=====_001_next====="
-X-MAIL: mse-fl2.zte.com.cn 6AGBghRD019584
-X-TLS: YES
-X-ENVELOPE-SENDER: wang.junlong1@zte.com.cn
-X-SOURCE-IP: 10.5.228.133 unknown Mon, 16 Nov 2026 19:43:03 +0800
-X-CLEAN: YES
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6AFAEC47.001/4jSmFg1jQfz52SG8
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -68,144 +51,132 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
+On 13/11/2026 18:07, Morten Brørup wrote:
+>> If the function rte_combine64ms1b() returns the maximum possible
+>> uint64_t
+>> value, it will result in an overflow.
+>>
+>> To avoid this, add a check.
+>>
+>> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+>>
+>> Fixes: 7253e3d2a5 ("bitops: move bit count functions")
+>> Cc: stable@dpdk.org
+>>
+>> Signed-off-by: Alexey Simakov <bigalex934@gmail.com>
+>> Signed-off-by: Mark Bulatov <ms.bulatov7@gmail.com>
+>> ---
+>>   lib/eal/include/rte_bitops.h | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/lib/eal/include/rte_bitops.h
+>> b/lib/eal/include/rte_bitops.h
+>> index 45255b68aa..d2ed0c3c61 100644
+>> --- a/lib/eal/include/rte_bitops.h
+>> +++ b/lib/eal/include/rte_bitops.h
+>> @@ -1307,6 +1307,9 @@ rte_align64pow2(uint64_t v)
+>>   	v--;
+>>   	v = rte_combine64ms1b(v);
+>>
+>> +	if (v == UINT64_MAX)
+>> +		v--;
+>> +
+>>   	return v + 1;
+>>   }
+> 
+> NAK.
+> 
+> The overflow bug is present, also in rte_align32pow2().
+> 
+> But the fix is wrong; it does not return a power-of-two value.
+> 
+> There is no solution to fix this overflow.
+> The only possible fix is to specify in the function documentation that the parameter must not exceed 1 << 63 (0x8000000000000000).
+> 
+> -Morten
 
+You are right Morten, sorry about that. No point avoiding the overflow 
+if the return value doesn't even fulfil the purpose of the function 
+itself. Also, I realised the provided fix would change the behaviour for 
+the input value of 0 - currently this returns 0, but with this patch it 
+would return UINT64_MAX.
 
---=====_001_next=====
-Content-Type: multipart/related;
-	boundary="=====_002_next====="
+I guess the change should look something like this:
+-----
 
+[PATCH] bitops: document input value range for rte_align[32,64]pow2
 
---=====_002_next=====
-Content-Type: multipart/alternative;
-	boundary="=====_003_next====="
+rte_align32pow2 and rte_align62pow2 will overflow and return incorrect
+values for input values exceeding 1<<31 and 1<<63, respectively. There
+is no way to return a valid result here: the next power of two above
+these values is unrepresentable with 32/64 bit unsigned integers.
 
+Adjust the documentation for these functions to clarify that input
+values above these limits will return invalid results, and thus should
+not be provided to these functions. Additionally, document an existing
+edge case of the implementation: when the input is 0, it returns 0 (not
+a power of 2).
+---
+  lib/eal/include/rte_bitops.h | 22 ++++++++++++++++++----
+  1 file changed, 18 insertions(+), 4 deletions(-)
 
---=====_003_next=====
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-VGhlIGhlYWRlciBjaGVjayBvZiBhIHJlY2VpdmVkIEJBUiBjaGFubmVsIG1lc3NhZ2UgY29waWVz
-IHRoZSAxNi1iaXQNCm1vZHVsZV9pZCBmaWVsZCBpbnRvIGEgdWludDhfdCBsb2NhbCBiZWZvcmUg
-Y29tcGFyaW5nIGl0IHdpdGggdGhlDQpoYW5kbGVyIHRhYmxlIHNpemUsIGFuZCB0aGUgY2FsbGVy
-cyB0aGVuIGluZGV4DQp6eGRoX21zZ19yZWN2X2Z1bmNfdGJsW10gd2l0aCB0aGUgZnVsbCB1bnRy
-dW5jYXRlZCB2YWx1ZS4gQW55DQptb2R1bGVfaWQgd2hvc2UgbG93IGJ5dGUgaXMgYmVsb3cgWlhE
-SF9CQVJfTVNHX01PRFVMRV9OVU0gcGFzc2VzIHRoZQ0KY2hlY2ssIHNvIGEgc2VuZGVyIGNhbiBz
-ZWxlY3QgYW1vbmcgYWJvdXQgMjUsNTAwIHNsb3RzIHBhc3QgdGhlDQoxMDAtZW50cnkgdGFibGUs
-IGFuZCBhIHN5bmNocm9ub3VzIG1lc3NhZ2UgbWFrZXMgdGhlIFBGIGNhbGwgd2hhdGV2ZXINCndv
-cmQgaXQgZmluZHMgdGhlcmUuIFdpdGggdGhlIGRlZmF1bHQgZ2NjIGJ1aWxkIHRoZSByZWFjaGFi
-bGUgc2xvdHMNCmluc2lkZSBnX3NlcWlkX3JpbmcgaG9sZCBzbWFsbCBpbnRlZ2VycyBzZXQgYXQg
-aW5pdCwgc28gb25lIGZvcmdlZA0KbWVzc2FnZSBmcm9tIGEgVkYganVtcHMgdG8gYSBsb3cgYWRk
-cmVzcyBhbmQga2lsbHMgdGhlIFBGIHByb2Nlc3MuDQoNCldpZGVuIHRoZSBsb2NhbCB0byB1aW50
-MTZfdCBhbmQgZHJvcCB0aGUgKHVpbnQ4X3QpIGNhc3Qgc28gdGhlIGNoZWNrDQpjb21wYXJlcyB0
-aGUgc2FtZSB2YWx1ZSB0aGUgY2FsbGVycyB1c2UgYXMgdGhlIGluZGV4LiBUaGlzIGlzIHRoZQ0K
-b25seSBwbGFjZSBhIHJlY2VpdmVkIG1vZHVsZV9pZCBpcyB2YWxpZGF0ZWQ7IHRoZSBzZW5kIHNp
-ZGUgYWxyZWFkeQ0KY29tcGFyZXMgdGhlIGZ1bGwgdmFsdWUuIFZhbGlkIGlkcyAwLTk5IGFyZSB1
-bmFmZmVjdGVkLg0KDQpGaXhlczogMzYzMGFjOGJkODFmICgibmV0L3p4ZGg6IGNvbmZpZ3VyZSBp
-bnRlcnJ1cHQiKQ0KQ2M6IHN0YWJsZUBkcGRrLm9yZw0KDQpTaWduZWQtb2ZmLWJ5OiBKdW5sb25n
-IFdhbmcgPHdhbmcuanVubG9uZzFAenRlLmNvbS5jbj4NCi0tLQ0KIGRyaXZlcnMvbmV0L3p4ZGgv
-enhkaF9tc2cuYyB8IDQgKystLQ0KIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDIg
-ZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC96eGRoL3p4ZGhfbXNnLmMg
-Yi9kcml2ZXJzL25ldC96eGRoL3p4ZGhfbXNnLmMNCmluZGV4IDk1YjJmNWE2MGIuLjc3YjhkZjJm
-MTIgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL25ldC96eGRoL3p4ZGhfbXNnLmMNCisrKyBiL2RyaXZl
-cnMvbmV0L3p4ZGgvenhkaF9tc2cuYw0KQEAgLTk2MCw3ICs5NjAsNyBAQCBzdGF0aWMgdWludDE2
-X3QNCiB6eGRoX2Jhcl9jaGFuX21zZ19oZWFkZXJfY2hlY2soc3RydWN0IHp4ZGhfYmFyX21zZ19o
-ZWFkZXIgKm1zZ19oZWFkZXIpDQogew0KIAl1aW50MTZfdCBsZW4gPSAwOw0KLQl1aW50OF90IG1v
-ZHVsZV9pZCA9IDA7DQorCXVpbnQxNl90IG1vZHVsZV9pZCA9IDA7DQogDQogCWlmIChtc2dfaGVh
-ZGVyLT52YWxpZCAhPSBaWERIX0JBUl9NU0dfQ0hBTl9VU0VEKSB7DQogCQlQTURfTVNHX0xPRyhF
-UlIsICJyZWN2IGhlYWRlciBFUlI6IHZhbGlkIGxhYmVsIGlzIG5vdCB1c2VkIik7DQpAQCAtOTY4
-LDcgKzk2OCw3IEBAIHp4ZGhfYmFyX2NoYW5fbXNnX2hlYWRlcl9jaGVjayhzdHJ1Y3QgenhkaF9i
-YXJfbXNnX2hlYWRlciAqbXNnX2hlYWRlcikNCiAJfQ0KIAltb2R1bGVfaWQgPSBtc2dfaGVhZGVy
-LT5tb2R1bGVfaWQ7DQogDQotCWlmIChtb2R1bGVfaWQgPj0gKHVpbnQ4X3QpWlhESF9CQVJfTVNH
-X01PRFVMRV9OVU0pIHsNCisJaWYgKG1vZHVsZV9pZCA+PSBaWERIX0JBUl9NU0dfTU9EVUxFX05V
-TSkgew0KIAkJUE1EX01TR19MT0coRVJSLCAicmVjdiBoZWFkZXIgRVJSOiBpbnZhbGlkIG1vZHVs
-ZV9pZDogJXUiLCBtb2R1bGVfaWQpOw0KIAkJcmV0dXJuIFpYREhfQkFSX01TR19FUlJfTU9EVUxF
-Ow0KIAl9DQotLSANCjIuMjcuMA==
-
-
---=====_003_next=====
-Content-Type: text/html ;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-VGhlJm5ic3A7aGVhZGVyJm5ic3A7Y2hlY2smbmJzcDtvZiZuYnNwO2EmbmJzcDtyZWNlaXZlZCZu
-YnNwO0JBUiZuYnNwO2NoYW5uZWwmbmJzcDttZXNzYWdlJm5ic3A7Y29waWVzJm5ic3A7dGhlJm5i
-c3A7MTYtYml0PGJyIC8+bW9kdWxlX2lkJm5ic3A7ZmllbGQmbmJzcDtpbnRvJm5ic3A7YSZuYnNw
-O3VpbnQ4X3QmbmJzcDtsb2NhbCZuYnNwO2JlZm9yZSZuYnNwO2NvbXBhcmluZyZuYnNwO2l0Jm5i
-c3A7d2l0aCZuYnNwO3RoZTxiciAvPmhhbmRsZXImbmJzcDt0YWJsZSZuYnNwO3NpemUsJm5ic3A7
-YW5kJm5ic3A7dGhlJm5ic3A7Y2FsbGVycyZuYnNwO3RoZW4mbmJzcDtpbmRleDxiciAvPnp4ZGhf
-bXNnX3JlY3ZfZnVuY190YmxbXSZuYnNwO3dpdGgmbmJzcDt0aGUmbmJzcDtmdWxsJm5ic3A7dW50
-cnVuY2F0ZWQmbmJzcDt2YWx1ZS4mbmJzcDtBbnk8YnIgLz5tb2R1bGVfaWQmbmJzcDt3aG9zZSZu
-YnNwO2xvdyZuYnNwO2J5dGUmbmJzcDtpcyZuYnNwO2JlbG93Jm5ic3A7WlhESF9CQVJfTVNHX01P
-RFVMRV9OVU0mbmJzcDtwYXNzZXMmbmJzcDt0aGU8YnIgLz5jaGVjaywmbmJzcDtzbyZuYnNwO2Em
-bmJzcDtzZW5kZXImbmJzcDtjYW4mbmJzcDtzZWxlY3QmbmJzcDthbW9uZyZuYnNwO2Fib3V0Jm5i
-c3A7MjUsNTAwJm5ic3A7c2xvdHMmbmJzcDtwYXN0Jm5ic3A7dGhlPGJyIC8+MTAwLWVudHJ5Jm5i
-c3A7dGFibGUsJm5ic3A7YW5kJm5ic3A7YSZuYnNwO3N5bmNocm9ub3VzJm5ic3A7bWVzc2FnZSZu
-YnNwO21ha2VzJm5ic3A7dGhlJm5ic3A7UEYmbmJzcDtjYWxsJm5ic3A7d2hhdGV2ZXI8YnIgLz53
-b3JkJm5ic3A7aXQmbmJzcDtmaW5kcyZuYnNwO3RoZXJlLiZuYnNwO1dpdGgmbmJzcDt0aGUmbmJz
-cDtkZWZhdWx0Jm5ic3A7Z2NjJm5ic3A7YnVpbGQmbmJzcDt0aGUmbmJzcDtyZWFjaGFibGUmbmJz
-cDtzbG90czxiciAvPmluc2lkZSZuYnNwO2dfc2VxaWRfcmluZyZuYnNwO2hvbGQmbmJzcDtzbWFs
-bCZuYnNwO2ludGVnZXJzJm5ic3A7c2V0Jm5ic3A7YXQmbmJzcDtpbml0LCZuYnNwO3NvJm5ic3A7
-b25lJm5ic3A7Zm9yZ2VkPGJyIC8+bWVzc2FnZSZuYnNwO2Zyb20mbmJzcDthJm5ic3A7VkYmbmJz
-cDtqdW1wcyZuYnNwO3RvJm5ic3A7YSZuYnNwO2xvdyZuYnNwO2FkZHJlc3MmbmJzcDthbmQmbmJz
-cDtraWxscyZuYnNwO3RoZSZuYnNwO1BGJm5ic3A7cHJvY2Vzcy48YnIgLz4NPGJyIC8+V2lkZW4m
-bmJzcDt0aGUmbmJzcDtsb2NhbCZuYnNwO3RvJm5ic3A7dWludDE2X3QmbmJzcDthbmQmbmJzcDtk
-cm9wJm5ic3A7dGhlJm5ic3A7KHVpbnQ4X3QpJm5ic3A7Y2FzdCZuYnNwO3NvJm5ic3A7dGhlJm5i
-c3A7Y2hlY2s8YnIgLz5jb21wYXJlcyZuYnNwO3RoZSZuYnNwO3NhbWUmbmJzcDt2YWx1ZSZuYnNw
-O3RoZSZuYnNwO2NhbGxlcnMmbmJzcDt1c2UmbmJzcDthcyZuYnNwO3RoZSZuYnNwO2luZGV4LiZu
-YnNwO1RoaXMmbmJzcDtpcyZuYnNwO3RoZTxiciAvPm9ubHkmbmJzcDtwbGFjZSZuYnNwO2EmbmJz
-cDtyZWNlaXZlZCZuYnNwO21vZHVsZV9pZCZuYnNwO2lzJm5ic3A7dmFsaWRhdGVkOyZuYnNwO3Ro
-ZSZuYnNwO3NlbmQmbmJzcDtzaWRlJm5ic3A7YWxyZWFkeTxiciAvPmNvbXBhcmVzJm5ic3A7dGhl
-Jm5ic3A7ZnVsbCZuYnNwO3ZhbHVlLiZuYnNwO1ZhbGlkJm5ic3A7aWRzJm5ic3A7MC05OSZuYnNw
-O2FyZSZuYnNwO3VuYWZmZWN0ZWQuPGJyIC8+DTxiciAvPkZpeGVzOiZuYnNwOzM2MzBhYzhiZDgx
-ZiZuYnNwOygmcXVvdDtuZXQvenhkaDombmJzcDtjb25maWd1cmUmbmJzcDtpbnRlcnJ1cHQmcXVv
-dDspPGJyIC8+Q2M6Jm5ic3A7c3RhYmxlQGRwZGsub3JnPGJyIC8+DTxiciAvPlNpZ25lZC1vZmYt
-Ynk6Jm5ic3A7SnVubG9uZyZuYnNwO1dhbmcmbmJzcDsmbHQ7d2FuZy5qdW5sb25nMUB6dGUuY29t
-LmNuJmd0Ow08YnIgLz4tLS08YnIgLz4mbmJzcDtkcml2ZXJzL25ldC96eGRoL3p4ZGhfbXNnLmMm
-bmJzcDt8Jm5ic3A7NCZuYnNwOysrLS08YnIgLz4mbmJzcDsxJm5ic3A7ZmlsZSZuYnNwO2NoYW5n
-ZWQsJm5ic3A7MiZuYnNwO2luc2VydGlvbnMoKyksJm5ic3A7MiZuYnNwO2RlbGV0aW9ucygtKTxi
-ciAvPg08YnIgLz5kaWZmJm5ic3A7LS1naXQmbmJzcDthL2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9t
-c2cuYyZuYnNwO2IvZHJpdmVycy9uZXQvenhkaC96eGRoX21zZy5jPGJyIC8+aW5kZXgmbmJzcDs5
-NWIyZjVhNjBiLi43N2I4ZGYyZjEyJm5ic3A7MTAwNjQ0PGJyIC8+LS0tJm5ic3A7YS9kcml2ZXJz
-L25ldC96eGRoL3p4ZGhfbXNnLmM8YnIgLz4rKysmbmJzcDtiL2RyaXZlcnMvbmV0L3p4ZGgvenhk
-aF9tc2cuYzxiciAvPkBAJm5ic3A7LTk2MCw3Jm5ic3A7Kzk2MCw3Jm5ic3A7QEAmbmJzcDtzdGF0
-aWMmbmJzcDt1aW50MTZfdDxiciAvPiZuYnNwO3p4ZGhfYmFyX2NoYW5fbXNnX2hlYWRlcl9jaGVj
-ayhzdHJ1Y3QmbmJzcDt6eGRoX2Jhcl9tc2dfaGVhZGVyJm5ic3A7Km1zZ19oZWFkZXIpPGJyIC8+
-Jm5ic3A7ezxiciAvPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3VpbnQxNl90Jm5ic3A7
-bGVuJm5ic3A7PSZuYnNwOzA7PGJyIC8+LSZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3VpbnQ4X3Qm
-bmJzcDttb2R1bGVfaWQmbmJzcDs9Jm5ic3A7MDs8YnIgLz4rJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7dWludDE2X3QmbmJzcDttb2R1bGVfaWQmbmJzcDs9Jm5ic3A7MDs8YnIgLz4mbmJzcDsNPGJy
-IC8+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7aWYmbmJzcDsobXNnX2hlYWRlci0mZ3Q7
-dmFsaWQmbmJzcDshPSZuYnNwO1pYREhfQkFSX01TR19DSEFOX1VTRUQpJm5ic3A7ezxiciAvPiZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO1BNRF9N
-U0dfTE9HKEVSUiwmbmJzcDsmcXVvdDtyZWN2Jm5ic3A7aGVhZGVyJm5ic3A7RVJSOiZuYnNwO3Zh
-bGlkJm5ic3A7bGFiZWwmbmJzcDtpcyZuYnNwO25vdCZuYnNwO3VzZWQmcXVvdDspOzxiciAvPkBA
-Jm5ic3A7LTk2OCw3Jm5ic3A7Kzk2OCw3Jm5ic3A7QEAmbmJzcDt6eGRoX2Jhcl9jaGFuX21zZ19o
-ZWFkZXJfY2hlY2soc3RydWN0Jm5ic3A7enhkaF9iYXJfbXNnX2hlYWRlciZuYnNwOyptc2dfaGVh
-ZGVyKTxiciAvPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO308YnIgLz4mbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDttb2R1bGVfaWQmbmJzcDs9Jm5ic3A7bXNnX2hlYWRlci0mZ3Q7
-bW9kdWxlX2lkOzxiciAvPiZuYnNwOw08YnIgLz4tJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7aWYm
-bmJzcDsobW9kdWxlX2lkJm5ic3A7Jmd0Oz0mbmJzcDsodWludDhfdClaWERIX0JBUl9NU0dfTU9E
-VUxFX05VTSkmbmJzcDt7PGJyIC8+KyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO2lmJm5ic3A7KG1v
-ZHVsZV9pZCZuYnNwOyZndDs9Jm5ic3A7WlhESF9CQVJfTVNHX01PRFVMRV9OVU0pJm5ic3A7ezxi
-ciAvPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-O1BNRF9NU0dfTE9HKEVSUiwmbmJzcDsmcXVvdDtyZWN2Jm5ic3A7aGVhZGVyJm5ic3A7RVJSOiZu
-YnNwO2ludmFsaWQmbmJzcDttb2R1bGVfaWQ6Jm5ic3A7JXUmcXVvdDssJm5ic3A7bW9kdWxlX2lk
-KTs8YnIgLz4mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDtyZXR1cm4mbmJzcDtaWERIX0JBUl9NU0dfRVJSX01PRFVMRTs8YnIgLz4mbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDt9PGJyIC8+LS0mbmJzcDsNPGJyIC8+Mi4yNy4wPGJyIC8+
-
-
---=====_003_next=====--
-
---=====_002_next=====--
-
---=====_001_next=====--
-
+diff --git a/lib/eal/include/rte_bitops.h b/lib/eal/include/rte_bitops.h
+index 45255b68aa..59dcf1e028 100644
+--- a/lib/eal/include/rte_bitops.h
++++ b/lib/eal/include/rte_bitops.h
+@@ -1261,10 +1261,17 @@ rte_is_power_of_2(uint32_t n)
+   * Aligns input parameter to the next power of 2
+   *
+   * @param x
+- *   The integer value to align
++ *   The integer value to align. Must be less than or equal to 1 << 31
++ *   (0x80000000).
+   *
+   * @return
+- *   The smallest power of 2 which is greater than or equal to @c x.
++ *   The smallest power of 2 which is greater than or equal to @c x, or 
+0 if
++ *   @c v is 0.
++ *
++ * @note If the input parameter exceeds 1 << 31 (0x80000000), then the 
+expected
++ *       result is unrepresentable and the return value is invalid.
++ * @note For the input value 0, this function returns 0, which is not a 
+power of
++ *       2.
+   */
+  static inline uint32_t
+  rte_align32pow2(uint32_t x)
+@@ -1296,10 +1303,17 @@ rte_align32prevpow2(uint32_t x)
+   * Aligns 64b input parameter to the next power of 2
+   *
+   * @param v
+- *   The 64b value to align
++ *   The 64b value to align. Must be less than or equal to 1 << 63
++ *   (0x8000000000000000).
+   *
+   * @return
+- *   The smallest power of 2 which is greater than or equal to @c v.
++ *   The smallest power of 2 which is greater than or equal to @c v, or 
+0 if
++ *   @c v is 0.
++ *
++ * @note If the input parameter exceeds 1 << 63 (0x8000000000000000), 
+then the
++ *       expected result is unrepresentable and the return value is 
+invalid.
++ * @note For the input value 0, this function returns 0, which is not a 
+power of
++ *       2.
+   */
+  static inline uint64_t
+  rte_align64pow2(uint64_t v)
+-- 
+2.43.0
