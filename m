@@ -2,91 +2,95 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDFE2606A31C
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Nov 2026 21:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283F8606A323
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Nov 2026 21:57:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.a=rsa-sha256 header.s=google header.b=O9W8oFkv
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.a=rsa-sha256 header.s=google header.b=Ro8sGIrR
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 475E14026F;
-	Mon, 16 Nov 2026 22:47:13 +0100 (CET)
-Received: from mail-pj1-f100.google.com (mail-pj1-f100.google.com
- [209.85.216.100])
- by mails.dpdk.org (Postfix) with ESMTPS id F0A8040150
- for <dev@dpdk.org>; Mon, 16 Nov 2026 22:47:10 +0100 (CET)
-Received: by mail-pj1-f100.google.com with SMTP id
- 98e67ed59e1d1-3ace1f3897cso2176814a91.0
- for <dev@dpdk.org>; Mon, 16 Nov 2026 13:47:10 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 56CA740297;
+	Mon, 16 Nov 2026 22:57:57 +0100 (CET)
+Received: from mail-pj1-f98.google.com (mail-pj1-f98.google.com
+ [209.85.216.98])
+ by mails.dpdk.org (Postfix) with ESMTPS id 26A5C40150
+ for <dev@dpdk.org>; Mon, 16 Nov 2026 22:57:55 +0100 (CET)
+Received: by mail-pj1-f98.google.com with SMTP id
+ 98e67ed59e1d1-3ace1f3897cso2182071a91.0
+ for <dev@dpdk.org>; Mon, 16 Nov 2026 13:57:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794865629; x=1795470429;
+ d=1e100.net; s=20260707; t=1794866273; x=1795471073;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:dkim-signature:x-gm-gg:x-gm-message-state
  :from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=zSeSIfIHI91aSqInAzldxvIVGD2PgwBjr5cAPES3WFk=;
- b=l0cDqrBUY3cDXykVJ+Vpt4sMmi6n+sr3S56zbGnXC5Ye8dBKKSttBIgOuvrMKHWGUe
- Q2i/JM7S+kEZTGemtTj8Uz0pgP8PsY+1obDhmi/w/onw65VVzrLN7ns/qMWsgXzB+cij
- UuPCwENJCbxJn7pFHf9wag2PCdCDMtocQwRaHEKrpRge1AVXBEwUa/1N3A24zR0/GyOh
- wNIq85CPzvS8gwGiqRom1ywGXdOgK6VnWstktjQtGZv9/MSrkB8GP0jdcPy+62K41fQU
- OmVwLwPqWLRTCm1Zbq8CVr4az5FAE7ZirYah53l0x3m0kc4yPaPeskb7AnPKBnAC6hgY
- OQvQ==
+ bh=fh+0jTfhGrsoEnOu3vJYvBTH9tkkJZDZsNqIHfUSYZ4=;
+ b=SX8UQE393naD3ezNKHd33rYrU0/w3rfYKKEESgv5AIaZd1RUDfCgT7sVehn9CkMw3D
+ mKkxfH62cJmn2n7FGp+iwSz8THD82KANssYKCyphZ8EdfZX8tC6oENc+LNUVNXF5CF8D
+ bZshEGBKOeAbhBaMd5Nx7Wf5mvPWSfCPiiZHlwUMKPPXZ68RgPOSu//KTdhqHEjevv8T
+ cDhaly3oznd4SpvMbdusmNdOyO4RC2esjc+vQnjb3T5Yenmw30wykqiqQV4MVJCJGAwP
+ dpn4cZXtFPiClzMJuymnrwyID7FNI7Y0st1tnWFDZmTIhSYC7r7/3JAx0A9vmfMVu0nM
+ +E8A==
 X-Forwarded-Encrypted: i=1;
- AL+hErFQ36ud/nF/TUO0uej/qv5JoAvJaSQqu8qb+HzHUd6baQJf5S2XdO1gsyWa1SBDEamHe28=@dpdk.org
-X-Gm-Message-State: APuU4Z/HFBwxOtxpj7CgN9WNSJg6LBlQeOMk9QSM7Q7PdOm2xyhcep/U
- +Z1mGE2qz0LPl2nwg/RSazRotEQE3HSKBianal7/l+IDljKe9cxj08RdQqv9xO+TN1iXDCGhYuT
- HnfLB2OZr9wRf6mfjY2+edJbKINX1SRAihZAlPXXOkgeS7q77f7pkoyKK0tdC0NLjgT/6GBeV6C
- 9EW31KuSFFKNOGAvjwNN4IM87UBCzoO12f1YM1fbATISLN3WWGYCQtpDNw+JpD9DRtr9HY/58p5
- OxMGg==
-X-Gm-Gg: AZFdTZfp4gFuZhjLP1GjmWHl8bP0poQIwAFmgz/2RJC7V3JiOQxd5YFbbiR8tSPOhYS
- QbaGTpJcYt338lLv8tj9t51CrKBzfDfCl0oH0oPrBSGloNa85TlN1/NEEeGjOw/GWZ/jjNGvVdd
- +au/jqi1xlLu5vaXgc+lD67erZtO+oLdkzYP6R3QIzBg/ft69T1G+Xs1RZkayRHLO+cXzuIYwxG
- OG7eapHWN8ofnOzfjj1duN/jUOYhtkmcZDTwFsn/EL7taqs2idMImNthWu3Mu6oNdrP7arh+t1W
- peDIVmeDC7Wpoh+ZV8X2Ydab4di0FykNkUk/SQXdJq2erIbHGO6pm5gvwSQNw89ZQBs+Qgso300
- sBL4iwULh/CvjMFbSgq5sx7EK0d8UbZBHlJGM+u+BEt8yX52YTpLqlEavzHHWcib0dzsNmWqrPg
- 6f4pEJ2FRL5E0QzspVP+fjxO6T8sTJVwmj/bjJGQCSEjs=
-X-Received: by 2002:a17:90b:1c05:b0:3b0:a511:fb75 with SMTP id
- 98e67ed59e1d1-3b1b0b5b90amr11349599a91.40.1794865628870; 
- Mon, 16 Nov 2026 13:47:08 -0800 (PST)
+ AL+hErF16oajnhTcozXPO+CeQ7kzSAiNped0Yjb1iNGxsy6TXzwvXm+ilQbFd0CXDZA10+lLkiM=@dpdk.org
+X-Gm-Message-State: APuU4Z9Rq5obwd9HSqNICJ9IU0GREx0plzuingW6hwFQN5ywYCTp4hwC
+ VS4n253/9y04Ywp6e+i0Age0k5mZ31n3rMvV2CLFxeLyzQqEEh/+Rxo5xEk1gTDQwY/P/sRBkr2
+ tB0Z7Wds+bKOJxTnbVQ71dlW//ZcWL5G3lqRJxnjiIBqvIn+uosOmk89jI2gTUmzvjchWC+O7II
+ 0eFp9Jb/NkztMh56GihWVNcK4a1eut4rsTzL0eNUlifCDHO/dugLtMUEf1VPf9qMOCTwseq5H4D
+ Ky/LQ==
+X-Gm-Gg: AZFdTZdqHjsSVbhDf0i+/p8fBD4b9j9y1NPffU82a3WigP+j+qL4HQQMUOKgI+I8lP+
+ x84bkL5KiSyjpD4Tx3Oq5p/rbxUiIeO8TfEYfFIu7rpfEGZnxnIbR4rs/cRpehnRuFJ/0/wAPk2
+ MdpJAN8TxdoMdfY2kKBv2mtUSbXtYZru9Xet49Zmh08QtzR6eQvnXFVi2D0sxpsVr0FBr1m256s
+ rqta8mR3TGTaeGAwrP27xaedqlFmwkBA3euNLRMt+Uu0wC8sssaCcVHj9QLWNZY1IjqrIPnmyTa
+ VIaFrP+caNcN11h+l7risFTmrlxY/el2BhkuT8FOJu/sJdD4Q3YrvBR3tGprAKdTJXE6cAcaZ1H
+ iDbzck6+Bsoj6oRJ8YpCC+6aY0m3CiW6Zg0vgtslhNdeqMKNxOcO/sZyg5TiV9IhA9wap2W0itP
+ DszfDgHYjDg6e2sh1+W8G0ysNf0QiLbq2kdXSIa+OTQgs=
+X-Received: by 2002:a17:90b:53c4:b0:3ac:b867:81df with SMTP id
+ 98e67ed59e1d1-3b1b0b531cemr12130096a91.39.1794866273063; 
+ Mon, 16 Nov 2026 13:57:53 -0800 (PST)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
  (address-144-49-247-28.dlp.protect.broadcom.com. [144.49.247.28])
  by smtp-relay.gmail.com with ESMTPS id
- 98e67ed59e1d1-3b3abeca517sm445250a91.8.2026.11.16.13.47.06
+ 98e67ed59e1d1-3b3ab9f98bdsm489880a91.0.2026.11.16.13.57.52
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 16 Nov 2026 13:47:08 -0800 (PST)
+ Mon, 16 Nov 2026 13:57:53 -0800 (PST)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-lj1-f197.google.com with SMTP id
- 38308e7fff4ca-3adfcaea19aso20228371fa.1
- for <dev@dpdk.org>; Mon, 16 Nov 2026 13:47:06 -0800 (PST)
+Received: by mail-lf1-f72.google.com with SMTP id
+ 2adb3069b0e04-5bff4099b52so605941e87.3
+ for <dev@dpdk.org>; Mon, 16 Nov 2026 13:57:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1794865625; x=1795470425; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1794866271; x=1795471071; darn=dpdk.org;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=zSeSIfIHI91aSqInAzldxvIVGD2PgwBjr5cAPES3WFk=;
- b=O9W8oFkv7tycpiFWfXeLnmpxrRKnJwrou0R6WxHwm/hSs3QUXG8eNu5z3ZIp53/3Aw
- dnH7zvEAyQpKzNP0DsR0NOG6RmVhEpbLqMu5+b5ADm1nZA92MjHQVssuyAH5lZjBEc1c
- pyszMO6m9mZAV/t7T6SnpuWie7rvih+8e6Srg=
+ :content-type; bh=fh+0jTfhGrsoEnOu3vJYvBTH9tkkJZDZsNqIHfUSYZ4=;
+ b=Ro8sGIrR5n0T0QN/upUfwq8sIkYtnkuTy9gexKGajEjkUo8gSBrRGGZ9RZEh3O13LY
+ /KJaUUJpyWkC0S6zqd6Mh+/sjvbiHLoREBe93dnPBP7B1gmKm0BV3iNMH6BgBk5PjI6B
+ 55M4ZA0S+bxpreHCF/R8vPIKTvrFmQovZbJFQ=
 X-Forwarded-Encrypted: i=1;
- AL+hErEbbuwSRGJIREVt7r2en3S6kaqRqm8E7KqcY++Ly1vkd80i27tkY6/APyssxX22Bv8+cbY=@dpdk.org
-X-Received: by 2002:ac2:4bc5:0:b0:5c1:4c12:8b7d with SMTP id
- 2adb3069b0e04-5c1707952d1mr4852847e87.29.1794865625410; 
- Mon, 16 Nov 2026 13:47:05 -0800 (PST)
-X-Received: by 2002:ac2:4bc5:0:b0:5c1:4c12:8b7d with SMTP id
- 2adb3069b0e04-5c1707952d1mr4852838e87.29.1794865624946; Mon, 16 Nov 2026
- 13:47:04 -0800 (PST)
+ AL+hErEh/t1nwHJkWEKXRd1OmoDTp/WAFg6PMfzHmbg3pwAV4H2E1tajTF+VlSlIH97Qp7QiK5c=@dpdk.org
+X-Received: by 2002:a05:6512:3a94:b0:5c1:5981:5a44 with SMTP id
+ 2adb3069b0e04-5c17077fda5mr4472649e87.10.1794866270806; 
+ Mon, 16 Nov 2026 13:57:50 -0800 (PST)
+X-Received: by 2002:a05:6512:3a94:b0:5c1:5981:5a44 with SMTP id
+ 2adb3069b0e04-5c17077fda5mr4472644e87.10.1794866270363; Mon, 16 Nov 2026
+ 13:57:50 -0800 (PST)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-References: <20261116073914.236781-1-Evgeny.Sokolov@infotecs.ru>
-In-Reply-To: <20261116073914.236781-1-Evgeny.Sokolov@infotecs.ru>
+References: <20261116073721.236658-1-Evgeny.Sokolov@infotecs.ru>
+In-Reply-To: <20261116073721.236658-1-Evgeny.Sokolov@infotecs.ru>
 From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Date: Mon, 16 Nov 2026 16:46:47 -0500
-X-Gm-Features: AclHuK8_Djzoko6whuZC7KgGGcj9x-ajsJODSPowKdjsCP4JeqI6UJGd7_yGIl0
-Message-ID: <CA+BST0=zQ3pQ0gR8Qq0kVK+3spoeUhD9J4o68jq5Q2Jf71F+dw@mail.gmail.com>
-Subject: Re: [PATCH] net/bnxt: check backing ethdev after creation
+Date: Mon, 16 Nov 2026 16:57:32 -0500
+X-Gm-Features: Aa3M54oHJ0Ahy7CWl2EPL1H1CxImUkn_vRsfbmQ6wGlp360zJlydqt05OdoATRo
+Message-ID: <CA+BST0kCGoBkbeqDpCOzVOCikY-zG3Z6VJndo24k1897sSnLNQ@mail.gmail.com>
+Subject: Re: [PATCH] From: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru> Date:
+ Mon,
+ 26 Oct 2026 20:39:23 +0300 Subject: [PATCH] net/bnxt: remove redundant lines
 To: Evgeny Sokolov <Evgeny.Sokolov@infotecs.ru>
-Cc: Ajit Khaparde <ajit.khaparde@broadcom.com>, dev@dpdk.org, stable@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>, 
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Ajit Khaparde <ajit.khaparde@broadcom.com>, dev@dpdk.org, stable@dpdk.org
 X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 Content-Type: multipart/signed; protocol="application/pkcs7-signature";
- micalg=sha-256; boundary="00000000000009816106606bb8a0"
+ micalg=sha-256; boundary="0000000000008332d606606bdea1"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -103,21 +107,22 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
---00000000000009816106606bb8a0
-Content-Type: multipart/alternative; boundary="000000000000feb8f006606bb7b3"
+--0000000000008332d606606bdea1
+Content-Type: multipart/alternative; boundary="00000000000076fdbb06606bde53"
 
---000000000000feb8f006606bb7b3
+--00000000000076fdbb06606bde53
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 16, 2026 at 2:39=E2=80=AFAM Evgeny Sokolov <Evgeny.Sokolov@info=
+On Mon, Nov 16, 2026 at 2:37=E2=80=AFAM Evgeny Sokolov <Evgeny.Sokolov@info=
 tecs.ru>
 wrote:
 
-> From: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
+> Remove the redundant lines
 >
-> Check whether the backing Ethernet device was successfully retrieved.
-> If the device is not found, return -ENODEV
+> The return value of the _mm256_permutevar8x32_epi32 function
+> stored in the info3_v varable is overwritten a line below
+> and can be safely removed.
 >
 > Found by InfoTeCS on behalf of Linux Verification Center (linuxtesting.or=
 g)
@@ -125,49 +130,48 @@ g)
 >
 > Signed-off-by: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
 > ---
->  drivers/net/bnxt/bnxt_ethdev.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  drivers/net/bnxt/bnxt_rxtx_vec_avx2.c | 3 ---
+>  1 file changed, 3 deletions(-)
 >
-> diff --git a/drivers/net/bnxt/bnxt_ethdev.c
-> b/drivers/net/bnxt/bnxt_ethdev.c
-> index 23edd94444..8dcf62f176 100644
-> --- a/drivers/net/bnxt/bnxt_ethdev.c
-> +++ b/drivers/net/bnxt/bnxt_ethdev.c
-> @@ -6994,6 +6994,9 @@ static int bnxt_pci_probe(struct rte_pci_driver
-> *pci_drv __rte_unused,
->                         return ret;
+> diff --git a/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
+> b/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
+> index 80074a56c4..07806f7357 100644
+> --- a/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
+> +++ b/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
+> @@ -570,9 +570,6 @@ crx_burst_vec_avx2(void *rx_queue, struct rte_mbuf
+> **rx_pkts, uint16_t nb_pkts)
+>                  * bits and count the number of set bits in order to
+> determine
+>                  * the number of valid descriptors.
+>                  */
+> -               const __m256i perm_msk =3D
+> -                               _mm256_set_epi32(7, 3, 6, 2, 5, 1, 4, 0);
+> -               info3_v =3D _mm256_permutevar8x32_epi32(errors_v2, perm_m=
+sk);
+>                 info3_v =3D _mm256_and_si256(errors_v2, info3_v_mask);
+>                 info3_v =3D _mm256_xor_si256(info3_v, valid_target);
 >
->                 backing_eth_dev =3D rte_eth_dev_allocated(pci_dev->
-> device.name);
-> +               if (backing_eth_dev =3D=3D NULL) {
-> +                       return -ENODEV;
-> +               }
->
-Either add a debug error message or remove the braces for the if condition.
-
->         }
->         PMD_DRV_LOG_LINE(DEBUG, "BNXT Port:%d pci probe",
->                     backing_eth_dev->data->port_id);
 > --
-> 2.30.2
+> 2.47.3
 >
->
+> This change is not relevant, this is already fixed in commit 242965acd785=
+.
+Update to latest dpdk release.
 
---000000000000feb8f006606bb7b3
+--00000000000076fdbb06606bde53
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 <div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
 mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Mon, Nov 16,=
- 2026 at 2:39=E2=80=AFAM Evgeny Sokolov &lt;<a href=3D"mailto:Evgeny.Sokolo=
+ 2026 at 2:37=E2=80=AFAM Evgeny Sokolov &lt;<a href=3D"mailto:Evgeny.Sokolo=
 v@infotecs.ru">Evgeny.Sokolov@infotecs.ru</a>&gt; wrote:<br></div><blockquo=
 te class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px =
-solid rgb(204,204,204);padding-left:1ex">From: Sokolov Evgeny &lt;<a href=
-=3D"mailto:Evgeny.Sokolov@infotecs.ru" target=3D"_blank">Evgeny.Sokolov@inf=
-otecs.ru</a>&gt;<br>
+solid rgb(204,204,204);padding-left:1ex">Remove the redundant lines<br>
 <br>
-Check whether the backing Ethernet device was successfully retrieved.<br>
-If the device is not found, return -ENODEV<br>
+The return value of the _mm256_permutevar8x32_epi32 function<br>
+stored in the info3_v varable is overwritten a line below<br>
+and can be safely removed.<br>
 <br>
 Found by InfoTeCS on behalf of Linux Verification Center (<a href=3D"http:/=
 /linuxtesting.org" rel=3D"noreferrer" target=3D"_blank">linuxtesting.org</a=
@@ -176,43 +180,41 @@ Found by InfoTeCS on behalf of Linux Verification Center (<a href=3D"http:/=
 Signed-off-by: Sokolov Evgeny &lt;<a href=3D"mailto:Evgeny.Sokolov@infotecs=
 .ru" target=3D"_blank">Evgeny.Sokolov@infotecs.ru</a>&gt;<br>
 ---<br>
-=C2=A0drivers/net/bnxt/bnxt_ethdev.c | 3 +++<br>
-=C2=A01 file changed, 3 insertions(+)<br>
+=C2=A0drivers/net/bnxt/bnxt_rxtx_vec_avx2.c | 3 ---<br>
+=C2=A01 file changed, 3 deletions(-)<br>
 <br>
-diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.=
-c<br>
-index 23edd94444..8dcf62f176 100644<br>
---- a/drivers/net/bnxt/bnxt_ethdev.c<br>
-+++ b/drivers/net/bnxt/bnxt_ethdev.c<br>
-@@ -6994,6 +6994,9 @@ static int bnxt_pci_probe(struct rte_pci_driver *pci_=
-drv __rte_unused,<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 return ret;<br>
+diff --git a/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c b/drivers/net/bnxt/bnxt_=
+rxtx_vec_avx2.c<br>
+index 80074a56c4..07806f7357 100644<br>
+--- a/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c<br>
++++ b/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c<br>
+@@ -570,9 +570,6 @@ crx_burst_vec_avx2(void *rx_queue, struct rte_mbuf **rx=
+_pkts, uint16_t nb_pkts)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* bits and co=
+unt the number of set bits in order to determine<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* the number =
+of valid descriptors.<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0*/<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0const __m256i perm_=
+msk =3D<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0_mm256_set_epi32(7, 3, 6, 2, 5, 1, 4,=
+ 0);<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0info3_v =3D _mm256_=
+permutevar8x32_epi32(errors_v2, perm_msk);<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 info3_v =3D _mm256_=
+and_si256(errors_v2, info3_v_mask);<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 info3_v =3D _mm256_=
+xor_si256(info3_v, valid_target);<br>
 <br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 backing_eth_dev =3D=
- rte_eth_dev_allocated(pci_dev-&gt;<a href=3D"http://device.name" rel=3D"no=
-referrer" target=3D"_blank">device.name</a>);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (backing_eth_dev=
- =3D=3D NULL) {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0return -ENODEV;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br></blockquote><=
-div>Either add a debug error message or remove the braces for the if condit=
-ion.=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0=
-px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 }<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 PMD_DRV_LOG_LINE(DEBUG, &quot;BNXT Port:%d pci =
-probe&quot;,<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 backi=
-ng_eth_dev-&gt;data-&gt;port_id);<br>
 -- <br>
-2.30.2<br>
-<br>
-</blockquote></div></div>
+2.47.3<br>
+<br></blockquote><div>This change is not relevant, this is already fixed in=
+ commit 242965acd785. Update to latest dpdk release.</div></div></div>
 
---000000000000feb8f006606bb7b3--
+--00000000000076fdbb06606bde53--
 
---00000000000009816106606bb8a0
+--0000000000008332d606606bdea1
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -306,13 +308,13 @@ W8uDQvdvRdxXg4lkBLyifOudYTP3fULjpD6RWQPFlUPlh8F5QQEdKlfKW94rGD+O0u4sWi/msZw0
 6VTvZ6C2BbUMJAo7coFff48NkW2xfICC8Kn1eU1eiWCrPSAls8STm9q25wOQMYICVzCCAlMCAQEw
 YjBSMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEoMCYGA1UEAxMfR2xv
 YmFsU2lnbiBHQ0MgUjYgU01JTUUgQ0EgMjAyMwIMTxuM8PbwRQIs9uJeMA0GCWCGSAFlAwQCAQUA
-oIHHMC8GCSqGSIb3DQEJBDEiBCC2s7nxEOl9/HnTwqA9GFOSosqjC2z73nQb6l/+AaHHYTAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjExMTYyMTQ3MDVaMFwGCSqG
+oIHHMC8GCSqGSIb3DQEJBDEiBCDj9EVUWdxiMtPO9qN5SwweZY3wtmgynKi/xrSu2alZeTAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjExMTYyMTU3NTFaMFwGCSqG
 SIb3DQEJDzFPME0wCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZI
-hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQC2ekM+TIbt
-B4/CPcU3LgUtlmml94ErBwEaIJKWtTXApiUWhKQOCY2OuYl9iCZT8nVlpBxqLEvOzve1jVCrVs6e
-/lz1LDNHEluTTG6dotaQs8wJo1bwRXvYZ4VEod9v7tsPoqYH+AQU3d/Xct/QMigxYZXgOVR2/msq
-CMwyRA3YStFs9xiGN/26MydVS6h5+xkO66AhXUnqcLFgfAbbq+pdsTlm+++86NtVFOM4Ru5keE2t
-ckLcKwJkH8ExK1N8wBfm8f3JrA6K9IHSupBlx0i4LecJZGdcoroHxfgEVzeDNHxfN9MaSMvRcF2i
-J+RvAT/C4uOqfOaxnLdrIj8SGaQO
---00000000000009816106606bb8a0--
+hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBzzBx+l58m
+IAN7NJe3fB1JHbEfioQCCVBv8jnP+a0PLfe/AhvrXeGLHuzOcOLrjxuRETKDwvHOCkodlXG/HCL4
+ext5u1KoaS5zri9wwQbJ1NMac15FvKr0Ojxw3OCRra82Uz5fwLXBIB7rTquK2FgpwKwaVWDqT9Uz
+wHi00a6Fqoe21+4jyWOL1/U+WyedmTPnU4sAWyOG6V1mxuUDQoITo/xGL777mbO7JWKtV4C3Q98u
+KE2QITRdOv/9EQBNFLqzzwm0QgSSdpksAcJGmu0oA50Uo/BTZul/9kzUeCvbigroduCYG5GvsIXL
+35ripuDvmIjZYnozSpjgMOmdMEam
+--0000000000008332d606606bdea1--
