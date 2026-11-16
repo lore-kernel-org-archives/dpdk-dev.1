@@ -2,38 +2,40 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A59606A31C
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Nov 2026 07:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5DEB606A31C
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Nov 2026 07:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.a=rsa-sha256 header.s=mx header.b=jmesfpv8
+	dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.a=rsa-sha256 header.s=mx header.b=Di4Qw0VI
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 87691402A4;
-	Mon, 16 Nov 2026 08:38:32 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id B9613402A4;
+	Mon, 16 Nov 2026 08:38:55 +0100 (CET)
 Received: from mx0.infotecs.ru (mx0.infotecs.ru [91.244.183.115])
- by mails.dpdk.org (Postfix) with ESMTPS id C7F2740150;
- Mon, 16 Nov 2026 08:38:30 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru B80B02C0BAA
+ by mails.dpdk.org (Postfix) with ESMTPS id 99A0440294;
+ Mon, 16 Nov 2026 08:38:53 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru BA3482C0BA6
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infotecs.ru; s=mx;
- t=1794814710; bh=jq3R1BoPxzfHyLxVJ5t5OTm23Hjh5kLxgXl+MDtgNjQ=;
+ t=1794814733; bh=+u98GFDffSfjvq9qYliKvB96lBiNus9VMizWaFjcBwM=;
  h=From:To:CC:Subject:Date:From;
- b=jmesfpv8Dmhk+dfBWdL5YccVdTF/aS5cqycgDx1i785hAQty5DYp6aUi0ogpV/IKz
- WBAJRJDylzS6lm0IOdjYsWiNO5KEfcqqfc6JnPxev8DD8mRywXWUv2kFwCXWdAjxPa
- gpu4P05ke02bZXrFCMo8/eFbyOsmRIfO6W/JFbu0=
+ b=Di4Qw0VI3Z9rMmqC3QVCrguk+993w0qeGlxq46HRjwGWCCGRGanSluUrgTVVmjJop
+ lpHvINOq0ApULi6rCiLg++Uho2NZkll0ptzJStPB3o3ApqxGVZEqcXYgpEZ7tT2HgF
+ gkWvK97Qu1uHTjDq2Jmgs8xwPSVAOIlwwh1ZmLNE=
 Received: from mx0.infotecs-nt (localhost [127.0.0.1])
- by mx0.infotecs.ru (Postfix) with ESMTP id B80B02C0BAA;
- Mon, 16 Nov 2026 10:38:29 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs-nt 7EE052C0B99
+ by mx0.infotecs.ru (Postfix) with ESMTP id BA3482C0BA6;
+ Mon, 16 Nov 2026 10:38:52 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs-nt 70BFF2C0B8E
 Received: from msk-exch-02.infotecs-nt (msk-exch-02.infotecs-nt [10.0.7.192])
- by mx0.infotecs-nt (Postfix) with ESMTP id 7EE052C0B99;
- Mon, 16 Nov 2026 10:38:29 +0300 (MSK)
+ by mx0.infotecs-nt (Postfix) with ESMTP id 70BFF2C0B8E;
+ Mon, 16 Nov 2026 10:38:52 +0300 (MSK)
 From: Evgeny Sokolov <Evgeny.Sokolov@infotecs.ru>
-To: Konstantin Ananyev <konstantin.ananyev@huawei.com>, Marat Khalili
- <qm2k21@gmail.com>
+To: Kishore Padmanabha <kishore.padmanabha@broadcom.com>, Ajit Khaparde
+ <ajit.khaparde@broadcom.com>, Shuanglin Wang <shuanglin.wang@broadcom.com>,
+ Manish Kurup <manish.kurup@broadcom.com>, Shahaji Bhosle
+ <shahaji.bhosle@broadcom.com>, Randy Schacher <stuart.schacher@broadcom.com>
 CC: <dev@dpdk.org>, <stable@dpdk.org>, Sokolov Evgeny
  <Evgeny.Sokolov@infotecs.ru>
-Subject: [PATCH] bpf: remove redundant self-assignment in eval_divmod
-Date: Mon, 16 Nov 2026 07:38:27 +0000
-Message-ID: <20261116073827.236699-1-Evgeny.Sokolov@infotecs.ru>
+Subject: [PATCH] net/bnxt: add debug log for ulp_regfile_write failure
+Date: Mon, 16 Nov 2026 07:38:49 +0000
+Message-ID: <20261116073850.236738-1-Evgeny.Sokolov@infotecs.ru>
 X-Mailer: git-send-email 2.47.3
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
@@ -69,30 +71,41 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
 
-Remove the redundant self-assignment of rd->u.max in eval_divmod().
+The return value of ulp_regfile_write() is not checked in this path,
+but failures may indicate issues when updating the EM insertion
+status in the regfile.
 
-The assignment has no effect and can be safely removed.
+Add a debug log to help diagnose potential failures during flow
+processing.
 
 Found by InfoTeCS on behalf of Linux Verification Center (linuxtesting.org) with SVACE.
 
+Fixes: dd0191d5e70 ("net/bnxt/tf_ulp: support Thor2 ULP layer")
+Cc: stable@dpdk.org
+
 Signed-off-by: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
 ---
- lib/bpf/bpf_validate.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/lib/bpf/bpf_validate.c b/lib/bpf/bpf_validate.c
-index 8bd8c10177..000d218cb4 100644
---- a/lib/bpf/bpf_validate.c
-+++ b/lib/bpf/bpf_validate.c
-@@ -958,8 +958,6 @@ eval_divmod(uint32_t op, struct bpf_reg_val *rd, struct bpf_reg_val *rs, uint64_
- 	} else {
- 		if (op == BPF_MOD)
- 			rd->u.max = RTE_MIN(rd->u.max, rs->u.max - 1);
--		else
--			rd->u.max = rd->u.max;
- 		rd->u.min = 0;
- 	}
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c b/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
+index 2d89f10d5e..ec6ddaf6d6 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
+@@ -603,8 +603,11 @@ ulp_mapper_tfc_em_tbl_process(struct bnxt_ulp_mapper_parms *parms,
+ 				BNXT_DRV_DBG(DEBUG,
+ 					     "Fail to insert EM, shall add to wc\n");
+ 			}
+-			ulp_regfile_write(parms->regfile, tbl->tbl_operand,
+-					  rte_cpu_to_be_64(val));
++			if (unlikely(ulp_regfile_write(parms->regfile, tbl->tbl_operand,
++						       rte_cpu_to_be_64(val)))) {
++				BNXT_DRV_DBG(DEBUG, "Regfile[%d] write failed.\n",
++					     tbl->tbl_operand);
++			}
+ 		}
  
+ 		if (rc && rc != -E2BIG)
 -- 
 2.30.2
 
