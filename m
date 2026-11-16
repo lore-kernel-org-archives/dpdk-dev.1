@@ -2,41 +2,38 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E01606A31C
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Nov 2026 07:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A59606A31C
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Nov 2026 07:38:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=infotecs.ru header.i=@infotecs.ru header.a=rsa-sha256 header.s=mx header.b=QwwVW4Kj
+	dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.a=rsa-sha256 header.s=mx header.b=jmesfpv8
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5542340296;
-	Mon, 16 Nov 2026 08:37:27 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 87691402A4;
+	Mon, 16 Nov 2026 08:38:32 +0100 (CET)
 Received: from mx0.infotecs.ru (mx0.infotecs.ru [91.244.183.115])
- by mails.dpdk.org (Postfix) with ESMTPS id B5F4E400EF;
- Mon, 16 Nov 2026 08:37:25 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru 91FCD2C0BAA
+ by mails.dpdk.org (Postfix) with ESMTPS id C7F2740150;
+ Mon, 16 Nov 2026 08:38:30 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru B80B02C0BAA
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infotecs.ru; s=mx;
- t=1794814644; bh=Bk2JQCpoubN9dLG9MafAmQ3FYsifb+TiILvMfhJxbio=;
+ t=1794814710; bh=jq3R1BoPxzfHyLxVJ5t5OTm23Hjh5kLxgXl+MDtgNjQ=;
  h=From:To:CC:Subject:Date:From;
- b=QwwVW4KjE6T+0orguyZwY7qN3PDVyS2LGcfsPTvFfTSQtN1WLT3N/83VzgrGFllTJ
- 9PYZoyW6TzAnrbFzR1AYXHqKHEEjzOzFiyn73expoj3c8wPGAm+HV4x3bP4NSnTXUG
- v0s4/vpN0gO5PfG92r0+V6zu8o71KUVisdMBwjhw=
+ b=jmesfpv8Dmhk+dfBWdL5YccVdTF/aS5cqycgDx1i785hAQty5DYp6aUi0ogpV/IKz
+ WBAJRJDylzS6lm0IOdjYsWiNO5KEfcqqfc6JnPxev8DD8mRywXWUv2kFwCXWdAjxPa
+ gpu4P05ke02bZXrFCMo8/eFbyOsmRIfO6W/JFbu0=
 Received: from mx0.infotecs-nt (localhost [127.0.0.1])
- by mx0.infotecs.ru (Postfix) with ESMTP id 91FCD2C0BAA;
- Mon, 16 Nov 2026 10:37:24 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs-nt 4DB4D2C0B99
+ by mx0.infotecs.ru (Postfix) with ESMTP id B80B02C0BAA;
+ Mon, 16 Nov 2026 10:38:29 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs-nt 7EE052C0B99
 Received: from msk-exch-02.infotecs-nt (msk-exch-02.infotecs-nt [10.0.7.192])
- by mx0.infotecs-nt (Postfix) with ESMTP id 4DB4D2C0B99;
- Mon, 16 Nov 2026 10:37:24 +0300 (MSK)
+ by mx0.infotecs-nt (Postfix) with ESMTP id 7EE052C0B99;
+ Mon, 16 Nov 2026 10:38:29 +0300 (MSK)
 From: Evgeny Sokolov <Evgeny.Sokolov@infotecs.ru>
-To: Bruce Richardson <bruce.richardson@intel.com>, Konstantin Ananyev
- <konstantin.ananyev@huawei.com>, Kishore Padmanabha
- <kishore.padmanabha@broadcom.com>, Ajit Khaparde <ajit.khaparde@broadcom.com>
-CC: <dev@dpdk.org>, <stable@dpdk.org>, Evgeny Sokolov
+To: Konstantin Ananyev <konstantin.ananyev@huawei.com>, Marat Khalili
+ <qm2k21@gmail.com>
+CC: <dev@dpdk.org>, <stable@dpdk.org>, Sokolov Evgeny
  <Evgeny.Sokolov@infotecs.ru>
-Subject: [PATCH] From: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru> Date: Mon,
- 26 Oct 2026 20:39:23 +0300 Subject: [PATCH] net/bnxt: remove
- redundant lines
-Date: Mon, 16 Nov 2026 07:37:21 +0000
-Message-ID: <20261116073721.236658-1-Evgeny.Sokolov@infotecs.ru>
+Subject: [PATCH] bpf: remove redundant self-assignment in eval_divmod
+Date: Mon, 16 Nov 2026 07:38:27 +0000
+Message-ID: <20261116073827.236699-1-Evgeny.Sokolov@infotecs.ru>
 X-Mailer: git-send-email 2.47.3
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
@@ -70,33 +67,32 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Remove the redundant lines
+From: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
 
-The return value of the _mm256_permutevar8x32_epi32 function
-stored in the info3_v varable is overwritten a line below
-and can be safely removed.
+Remove the redundant self-assignment of rd->u.max in eval_divmod().
+
+The assignment has no effect and can be safely removed.
 
 Found by InfoTeCS on behalf of Linux Verification Center (linuxtesting.org) with SVACE.
 
 Signed-off-by: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
 ---
- drivers/net/bnxt/bnxt_rxtx_vec_avx2.c | 3 ---
- 1 file changed, 3 deletions(-)
+ lib/bpf/bpf_validate.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c b/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
-index 80074a56c4..07806f7357 100644
---- a/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
-+++ b/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
-@@ -570,9 +570,6 @@ crx_burst_vec_avx2(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
- 		 * bits and count the number of set bits in order to determine
- 		 * the number of valid descriptors.
- 		 */
--		const __m256i perm_msk =
--				_mm256_set_epi32(7, 3, 6, 2, 5, 1, 4, 0);
--		info3_v = _mm256_permutevar8x32_epi32(errors_v2, perm_msk);
- 		info3_v = _mm256_and_si256(errors_v2, info3_v_mask);
- 		info3_v = _mm256_xor_si256(info3_v, valid_target);
+diff --git a/lib/bpf/bpf_validate.c b/lib/bpf/bpf_validate.c
+index 8bd8c10177..000d218cb4 100644
+--- a/lib/bpf/bpf_validate.c
++++ b/lib/bpf/bpf_validate.c
+@@ -958,8 +958,6 @@ eval_divmod(uint32_t op, struct bpf_reg_val *rd, struct bpf_reg_val *rs, uint64_
+ 	} else {
+ 		if (op == BPF_MOD)
+ 			rd->u.max = RTE_MIN(rd->u.max, rs->u.max - 1);
+-		else
+-			rd->u.max = rd->u.max;
+ 		rd->u.min = 0;
+ 	}
  
 -- 
-2.47.3
+2.30.2
 
