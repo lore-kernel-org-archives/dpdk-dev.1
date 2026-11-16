@@ -2,88 +2,77 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9A3606A331
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Nov 2026 18:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2FC7606A32C
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Nov 2026 18:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=EQPWDiz7
+	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=WWfjAcfS
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1206E4026F;
-	Mon, 16 Nov 2026 19:37:17 +0100 (CET)
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com
- [209.85.215.174])
- by mails.dpdk.org (Postfix) with ESMTPS id 7D5A540150
- for <dev@dpdk.org>; Mon, 16 Nov 2026 19:37:15 +0100 (CET)
-Received: by mail-pg1-f174.google.com with SMTP id
- 41be03b00d2f7-cdb2e0062bbso1631387a12.1
- for <dev@dpdk.org>; Mon, 16 Nov 2026 10:37:15 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id EEB934026F;
+	Mon, 16 Nov 2026 19:45:01 +0100 (CET)
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com
+ [209.85.214.173])
+ by mails.dpdk.org (Postfix) with ESMTPS id 8F4A240150
+ for <dev@dpdk.org>; Mon, 16 Nov 2026 19:45:00 +0100 (CET)
+Received: by mail-pl1-f173.google.com with SMTP id
+ d9443c01a7336-2efc5a60bd6so4585715ad.3
+ for <dev@dpdk.org>; Mon, 16 Nov 2026 10:45:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1794854234;
- x=1795459034; darn=dpdk.org; 
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1794854699;
+ x=1795459499; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=envlu4D2mmkuehx/6u6a5o56iPJAuXkArLepCt3vUg0=;
- b=EQPWDiz7E26bJoAjYHefaoZPWZVDECF38n30WC4NejdlNL6lQKYeB8u+kBXArgYET6
- ZVRij5NccwfS/+hSOSMERYprDZDDaT1xD7ZGJcDgw4QJZk/m3brfRXAPSIYslwPcDzd4
- Cn7UyRvCbs2pirooikr6CJkklR+qVCEVZIm5xpPReFCACYuXtPNcUNkIr6dOLAaUGDe6
- mS60VPuKLBPEHNvVsXdrqXqlaMmG2PvKhdZQVsxI/mSkX6rAfFtBAuomP28HPSVhRgZU
- ICG1ZOvNof3Ohvt0hxfl1Ra/S+cIEXoydeMIaFfHV6fcv9ARWyxnjqUTVo4KR+Y3/QgP
- sG0g==
+ bh=fFsaFEW8tdX6OKTDrW3B2Sx0TVzd9sOwa6HgXxuZ4Pg=;
+ b=WWfjAcfSQ4EdHgYHLXkg6wsC7/sKrRCceMx4aDr2pUnWdqAdKkZjyCtCZ+U9duE4Tt
+ 1ngKMuWZeTqT4PpyA9zfTdg17MAn2F2UjxJgRWqa5Z+ugqlnmO4nuy1i19f5SnKL0FLh
+ Vz747gSfDyPGZ8dvEkw+LzLRdLbEa55nDvlL8k0jRzhtbenQdLdeIkmLw3DxsmWJLfH9
+ nvT3Y/lMvESHEE8NptwdeODseYFki9/jiapjP0bMCClN4fJMezMNMBv9lnBkl1EQx+nh
+ Y5hCR7u4iDW5qJ60SvQf3pJNAqa5N6NxSRpcjmPaRyL7aUPukq3thZl6L3HJinSDnqHN
+ 71gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794854234; x=1795459034;
+ d=1e100.net; s=20260707; t=1794854699; x=1795459499;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=envlu4D2mmkuehx/6u6a5o56iPJAuXkArLepCt3vUg0=;
- b=HCw5SdpnHZV4d7o8Bi/fObiTv63WBPbYhkSrd7164BniR1wixw+SHYeLDTONumFzhc
- rd6zM2xC8Ffx1frSDUu9CsMKhxKE9H81Vu5j+sSnbTcMULCtG9mfly1uBjjSg80Hf3d0
- vh2a7cBqgerjk8TCBFMLuUEd10yK+FIxXQKFXdIiEkNPRrSrMKQ+EqNpE7FeFXiufE/a
- 3eavXDVA0WqsvZVREnP2iAnnXb+ubVcWqOJDXquklcz/1fJuJy9JcH92KzJFgDklz3ee
- a82nlS3fcBMBLXJuZYD/V/qf52uPMuQuIwMzSgCK6hE1lsm5u4GNPbi2to+10U4z8K5g
- vofQ==
-X-Gm-Message-State: APuU4Z/MwQwXmSLFZCXHIcc3Z+AAIXhMQG2/uFJRaLKYc3Gr8HtpfW6z
- h+Cx4cLu6vnMg6ep7Tfy2LtYCYvjb6dsp+DgJcMzPLFCMfo0SjnSuS5oZ9uGOI25gxlLHwlsztH
- zRoeysm4=
-X-Gm-Gg: AZFdTZcNERmfEx86ZfwUt7mrvWf5vkFxCCYIOcJz0lK+PrFah8/LRceoyDOmBao0ZhL
- PKrNfMISeQQZ/yfYyYUQQLeKu2kP2qhXd6nYUkr2H5/qG5V1NyXveHrBuqB/a/nAWHReYJvm2+L
- N5H3vt+qeVnFu/UY5arD0ubjO3yOx2ili/+qrci66EsZM0r1VEukhf2yvRCAPIfpWzJAZER2yvz
- XCDc3W0XpFoYNhpBSRlQegn30gNY2o82lp3YIDBeXfJX78d4vLF7Ij7FXD/Uy+avqF53dbwPMGl
- OqGphbgiD5I6xVRgPKKsDXsq6audpqQIpr9qLIyy7EQ1MmMrDYVQNlTxmBFNppq32tPTPYLobNR
- Dr+ty48f0/E6laMdxipP+Jj/CFLP1GQP4uxCjuZJP/bB5mJrAk4qlx3g03420hpsCZG9W569gsO
- 1Y0uJN9PRK+IpuPEDoSQWRvJHnU85OfUKdl3q2ZyGZNYy7/O3bV0H43AGzcbN5xfj+j9ZyKpjnX
- 5VBkHpov8hklacNV60d60oUve9rkSpROMUaZoAxsUmEa3diJfzdXQF6ykmprZYP/a0XhQDABl7X
- rfweyzrSJWeM2X1iplIIDPN7lrKtvNL0ANzas30eVvZkmgbfRHEjxX9/cyilW6s5fMwgq6QfF8w
+ bh=fFsaFEW8tdX6OKTDrW3B2Sx0TVzd9sOwa6HgXxuZ4Pg=;
+ b=VQCPkUOhSXHubXY/Y+euF0n8pzA6A+/+c8XkhcjcLEnvNu2CLIrsmojFia3YphSEez
+ 1H97k9BhV5+Il3A/pBqggwB64JYUwqPI+BfBQoBILUCi8NIlagSDhOAtkX4BdOPTy3bt
+ 07jbp7ygFy5r5syfyOfM7WKOZhUZ2aDAmOzNgUUi278D0V5DgDFrFhuVdU7ha2PUzn3v
+ zEAllWFEG6Jz1/IKfd+JrrYUFH5ZMwYqIHO7U03QmEE1iixECgwm0DSZTk9vNaMBazck
+ v3siVoS+Hp5R1mf8ggFvdjUu1uwrzgoLjVFAaIhluC7HLWeT7HuiR/BXP2gdxmBaVzxl
+ VXsw==
+X-Gm-Message-State: APuU4Z9L5Qg0ALJQgqPuwhcKlRzgtio04t13Tb4R9lZf2AhjzszVcQWD
+ 5/aKEbe6sdztKARAvpELCZ5gT27vQw8Z8ZhS205tQChOyxWN3BQPOR3mOXu3lxcGA6o=
+X-Gm-Gg: AZFdTZc291U4VLhsmioHac7UtGXvEhxatFyxX2NQQMEK1MS0vu3pL+rCf2mnmfpErnb
+ O/4W7zLWIFbOiFkPOfwfgGyUDE6FC2tbqiMbjBze4zB7Mk3ut+dAjOSdXjemkww0xwR5qxKwLc2
+ weXzGt1Vpv5WQewz1VgA4sHRBB6n+nL4JFkbGUaEbQ/tQs3Baph14XYs5MLYpCVE4+pywsVbN4o
+ 3599FWQ779SorU064gKjc1lLqWlVGx2G1hcSGsrzt5tQklhAmmnwTbDkwyxxaE4d0xK4TpKU2zf
+ ruAmfWqHzy/XrUUaNKS7d6RW20045fIEk5yidt1sH+AYn9V7BOOUvS7KvDUTzY3nAjt1e2jV6ow
+ 6wbWfX6xQXktIMsrr4BsR9xlLQEqGZnkUFLGACE/DNozSwEjbQngdvZvX57N7A1YrEstdpDP0Tb
+ Q7nsOyd+2gTQJrln2QWIV8c9kZ/yLO6q44FWH3WZrWbzBlHair4dcvxhfPLykX8uzEFErPw1yPh
+ FAY4ilbGrkLhk8TE6TZau2BX+e42Po4rgx/Gxag/2W/KB71twk7WYZ1ug7cGsH1fj2fhiOvLyQ7
+ ZzI7LQVb/j+hXnWQvFOuTadochYHuZye+Ny0u6TEQkG+BinCUxljix+6kp1oH4+rXwxh7lBMYA=
  =
-X-Received: by 2002:a17:90a:e54d:b0:3b3:a74d:f848 with SMTP id
- 98e67ed59e1d1-3b3a74df977mr564795a91.15.1794854233710; 
- Mon, 16 Nov 2026 10:37:13 -0800 (PST)
+X-Received: by 2002:a17:902:f78b:b0:2e6:943:39df with SMTP id
+ d9443c01a7336-2ee0dad0665mr111258975ad.25.1794854698779; 
+ Mon, 16 Nov 2026 10:44:58 -0800 (PST)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3b3abd068e2sm420884a91.6.2026.11.16.10.37.12
+ d9443c01a7336-2efd7a3c821sm3190515ad.37.2026.11.16.10.44.58
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 16 Nov 2026 10:37:13 -0800 (PST)
-Date: Mon, 16 Nov 2026 10:37:11 -0800
+ Mon, 16 Nov 2026 10:44:58 -0800 (PST)
+Date: Mon, 16 Nov 2026 10:44:56 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Reshma Pattan <reshma.pattan@intel.com>, Aman Singh
- <aman.deep.singh@intel.com>, Naga Harish K S V
- <s.v.naga.harish.k@intel.com>, Sriram Yagnaraman
- <sriram.yagnaraman@ericsson.com>, Jakub Grajciar <jgrajcia@cisco.com>,
- Bruce Richardson <bruce.richardson@intel.com>, Kishore Padmanabha
- <kishore.padmanabha@broadcom.com>, Ajit Khaparde
- <ajit.khaparde@broadcom.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Kiran Kumar K <kirankumark@marvell.com>, Sunil Kumar Kori
- <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>, Harman Kalra
- <hkalra@marvell.com>, Anatoly Burakov <anatoly.burakov@intel.com>, Cristian
- Dumitrescu <cristian.dumitrescu@intel.com>, Thomas Monjalon
- <thomas@monjalon.net>, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: Re: [PATCH v5] ethdev: add buffer size parameter to
- rte_eth_dev_get_name_by_port()
-Message-ID: <20261116103711.45e7d6e5@phoenix.local>
-In-Reply-To: <20261115213640.1037602-1-stephen@networkplumber.org>
-References: <20260409013658.965613-1-stephen@networkplumber.org>
- <20261115213640.1037602-1-stephen@networkplumber.org>
+To: Mujahed Mohammed <mballas@nvidia.com>
+Cc: <dev@dpdk.org>, <stable@dpdk.org>, Thomas Monjalon
+ <thomas@monjalon.net>, Aman Singh <aman.deep.singh@intel.com>, "Viacheslav
+ Ovsiienko" <viacheslavo@nvidia.com>
+Subject: Re: [PATCH v2] app/testpmd: avoid mbuf pool memzone name collision
+Message-ID: <20261116104456.1092a4c7@phoenix.local>
+In-Reply-To: <20261116112556.535445-1-mballas@nvidia.com>
+References: <LV3PR12MB914444BAE4DA3B85B4179A4AD47D2@LV3PR12MB9144.namprd12.prod.outlook.com>
+ <20261116112556.535445-1-mballas@nvidia.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -104,24 +93,41 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Sun, 15 Nov 2026 13:36:21 -0800
-Stephen Hemminger <stephen@networkplumber.org> wrote:
+On Mon, 16 Nov 2026 13:25:53 +0200
+Mujahed Mohammed <mballas@nvidia.com> wrote:
 
-> rte_eth_dev_get_name_by_port() uses strcpy() into a caller-provided
-> buffer with no bounds checking. A mistaken caller that supplies a
-> buffer smaller than RTE_ETH_NAME_MAX_LEN can overflow the buffer.
+> Additional mbuf pools append a numeric size index to the base pool
+> name. Mempool backing chunks also append a numeric chunk index. If
+> the base pool needs multiple chunks, its chunk name can therefore
+> match the metadata memzone name of an additional pool.
 > 
-> Add a size parameter and replace strcpy() with strlcpy(), returning
-> -ERANGE if the name is truncated. The copy is now performed under
-> the ethdev shared data lock so that the name cannot be mutated by
-> another process between reading and copying.
+> Add an s marker before additional pool size indexes to keep the two
+> namespaces distinct while retaining the original index-zero pool
+> name.
 > 
-> Update all in-tree callers to pass the size of the buffer
-> and add checks for return value.
+> Fixes: 26cbb4191e91 ("app/testpmd: add multiple pools per core creation")
 > 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Mujahed Mohammed <mballas@nvidia.com>
 > ---
 
-I think this should go into 26.11 just because it is easier to do
-API change in LTS version rather than having to do function versioning.
-If not will resend with function versioning for 27.03
+Looks ok, but I like the AI suggestion to fix it in mempoll code
+not just in testpmd.
+
+---
+
+The collision is not testpmd specific. rte_mempool_populate_default()
+names chunks MP_<name>_<id>, which shares a namespace with the pool
+metadata memzone MP_<name>. Any application with pools "foo" and
+"foo_1" can hit this once "foo" spans more than one chunk.
+
+Please fix it in lib/mempool instead, e.g. use a distinct prefix of
+the same length for chunk memzones ("MC_%s_%u"). Nothing looks up
+chunk memzones by name, and the name length budget is unchanged.
+
+Also please add the reproduction (command line and memory setup that
+forces multiple chunks) to the commit message.
+
+Minor: braces around the else body if a comment is added there, and
+no blank line between Fixes: and Cc: stable.
