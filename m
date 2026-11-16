@@ -2,39 +2,40 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C251C606A323
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Nov 2026 14:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FF9606A33F
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Nov 2026 14:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=foss.arm.com header.i=@foss.arm.com header.a=rsa-sha256 header.s=main header.b=mCXc/A+r
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=foss.arm.com header.i=@foss.arm.com header.a=rsa-sha256 header.s=main header.b=GNnNVfBg
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 214D140294;
-	Mon, 16 Nov 2026 15:29:10 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 153E24026F;
+	Mon, 16 Nov 2026 15:38:05 +0100 (CET)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id DCD5A40150;
- Mon, 16 Nov 2026 15:29:08 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 94AAA40150;
+ Mon, 16 Nov 2026 15:38:03 +0100 (CET)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 32EB61713;
- Mon, 16 Nov 2026 06:29:05 -0800 (PST)
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F12181713;
+ Mon, 16 Nov 2026 06:37:59 -0800 (PST)
 Received: from KDFJ2LQKPJ.cambridge.arm.com (KDFJ2LQKPJ.cambridge.arm.com
  [10.2.197.124])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0CEFF3F763;
- Mon, 16 Nov 2026 06:29:06 -0800 (PST)
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B42313F763;
+ Mon, 16 Nov 2026 06:38:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=foss.arm.com; s=main;
- t=1794839348; bh=2mMKdumNAqK83U80xJ0wIcsqOsJ78O4YeY28jmFQLNY=;
+ t=1794839882; bh=xg5G2R/Pd/qVukUAXtkHjioptD8MMV3mSmJTMTVz9YU=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=mCXc/A+rHAEZvwmGVyNplIOZrHWeNx4IaP7CMYbaNfGrCm2KXxBPha/SFRBfjJC7Y
- XFlcZJBTnz9VkfOzwo8VOCJM03Cqr3dMJKffZ/Zohjs3qHXjdCqZGpmYxwcFa0hzOW
- s8wfMOQCnTws5cw1RUwuEoUAUYv+I49e6V0d0Bb4=
+ b=GNnNVfBgWjq+nJy2fTMTGtxdonE/iaBDAoLKwhK/7L+Yk8QKi3G84IQk0+arB05Fy
+ zYevzOzN8iu+8Q40gWSSC3qve/JMADlXOB2St70YGrX1xQvB7ZM01SttfoT2TpnBxe
+ hXgpjMOm0lAxbN8vePb/d6ndhrJ27azM6w6vVDf0=
 From: Jack Bond-Preston <jack.bond-preston@foss.arm.com>
-To: Bruce Richardson <bruce.richardson@intel.com>,
- Ferruh Yigit <ferruh.yigit@amd.com>,
- =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>
-Cc: dev@dpdk.org, Jack Bond-Preston <jack.bond-preston@arm.com>,
- stable@dpdk.org, Mark Bulatov <ms.bulatov7@gmail.com>
-Subject: [PATCH v2] bitops: document max input value for rte_align[32,64]pow2
-Date: Mon, 16 Nov 2026 14:27:58 +0000
-Message-ID: <20261116142759.48440-1-jack.bond-preston@foss.arm.com>
+To: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>,
+ Ferruh Yigit <ferruh.yigit@amd.com>
+Cc: dev@dpdk.org,
+	stable@dpdk.org,
+	Mark Bulatov <ms.bulatov7@gmail.com>
+Subject: [PATCH v3] bitops: document max input value for rte_align[32,64]pow2
+Date: Mon, 16 Nov 2026 14:37:59 +0000
+Message-ID: <20261116143759.51525-1-jack.bond-preston@foss.arm.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20261113141307.4727-1-ms.bulatov7@gmail.com>
 References: <20261113141307.4727-1-ms.bulatov7@gmail.com>
@@ -58,8 +59,6 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-From: Jack Bond-Preston <jack.bond-preston@arm.com>
-
 rte_align32pow2 and rte_align62pow2 will overflow and return incorrect
 values for input values exceeding 1<<31 and 1<<63, respectively. There
 is no way to return a valid result here: the next power of two above
@@ -71,13 +70,19 @@ not be provided to these functions. Additionally, document an existing
 edge case of the implementation: when the input is 0, it returns 0 (not
 a power of 2).
 
-Fixes: 7253e3d2a5 ("bitops: move bit count functions")
+Fixes: 7253e3d2a5b6 ("bitops: move bit count functions")
 Cc: stable@dpdk.org
 
 Reported-by: Mark Bulatov <ms.bulatov7@gmail.com>
 Signed-off-by: Jack Bond-Preston <jack.bond-preston@foss.arm.com>
 Acked-by: Morten Brørup <mb@smartsharesystems.com>
 ---
+v3:
+* fixed wrong email and too short Fixes: commit hash
+
+v2:
+* document the limitation instead of avoiding the overflow
+
  lib/eal/include/rte_bitops.h | 22 ++++++++++++++++++----
  1 file changed, 18 insertions(+), 4 deletions(-)
 
@@ -125,6 +130,6 @@ index 45255b68aa..eb404a3dd4 100644
   */
  static inline uint64_t
  rte_align64pow2(uint64_t v)
--- 
+--
 2.54.0 (Apple Git-157)
 
