@@ -2,47 +2,101 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FF9606A33F
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Nov 2026 14:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4D3606A323
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Nov 2026 16:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=foss.arm.com header.i=@foss.arm.com header.a=rsa-sha256 header.s=main header.b=GNnNVfBg
+	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=nu5bow2E;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=ZdDd53Pc
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 153E24026F;
-	Mon, 16 Nov 2026 15:38:05 +0100 (CET)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 94AAA40150;
- Mon, 16 Nov 2026 15:38:03 +0100 (CET)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F12181713;
- Mon, 16 Nov 2026 06:37:59 -0800 (PST)
-Received: from KDFJ2LQKPJ.cambridge.arm.com (KDFJ2LQKPJ.cambridge.arm.com
- [10.2.197.124])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B42313F763;
- Mon, 16 Nov 2026 06:38:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=foss.arm.com; s=main;
- t=1794839882; bh=xg5G2R/Pd/qVukUAXtkHjioptD8MMV3mSmJTMTVz9YU=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=GNnNVfBgWjq+nJy2fTMTGtxdonE/iaBDAoLKwhK/7L+Yk8QKi3G84IQk0+arB05Fy
- zYevzOzN8iu+8Q40gWSSC3qve/JMADlXOB2St70YGrX1xQvB7ZM01SttfoT2TpnBxe
- hXgpjMOm0lAxbN8vePb/d6ndhrJ27azM6w6vVDf0=
-From: Jack Bond-Preston <jack.bond-preston@foss.arm.com>
-To: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>,
- Ferruh Yigit <ferruh.yigit@amd.com>
-Cc: dev@dpdk.org,
-	stable@dpdk.org,
-	Mark Bulatov <ms.bulatov7@gmail.com>
-Subject: [PATCH v3] bitops: document max input value for rte_align[32,64]pow2
-Date: Mon, 16 Nov 2026 14:37:59 +0000
-Message-ID: <20261116143759.51525-1-jack.bond-preston@foss.arm.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20261113141307.4727-1-ms.bulatov7@gmail.com>
-References: <20261113141307.4727-1-ms.bulatov7@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 03D624026F;
+	Mon, 16 Nov 2026 17:00:27 +0100 (CET)
+Received: from fhigh-a2-smtp.messagingengine.com
+ (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+ by mails.dpdk.org (Postfix) with ESMTPS id 663AA40150
+ for <dev@dpdk.org>; Mon, 16 Nov 2026 17:00:25 +0100 (CET)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 667A5140006B
+ for <dev@dpdk.org>; Mon, 16 Nov 2026 11:00:24 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-04.internal (MEProxy); Mon, 16 Nov 2026 11:00:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1794844824;
+ x=1794931224; bh=BBSJVEPyRUw0sJ0cmNVrHrtpDkfoSlIX5RKPpGNzRTk=; b=
+ nu5bow2EgSQJQDPVODTaFsL3pzg4SRGVm5FauHH96CEQS0Ku4Ax1BciSzYDPr+AS
+ Hj79glag1PYXvMuruEL7m5i6vpZFWsr0xpgKAwUeFzWLL+PjdghveqFeg6z3XYfu
+ G4XEHQSZ0sQMyg6Z5rt7iL0U7jIWUBSPij1Br3PXs6cD94hQ3DtarbzXIYPLGqcJ
+ TbbNhwK/3uK4BL0jUg8aTgANQ9iQpkCsA1uE/B3IWSzCu21JbdENQF03eq3sysZ8
+ 1EUaoY+F+DCJV8CR8vn85KhDgF1up3o71wJTcv6dpYSxlvoPlZkJhAYBE6aiJnH+
+ aqkU9iBtCcTI8VjxCXxW9w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1794844824; x=
+ 1794931224; bh=BBSJVEPyRUw0sJ0cmNVrHrtpDkfoSlIX5RKPpGNzRTk=; b=Z
+ dDd53PckPuLSMVWuJ3sZakZ5ctKlLR638funFe3lWLZYHfIKlQ7IbKoNdSF8MEHT
+ mgC2/Tz8SUJSqsgfmCqZvKMDmzvPrx9GMLI3bPyFdm9rwbiGnr1ZIf0W5VtzjIZY
+ aVD9+CVYI6wRJrcbxMYUGoIw5izAW8Lwmf8teVGFz3r05KuVvtC7aHSmx5Qxm+7Z
+ h3p84ZSLAdh1SF2ZKwK4/c1RpOT6z2kfrNU6tE/DDsdhUDn+ckbnUk07gVeV2Asm
+ NmI51nlebVxqTOcT7L2Ni9/oZoVUyEbWLP0Khwjf5wAereE8WiYwLSX1zzbbp58T
+ Rl0spTlnvN8DZGebBK+Yg==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+ repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+ action=sign d=monjalon.net a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1794844824; d=monjalon.net;
+ mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
+ s=fm3:rsa-sha256:ai79l2GUUw3eQkqbhyNxnNzWWGaA6VbasQSIe+ZH/V6b4CW
+ 7Mh40nFR4jB7bjh+GKpwB2k5BMLreY1On0/rRNtChNErn2Zf5RZlKcTRQUumrUav
+ fWnctpaz8k4077QPIDU0n2ZvxfnCBmT3nbE/sh5bSW059UQ/iQRZffYzmxzm/f7Z
+ m4+RVggd6u0p7X0o6Rd3XUOG55jKzYpmdnSIvSAMRi+8n/6j/DKw6mmm3tJAEpBp
+ yrt2Yc+xtDsn87Fdg1FWCa/5IiuHQyUQfgXPmyie+MNFsZT6pXSnipNkUNVmw0e6
+ R/30LGZThmonXC/FYjezy1MPr1Py4EC7m5+NeKw==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+ repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+ action=mi-m=1; hc=12;
+ hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+ from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1;
+ h=sha256:xopCNNweBgMONUONApLtsRRvw7+RfHGbjbsRVerdFKE=:wa/6Sv1x1m932bkTtPYqSkntytn268dAgfohhV38PVM=;
+X-ME-Sender: <xms:lyj7aiDs-ag4ir8cwlCyAPal7tYGTZiCPP5hMEKjOeHUfz-WJNmNaA>
+ <xme:lyj7asrKn_TtKaiBCXjfLvdYy6fbrDq8xvmoVqfwrR6z7xgIoekX8UGLZ_F5qXwTh
+ NzX_SoJFOk8SXBQfLkdOP1J8Vw8h9Rur9dInWvtXtesaEMLVrpZtxWl>
+X-ME-Received: <xmr:lyj7atjdRUSN7kUXgoZm3LjksLz5Wbt7ekKi2yiQ4TcKCnoLZxBjwUiEoW04FWvxXw72OFgFP7bxasSEb57OJiE>
+X-ME-Proxy-Cause: dmFkZTGJgyue1OG1+2YyTDl3z21N5KSwnAI3mzowDSDWGAXBpK9XJ+m6cCVijEVdaslnmA
+ ZV1sDqn9qQPQjMuApT9BSCXZ6J5zGCQvh0mUZ9uh7IlGqtJolLnL/MDEqC1UQVAnTrGTVb
+ u4eJQLpTCIxgu7bpPVVwg7JZ0+Af+Sv0VfJo2hEK9enJATH98vJskG+Wv+5om5tJN1Rwwy
+ NrRj95VeVxz572McjRGYx2dqBCB4HsxySRNDi0oRL6YR6gBIcIMpoCeIsaoXQWkNY8QZY+
+ SL5/hdcu0v1yty8kXYFclFmMH91X+YgTxVCFz/iI90nh2FUF82GCqGD53xWxdviDCeCNE3
+ Doo86ZNm9oZJeQIVFuXyBiJZNAkV+gHz8wJBdRxJwYrYEkrWTVPnsJGz4hfxy86zrcOjGa
+ 5ScCBtws8SzSilKB2V8WDcsAef5teWQOD3FTqzccaqtpScwiBQlh/fG6cSVc0Oig41jELl
+ vGytgun5gi9nKLuwo71lUYTRlvQMSN6ziKg4QyEnLdFDCF6+Z+HQw8KFrEhksb+laRr2wl
+ 5nDidik+YJZE/YHDfwK6aSfcyoN4OZlTxtbNF+mk/+7PwOzpBiP4cbJzq4jcbjyBXZmaB/
+ aoKYyBN3onuNrsDcVvsR+jr/ywkbSQCjduarNy/pT5uVwpkgEzgJBmiJYnLQ
+X-ME-Proxy: <xmx:lyj7apBFXg1EkI9cOxStwhnbgP28Ar32NuDntS1d-cXa-ftEDYg9lA>
+ <xmx:lyj7aiEMTdJsyXHD5f2ARw_vQ_l73r_srXvI-lLfWdPCS_N8vB7G3g>
+ <xmx:lyj7ahLeP2m1sVW7WlwvUk97_rbhAzHaSILfm5bDEmnOQRNXad8s_Q>
+ <xmx:lyj7amnvjjMh_UZSNiVpCvBQigRlCDh5pKYLm07SoTBCHDZSyOV_JQ>
+ <xmx:mCj7apodXwWFzgSUiGjmKcvC0qpTElNP5rFcwsTQ8ryMUNPvZlJ2POZn>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 16 Nov 2026 11:00:22 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: dev@dpdk.org, Gagandeep Singh <g.singh@nxp.com>
+Cc: david.marchand@redhat.com, hemant.agrawal@nxp.com
+Subject: Re: [PATCH v4 1/1] bus/dpaa: fix unneeded conditional in bman_release
+Date: Mon, 16 Nov 2026 17:00:19 +0100
+Message-ID: <q-i_SV0SRL2NN8wm9QvxNw@monjalon.net>
+In-Reply-To: <20261116040635.639732-2-g.singh@nxp.com>
+References: <20261027093335.4109017-1-g.singh@nxp.com>
+ <20261116040635.639732-1-g.singh@nxp.com>
+ <20261116040635.639732-2-g.singh@nxp.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,84 +106,30 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-rte_align32pow2 and rte_align62pow2 will overflow and return incorrect
-values for input values exceeding 1<<31 and 1<<63, respectively. There
-is no way to return a valid result here: the next power of two above
-these values is unrepresentable with 32/64 bit unsigned integers.
+16/11/2026 05:06, Gagandeep Singh:
+> bman_release() computed i = num - 1 before the num == 0 bounds check,
+> which only exists under RTE_LIBRTE_DPAA_HWDEBUG. With that debug flag
+> disabled and num == 0, i wraps to UINT32_MAX, and the subsequent
+> 'if (i)' guard is then always taken regardless of num, relying on the
+> for loop's own bound to do nothing. The indirection added no value and
+> obscured the num == 0 handling.
+> 
+> Drop the i = num - 1 initializer and the if (i) wrapper, relying
+> solely on the for (i = 1; i < num; i++) loop condition, matching the
+> simpler pattern already used in bman_release_fast().
+> 
+> Fixes: f38f61e982f8 ("bus/dpaa: add BMAN hardware interfaces")
+> 
+> Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 
-Adjust the documentation for these functions to clarify that input
-values above these limits will return invalid results, and thus should
-not be provided to these functions. Additionally, document an existing
-edge case of the implementation: when the input is 0, it returns 0 (not
-a power of 2).
+Applied, thanks.
 
-Fixes: 7253e3d2a5b6 ("bitops: move bit count functions")
-Cc: stable@dpdk.org
 
-Reported-by: Mark Bulatov <ms.bulatov7@gmail.com>
-Signed-off-by: Jack Bond-Preston <jack.bond-preston@foss.arm.com>
-Acked-by: Morten Brørup <mb@smartsharesystems.com>
----
-v3:
-* fixed wrong email and too short Fixes: commit hash
-
-v2:
-* document the limitation instead of avoiding the overflow
-
- lib/eal/include/rte_bitops.h | 22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
-
-diff --git a/lib/eal/include/rte_bitops.h b/lib/eal/include/rte_bitops.h
-index 45255b68aa..eb404a3dd4 100644
---- a/lib/eal/include/rte_bitops.h
-+++ b/lib/eal/include/rte_bitops.h
-@@ -1261,10 +1261,17 @@ rte_is_power_of_2(uint32_t n)
-  * Aligns input parameter to the next power of 2
-  *
-  * @param x
-- *   The integer value to align
-+ *   The integer value to align. Must be less than or equal to 1 << 31
-+ *   (0x80000000).
-  *
-  * @return
-- *   The smallest power of 2 which is greater than or equal to @c x.
-+ *   The smallest power of 2 which is greater than or equal to @c x, or 0 if
-+ *   @c x is 0.
-+ *
-+ * @note If the input parameter exceeds 1 << 31 (0x80000000), then the expected
-+ *       result is unrepresentable and the return value is invalid.
-+ * @note For the input value 0, this function returns 0, which is not a power of
-+ *       2.
-  */
- static inline uint32_t
- rte_align32pow2(uint32_t x)
-@@ -1296,10 +1303,17 @@ rte_align32prevpow2(uint32_t x)
-  * Aligns 64b input parameter to the next power of 2
-  *
-  * @param v
-- *   The 64b value to align
-+ *   The 64b value to align. Must be less than or equal to 1 << 63
-+ *   (0x8000000000000000).
-  *
-  * @return
-- *   The smallest power of 2 which is greater than or equal to @c v.
-+ *   The smallest power of 2 which is greater than or equal to @c v, or 0 if
-+ *   @c v is 0.
-+ *
-+ * @note If the input parameter exceeds 1 << 63 (0x8000000000000000), then the
-+ *       expected result is unrepresentable and the return value is invalid.
-+ * @note For the input value 0, this function returns 0, which is not a power of
-+ *       2.
-  */
- static inline uint64_t
- rte_align64pow2(uint64_t v)
---
-2.54.0 (Apple Git-157)
 
