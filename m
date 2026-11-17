@@ -2,30 +2,30 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22F3606A32A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 16:00:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9C3606A32A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 16:00:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=VJrIXatS
+	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=FsPj6mfR
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E074D40E16;
-	Tue, 17 Nov 2026 16:58:01 +0100 (CET)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.4])
- by mails.dpdk.org (Postfix) with ESMTPS id 423EE402D8
- for <dev@dpdk.org>; Tue, 17 Nov 2026 16:57:43 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id C329A40E1B;
+	Tue, 17 Nov 2026 16:58:02 +0100 (CET)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.222])
+ by mails.dpdk.org (Postfix) with ESMTPS id 3CA2F4067A
+ for <dev@dpdk.org>; Tue, 17 Nov 2026 16:57:45 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=kLx1MYTiOGflpVvMQ1e1TKSPQE/jpJsnGhsexPPjJMQ=;
- b=VJrIXatSTv1GOKHEQtKDSWfYHnjm439M/z/5oqqlvESCtZREivkybzPrxi1F8w
- 13YyBIMGtiWV62kJRWEsCNNLdi15VTnJ+ldnGzo0vAMj3+r4gP9LeU6TDfiUXuuO
- twhD9FUHN3QBRRsR7RrxOUXj3iUYzP2ogg0aQQm7ZJ3xM=
+ MIME-Version; bh=9L+59yfp4Bah1bSsCJzAjhYYml7iihwtel23r7vB2jU=;
+ b=FsPj6mfRaQFa5fF6FlFkoZvbeRyT74PeC0q7ThtiwTmAe01T9WTs89W1m1KynO
+ fO0On4AFAvCVAsNnzQkLsFKAUR0/YzizfzkxsgFkSTBpm7wG5un9K5rXxZpX0EJb
+ zVoXnwr+LOLD+d0EbPSgYj40nn3DO4AYP7YFFb0InXoAk=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
  Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v7 17/29] net/hinic3: add VF link state and promiscuous support
-Date: Tue, 17 Nov 2026 23:56:58 +0800
-Message-ID: <20261117155711.1048-18-yejiacheng4@h-partners.com>
+Subject: [PATCH v7 27/29] net/hinic3: add SP230 VF software statistics
+Date: Tue, 17 Nov 2026 23:57:08 +0800
+Message-ID: <20261117155711.1048-28-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.53.0.windows.2
 In-Reply-To: <20261117155711.1048-1-yejiacheng4@h-partners.com>
 References: <20261109162033.1144-1-yejiacheng4@h-partners.com>
@@ -33,13 +33,13 @@ References: <20261109162033.1144-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Ac8vCgC3S5drefxqC7WJBQ--.4821S19
-X-Coremail-Antispam: 1Uf129KBjvJXoW3AFy8XryDtryxCr4UKF4UArb_yoW3Zw1fpa
- yUGa93tF9rGF47X3Z8Gw47u3W5Xa1xC347Kas5C3W5Z3W5XrZ0y347JrW2vr15t3srJa17
- uF409F4q9F1UKrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Uio7tUUUUU=
+X-CM-TRANSID: Ac8vCgC3S5drefxqC7WJBQ--.4821S29
+X-Coremail-Antispam: 1Uf129KBjvJXoW7ArWUJr43XFWUJrWDuFWruFg_yoW8KF18pF
+ yDGa43Ar9rXFs7X3ZIk3y7Z345Cws3Z3yUGF97JayYkFs8Xrn0y34UKrWjyrn8GFW3Za17
+ Zws0kFZ0k3yUKwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Ut5rxUUUUU=
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNRNUXmr8eXMCjgAA38
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNxdVX2r8eXcDrwAA3e
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,235 +56,71 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-A VF link followed the PF, so a VF could not be brought down while the PF
-stayed up. Track vf_valid_status and combine it with the physical link
-when the VF link status is calculated.
-
-Keep a separate admin_down flag, set only by dev_set_link_up() and
-dev_set_link_down() and checked in hinic3_set_vport_state(), dev_start()
-and the VF link status, so a PF link-up event cannot re-enable a vport
-that the application has brought down.
-
-Register the promiscuous callbacks in the VF eth_dev_ops.
+The SP230 VF does not expose rx/tx counters through the vport statistics
+path, so aggregate the software queue counters instead to return
+meaningful ipackets/ibytes/opackets/obytes for VF ports. PF ports keep
+using the firmware vport statistics.
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- drivers/net/hinic3/base/hinic3_hwdev.h     |  3 +-
- drivers/net/hinic3/base/hinic3_nic_cfg.c   |  2 +
- drivers/net/hinic3/base/hinic3_nic_event.c |  9 ++-
- drivers/net/hinic3/hinic3_ethdev.c         | 67 +++++++++++++++++++---
- drivers/net/hinic3/hinic3_ethdev.h         |  2 +
- 5 files changed, 73 insertions(+), 10 deletions(-)
+ drivers/net/hinic3/hinic3_ethdev.c | 27 ++++++++++++++++++++++-----
+ 1 file changed, 22 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/hinic3/base/hinic3_hwdev.h b/drivers/net/hinic3/base/hinic3_hwdev.h
-index c6661aa1a6..87ca18e571 100644
---- a/drivers/net/hinic3/base/hinic3_hwdev.h
-+++ b/drivers/net/hinic3/base/hinic3_hwdev.h
-@@ -157,7 +157,8 @@ struct hinic3_hwdev {
- 	char mgmt_ver[MGMT_VERSION_MAX_LEN];
- 
- 	uint16_t max_vfs;
--	uint16_t link_status;
-+	uint8_t link_status;
-+	uint8_t vf_valid_status; /* vport_enable: 1, vport_disable: 0 */
- 	uint64_t features[HINIC3_MAX_FEATURE_QWORD];
- };
- 
-diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.c b/drivers/net/hinic3/base/hinic3_nic_cfg.c
-index 2725f49df5..4a0e216b69 100644
---- a/drivers/net/hinic3/base/hinic3_nic_cfg.c
-+++ b/drivers/net/hinic3/base/hinic3_nic_cfg.c
-@@ -468,6 +468,8 @@ hinic3_set_vport_enable(struct hinic3_hwdev *hwdev, bool enable)
- 		return -EIO;
- 	}
- 
-+	hwdev->vf_valid_status = enable;
-+
- 	return 0;
- }
- 
-diff --git a/drivers/net/hinic3/base/hinic3_nic_event.c b/drivers/net/hinic3/base/hinic3_nic_event.c
-index 981a5f5083..0fe7b54981 100644
---- a/drivers/net/hinic3/base/hinic3_nic_event.c
-+++ b/drivers/net/hinic3/base/hinic3_nic_event.c
-@@ -82,7 +82,8 @@ hinic3_set_vport_state(struct hinic3_hwdev *hwdev,
- 	nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(hwdev->eth_dev);
- 
- 	if (link_state->state) {
--		if (hinic3_get_bit(HINIC3_DEV_START, &nic_dev->dev_status))
-+		if (hinic3_get_bit(HINIC3_DEV_START, &nic_dev->dev_status) &&
-+		    !nic_dev->admin_down)
- 			err = hinic3_set_vport_enable(hwdev, true);
- 	} else {
- 		err = hinic3_set_vport_enable(hwdev, false);
-@@ -111,6 +112,12 @@ link_status_event_handler(struct hinic3_hwdev *hwdev, struct hinic3_handler_info
- 
- 	/* Link event reported only after set vport enable. */
- 	hinic3_get_link_port_info(hwdev, link_status->state, &link);
-+
-+	if (HINIC3_IS_VF(hwdev)) {
-+		hwdev->link_status = link.link_status;
-+		link.link_status = hwdev->link_status & hwdev->vf_valid_status;
-+	}
-+
- 	err = rte_eth_linkstatus_set(hwdev->eth_dev, &link);
- 	if (!err && hwdev->eth_dev->data->dev_conf.intr_conf.lsc != 0)
- 		rte_eth_dev_callback_process(hwdev->eth_dev,
 diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index 2062f63892..aace4d74a0 100644
+index 570f626574..fe0b5bf1af 100644
 --- a/drivers/net/hinic3/hinic3_ethdev.c
 +++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -821,6 +821,26 @@ hinic3_fw_version_get(struct rte_eth_dev *dev, char *fw_version, size_t fw_size)
- 	return 0;
- }
- 
-+/**
-+ * Get the VF link status reported to the application.
-+ *
-+ * @param[in] nic_dev
-+ * Pointer to the hinic3 NIC device.
-+ *
-+ * @return
-+ * Link status of the VF, RTE_ETH_LINK_UP or RTE_ETH_LINK_DOWN.
-+ */
-+static uint8_t
-+hinic3_vf_link_status(struct hinic3_nic_dev *nic_dev)
-+{
-+	struct hinic3_hwdev *hwdev = nic_dev->hwdev;
-+
-+	if (nic_dev->admin_down)
-+		return RTE_ETH_LINK_DOWN;
-+
-+	return hwdev->link_status & hwdev->vf_valid_status;
-+}
-+
- /**
-  * Set ethernet device link state up.
-  *
-@@ -834,8 +854,11 @@ static int
- hinic3_dev_set_link_up(struct rte_eth_dev *dev)
- {
+@@ -3032,13 +3032,16 @@ hinic3_dev_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
  	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
-+	struct rte_eth_link link = { 0 };
+ 	struct hinic3_vport_stats vport_stats;
+ 	uint64_t rx_discards_pmd = 0;
++	bool sw_stats = HINIC3_IS_VF(nic_dev->hwdev) && HINIC3_IS_SP230_NIC(nic_dev);
  	int err;
  
-+	nic_dev->admin_down = 0;
-+
- 	/*
- 	 * Vport enable will set function valid in mpu.
- 	 * So dev start status need to be checked before vport enable.
-@@ -858,6 +881,13 @@ hinic3_dev_set_link_up(struct rte_eth_dev *dev)
- 		return err;
- 	}
- 
-+	if (HINIC3_IS_VF(nic_dev->hwdev)) {
-+		link = dev->data->dev_link;
-+		link.link_status = hinic3_vf_link_status(nic_dev);
-+
-+		(void)rte_eth_linkstatus_set(dev, &link);
-+	}
-+
- 	return 0;
- }
- 
-@@ -874,10 +904,14 @@ static int
- hinic3_dev_set_link_down(struct rte_eth_dev *dev)
- {
- 	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
-+	struct rte_eth_link link = { 0 };
- 	int err;
- 
-+	nic_dev->admin_down = 1;
-+
- 	err = hinic3_set_vport_enable(nic_dev->hwdev, false);
- 	if (err) {
-+		nic_dev->admin_down = 0;
- 		PMD_DRV_LOG(ERR, "Disable vport failed, dev_name: %s",
- 			    nic_dev->dev_name);
- 		return err;
-@@ -887,11 +921,18 @@ hinic3_dev_set_link_down(struct rte_eth_dev *dev)
- 	err = hinic3_set_port_enable(nic_dev->hwdev, false);
- 	if (err) {
- 		PMD_DRV_LOG(ERR,
--			"Set MAC link down failed, dev_name: %s, port_id: %d",
--			nic_dev->dev_name, dev->data->port_id);
-+			    "Set MAC link down failed, dev_name: %s, port_id: %d",
-+			    nic_dev->dev_name, dev->data->port_id);
- 		return err;
- 	}
- 
-+	if (HINIC3_IS_VF(nic_dev->hwdev)) {
-+		link = dev->data->dev_link;
-+		link.link_status = hinic3_vf_link_status(nic_dev);
-+
-+		(void)rte_eth_linkstatus_set(dev, &link);
-+	}
-+
- 	return 0;
- }
- 
-@@ -939,6 +980,11 @@ hinic3_link_update(struct rte_eth_dev *dev, int wait_to_complete)
- 	} while (rep_cnt--);
- 
- out:
-+	if (HINIC3_IS_VF(nic_dev->hwdev)) {
-+		nic_dev->hwdev->link_status = link.link_status;
-+		link.link_status = hinic3_vf_link_status(nic_dev);
-+	}
-+
- 	return rte_eth_linkstatus_set(dev, &link);
- }
- 
-@@ -2076,12 +2122,13 @@ hinic3_dev_start(struct rte_eth_dev *eth_dev)
- 
- 	hinic3_start_all_sqs(eth_dev);
- 
--	/* Open virtual port and ready to start packet receiving. */
--	err = hinic3_set_vport_enable(nic_dev->hwdev, true);
+-	err = hinic3_get_vport_stats(nic_dev->hwdev, &vport_stats);
 -	if (err) {
--		PMD_DRV_LOG(ERR, "Enable vport failed, dev_name: %s",
--			    eth_dev->data->name);
--		goto en_vport_fail;
-+	if (!nic_dev->admin_down) {
-+		err = hinic3_set_vport_enable(nic_dev->hwdev, true);
+-		PMD_DRV_LOG(ERR, "Get vport stats from fw failed, nic_dev: %s",
+-			    nic_dev->dev_name);
+-		return err;
++	if (!sw_stats) {
++		err = hinic3_get_vport_stats(nic_dev->hwdev, &vport_stats);
 +		if (err) {
-+			PMD_DRV_LOG(ERR, "Enable vport failed, dev_name: %s",
-+				    eth_dev->data->name);
-+			goto en_vport_fail;
++			PMD_DRV_LOG(ERR, "Get vport stats from fw failed, nic_dev: %s",
++				    nic_dev->dev_name);
++			return err;
 +		}
  	}
  
- 	/* Open physical port and start packet receiving. */
-@@ -3646,6 +3693,8 @@ static const struct eth_dev_ops hinic3_pmd_vf_ops = {
- 	.dev_configure                 = hinic3_dev_configure,
- 	.dev_infos_get                 = hinic3_dev_infos_get,
- 	.fw_version_get                = hinic3_fw_version_get,
-+	.dev_set_link_up               = hinic3_dev_set_link_up,
-+	.dev_set_link_down             = hinic3_dev_set_link_down,
- 	.rx_queue_setup                = hinic3_rx_queue_setup,
- 	.tx_queue_setup                = hinic3_tx_queue_setup,
- 	.rx_queue_intr_enable          = hinic3_dev_rx_queue_intr_enable,
-@@ -3667,6 +3716,8 @@ static const struct eth_dev_ops hinic3_pmd_vf_ops = {
- 	.vlan_offload_set              = hinic3_vlan_offload_set,
- 	.allmulticast_enable           = hinic3_dev_allmulticast_enable,
- 	.allmulticast_disable          = hinic3_dev_allmulticast_disable,
-+	.promiscuous_enable            = hinic3_dev_promiscuous_enable,
-+	.promiscuous_disable           = hinic3_dev_promiscuous_disable,
- 	.rss_hash_update               = hinic3_rss_hash_update,
- 	.rss_hash_conf_get             = hinic3_rss_conf_get,
- 	.reta_update                   = hinic3_rss_reta_update,
-diff --git a/drivers/net/hinic3/hinic3_ethdev.h b/drivers/net/hinic3/hinic3_ethdev.h
-index 935b7719ca..a078120794 100644
---- a/drivers/net/hinic3/hinic3_ethdev.h
-+++ b/drivers/net/hinic3/hinic3_ethdev.h
-@@ -141,6 +141,8 @@ struct hinic3_nic_dev {
- 
- 	RTE_ATOMIC(uint64_t)dev_status;
- 
-+	uint8_t admin_down; /**< Link down requested by dev_set_link_down(). */
+ 	/* Rx queue stats. */
+@@ -3059,6 +3062,12 @@ hinic3_dev_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
+ 		stats->ierrors += rxq->rxq_stats.errors;
+ 		rx_discards_pmd += rxq->rxq_stats.dropped;
+ 		dev->data->rx_mbuf_alloc_failed += rxq->rxq_stats.rx_nombuf;
 +
- 	uint8_t pause_set; /**< Flag of PAUSE frame setting. */
- 	struct nic_pause_config nic_pause;
++		if (sw_stats) {
++			stats->ipackets += rxq->rxq_stats.packets;
++			stats->ibytes += rxq->rxq_stats.bytes;
++			stats->imissed += rxq->rxq_stats.dropped;
++		}
+ 	}
+ 
+ 	/* Tx queue stats. */
+@@ -3069,8 +3078,16 @@ hinic3_dev_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
+ 			qstats[i].q_opackets = txq->txq_stats.packets;
+ 			qstats[i].q_obytes = txq->txq_stats.bytes;
+ 		}
++
++		if (sw_stats) {
++			stats->opackets += txq->txq_stats.packets;
++			stats->obytes += txq->txq_stats.bytes;
++		}
+ 	}
+ 
++	if (sw_stats)
++		return 0;
++
+ 	/* Vport stats. */
+ 	stats->oerrors += vport_stats.tx_discard_vport;
  
 -- 
 2.33.0
