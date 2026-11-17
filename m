@@ -2,73 +2,74 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14DCD606A31C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 17:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97BC5606A899
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 17:57:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=HjrYJzJn
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=efn/BDb+
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 114D0402E0;
+	by mails.dpdk.org (Postfix) with ESMTP id D32D040430;
 	Tue, 17 Nov 2026 18:57:31 +0100 (CET)
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com
- [209.85.222.175])
- by mails.dpdk.org (Postfix) with ESMTPS id 2392E402ED
- for <dev@dpdk.org>; Tue, 17 Nov 2026 18:57:28 +0100 (CET)
-Received: by mail-qk1-f175.google.com with SMTP id
- af79cd13be357-9496577d4c4so147022985a.1
- for <dev@dpdk.org>; Tue, 17 Nov 2026 09:57:28 -0800 (PST)
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com
+ [209.85.160.170])
+ by mails.dpdk.org (Postfix) with ESMTPS id 3AFC6402A4
+ for <dev@dpdk.org>; Tue, 17 Nov 2026 18:57:29 +0100 (CET)
+Received: by mail-qt1-f170.google.com with SMTP id
+ d75a77b69052e-55c48582654so865131cf.0
+ for <dev@dpdk.org>; Tue, 17 Nov 2026 09:57:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1794938247; x=1795543047; darn=dpdk.org;
+ d=gmail.com; s=20260707; t=1794938248; x=1795543048; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=nlJptA5GYD0ovRmnpm48CswnLLaHJr6NxCjBwRl8vtg=;
- b=HjrYJzJnF+1esSGm41GPWusuy+mbSUMxA5pcL59O4bKNsm23kQk2rmEpxCCqtZUHzs
- A9N5MenW1ZnTLwELCx5+TuAspfNvFpYJvpGJC5Qm/hM12Uq6JQ9td0Jt1ZsOFThvNLQn
- BKrxSSP1Nk8KMVKW/IGuGk8HKBpYkrMxjZbxJVltTwXc4Uw5Cxs2FZW7rjtoj8L7bah3
- mhLQ9Xhu7EcwBqcvgzDLXJQVZl5FlrgbTHWwt45gp0/GMzpphU2n7sawuQFvqZTLZ6/k
- Sztdc4HkeFk3fCy5i6XhoJefe0UOTmGNgDIM54z2lxG5U1Wkd4DIINzOFreLNVQQL9Nk
- gesQ==
+ bh=Xc1DabXBWCmRcrq/yx8umXekrfyJZWbliFP/ZChu16g=;
+ b=efn/BDb+dRSpZBZhurs48n/CVmZrmwJ3hBqZU0UwrrHa6+EvqpeV/KlhtHxVy0EqBK
+ Cw1mfq789W4vypcEgJTiOfxA7riBa7z4DfJjou6RGxD3BGMfZaC50Oc5Tl5y72SHVJ9Z
+ K18gwFrt2e2nzCLuo65t+d687kwcYjEpHMkn6xNYyiYjibQ7BUvz9le11QUJz1Nays43
+ D367Mlg0tRrI0FQeaOxw+ePSHSilfguopkBPXn5KobmIytSJoXIe0hDinEch9zoKq2hR
+ O0LmZZjGTREVCnd1Hfsx3WbLIxfdSyF1+0vPc0EbW+wVTvmPAWF+ITKMKnFntBcwuz75
+ zM1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794938247; x=1795543047;
+ d=1e100.net; s=20260707; t=1794938248; x=1795543048;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=nlJptA5GYD0ovRmnpm48CswnLLaHJr6NxCjBwRl8vtg=;
- b=hknvUwE1j+Qh0J1zTat2A04pnkvfEGFSQQSmPADMzUdYii6+D0IGzUR4IjeZJO+yHQ
- JC7B4uv6/lDpk2iC/dFZjelo+PRiiB6eLc8+tzkfiamgFmjJ3Up1PcJ/t1+AkxvvWAnO
- zrHNeWSF/WJTa5Va4JyPQR3dSRyWTMnd0bsZZIt1ABFLa+gEtmyOcjqVSwQTZL8OAhjG
- Hu2qiIKgZ/QfVHuAYI3F6Q9Jh+Wr5PrTlOgMWiLETt0tcu0gqLaO4Elgww/2ZYphuoAU
- o4ERcOfCC6G1f8lrpb1NuooevzSjkiyDmhmfLqDAHT+dqYhfZWJaafllqVqIXj/xHswa
- Xj+A==
-X-Gm-Message-State: APuU4Z9lnYiKWZri3qwj3gxd3tux3woXKGA3QMc64d0ElZZXv9h+j0/h
- F3Sk7MXp3YytOyluofjZjTJr5na+2HPnSgdjC2+Wdfvo/lrcFRqmUsCbTr9arZU1
-X-Gm-Gg: AYBFou0QIGxKubm8UtSG8g9w81plVWHqviHeDDIqnVYUVVVuFC1wPr62EZlfwD8+PDF
- X4+ZhXMh6xTXKSmkegIhfcNRdzZ9FeK6usQA3rV3AeGMg6CUKuVKBPudHs3YhZsIoEt6Z923uMb
- ghHrzFZDgnCRRIkNZydRs1x82qYbd0at9GoOlpuIcs4DmWo0+jYwI3kE3sRuA/tDRIrup6i0Cml
- 5dOSgvSkcz8ubjzUDrCmI6aDyjFobV77JUqKnPGw4REGuECWDlnegAy/x3bpHLE9ROT4vtsViVA
- Q5ObynobidZXyoxp+GUYedZ1MavYxbAA78nT2Wp//D8b/sOAbnMsYVhT0NsGx/EKID4vxdXnNrj
- +OeGx4EBUZxBN4dQHKqlvIbKz6QF6ay1BgYkopL31mn+WxsSbW+zgcBZwrTxGTotKF+4VoPMJXk
- UzABTwq3Ovz4bYgg9WnpFcFT5v80C0TNUrxkH6qL2aYG5Cayguvi/HcsXTq9BftcBUloOVF+IXr
- 8sH66JpS8kcSOWhcJUGSXVQ4AGJFMjqnRCjcXBX+hVMcaJS7csaxMFrsmRbMzZf+QrP7hr41FGB
- hkyYmh3lG9A2VQNd4f304scsbdbT4+0byW/574xppZMZ+LvCkOifs7WDlHc0CrZgQKRMuGM9VJG
- ydwsUPgK/k0/PkqPn5VKE73RSlctklSM5x48m8cjuSojz8NsCz+Bk
-X-Received: by 2002:a05:620a:1789:b0:949:8109:67e7 with SMTP id
- af79cd13be357-9498b96f5a4mr531983185a.36.1794938246699; 
- Tue, 17 Nov 2026 09:57:26 -0800 (PST)
+ bh=Xc1DabXBWCmRcrq/yx8umXekrfyJZWbliFP/ZChu16g=;
+ b=VonSQMuaUZZhjqwHi4rNM2HPewrNCMi5WEFcFdgpllq7y47nlLi0KKUQEQqIyYSjZC
+ c/smtGUreW5f1wTJy9y1owIp0KY0hygsl0jhzTegFDXdqVxGHStyltdlB3zba53DcZvI
+ bplt/A4t4npBQbeQpnXc6436PEb7LhoutXIGcgsBqtAqOK8jUaDcoPzeo18A0u2LGOud
+ tj28ubDIeCTDHE6jQFDAyOVxWfgSkwb5Ma8mJH1VzCK61Kg/9tXxzpx4DWSDnQhEDRmQ
+ 8oIbzjbO4Ark/vvIH2JvQeQ42vxeFDf8yNZXTTs4MCbRmszSVYXT1rTA+hcvLgOTw1F3
+ KqnQ==
+X-Gm-Message-State: APuU4Z+nEC0yU3klq91bRzOAhVmA5M5KQQHWaq/r2DgCkgO4ZeHeywc1
+ 5RMaRY6PSAiJSb1t9DFFqaH0lXjgHRHPS3UCtcL/e4pnzfTSodDZG+fh8ZcMAXsQ
+X-Gm-Gg: AYBFou0pGnBuSBvy99YgAO1opaIhc1pA8Kg23RjWiBzO9a+W57QoBkvuEny7lDcPqpT
+ 2lqeP8X/UZ038trtn8wwBqMC7AGA39Ci1pP4o2eksZu4uXrOKlN0jrmLo5Avhq6oLefTUW8IF90
+ BD/nK8UPPuhxFHfIOqZR8/+2eROSauo1G9eOj+949hd+McT8f1mFXqgWzSkXtJU+eNfSgXBHVWU
+ BNGSPf0iqroTJeebtuk+fkflljtr+8Quze1hZvE1iK2gOdN/WrlgJK7B08CI8ksDk2Vd6ptv89b
+ wb0f3HZXOAbh+ejk9Bm+t5aCkmTQpT+S5oFxwILWsXqCSoyatk0gP1jqRBdftXXUISYSkukmoJk
+ HU1Yfipo3q43TjSAEYmzMo5ys+yLxO4GqYhbGHgz+IjMaAEKjkmeXLSS9Yprq+H1TdYUY3hMHlG
+ Yg95h6VnQny8UsWCpVmCKb1ACCHmFsAOdAZ3+P0ThODEPhgOw7GrWQlkQsZir5snbd7FEu6//ay
+ oGLMLhVhAXLzXZdKs7MObVN37U4pUzOk7ZSjHz7FPMa/XkrOlnlYNGgRud7WYUG5YYZSQLfW5GI
+ uIEGgHAPjjAuN0com4wLSaVu1n07qmfyAXRhphsDMAqt+mECNsM4DZCtuAjqqy7nnZIarPfzRph
+ QD6K56hT2M+iirCejghPaTjlPEKT/VM9vJiqfga4O1M5isd4uU1PdVmXeF0IXbzlw+gy7WzKXKw
+ ==
+X-Received: by 2002:ac8:5f50:0:b0:535:23ee:eb7f with SMTP id
+ d75a77b69052e-55d5a34dfdemr1478921cf.1.1794938247814; 
+ Tue, 17 Nov 2026 09:57:27 -0800 (PST)
 Received: from pravin-HP-Z840 (ool-944c29f7.dyn.optonline.net. [148.76.41.247])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-921148c261bsm327426d6.0.2026.11.17.09.57.25
+ 6a1803df08f44-921148c261bsm327426d6.0.2026.11.17.09.57.27
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 17 Nov 2026 09:57:26 -0800 (PST)
+ Tue, 17 Nov 2026 09:57:27 -0800 (PST)
 From: Pravin Pathak <pravinpathakdev@gmail.com>
 To: dev@dpdk.org
 Cc: jerinj@marvell.com, bruce.richardson@intel.com, thomas@monjalon.net,
  david.marchand@redhat.com, nipun.gupta@amd.com, chenbox@nvidia.com,
  tirthendu.sarkar@intel.com, mattias.ronnblom@ericsson.com,
  stephen@networkplumber.org, Pravin Pathak <pravin.pathak.dev@gmail.com>
-Subject: [PATCH v2 3/8] event/slb: add support for atomic queues
-Date: Tue, 17 Nov 2026 12:57:03 -0500
-Message-ID: <20261117175709.2346400-4-pravinpathakdev@gmail.com>
+Subject: [PATCH v2 4/8] event/slb: add dynamic flow migration for atomic queues
+Date: Tue, 17 Nov 2026 12:57:04 -0500
+Message-ID: <20261117175709.2346400-5-pravinpathakdev@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261117175709.2346400-1-pravinpathakdev@gmail.com>
 References: <20261107013011.2443138-9-pravinpathakdev@gmail.com>
@@ -85,637 +86,474 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-14.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FORGED_GMAIL_RCVD,FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
 From: Pravin Pathak <pravin.pathak.dev@gmail.com>
 
-Add support for RTE_SCHED_TYPE_ATOMIC queues to provide per-flow event
-serialization across worker ports.
+Add dynamic flow migration to automatically rebalance flows across
+worker ports when an atomic queue's destination port becomes congested.
 
-Flow affinity is maintained using a 2048-entry flow map that pins each
-flow ID to a serving worker port upon first observation. Events for each
-atomic queue are held in a main ring and scheduled into dedicated per-port
-rings via slb_atomic_refill using counting sort grouping.
+When consecutive enqueue attempts to a worker's private atomic ring fail
+and exceed SLB_MIGRATION_LOAD_THRESHOLD, migration is initiated. The
+PMD inspects the overloaded ring and selects the lightest active flow
+not currently in migration cooldown.
 
-A hold buffer retains events when destination port rings are temporarily
-full to preserve flow FIFO ordering. Worker ports dequeue atomic events
-from their private rings and record active flows in port history to track
-returns on release or forward operations.
+To preserve strict per-flow event ordering, migration completes only
+after all previously scheduled events for the source port have been
+returned (q_enqueued == q_returned). The flow affinity is then remapped
+to the least-loaded worker port, and any matching events retained in the
+hold buffer are reassigned.
 
 Signed-off-by: Pravin Pathak <pravin.pathak.dev@gmail.com>
 ---
- drivers/event/slb/slb_evdev.c |  90 +++++++++-
- drivers/event/slb/slb_evdev.h |  37 ++++
- drivers/event/slb/slb_event.c | 312 +++++++++++++++++++++++++++++++---
- 3 files changed, 411 insertions(+), 28 deletions(-)
+ drivers/event/slb/slb_evdev.c |  16 ++-
+ drivers/event/slb/slb_evdev.h |  20 ++-
+ drivers/event/slb/slb_event.c | 252 ++++++++++++++++++++++++++++++++--
+ 3 files changed, 273 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/event/slb/slb_evdev.c b/drivers/event/slb/slb_evdev.c
-index 13be490636..be0b3630f6 100644
+index be0b3630f6..1916b7faa4 100644
 --- a/drivers/event/slb/slb_evdev.c
 +++ b/drivers/event/slb/slb_evdev.c
-@@ -121,6 +121,10 @@ slb_queue_release(struct rte_eventdev *dev, uint8_t queue_id)
- 	struct slb_evdev *slb = slb_pmd_priv(dev);
- 	struct slb_queue *queue = &slb->queues[queue_id];
+@@ -74,8 +74,13 @@ slb_port_setup(struct rte_eventdev *dev, uint8_t port_id,
+ 		.total_dequeues = 0,
+ 		.empty_dequeues = 0,
+ 		.pending_releases = 0,
++		.is_loaded = false,
+ 		.single_linked_q = NULL,
+ 		.single_linked_ring = NULL,
++		.flow_migrations = 0,
++		.migrations_in = 0,
++		.migrations_out = 0,
++		.last_migrated_time = 0,
+ 	};
  
-+	if (queue->atomic_state) {
-+		rte_free(queue->atomic_state);
-+		queue->atomic_state = NULL;
-+	}
- 	if (queue->reorder_buffer) {
- 		rte_free(queue->reorder_buffer);
- 		queue->reorder_buffer = NULL;
-@@ -129,6 +133,12 @@ slb_queue_release(struct rte_eventdev *dev, uint8_t queue_id)
- 		rte_event_ring_free(queue->q_ring);
- 		queue->q_ring = NULL;
- 	}
-+	for (int i = 0; i < SLB_MAX_PORTS; i++) {
-+		if (queue->per_port_rings[i]) {
-+			rte_event_ring_free(queue->per_port_rings[i]);
-+			queue->per_port_rings[i] = NULL;
-+		}
-+	}
- }
- 
- /* Setup Eventdev queue. Eventdev queues are implemented as DPDK rings */
-@@ -154,9 +164,14 @@ slb_queue_setup(struct rte_eventdev *dev, uint8_t queue_id,
- 		queue->is_single_link = true;
- 		ring = rte_event_ring_create(ring_name, q_size,
- 			dev->data->socket_id, RING_F_SC_DEQ | RING_F_EXACT_SZ);
-+	} else if (conf->schedule_type == RTE_SCHED_TYPE_ATOMIC) {
-+		/* MP -> SC ring for atomic queues main ring */
-+		queue->is_single_link = false;
-+		ring = rte_event_ring_create(ring_name, q_size,
-+			dev->data->socket_id, RING_F_SC_DEQ | RING_F_EXACT_SZ);
- 	} else if (conf->schedule_type == RTE_SCHED_TYPE_PARALLEL ||
- 		   conf->schedule_type == RTE_SCHED_TYPE_ORDERED) {
--		/* MP -> MC ring for parallel queues */
-+		/* MP -> MC ring for parallel or ordered queues */
- 		queue->is_single_link = false;
- 		ring = rte_event_ring_create(ring_name, q_size,
- 			dev->data->socket_id, RING_F_EXACT_SZ);
-@@ -174,6 +189,31 @@ slb_queue_setup(struct rte_eventdev *dev, uint8_t queue_id,
- 	queue->serving_ports_mask = 0;
- 	queue->num_serving_ports = 0;
- 
-+	/* Atomic queue allocation */
-+	if (conf->schedule_type == RTE_SCHED_TYPE_ATOMIC) {
-+		for (int i = 0; i < SLB_MAX_PORTS; i++)
-+			queue->per_port_rings[i] = NULL;
-+
-+		queue->atomic_state = rte_zmalloc_socket("slb_atomic_state",
-+			sizeof(struct slb_atomic_state),
-+			RTE_CACHE_LINE_SIZE, dev->data->socket_id);
-+		if (queue->atomic_state == NULL) {
-+			rte_event_ring_free(ring);
-+			return -ENOMEM;
-+		}
-+		for (int i = 0; i < SLB_ATOMIC_FLOWS; i++)
-+			rte_atomic_store_explicit(
-+				&queue->atomic_state->flow_map.flows[i].port_id,
-+				-1, rte_memory_order_relaxed);
-+		queue->atomic_state->next_port_rr = 0;
-+		rte_spinlock_init(&queue->atomic_state->refill_lock);
-+		queue->atomic_state->hold_count = 0;
-+		memset(queue->atomic_state->port_stats, 0,
-+		       sizeof(queue->atomic_state->port_stats));
-+	} else {
-+		queue->atomic_state = NULL;
-+	}
-+
- 	/* Ordered queue reorder buffer allocation */
- 	if (conf->schedule_type == RTE_SCHED_TYPE_ORDERED) {
- 		queue->reorder_buffer = rte_zmalloc_socket("slb_reorder_buf",
-@@ -244,6 +284,26 @@ slb_port_link_one(struct slb_port *port, struct slb_queue *queue,
- 		port->single_linked_q = queue;
- 		port->single_linked_ring = queue->q_ring;
+ 	port->remap_input_q = false;
+@@ -208,8 +213,12 @@ slb_queue_setup(struct rte_eventdev *dev, uint8_t queue_id,
+ 		queue->atomic_state->next_port_rr = 0;
+ 		rte_spinlock_init(&queue->atomic_state->refill_lock);
+ 		queue->atomic_state->hold_count = 0;
++		queue->atomic_state->migration.in_progress = false;
++		queue->atomic_state->migrations_count = 0;
+ 		memset(queue->atomic_state->port_stats, 0,
+ 		       sizeof(queue->atomic_state->port_stats));
++		memset(queue->atomic_state->flow_last_migrated, 0,
++		       sizeof(queue->atomic_state->flow_last_migrated));
  	} else {
-+		if (queue->schedule_type == RTE_SCHED_TYPE_ATOMIC &&
-+		    queue->per_port_rings[port->id] == NULL) {
-+			char ring_name[RTE_RING_NAMESIZE];
-+			struct rte_event_ring *ring;
-+
-+			snprintf(ring_name, sizeof(ring_name),
-+				 "slb%d_q%u_p%u", port->slb->data->dev_id,
-+				 qid, port->id);
-+			ring = rte_event_ring_create(
-+				ring_name,
-+				SLB_MAX_PORT_DEQUEUE_DEPTH * 4,
-+				port->slb->data->socket_id,
-+				RING_F_SP_ENQ | RING_F_SC_DEQ);
-+			if (ring == NULL) {
-+				rte_errno = ENOMEM;
-+				return -ENOMEM;
-+			}
-+			queue->per_port_rings[port->id] = ring;
-+		}
-+
- 		if (has_prio)
- 			prio = (app_prio < RTE_EVENT_DEV_PRIORITY_NORMAL) ? 0 : 1;
- 		else
-@@ -262,12 +322,15 @@ slb_port_link_one(struct slb_port *port, struct slb_queue *queue,
- 		}
- 		if (!found) {
- 			uint16_t slot = port->num_q[prio];
-+			struct rte_event_ring *dq_ring =
-+				(queue->schedule_type == RTE_SCHED_TYPE_ATOMIC) ?
-+				queue->per_port_rings[port->id] : queue->q_ring;
- 
- 			if (slot >= SLB_PORT_MAX_Q_MAP_PER_PRIO) {
- 				rte_errno = ENOSPC;
- 				return -ENOSPC;
- 			}
--			port->q_entries[prio][slot].dq_ring = queue->q_ring;
-+			port->q_entries[prio][slot].dq_ring = dq_ring;
- 			port->q_entries[prio][slot].queue = queue;
- 			port->q_entries[prio][slot].queue_id = qid;
- 			port->q_entries[prio][slot].schedule_type =
-@@ -311,6 +374,13 @@ slb_port_unlink_one(struct slb_port *port, struct slb_queue *queue, uint8_t qid)
- 			rte_errno = EINVAL;
- 			return -EINVAL;
- 		}
-+
-+		if (queue->schedule_type == RTE_SCHED_TYPE_ATOMIC &&
-+		    queue->per_port_rings[port->id] != NULL) {
-+			rte_event_ring_free(queue->per_port_rings[port->id]);
-+			queue->per_port_rings[port->id] = NULL;
-+		}
-+
- 		rte_atomic_fetch_and_explicit(&port->active_queues,
- 					      ~(1ULL << qid),
- 					      rte_memory_order_release);
-@@ -379,6 +449,7 @@ slb_info_get(struct rte_eventdev *dev __rte_unused,
- 		.max_profiles_per_port = 1,
- 		.event_dev_cap = RTE_EVENT_DEV_CAP_BURST_MODE |
- 		RTE_EVENT_DEV_CAP_PARALLEL |
-+		RTE_EVENT_DEV_CAP_ATOMIC |
- 		RTE_EVENT_DEV_CAP_ORDERED |
- 		RTE_EVENT_DEV_CAP_DISTRIBUTED_SCHED |
- 		RTE_EVENT_DEV_CAP_IMPLICIT_RELEASE_DISABLE |
-@@ -474,6 +545,21 @@ slb_stop(struct rte_eventdev *dev)
- 
- 	for (uint8_t qid = 0; qid < slb->num_queues; qid++) {
+ 		queue->atomic_state = NULL;
+ 	}
+@@ -547,12 +556,16 @@ slb_stop(struct rte_eventdev *dev)
  		struct slb_queue *q = &slb->queues[qid];
-+
-+		if (q->schedule_type == RTE_SCHED_TYPE_ATOMIC && q->atomic_state != NULL) {
-+			for (int f = 0; f < SLB_ATOMIC_FLOWS; f++)
-+				rte_atomic_store_explicit(
-+					&q->atomic_state->flow_map.flows[f].port_id,
-+					-1, rte_memory_order_relaxed);
-+
-+			for (uint16_t pid = 0; pid < slb->num_ports; pid++) {
-+				if (q->per_port_rings[pid] != NULL)
-+					slb_drain_ring(dev_id,
-+						       q->per_port_rings[pid],
-+						       flush, flush_arg);
+ 
+ 		if (q->schedule_type == RTE_SCHED_TYPE_ATOMIC && q->atomic_state != NULL) {
+-			for (int f = 0; f < SLB_ATOMIC_FLOWS; f++)
++			for (int f = 0; f < SLB_ATOMIC_FLOWS; f++) {
+ 				rte_atomic_store_explicit(
+ 					&q->atomic_state->flow_map.flows[f].port_id,
+ 					-1, rte_memory_order_relaxed);
++				q->atomic_state->flow_last_migrated[f] = 0;
 +			}
-+		}
-+
- 		if (q->q_ring != NULL)
- 			slb_drain_ring(dev_id, q->q_ring, flush, flush_arg);
++			q->atomic_state->migration.in_progress = false;
+ 
+ 			for (uint16_t pid = 0; pid < slb->num_ports; pid++) {
++				q->atomic_state->port_stats[pid].load_counter = 0;
+ 				if (q->per_port_rings[pid] != NULL)
+ 					slb_drain_ring(dev_id,
+ 						       q->per_port_rings[pid],
+@@ -568,6 +581,7 @@ slb_stop(struct rte_eventdev *dev)
+ 		struct slb_port *port = &slb->ports[i];
+ 		port->inflight_credits = 0;
+ 		port->credits_drained = false;
++		port->is_loaded = false;
+ 		for (int p = 0; p < SLB_MAX_PRIORITIES; p++)
+ 			port->next_q[p] = 0;
  	}
 diff --git a/drivers/event/slb/slb_evdev.h b/drivers/event/slb/slb_evdev.h
-index b73127a739..7a70d5c94c 100644
+index 7a70d5c94c..b1a6de8606 100644
 --- a/drivers/event/slb/slb_evdev.h
 +++ b/drivers/event/slb/slb_evdev.h
-@@ -84,6 +84,39 @@ struct slb_reorder_entry {
- 	RTE_ATOMIC(uint8_t) state;
+@@ -87,6 +87,8 @@ struct slb_reorder_entry {
+ #define SLB_ATOMIC_FLOWS 2048
+ #define SLB_ATOMIC_FLOWS_MASK (SLB_ATOMIC_FLOWS - 1)
+ #define SLB_HOLD_BUFFER_SIZE (SLB_MAX_PORT_DEQUEUE_DEPTH * 64)
++#define SLB_MIGRATION_LOAD_THRESHOLD 16
++#define SLB_MIGRATION_COOLDOWN_MS 500
+ 
+ /* Per-flow entry for atomic scheduling affinity */
+ struct slb_flow {
+@@ -100,17 +102,28 @@ struct slb_flow_map {
+ 
+ /* Per-port counters for an atomic queue */
+ struct __rte_cache_aligned slb_atomic_port_stats {
++	uint32_t load_counter; /* Incremented when full, decremented when space available */
+ 	uint32_t flow_count;   /* Number of active flows mapped to this port */
+ 	uint64_t q_enqueued;   /* Events scheduled into this port's atomic port-Q */
+ 	uint64_t q_returned;   /* Events returned (FORWARD/RELEASE) by this port */
  };
  
-+#define SLB_ATOMIC_FLOWS 2048
-+#define SLB_ATOMIC_FLOWS_MASK (SLB_ATOMIC_FLOWS - 1)
-+#define SLB_HOLD_BUFFER_SIZE (SLB_MAX_PORT_DEQUEUE_DEPTH * 64)
-+
-+/* Per-flow entry for atomic scheduling affinity */
-+struct slb_flow {
-+	RTE_ATOMIC(int32_t) port_id; /* Port this flow is pinned to */
++/* Active migration state for an atomic queue */
++struct slb_migration_state {
++	bool in_progress;
++	uint8_t port_id;       /* Source port being drained */
++	uint32_t flow_idx;     /* Flow hash index being migrated */
 +};
 +
-+/* Flow-to-port affinity mapping table */
-+struct slb_flow_map {
-+	struct slb_flow flows[SLB_ATOMIC_FLOWS];
-+};
-+
-+/* Per-port counters for an atomic queue */
-+struct __rte_cache_aligned slb_atomic_port_stats {
-+	uint32_t flow_count;   /* Number of active flows mapped to this port */
-+	uint64_t q_enqueued;   /* Events scheduled into this port's atomic port-Q */
-+	uint64_t q_returned;   /* Events returned (FORWARD/RELEASE) by this port */
-+};
-+
-+/* Dynamically allocated state for atomic queues */
-+struct slb_atomic_state {
-+	struct slb_flow_map flow_map;
-+	uint32_t next_port_rr;
-+	rte_spinlock_t refill_lock;
-+	uint16_t hold_count;
-+	alignas(RTE_CACHE_LINE_SIZE)
-+	struct slb_atomic_port_stats port_stats[SLB_MAX_PORTS];
-+	uint8_t hold_ports[SLB_HOLD_BUFFER_SIZE];
-+	struct rte_event hold_buffer[SLB_HOLD_BUFFER_SIZE];
-+};
-+
- struct __rte_cache_aligned slb_port {
- 	/* --- Cacheline 0: Hot Rx & Tx scheduling control (64 bytes) --- */
- 	uint16_t id;
-@@ -134,6 +167,10 @@ struct slb_queue {
- 	uint16_t num_serving_ports;
- 	uint64_t serving_ports_mask;
- 	alignas(RTE_CACHE_LINE_SIZE) struct rte_event_ring *q_ring;
-+	/* Per-port rings for atomic queues */
-+	struct rte_event_ring *per_port_rings[SLB_MAX_PORTS];
-+	/* For atomic queues (dynamically allocated) */
-+	struct slb_atomic_state *atomic_state;
- 	/* For ordered queues (dynamically allocated) */
- 	struct slb_reorder_entry *reorder_buffer;
- 	uint32_t reorder_drain_idx;
+ /* Dynamically allocated state for atomic queues */
+ struct slb_atomic_state {
+ 	struct slb_flow_map flow_map;
+ 	uint32_t next_port_rr;
+ 	rte_spinlock_t refill_lock;
+ 	uint16_t hold_count;
++	struct slb_migration_state migration;
++	uint64_t migrations_count;
++	uint64_t flow_last_migrated[SLB_ATOMIC_FLOWS];
+ 	alignas(RTE_CACHE_LINE_SIZE)
+ 	struct slb_atomic_port_stats port_stats[SLB_MAX_PORTS];
+ 	uint8_t hold_ports[SLB_HOLD_BUFFER_SIZE];
+@@ -132,7 +145,8 @@ struct __rte_cache_aligned slb_port {
+ 	bool implicit_release;
+ 	bool credits_drained;
+ 	bool remap_input_q;
+-	uint8_t pad_port[4];
++	bool is_loaded; /* Port marked loaded for atomic flow migration */
++	uint8_t pad_port[3];
+ 	struct rte_event_ring *single_linked_ring;
+ 	struct slb_evdev *slb;
+ 
+@@ -149,6 +163,10 @@ struct __rte_cache_aligned slb_port {
+ 	uint16_t dequeue_depth;
+ 	uint16_t enqueue_depth;
+ 	struct slb_queue *single_linked_q;
++	uint64_t flow_migrations;
++	uint64_t migrations_in;
++	uint64_t migrations_out;
++	uint64_t last_migrated_time;
+ 	uint64_t enqueue_calls;
+ 	uint64_t new_enqueued;
+ 	uint64_t forward_enqueued;
 diff --git a/drivers/event/slb/slb_event.c b/drivers/event/slb/slb_event.c
-index b6c7a8a514..22f40d72d4 100644
+index 22f40d72d4..3a0f7f6fde 100644
 --- a/drivers/event/slb/slb_event.c
 +++ b/drivers/event/slb/slb_event.c
-@@ -156,6 +156,216 @@ slb_reorder_drain(struct slb_evdev *slb, struct slb_queue *queue)
- 	rte_spinlock_unlock(&queue->reorder_lock);
+@@ -3,6 +3,7 @@
+  */
+ 
+ #include <stdbool.h>
++#include <limits.h>
+ #include <rte_bitops.h>
+ #include <rte_cycles.h>
+ #include <rte_ring_elem.h>
+@@ -163,12 +164,204 @@ slb_flow_hash(uint32_t flow_id)
+ 	return (flow_id * 2654435761U) & SLB_ATOMIC_FLOWS_MASK;
  }
  
-+/* Hash flow ID to atomic flow slot index */
-+static inline uint32_t
-+slb_flow_hash(uint32_t flow_id)
++static int32_t
++slb_find_lightest_flow_on_port(struct slb_queue *queue, uint8_t port_id,
++			       uint64_t now, uint64_t cooldown_cycles)
 +{
-+	return (flow_id * 2654435761U) & SLB_ATOMIC_FLOWS_MASK;
-+}
-+
-+/* If port queue is empty for an atomic queue, pull events from main atomic queue to fill
-+ * up port queues.
-+ */
-+static void
-+slb_atomic_refill(struct slb_port *port __rte_unused, struct slb_queue *queue)
-+{
-+	struct rte_event master_events[SLB_MAX_PORT_DEQUEUE_DEPTH];
-+	uint16_t n_deq;
-+	uint16_t i;
-+	uint64_t full_ports_mask = 0;
++	struct rte_event_ring *ering = queue->per_port_rings[port_id];
 +	struct slb_atomic_state *astate = queue->atomic_state;
-+	uint64_t serving_mask;
-+	uint16_t num_serving_ports;
++	struct rte_ring *r;
++	uint32_t cons;
++	uint32_t prod;
++	uint32_t count;
++	uint16_t counts[SLB_ATOMIC_FLOWS];
++	int32_t best_flow_idx = -1;
++	uint32_t min_events = UINT32_MAX;
 +
-+	if (unlikely(astate == NULL))
-+		return;
++	if (unlikely(ering == NULL || astate == NULL))
++		return -1;
 +
-+	if (!rte_spinlock_trylock(&astate->refill_lock))
-+		return;
++	if (astate->port_stats[port_id].flow_count <= 1)
++		return -1;
 +
-+	/* 1. Process Hold Buffer first */
-+	if (astate->hold_count > 0) {
-+		uint16_t retained = 0;
-+		uint16_t count = astate->hold_count;
++	r = &ering->r;
++	cons = rte_atomic_load_explicit(&r->cons.tail, rte_memory_order_relaxed);
++	prod = rte_atomic_load_explicit(&r->prod.tail, rte_memory_order_relaxed);
++	count = prod - cons;
 +
-+		i = 0;
-+		while (i < count) {
-+			uint8_t dest_port_id = astate->hold_ports[i];
-+			uint16_t burst_len = 1;
++	memset(counts, 0, sizeof(counts));
++	if (count > 0) {
++		struct rte_event *ring_events = (struct rte_event *)(r + 1);
 +
-+			while ((i + burst_len) < count &&
-+			       astate->hold_ports[i + burst_len] == dest_port_id)
-+				burst_len++;
++		for (uint32_t i = 0; i < count; i++) {
++			uint32_t slot = (cons + i) & r->mask;
++			uint32_t f_idx = slb_flow_hash(ring_events[slot].flow_id);
 +
-+			if (full_ports_mask & (1ULL << dest_port_id)) {
-+				if (retained != i) {
-+					memmove(&astate->hold_buffer[retained],
-+						&astate->hold_buffer[i],
-+						burst_len * sizeof(struct rte_event));
-+					memmove(&astate->hold_ports[retained],
-+						&astate->hold_ports[i],
-+						burst_len);
-+				}
-+				retained += burst_len;
-+				i += burst_len;
++			counts[f_idx]++;
++		}
++	}
++
++	for (uint32_t f = 0; f < SLB_ATOMIC_FLOWS; f++) {
++		if (rte_atomic_load_explicit(&astate->flow_map.flows[f].port_id,
++					     rte_memory_order_relaxed) == (int32_t)port_id) {
++			if (astate->flow_last_migrated[f] != 0 &&
++			    (now - astate->flow_last_migrated[f]) < cooldown_cycles)
 +				continue;
-+			}
 +
-+			uint16_t enqueued = rte_event_ring_enqueue_burst(
-+				queue->per_port_rings[dest_port_id],
-+				&astate->hold_buffer[i], burst_len, NULL);
-+			astate->port_stats[dest_port_id].q_enqueued += enqueued;
-+
-+			if (enqueued < burst_len) {
-+				uint16_t rem = burst_len - enqueued;
-+				uint16_t start_idx = i + enqueued;
-+
-+				full_ports_mask |= (1ULL << dest_port_id);
-+				if (retained != start_idx) {
-+					memmove(&astate->hold_buffer[retained],
-+						&astate->hold_buffer[start_idx],
-+						rem * sizeof(struct rte_event));
-+					memmove(&astate->hold_ports[retained],
-+						&astate->hold_ports[start_idx],
-+						rem);
-+				}
-+				retained += rem;
-+			}
-+
-+			i += burst_len;
-+		}
-+
-+		astate->hold_count = retained;
-+		if (astate->hold_count > 0) {
-+			rte_spinlock_unlock(&astate->refill_lock);
-+			return;
-+		}
-+	}
-+
-+	/* 2. Dequeue events from main atomic queue in batches */
-+	serving_mask = queue->serving_ports_mask;
-+	num_serving_ports = queue->num_serving_ports;
-+
-+	if (num_serving_ports == 0) {
-+		rte_spinlock_unlock(&astate->refill_lock);
-+		return;
-+	}
-+
-+	for (int iter = 0; iter < 2; iter++) {
-+		n_deq = rte_event_ring_dequeue_burst(
-+			queue->q_ring, master_events, RTE_DIM(master_events), NULL);
-+
-+		if (n_deq == 0)
-+			break;
-+
-+		uint8_t dest_ports[SLB_MAX_PORT_DEQUEUE_DEPTH];
-+		uint16_t port_counts[SLB_MAX_PORTS];
-+		uint16_t insert_pos[SLB_MAX_PORTS];
-+		uint16_t port_offsets[SLB_MAX_PORTS];
-+		struct rte_event sorted_events[SLB_MAX_PORT_DEQUEUE_DEPTH];
-+		uint64_t batch_ports_mask = 0;
-+
-+		for (i = 0; i < n_deq; i++) {
-+			struct rte_event *ev = &master_events[i];
-+			uint32_t flow_idx = slb_flow_hash(ev->flow_id);
-+			int32_t dest_port_id =
-+				rte_atomic_load_explicit(
-+					&astate->flow_map.flows[flow_idx].port_id,
-+					rte_memory_order_acquire);
-+
-+			if (unlikely(dest_port_id == -1)) {
-+				uint32_t rr_counter = astate->next_port_rr++;
-+				int port_offset = rr_counter % num_serving_ports;
-+				uint64_t temp_mask = serving_mask;
-+				uint8_t assigned_port = 0;
-+
-+				for (int j = 0; j <= port_offset; j++) {
-+					assigned_port = rte_ctz64(temp_mask);
-+					temp_mask &= (temp_mask - 1);
-+				}
-+
-+				dest_port_id = assigned_port;
-+				rte_atomic_store_explicit(
-+					&astate->flow_map.flows[flow_idx].port_id,
-+					dest_port_id, rte_memory_order_release);
-+				astate->port_stats[dest_port_id].flow_count++;
-+			}
-+
-+			dest_ports[i] = (uint8_t)dest_port_id;
-+			uint64_t p_bit = (1ULL << dest_port_id);
-+
-+			if (!(batch_ports_mask & p_bit)) {
-+				batch_ports_mask |= p_bit;
-+				port_counts[dest_port_id] = 1;
-+			} else {
-+				port_counts[dest_port_id]++;
-+			}
-+		}
-+
-+		uint16_t current_offset = 0;
-+		uint64_t pmask = batch_ports_mask;
-+
-+		while (pmask != 0) {
-+			uint8_t p = rte_ctz64(pmask);
-+
-+			pmask &= (pmask - 1);
-+			port_offsets[p] = current_offset;
-+			insert_pos[p] = current_offset;
-+			current_offset += port_counts[p];
-+		}
-+
-+		for (i = 0; i < n_deq; i++) {
-+			uint8_t p = dest_ports[i];
-+
-+			sorted_events[insert_pos[p]++] = master_events[i];
-+		}
-+
-+		pmask = batch_ports_mask;
-+		while (pmask != 0) {
-+			uint8_t p = rte_ctz64(pmask);
-+			uint16_t p_count = port_counts[p];
-+			uint16_t p_start = port_offsets[p];
-+
-+			pmask &= (pmask - 1);
-+
-+			if (full_ports_mask & (1ULL << p)) {
-+				uint16_t space = SLB_HOLD_BUFFER_SIZE - astate->hold_count;
-+				uint16_t to_copy = RTE_MIN(p_count, space);
-+
-+				if (to_copy > 0) {
-+					rte_memcpy(&astate->hold_buffer[astate->hold_count],
-+						   &sorted_events[p_start],
-+						   to_copy * sizeof(struct rte_event));
-+					memset(&astate->hold_ports[astate->hold_count], p, to_copy);
-+					astate->hold_count += to_copy;
-+				}
-+				continue;
-+			}
-+
-+			uint16_t enqueued = rte_event_ring_enqueue_burst(
-+				queue->per_port_rings[p], &sorted_events[p_start], p_count, NULL);
-+			astate->port_stats[p].q_enqueued += enqueued;
-+
-+			if (enqueued < p_count) {
-+				uint16_t rem = p_count - enqueued;
-+				uint16_t space = SLB_HOLD_BUFFER_SIZE - astate->hold_count;
-+				uint16_t to_copy = RTE_MIN(rem, space);
-+
-+				full_ports_mask |= (1ULL << p);
-+				if (to_copy > 0) {
-+					rte_memcpy(&astate->hold_buffer[astate->hold_count],
-+						   &sorted_events[p_start + enqueued],
-+						   to_copy * sizeof(struct rte_event));
-+					memset(&astate->hold_ports[astate->hold_count], p, to_copy);
-+					astate->hold_count += to_copy;
-+				}
++			if (counts[f] < min_events) {
++				min_events = counts[f];
++				best_flow_idx = (int32_t)f;
 +			}
 +		}
 +	}
 +
-+	rte_spinlock_unlock(&astate->refill_lock);
++	return best_flow_idx;
 +}
 +
- static inline uint16_t
- slb_event_enqueue_burst_generic(struct slb_port *source_port,
- 				const struct rte_event events[],
-@@ -205,7 +415,7 @@ slb_event_enqueue_burst_generic(struct slb_port *source_port,
- 
- 	slb_port_enqueue_stats(source_port, num_new, num_forward, num_release);
- 
--	/* Unified zero-copy fast path: when port has no in-flight ordered events
-+	/* Unified zero-copy fast path: when port has no in-flight ordered/atomic events
- 	 * and no release ops.
- 	 */
- 	if (likely(source_port->history_avail == SLB_PORT_HISTORY_MAX_TOKENS &&
-@@ -288,7 +498,7 @@ slb_event_enqueue_burst_generic(struct slb_port *source_port,
- 		return events_len;
- 	}
- 
--	/* General path for bursts with in-flight ordered events or releases */
-+	/* General path for bursts with in-flight ordered/atomic events or releases */
- 	uint64_t ordered_drain_mask = 0;
- 	uint16_t freed_count = 0;
- 	uint16_t head = source_port->history_head;
-@@ -332,6 +542,14 @@ slb_event_enqueue_burst_generic(struct slb_port *source_port,
- 			slb_port_queue_enqueue_stats(source_port, ev->queue_id);
- 		} else if (ev->op == RTE_EVENT_OP_RELEASE) {
- 			if (hist != NULL) {
-+				if (hist->sched_type == RTE_SCHED_TYPE_ATOMIC) {
-+					struct slb_queue *orig_q =
-+						&slb->queues[hist->orig_queue_id];
-+					if (orig_q->atomic_state) {
-+						uint8_t ep = hist->enq_port_id;
-+						orig_q->atomic_state->port_stats[ep].q_returned++;
-+					}
-+				}
- 				hist->active = false;
- 				hist->next_free = head;
- 				head = h_idx;
-@@ -340,6 +558,14 @@ slb_event_enqueue_burst_generic(struct slb_port *source_port,
- 			slb_port_queue_enqueue_stats(source_port, ev->queue_id);
- 		} else {
- 			if (hist != NULL) {
-+				if (hist->sched_type == RTE_SCHED_TYPE_ATOMIC) {
-+					struct slb_queue *orig_q =
-+						&slb->queues[hist->orig_queue_id];
-+					if (orig_q->atomic_state) {
-+						uint8_t ep = hist->enq_port_id;
-+						orig_q->atomic_state->port_stats[ep].q_returned++;
-+					}
-+				}
- 				hist->active = false;
- 				hist->next_free = head;
- 				head = h_idx;
-@@ -484,6 +710,35 @@ slb_ordered_ring_dequeue_burst(struct rte_event_ring *r,
- 	return n;
- }
- 
-+static inline void
-+slb_port_record_dequeued_history(struct slb_port *port, struct rte_event events[],
-+				 uint16_t dequeued, uint8_t queue_id,
-+				 uint8_t sched_type, uint32_t start_slot,
-+				 uint32_t ring_mask)
++static void
++slb_check_and_trigger_migration(struct slb_evdev *slb, struct slb_queue *queue,
++				struct slb_atomic_state *astate, uint8_t full_port_id)
 +{
-+	uint16_t head = port->history_head;
-+	bool is_ordered = (sched_type == RTE_SCHED_TYPE_ORDERED);
++	struct slb_atomic_port_stats *pstats = &astate->port_stats[full_port_id];
++	uint64_t now;
++	uint64_t hz;
++	uint64_t cooldown_cycles;
++	int32_t flow_to_migrate;
 +
-+	for (uint16_t j = 0; j < dequeued; j++) {
-+		uint16_t h_idx = head;
-+		struct slb_history_entry *h = &port->history[h_idx];
++	pstats->load_counter++;
++	if (pstats->load_counter < SLB_MIGRATION_LOAD_THRESHOLD)
++		return;
 +
-+		head = h->next_free;
-+		h->orig_queue_id = queue_id;
-+		h->sched_type = sched_type;
-+		if (is_ordered) {
-+			h->seq_slot = (start_slot + j) & ring_mask;
-+		} else {
-+			h->enq_port_id = (uint8_t)port->id;
-+			h->flow_id = events[j].flow_id;
-+		}
-+		h->active = true;
-+		events[j].impl_opaque = (uint8_t)h_idx;
-+	}
-+	port->history_head = head;
-+	port->history_avail -= dequeued;
++	if (astate->migration.in_progress)
++		return;
++
++	if (slb->ports[full_port_id].is_loaded)
++		return;
++
++	if (pstats->flow_count <= 1)
++		return;
++
++	now = rte_get_timer_cycles();
++	hz = rte_get_timer_hz();
++	cooldown_cycles = (hz * SLB_MIGRATION_COOLDOWN_MS) / 1000;
++
++	if (slb->ports[full_port_id].last_migrated_time != 0 &&
++	    (now - slb->ports[full_port_id].last_migrated_time) < cooldown_cycles)
++		return;
++
++	flow_to_migrate = slb_find_lightest_flow_on_port(
++		queue, full_port_id, now, cooldown_cycles);
++	if (flow_to_migrate < 0)
++		return;
++
++	pstats->load_counter = 0;
++	slb->ports[full_port_id].is_loaded = true;
++	astate->migration.in_progress = true;
++	astate->migration.port_id = full_port_id;
++	astate->migration.flow_idx = (uint32_t)flow_to_migrate;
 +}
 +
- static inline uint16_t
- slb_port_dequeue(struct slb_port *port, struct rte_event events[],
- 		 uint16_t num)
-@@ -535,8 +790,9 @@ slb_port_dequeue(struct slb_port *port, struct rte_event events[],
- 
- 			uint8_t sched_type = qent->schedule_type;
- 			bool is_ordered = (sched_type == RTE_SCHED_TYPE_ORDERED);
-+			bool is_atomic = (sched_type == RTE_SCHED_TYPE_ATOMIC);
- 
--			if (is_ordered) {
-+			if (is_ordered || is_atomic) {
- 				if (unlikely(port->history_avail == 0))
- 					continue;
- 
-@@ -544,31 +800,27 @@ slb_port_dequeue(struct slb_port *port, struct rte_event events[],
- 							       port->history_avail);
- 				uint32_t start_slot = 0;
- 
--				dequeued = slb_ordered_ring_dequeue_burst(
--					ring_to_dq, events, dequeue_num,
--					&start_slot);
--
--				if (dequeued > 0) {
--					uint16_t head = port->history_head;
--					uint32_t ring_mask = ring_to_dq->r.mask;
--
--					for (uint16_t j = 0; j < dequeued; j++) {
--						uint16_t h_idx = head;
--						struct slb_history_entry *h =
--							&port->history[h_idx];
--
--						head = h->next_free;
--						h->orig_queue_id = queue_id;
--						h->sched_type = sched_type;
--						h->seq_slot = (start_slot + j) &
--							      ring_mask;
--						h->active = true;
--						events[j].impl_opaque =
--							(uint8_t)h_idx;
-+				if (is_ordered) {
-+					dequeued = slb_ordered_ring_dequeue_burst(
-+						ring_to_dq, events, dequeue_num,
-+						&start_slot);
-+				} else {
-+					dequeued = rte_event_ring_dequeue_burst(
-+						ring_to_dq, events, dequeue_num,
-+						NULL);
-+					if (dequeued == 0) {
-+						slb_atomic_refill(port, qent->queue);
-+						dequeued = rte_event_ring_dequeue_burst(
-+							ring_to_dq, events, dequeue_num,
-+							NULL);
- 					}
--					port->history_head = head;
--					port->history_avail -= dequeued;
- 				}
++static inline int
++slb_find_migration_target_port(struct slb_evdev *slb, struct slb_queue *queue,
++			       struct slb_atomic_state *astate, uint8_t mig_port,
++			       uint64_t now, uint64_t cooldown_cycles)
++{
++	uint64_t temp_mask = queue->serving_ports_mask;
++	int target_port = -1;
++	int min_flows = INT_MAX;
 +
-+				if (dequeued > 0)
-+					slb_port_record_dequeued_history(
-+						port, events, dequeued, queue_id,
-+						sched_type, start_slot,
-+						ring_to_dq->r.mask);
- 			} else {
- 				dequeued = rte_event_ring_dequeue_burst(
- 					ring_to_dq, events, num, NULL);
-@@ -614,6 +866,14 @@ slb_port_process_implicit_release(struct slb_port *port, struct slb_evdev *slb,
- 					rte_memory_order_release);
- 				ordered_drain_mask |= (1ULL << hist->orig_queue_id);
- 			}
-+		} else if (hist->sched_type == RTE_SCHED_TYPE_ATOMIC) {
-+			struct slb_queue *oq = &slb->queues[hist->orig_queue_id];
++	while (temp_mask != 0) {
++		uint8_t cand_port = rte_ctz64(temp_mask);
++		struct slb_port *cp = &slb->ports[cand_port];
 +
-+			if (oq->atomic_state) {
-+				uint8_t ep = hist->enq_port_id;
++		temp_mask &= ~(1ULL << cand_port);
++		if (cand_port == mig_port || cp->is_loaded)
++			continue;
 +
-+				oq->atomic_state->port_stats[ep].q_returned++;
++		if (cp->last_migrated_time == 0 ||
++		    (now - cp->last_migrated_time) >= cooldown_cycles) {
++			if ((int)astate->port_stats[cand_port].flow_count < min_flows) {
++				min_flows = (int)astate->port_stats[cand_port].flow_count;
++				target_port = cand_port;
 +			}
++		} else if (target_port == -1) {
++			target_port = cand_port;
++		}
++	}
++	return target_port;
++}
++
++static inline void
++slb_complete_flow_migration(struct slb_evdev *slb, struct slb_atomic_state *astate,
++			    uint8_t mig_port, int target_port, uint64_t now)
++{
++	uint32_t f_idx = astate->migration.flow_idx;
++
++	rte_atomic_store_explicit(&astate->flow_map.flows[f_idx].port_id,
++				  target_port, rte_memory_order_release);
++
++	for (uint16_t h = 0; h < astate->hold_count; h++) {
++		if (astate->hold_ports[h] == mig_port &&
++		    slb_flow_hash(astate->hold_buffer[h].flow_id) == f_idx) {
++			astate->hold_ports[h] = (uint8_t)target_port;
++		}
++	}
++
++	astate->flow_last_migrated[f_idx] = now;
++	slb->ports[mig_port].last_migrated_time = now;
++	slb->ports[target_port].last_migrated_time = now;
++
++	if (astate->port_stats[mig_port].flow_count > 0)
++		astate->port_stats[mig_port].flow_count--;
++	astate->port_stats[target_port].flow_count++;
++	astate->migrations_count++;
++
++	slb->ports[mig_port].flow_migrations++;
++	slb->ports[mig_port].migrations_out++;
++	slb->ports[target_port].migrations_in++;
++
++	astate->port_stats[mig_port].load_counter = 0;
++	slb->ports[mig_port].is_loaded = false;
++	astate->migration.in_progress = false;
++}
++
++static inline uint8_t
++slb_assign_unmapped_flow_port(struct slb_evdev *slb, struct slb_atomic_state *astate,
++			      uint64_t serving_mask, uint16_t num_serving_ports)
++{
++	uint32_t rr_counter = astate->next_port_rr++;
++	int port_offset = rr_counter % num_serving_ports;
++	uint64_t temp_mask = serving_mask;
++	uint8_t assigned_port = 0;
++
++	for (int j = 0; j <= port_offset; j++) {
++		assigned_port = rte_ctz64(temp_mask);
++		temp_mask &= (temp_mask - 1);
++	}
++
++	if (slb->ports[assigned_port].is_loaded) {
++		uint64_t cand_mask = serving_mask;
++
++		while (cand_mask != 0) {
++			uint8_t cp = rte_ctz64(cand_mask);
++
++			cand_mask &= (cand_mask - 1);
++			if (!slb->ports[cp].is_loaded) {
++				assigned_port = cp;
++				break;
++			}
++		}
++	}
++	return assigned_port;
++}
++
+ /* If port queue is empty for an atomic queue, pull events from main atomic queue to fill
+  * up port queues.
+  */
+ static void
+-slb_atomic_refill(struct slb_port *port __rte_unused, struct slb_queue *queue)
++slb_atomic_refill(struct slb_port *port, struct slb_queue *queue)
+ {
++	struct slb_evdev *slb = port->slb;
+ 	struct rte_event master_events[SLB_MAX_PORT_DEQUEUE_DEPTH];
+ 	uint16_t n_deq;
+ 	uint16_t i;
+@@ -183,6 +376,35 @@ slb_atomic_refill(struct slb_port *port __rte_unused, struct slb_queue *queue)
+ 	if (!rte_spinlock_trylock(&astate->refill_lock))
+ 		return;
+ 
++	/* 0. Detect migration in progress before hold buffer processing */
++	if (astate->migration.in_progress) {
++		uint8_t mig_port = astate->migration.port_id;
++		uint64_t enq_cnt = astate->port_stats[mig_port].q_enqueued;
++		uint64_t ret_cnt = astate->port_stats[mig_port].q_returned;
++
++		if (enq_cnt == ret_cnt) {
++			uint64_t now = rte_get_timer_cycles();
++			uint64_t hz = rte_get_timer_hz();
++			uint64_t cooldown_cycles =
++				(hz * SLB_MIGRATION_COOLDOWN_MS) / 1000;
++			int target_port = slb_find_migration_target_port(
++				slb, queue, astate, mig_port, now,
++				cooldown_cycles);
++
++			if (target_port != -1)
++				slb_complete_flow_migration(
++					slb, astate, mig_port, target_port, now);
++			else {
++				astate->port_stats[mig_port].load_counter = 0;
++				slb->ports[mig_port].is_loaded = false;
++				astate->migration.in_progress = false;
++			}
++		}
++	}
++
++	if (astate->migration.in_progress)
++		full_ports_mask |= (1ULL << astate->migration.port_id);
++
+ 	/* 1. Process Hold Buffer first */
+ 	if (astate->hold_count > 0) {
+ 		uint16_t retained = 0;
+@@ -216,6 +438,10 @@ slb_atomic_refill(struct slb_port *port __rte_unused, struct slb_queue *queue)
+ 				&astate->hold_buffer[i], burst_len, NULL);
+ 			astate->port_stats[dest_port_id].q_enqueued += enqueued;
+ 
++			if (enqueued > 0 &&
++			    astate->port_stats[dest_port_id].load_counter > 0)
++				astate->port_stats[dest_port_id].load_counter--;
++
+ 			if (enqueued < burst_len) {
+ 				uint16_t rem = burst_len - enqueued;
+ 				uint16_t start_idx = i + enqueued;
+@@ -230,6 +456,9 @@ slb_atomic_refill(struct slb_port *port __rte_unused, struct slb_queue *queue)
+ 						rem);
+ 				}
+ 				retained += rem;
++				if (enqueued == 0)
++					slb_check_and_trigger_migration(
++						slb, queue, astate, dest_port_id);
+ 			}
+ 
+ 			i += burst_len;
+@@ -274,17 +503,8 @@ slb_atomic_refill(struct slb_port *port __rte_unused, struct slb_queue *queue)
+ 					rte_memory_order_acquire);
+ 
+ 			if (unlikely(dest_port_id == -1)) {
+-				uint32_t rr_counter = astate->next_port_rr++;
+-				int port_offset = rr_counter % num_serving_ports;
+-				uint64_t temp_mask = serving_mask;
+-				uint8_t assigned_port = 0;
+-
+-				for (int j = 0; j <= port_offset; j++) {
+-					assigned_port = rte_ctz64(temp_mask);
+-					temp_mask &= (temp_mask - 1);
+-				}
+-
+-				dest_port_id = assigned_port;
++				dest_port_id = slb_assign_unmapped_flow_port(
++					slb, astate, serving_mask, num_serving_ports);
+ 				rte_atomic_store_explicit(
+ 					&astate->flow_map.flows[flow_idx].port_id,
+ 					dest_port_id, rte_memory_order_release);
+@@ -346,7 +566,10 @@ slb_atomic_refill(struct slb_port *port __rte_unused, struct slb_queue *queue)
+ 				queue->per_port_rings[p], &sorted_events[p_start], p_count, NULL);
+ 			astate->port_stats[p].q_enqueued += enqueued;
+ 
+-			if (enqueued < p_count) {
++			if (enqueued == p_count) {
++				if (unlikely(astate->port_stats[p].load_counter > 0))
++					astate->port_stats[p].load_counter--;
++			} else {
+ 				uint16_t rem = p_count - enqueued;
+ 				uint16_t space = SLB_HOLD_BUFFER_SIZE - astate->hold_count;
+ 				uint16_t to_copy = RTE_MIN(rem, space);
+@@ -359,6 +582,9 @@ slb_atomic_refill(struct slb_port *port __rte_unused, struct slb_queue *queue)
+ 					memset(&astate->hold_ports[astate->hold_count], p, to_copy);
+ 					astate->hold_count += to_copy;
+ 				}
++				if (enqueued == 0)
++					slb_check_and_trigger_migration(
++						slb, queue, astate, p);
+ 			}
  		}
- 		hist->active = false;
- 		hist->next_free = head;
+ 	}
 -- 
 2.53.0
 
