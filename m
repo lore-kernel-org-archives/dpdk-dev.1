@@ -2,73 +2,73 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C2C606A331
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 17:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C81606A32F
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 17:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=GFTS8MXc
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=vJHNiJnD
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0B3C14065A;
-	Tue, 17 Nov 2026 18:57:35 +0100 (CET)
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com
- [209.85.160.182])
- by mails.dpdk.org (Postfix) with ESMTPS id 22638402A4
- for <dev@dpdk.org>; Tue, 17 Nov 2026 18:57:30 +0100 (CET)
-Received: by mail-qt1-f182.google.com with SMTP id
- d75a77b69052e-53644ab1f7bso665701cf.3
- for <dev@dpdk.org>; Tue, 17 Nov 2026 09:57:30 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 034FF4060C;
+	Tue, 17 Nov 2026 18:57:36 +0100 (CET)
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com
+ [209.85.219.47])
+ by mails.dpdk.org (Postfix) with ESMTPS id 8683240374
+ for <dev@dpdk.org>; Tue, 17 Nov 2026 18:57:31 +0100 (CET)
+Received: by mail-qv1-f47.google.com with SMTP id
+ 6a1803df08f44-91eb46044c4so80146396d6.1
+ for <dev@dpdk.org>; Tue, 17 Nov 2026 09:57:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1794938249; x=1795543049; darn=dpdk.org;
+ d=gmail.com; s=20260707; t=1794938250; x=1795543050; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=YBDbWGeoTR89ooh6Cto8wEuAtDgEvPcRlcLnDgk5rYQ=;
- b=GFTS8MXc2DdAgdZPIXEKYGuwzR6uCbtaW5wj8ju+rBjgIA9RSTRId3rvt3Szjp+6aX
- J1wN/38kQwTytKPSAXv1+95wkcd4LUF77P0lV9JmbcFzn+PziSUjZmol6HyM0Qp5kjlY
- sfosIn9I4J74iACZMagZu6/4BtUFEPNdggy83L9uxVu+VPMilhV5LALD2o3VoA0YVCU4
- Uh+2JVMEIDD0LtsQTChQKmiu8tfeoKAiyg7q1YcgzD6bVHcO5Gn86vyQzInHuvzwa4CO
- ba4TOhWuuc9lsmGi/4p/LtTxkkuw7RXM2/gHqCzMzOeHWEKNHcm/DuuCRPOM/rscz7K8
- Z+Dw==
+ bh=rpCvf/cAwEsSPseSJWW6891HhRF77hh8HtqHHwJAgak=;
+ b=vJHNiJnDRkS9Knht1ThUn2e/2OFe+WXENLFb8Fcsc1QSQHeEug4NnI9pyRPOhsTcQZ
+ HBkKwgjPYOYxQm/Yx+14x3GV0zYhoTVzCyoYuoX51ABFek9BC4kpLjqNcG8B8ZatDmAy
+ k1cJrxoxXvIEk9w/BTLJ8JG5jmesd6pbqiWOPBkY0YrwaifJEz+VcyVdEGcBr5poknsJ
+ L1qbb2u1il/xD2YF7Wb5Ge9XnQFV1xTDURrWHBEE132Hvu4BeNV7xfzV7iSWhe+ApP4L
+ pf70IDQxWxuZWPg9JlfIP+Evkp2SwwplZLnWKh7uh08sE/Y2ZZ5g97MoP2IBFklAnoi2
+ 4Okg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794938249; x=1795543049;
+ d=1e100.net; s=20260707; t=1794938250; x=1795543050;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=YBDbWGeoTR89ooh6Cto8wEuAtDgEvPcRlcLnDgk5rYQ=;
- b=gHEzWzcTdxwkqsiWCdOeKY8pNyNIZ7aGu+xOWhjZtwJONiueFYXppCU4CBjV8CTXby
- WBwaCXCOrlXnysGRCY+wfnbZbFnGXTsIQKhe06rUmHX0SEPdjM2RtlBNO8NDmuRf/4Fa
- Oih6rJo07j9ed1OPvqeHgXCXy5gDf7ZLtuRKnX/MwbIknmc4Z4g3/2VxIwKpQaTNujad
- zNBTItJtYiJG9uK8NRUjthTXLY8c7yAg3HIdgYf8xdnTRT08EdAmnzPKfjhJ90Jx8MZh
- cB4ph4bSrd5i93pTUB/XsDT6KfGpb6KJiGDrxoZe0hzS1P0mBx/qlsGATfMCupo+GRG+
- hSMQ==
-X-Gm-Message-State: APuU4Z8z4EqTerMJ9aJ8U/BXqxLNcPwVya6AKqyP3VKO8cT2VfdrWqG5
- HLAaC63HyWaSnat/G5M1sXqOkQHsh+BEG+tpvfjnUdiTAG6rxCLdlfi6+oP/e0nN
-X-Gm-Gg: AYBFou1mWVtmBbqBSdiaCh/toJSSf7y4e9ASJoKH0oRt2RXdinKDLNWsYCdDBJ6hQIc
- 41DxJNcnHsT+BbORrrUHoWcz4Wvy0XcfI0ojrg9gRZ1TVzOwSidYGMn2pEOWnuK2k5jIUbwn+JH
- PCbxodWhJ7YPV1KsRlgB8nGAt/HEdTO9RLDFu1ozUMH8jcQofaUhB9xFKR+5dkjeUkt0Zpmgs8Y
- 7kcTRLPfjtMcRZwh2s6V7FMEDhFbV38JN5gVPz7xePvSs3D1krdMojtM6n6nIVk2NFro3yZDn0j
- L3jhtLFDecGnNgqRJR3W9HDZSStMFdCdkG3dJd+iEUd5U3UFqr8rCTw4iQUBoOEPT3DbFrz92qH
- 2EXSCF8wOTE5Lu8041DXk/9M2lRNHEWJiyivCRats631/ZVvY9ZTxIlR20EoasXWkKKpVtDtUdv
- gR1FRb7jQTsEvt20QOAjv36hDin0W9dFvjB0hkFJb33HCHGgQlTVSX3cbSbRfqPr9Sb/QyAicNm
- gaFLW8nznw9jAXHcHIemUzOYadAJ+1Zzu+3nvmL9gfrMK12lkHVzS75yWh/iYg+k+kxbhsDn+DC
- /PjTCmVl2J/2Od+TtCDYI1qzovAF34/0fui/U4O4L8Yp4gBcjt5LlagSzpVqTp+mzm2pmMWFxwv
- 1l2tzJZ80DxqZjWZf3/KxGu/HioavhzGTTarUL3ja6JCkrYkqy3zw
-X-Received: by 2002:a05:622a:1390:b0:536:b7a:2ce8 with SMTP id
- d75a77b69052e-55d5a62dd36mr582631cf.51.1794938248944; 
- Tue, 17 Nov 2026 09:57:28 -0800 (PST)
+ bh=rpCvf/cAwEsSPseSJWW6891HhRF77hh8HtqHHwJAgak=;
+ b=welOC/ZbEuzMgJLu0eD98u+BE8/L37Xa0lgk8P4Gy37XmJlkQuozOb6Fl7STYJ9woJ
+ ks6AceohBkWvZUFs+hUeScal1eKaNtg4WSPHIt93TkT0lYwAcWiTDxm4HrgkcQzHZeIn
+ upvAPq15cW4ICPGyayN/36RfA5YWxvezfDi4p/gQDoSh9yl281bvDx6SD79BMz4aQN7j
+ tOxrccI3el+knhOQSHPlgJg8OGGU6wGc2CZD0IFE1ZKVxXaOQ3/K/UKzLp5sSAB1LSey
+ nmgZ6Id5Rjn/jVXpkdbUvZPtbfViNFeBssqo50XeKFfPkpVE5ERsgQWfNHOSrLGe5rPS
+ I9xw==
+X-Gm-Message-State: APuU4Z/Y8bn8TY07jXR1r9BZ9tLnC9MNjCQ/lDKoNXSCrE39yVLqYMb5
+ pqLlse1IcHwpLF1/OVSAhvcwQzd0a1eaqHUvI3zMijSkU8ZEsXAGP/uPn+yvTOIN
+X-Gm-Gg: AZFdTZf1/zvOix0uZdXa3lse+Jim/h5YsdFtPJPiOM/6t7kmlkVXDhvamYMep7pWP8c
+ r5OYKf2/RsL9y/gjidr2pDUG8H78GFKkLLemmNFHWSx0HRSnNcQiBasSECpIyN2ludXh/b8uxH3
+ xru6Hto5S4P6sUot6LCr0tA06kK/q77rGs2XHvBT7psMhmZ9jRnclf3EAWkiNsq+YKtX0HZEROz
+ Hk343BObrsA5zjA6j1MKYA87r+hUZacRg2BSfwiPkdGA+PK6E2LYe8UXiSRFkbs1uouQKxz9c8L
+ TkTUSObp5g92HDA3iw6dAe/RS6H81AKW0iWM6jn+APnUSUJRkqdRqXLkCGIo4hs1Mk5KyDArb9x
+ L1bzW9SVFfQdDIxCI3rimhgZFSkTtebD20cg8a5TuzOKGqE+q+X+qlSj36RziNXRse+xLvb6GST
+ y2GStqA7u+DnrXN82qp9duO5kBouKT04Qm+GmH4yT9ZzxCc68kJphxwSb3P0AsSR3AlZaCxxxyZ
+ CLoKZTvPsHZSRvbLU9mbkk8+YcqkutPHRH7ZM1HJ88t5qZNajO+e2FLoebjX9qBrDmus+NVkxCv
+ fQqZJ3wPZ72qnn3wyQ1iQEwiYZtyp28J6MNTAyWHNyLRrjuGZTY+Ih+w62/AFeg6b144LZP9bik
+ rXV8jaTC0koRztgFQA/ScdlSwrXO9+73I3UpF9FqOhGM6YjeUgN4C
+X-Received: by 2002:a05:6214:f09:b0:915:3066:2035 with SMTP id
+ 6a1803df08f44-91f2409d646mr222808906d6.7.1794938250065; 
+ Tue, 17 Nov 2026 09:57:30 -0800 (PST)
 Received: from pravin-HP-Z840 (ool-944c29f7.dyn.optonline.net. [148.76.41.247])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-921148c261bsm327426d6.0.2026.11.17.09.57.28
+ 6a1803df08f44-921148c261bsm327426d6.0.2026.11.17.09.57.29
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 17 Nov 2026 09:57:28 -0800 (PST)
+ Tue, 17 Nov 2026 09:57:29 -0800 (PST)
 From: Pravin Pathak <pravinpathakdev@gmail.com>
 To: dev@dpdk.org
 Cc: jerinj@marvell.com, bruce.richardson@intel.com, thomas@monjalon.net,
  david.marchand@redhat.com, nipun.gupta@amd.com, chenbox@nvidia.com,
  tirthendu.sarkar@intel.com, mattias.ronnblom@ericsson.com,
  stephen@networkplumber.org, Pravin Pathak <pravin.pathak.dev@gmail.com>
-Subject: [PATCH v2 5/8] event/slb: add extended statistics and diagnostics
-Date: Tue, 17 Nov 2026 12:57:05 -0500
-Message-ID: <20261117175709.2346400-6-pravinpathakdev@gmail.com>
+Subject: [PATCH v2 6/8] event/slb: add self-test and documentation
+Date: Tue, 17 Nov 2026 12:57:06 -0500
+Message-ID: <20261117175709.2346400-7-pravinpathakdev@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261117175709.2346400-1-pravinpathakdev@gmail.com>
 References: <20261107013011.2443138-9-pravinpathakdev@gmail.com>
@@ -95,563 +95,758 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Pravin Pathak <pravin.pathak.dev@gmail.com>
 
-Implement the eventdev extended statistics (xstats) interface and
-enhance PMD diagnostics in the dump callback.
+Add driver self-test coverage and documentation for the Software
+Load Balancer PMD.
 
-Device and per-port statistics are exposed through xstats callbacks,
-including enqueue/dequeue counts, credit loan counts, and migration
-tallies. The slb_dump callback is extended to display detailed per-port
-and per-queue internal state, atomic migration status, and queue depth.
+The self-test verifies parallel queues, atomic queue flow ordering,
+ordered queues with forward sequence restoration, single-link queues,
+and device stop/restart event draining. Register the self-test in
+app/test as a fast test.
+
+Add PMD user guide, feature matrix table, release notes entry for
+DPDK 26.11, and update MAINTAINERS.
 
 Signed-off-by: Pravin Pathak <pravin.pathak.dev@gmail.com>
 ---
- drivers/event/slb/meson.build  |   5 +
- drivers/event/slb/slb_evdev.c  |  94 ++++++++-
- drivers/event/slb/slb_evdev.h  |  11 ++
- drivers/event/slb/slb_xstats.c | 347 +++++++++++++++++++++++++++++++++
- 4 files changed, 450 insertions(+), 7 deletions(-)
- create mode 100644 drivers/event/slb/slb_xstats.c
+ MAINTAINERS                           |   2 +
+ app/test/test_eventdev.c              |   7 +
+ doc/guides/eventdevs/features/slb.ini |  26 ++
+ doc/guides/eventdevs/index.rst        |   1 +
+ doc/guides/eventdevs/slb.rst          |  68 ++++
+ drivers/event/slb/meson.build         |   1 +
+ drivers/event/slb/slb_evdev.c         |   1 +
+ drivers/event/slb/slb_evdev.h         |   4 +
+ drivers/event/slb/slb_selftest.c      | 522 ++++++++++++++++++++++++++
+ 9 files changed, 632 insertions(+)
+ create mode 100644 doc/guides/eventdevs/features/slb.ini
+ create mode 100644 doc/guides/eventdevs/slb.rst
+ create mode 100644 drivers/event/slb/slb_selftest.c
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1a0dd5505f..611794a8f8 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1537,6 +1537,8 @@ F: doc/guides/eventdevs/dsw.rst
+ Software Load Balancer (SLB) Eventdev PMD
+ M: Pravin Pathak <pravin.pathak.dev@gmail.com>
+ F: drivers/event/slb/
++F: doc/guides/eventdevs/slb.rst
++F: doc/guides/eventdevs/features/slb.ini
+ 
+ Software OPDL Eventdev PMD
+ M: Liang Ma <liangma@liangbit.com>
+diff --git a/app/test/test_eventdev.c b/app/test/test_eventdev.c
+index 1241da38cb..58ec440674 100644
+--- a/app/test/test_eventdev.c
++++ b/app/test/test_eventdev.c
+@@ -1527,12 +1527,19 @@ test_eventdev_selftest_cn20k(void)
+ 	return test_eventdev_selftest_impl("event_cn20k", "");
+ }
+ 
++static int
++test_eventdev_selftest_slb(void)
++{
++	return test_eventdev_selftest_impl("event_slb", "");
++}
++
+ #endif /* !RTE_EXEC_ENV_WINDOWS */
+ 
+ REGISTER_FAST_TEST(eventdev_common_autotest, NOHUGE_OK, ASAN_OK, test_eventdev_common);
+ 
+ #ifndef RTE_EXEC_ENV_WINDOWS
+ REGISTER_FAST_TEST(eventdev_selftest_sw, NOHUGE_OK, ASAN_OK, test_eventdev_selftest_sw);
++REGISTER_FAST_TEST(eventdev_selftest_slb, NOHUGE_OK, ASAN_OK, test_eventdev_selftest_slb);
+ REGISTER_DRIVER_TEST(eventdev_selftest_octeontx, test_eventdev_selftest_octeontx);
+ REGISTER_DRIVER_TEST(eventdev_selftest_dpaa2, test_eventdev_selftest_dpaa2);
+ REGISTER_DRIVER_TEST(eventdev_selftest_dlb2, test_eventdev_selftest_dlb2);
+diff --git a/doc/guides/eventdevs/features/slb.ini b/doc/guides/eventdevs/features/slb.ini
+new file mode 100644
+index 0000000000..0364840bc9
+--- /dev/null
++++ b/doc/guides/eventdevs/features/slb.ini
+@@ -0,0 +1,26 @@
++;
++; Supported features of the 'software load balancer' (event_slb) eventdev driver.
++;
++; Refer to default.ini for the full list of available PMD features.
++;
++[Scheduling Features]
++atomic_scheduling          = Y
++ordered_scheduling         = Y
++parallel_scheduling        = Y
++distributed_sched          = Y
++burst_mode                 = Y
++implicit_release_disable   = Y
++nonseq_mode                = Y
++runtime_port_link          = Y
++multiple_queue_port        = Y
++carry_flow_id              = Y
++maintenance_free           = Y
++independent_enq            = Y
++
++[Eth Rx adapter Features]
++
++[Eth Tx adapter Features]
++
++[Crypto adapter Features]
++
++[Timer adapter Features]
+diff --git a/doc/guides/eventdevs/index.rst b/doc/guides/eventdevs/index.rst
+index 69a5ebf812..fdaf846503 100644
+--- a/doc/guides/eventdevs/index.rst
++++ b/doc/guides/eventdevs/index.rst
+@@ -20,3 +20,4 @@ application through the eventdev API.
+     sw
+     octeontx
+     opdl
++    slb
+diff --git a/doc/guides/eventdevs/slb.rst b/doc/guides/eventdevs/slb.rst
+new file mode 100644
+index 0000000000..d319b94920
+--- /dev/null
++++ b/doc/guides/eventdevs/slb.rst
+@@ -0,0 +1,68 @@
++..  SPDX-License-Identifier: BSD-3-Clause
++    Copyright(c) 2026 Pravin Pathak <pravin.pathak.dev@gmail.com>
++
++Software Load Balancer (SLB) Eventdev Driver
++============================================
++
++The Software Load Balancer (SLB) event device is a poll-mode eventdev driver
++which distributes events among multiple worker ports and cores without requiring
++dedicated scheduling service cores or hardware coprocessors.
++
++Features
++--------
++
++Queues
++~~~~~~
++
++* **Parallel**: Lock-free multi-producer, multi-consumer ring-based queue allowing
++  concurrent dequeues across all serving worker ports.
++* **Atomic**: Flow-pinned scheduling guaranteeing strict per-flow packet ordering.
++  Includes dynamic load tracking and automatic flow migration to rebalance overloaded
++  ports while preserving in-flight sequence integrity.
++* **Ordered**: Ticket-based sequence tracking and reorder buffer providing end-to-end
++  packet order restoration across parallel processing workers.
++* **Single-Link**: Dedicated direct queue mapping from a producer port to a single
++  consumer port using optimized single-consumer rings.
++
++Ports & Scheduling Capabilities
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++* **Distributed Scheduling**: No dedicated service core required; scheduling work is
++  performed inline during enqueue and dequeue operations.
++* **Prefix Sum Burst Enqueue**: Interleaved multi-queue bursts are grouped and scattered
++  via prefix-sum offsets, dispatching single batched bursts to queue rings to eliminate
++  atomic Compare-And-Swap contention on multi-producer rings.
++* **Dynamic Flow Migration**: Atomic queues monitor port dequeue loads and migrate
++  eligible victim flows from overloaded ports to underloaded ports with cooling cycles.
++* **Credit Pool Management**: Centralized event credit pool with per-port credit caching
++  to enforce device-wide in-flight event limits (``max_num_events``).
++* **Runtime Port Linking**: Supports dynamic linking and unlinking of ports and queues
++  both when stopped and at runtime.
++* **Maintenance Free**: Operates without requiring periodic maintenance calls
++  (``RTE_EVENT_DEV_CAP_MAINTENANCE_FREE``).
++
++Configuration and Options
++-------------------------
++
++The SLB event device is a virtual device (vdev) and can be initialized from the
++application code or from the EAL command line:
++
++* From application code:
++
++  .. code-block:: c
++
++      rte_vdev_init("event_slb0", NULL);
++
++* From EAL command-line options:
++
++  .. code-block:: console
++
++      ./your_dpdk_application --vdev="event_slb0"
++
++Limitations
++-----------
++
++* **Flow Hash Table Size**: Atomic queues use an internal flow mapping table
++  dimensioned to 2048 concurrent active flows per queue (``SLB_ATOMIC_FLOWS``).
++* **Maximum Ports and Queues**: Configured for up to 64 ports (``SLB_MAX_PORTS``)
++  and 64 queues (``SLB_MAX_QUEUES``).
 diff --git a/drivers/event/slb/meson.build b/drivers/event/slb/meson.build
-index 9a1dff524f..d698a58f16 100644
+index d698a58f16..6caf48720f 100644
 --- a/drivers/event/slb/meson.build
 +++ b/drivers/event/slb/meson.build
-@@ -10,6 +10,11 @@ endif
- sources = files(
+@@ -11,6 +11,7 @@ sources = files(
          'slb_evdev.c',
          'slb_event.c',
-+        'slb_xstats.c',
+         'slb_xstats.c',
++        'slb_selftest.c',
  )
  
  deps += ['bus_vdev', 'ring']
-+
-+if cc.has_argument('-Wno-format-nonliteral')
-+    cflags += '-Wno-format-nonliteral'
-+endif
 diff --git a/drivers/event/slb/slb_evdev.c b/drivers/event/slb/slb_evdev.c
-index 1916b7faa4..04a2aba165 100644
+index 04a2aba165..c86b934b03 100644
 --- a/drivers/event/slb/slb_evdev.c
 +++ b/drivers/event/slb/slb_evdev.c
-@@ -606,6 +606,8 @@ slb_dump(struct rte_eventdev *dev, FILE *f)
- {
- 	struct slb_evdev *slb = slb_pmd_priv(dev);
- 	int32_t pool_on_loan, pool_avail;
-+	uint64_t total_mig_in = 0, total_mig_out = 0;
-+	int i;
- 
- 	if (dev == NULL || f == NULL)
- 		return;
-@@ -617,20 +619,41 @@ slb_dump(struct rte_eventdev *dev, FILE *f)
- 	fprintf(f, "\n[SLB EVENTDEV DEBUG STATS]\n");
- 	fprintf(f, "  Device ID: %u, Driver: %s\n", dev->data->dev_id,
- 		SLB_PMD_NAME);
--	fprintf(f, "  Credit Pool: %d on_loan / %d max_inflight (%d avail)\n",
-+	fprintf(f, "  Credit Pool: %d on_loan / %d max_inflight (%d available)\n",
- 		pool_on_loan, slb->max_inflight, pool_avail);
- 
-+	fprintf(f, "\n  PORT FLOW MIGRATION COUNTERS:\n");
-+	for (i = 0; i < slb->num_ports; i++) {
-+		struct slb_port *p = &slb->ports[i];
-+
-+		total_mig_in += p->migrations_in;
-+		total_mig_out += p->migrations_out;
-+		fprintf(f,
-+			"    Port %2u: Migrated-In: %6" PRIu64
-+			" | Migrated-Out: %6" PRIu64 " | Net: %+5" PRId64 "\n",
-+			i, p->migrations_in, p->migrations_out,
-+			(int64_t)p->migrations_in - (int64_t)p->migrations_out);
-+	}
-+	fprintf(f, "    Total Flow Migrations: IN=%" PRIu64 ", OUT=%" PRIu64 "\n",
-+		total_mig_in, total_mig_out);
-+
- 	fprintf(f, "\n  PORT STATISTICS & QUEUE LINKAGES:\n");
--	for (int i = 0; i < slb->num_ports; i++) {
-+	for (i = 0; i < slb->num_ports; i++) {
- 		struct slb_port *p = &slb->ports[i];
- 		uint64_t aq = rte_atomic_load_explicit(&p->active_queues,
- 						       rte_memory_order_acquire);
--		fprintf(f, "    Port %2u (credits=%3d, active=0x%08" PRIx64 "): ",
--			i, p->inflight_credits, aq);
- 		int linked_count = 0;
-+
-+		fprintf(f,
-+			"    Port %2u (credits=%3d, active=0x%08" PRIx64
-+			", loaded=%d, mig_in=%" PRIu64 ", mig_out=%" PRIu64 "): ",
-+			i, p->inflight_credits, aq, p->is_loaded,
-+			p->migrations_in, p->migrations_out);
-+
- 		if (p->is_single_linked) {
- 			if (p->single_linked_q) {
- 				int qid = p->single_linked_q - slb->queues;
-+
- 				fprintf(f, "Q%d (single-link)", qid);
- 				linked_count++;
- 			}
-@@ -638,6 +661,7 @@ slb_dump(struct rte_eventdev *dev, FILE *f)
- 			for (int pr = 0; pr < SLB_MAX_PRIORITIES; pr++) {
- 				for (int s = 0; s < p->num_q[pr]; s++) {
- 					int qid = p->q_entries[pr][s].queue_id;
-+
- 					if (linked_count > 0)
- 						fprintf(f, ", ");
- 					fprintf(f, "Q%d(p%d)", qid, pr);
-@@ -648,16 +672,69 @@ slb_dump(struct rte_eventdev *dev, FILE *f)
- 		if (linked_count == 0)
- 			fprintf(f, "(no queues linked)");
- 		fprintf(f, "\n");
-+		fprintf(f,
-+			"            stats: enq_calls=%" PRIu64
-+			", new_enq=%" PRIu64 ", fwd_enq=%" PRIu64
-+			", rel_enq=%" PRIu64 ", deq_calls=%" PRIu64
-+			", deq=%" PRIu64 "\n",
-+			p->enqueue_calls, p->new_enqueued,
-+			p->forward_enqueued, p->release_enqueued,
-+			p->dequeue_calls, p->dequeued);
- 	}
- 
- 	fprintf(f, "\n  ALL QUEUES STATUS:\n");
--	for (int i = 0; i < slb->num_queues; i++) {
-+	for (i = 0; i < slb->num_queues; i++) {
- 		struct slb_queue *q = &slb->queues[i];
- 		uint32_t count = rte_event_ring_count(q->q_ring);
- 		uint32_t ring_size = rte_event_ring_get_capacity(q->q_ring);
--		fprintf(f, "    Queue %2u: %6u/%6u events, serving_ports=0x%016" PRIx64 ", sched=%u, single=%d\n",
-+
-+		fprintf(f,
-+			"    Queue %2u: %6u/%6u events, serving_ports=0x%016" PRIx64
-+			" (count=%u), sched_type=%u, single_link=%d\n",
- 			i, count, ring_size, q->serving_ports_mask,
--			q->schedule_type, q->is_single_link);
-+			q->num_serving_ports, q->schedule_type,
-+			q->is_single_link);
-+		if (q->schedule_type == RTE_SCHED_TYPE_ATOMIC) {
-+			if (q->atomic_state) {
-+				fprintf(f,
-+					"      Atomic State: total_migrations=%" PRIu64
-+					", hold_count=%u\n",
-+					q->atomic_state->migrations_count,
-+					q->atomic_state->hold_count);
-+				if (q->atomic_state->migration.in_progress) {
-+					fprintf(f,
-+						"      MIGRATION IN PROGRESS: from port %u, flow_idx=%u\n",
-+						q->atomic_state->migration.port_id,
-+						q->atomic_state->migration.flow_idx);
-+				}
-+				for (int j = 0; j < slb->num_ports; j++) {
-+					if (q->per_port_rings[j]) {
-+						struct slb_atomic_port_stats *ps =
-+							&q->atomic_state->port_stats[j];
-+
-+						fprintf(f,
-+							"      Per-port ring %d: %u events"
-+							" (load_counter=%u, flows=%u,"
-+							" enq=%" PRIu64 ", ret=%" PRIu64 ")\n",
-+							j,
-+							rte_event_ring_count(q->per_port_rings[j]),
-+							ps->load_counter,
-+							ps->flow_count,
-+							ps->q_enqueued,
-+							ps->q_returned);
-+					}
-+				}
-+			}
-+		} else if (q->schedule_type == RTE_SCHED_TYPE_ORDERED) {
-+			fprintf(f, "      Ordered reorder_drain_idx=%u\n",
-+				q->reorder_drain_idx);
-+		}
-+		if (count > 0 && q->serving_ports_mask == 0)
-+			fprintf(f,
-+				"      ^^^ PROBLEM: Queue has %u events but serving_ports_mask=0!\n",
-+				count);
-+		if (count == 0 && q->serving_ports_mask == 0)
-+			fprintf(f, "      (unused queue)\n");
- 	}
- 	fprintf(f, "[END DEBUG]\n\n");
- 	fflush(f);
-@@ -678,6 +755,9 @@ static struct eventdev_ops slb_evdev_ops = {
- 	.dev_stop = slb_stop,
- 	.dev_close = slb_close,
- 	.dump = slb_dump,
-+	.xstats_get = slb_xstats_get,
-+	.xstats_get_names = slb_xstats_get_names,
-+	.xstats_get_by_name = slb_xstats_get_by_name,
+@@ -758,6 +758,7 @@ static struct eventdev_ops slb_evdev_ops = {
+ 	.xstats_get = slb_xstats_get,
+ 	.xstats_get_names = slb_xstats_get_names,
+ 	.xstats_get_by_name = slb_xstats_get_by_name,
++	.dev_selftest = test_slb_eventdev,
  };
  
  static int
 diff --git a/drivers/event/slb/slb_evdev.h b/drivers/event/slb/slb_evdev.h
-index b1a6de8606..17f3154efa 100644
+index 17f3154efa..f727a1b83c 100644
 --- a/drivers/event/slb/slb_evdev.h
 +++ b/drivers/event/slb/slb_evdev.h
-@@ -231,6 +231,17 @@ void slb_reorder_drain(struct slb_evdev *slb, struct slb_queue *queue);
+@@ -242,6 +242,8 @@ int slb_xstats_get(const struct rte_eventdev *dev,
+ uint64_t slb_xstats_get_by_name(const struct rte_eventdev *dev,
+ 				const char *name, uint64_t *id);
  
- void slb_dump(struct rte_eventdev *dev, FILE *f);
- 
-+int slb_xstats_get_names(const struct rte_eventdev *dev,
-+			 enum rte_event_dev_xstats_mode mode,
-+			 uint8_t queue_port_id,
-+			 struct rte_event_dev_xstats_name *xstats_names,
-+			 uint64_t *ids, unsigned int capacity);
-+int slb_xstats_get(const struct rte_eventdev *dev,
-+		   enum rte_event_dev_xstats_mode mode, uint8_t queue_port_id,
-+		   const uint64_t ids[], uint64_t values[], unsigned int n);
-+uint64_t slb_xstats_get_by_name(const struct rte_eventdev *dev,
-+				const char *name, uint64_t *id);
++int test_slb_eventdev(void);
 +
  static inline struct slb_evdev *
  slb_pmd_priv(const struct rte_eventdev *eventdev)
  {
-diff --git a/drivers/event/slb/slb_xstats.c b/drivers/event/slb/slb_xstats.c
+@@ -250,6 +252,8 @@ slb_pmd_priv(const struct rte_eventdev *eventdev)
+ 
+ extern int event_slb_logtype;
+ #define RTE_LOGTYPE_EVENT_SLB event_slb_logtype
++#define SLB_LOG_LINE(level, ...) \
++	RTE_LOG_LINE(level, EVENT_SLB, __VA_ARGS__)
+ #define SLB_LOG_DP_LINE(level, fmt, ...)				\
+ 	RTE_LOG_DP_LINE(level, EVENT_SLB, "%s() line %u: " fmt,		\
+ 		   __func__, __LINE__, ## __VA_ARGS__)
+diff --git a/drivers/event/slb/slb_selftest.c b/drivers/event/slb/slb_selftest.c
 new file mode 100644
-index 0000000000..fdb7dd6cc5
+index 0000000000..4a072b811b
 --- /dev/null
-+++ b/drivers/event/slb/slb_xstats.c
-@@ -0,0 +1,347 @@
++++ b/drivers/event/slb/slb_selftest.c
+@@ -0,0 +1,522 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright(c) 2026 Pravin Pathak <pravin.pathak.dev@gmail.com>
 + */
 +
++#include <stdio.h>
++#include <string.h>
++#include <stdint.h>
++#include <stdbool.h>
++#include <inttypes.h>
++
++#include <rte_bus_vdev.h>
++#include <rte_common.h>
++#include <rte_cycles.h>
++#include <rte_eventdev.h>
++
 +#include "slb_evdev.h"
 +
-+#include <limits.h>
-+#include <stdbool.h>
-+#include <string.h>
++#define NUM_PORTS 4
++#define NUM_QUEUES 4
++#define PORT_PROD 0
++#define PORT_W1   1
++#define PORT_W2   2
++#define PORT_CONS 3
 +
-+#include <rte_debug.h>
-+#include <rte_string_fns.h>
++#define Q_PARALLEL 0
++#define Q_ATOMIC   1
++#define Q_ORDERED  2
++#define Q_SINGLE   3
 +
-+/* The high bits in the xstats id is used to store an additional
-+ * parameter (beyond the queue or port id already in the xstats
-+ * interface).
-+ */
-+#define SLB_XSTATS_ID_PARAM_BITS (8)
-+#define SLB_XSTATS_ID_STAT_BITS \
-+	(sizeof(uint64_t) * CHAR_BIT - SLB_XSTATS_ID_PARAM_BITS)
-+#define SLB_XSTATS_ID_STAT_MASK ((UINT64_C(1) << SLB_XSTATS_ID_STAT_BITS) - 1)
++#define NUM_FLOWS 4
++#define EVENTS_PER_FLOW 16
++#define TOTAL_ATOMIC_EVENTS (NUM_FLOWS * EVENTS_PER_FLOW)
 +
-+#define SLB_XSTATS_ID_GET_PARAM(id) \
-+	((id) >> SLB_XSTATS_ID_STAT_BITS)
++static int g_dev_id = -1;
 +
-+#define SLB_XSTATS_ID_GET_STAT(id) \
-+	((id) & SLB_XSTATS_ID_STAT_MASK)
-+
-+#define SLB_XSTATS_ID_CREATE(id, param_value) \
-+	((((uint64_t)(param_value)) << SLB_XSTATS_ID_STAT_BITS) | (id))
-+
-+typedef uint64_t (*slb_xstats_dev_get_value_fn)(struct slb_evdev *slb);
-+
-+struct slb_xstat_dev {
-+	const char *name;
-+	slb_xstats_dev_get_value_fn get_value_fn;
-+};
-+
-+typedef uint64_t (*slb_xstats_port_get_value_fn)(struct slb_evdev *slb,
-+						 uint8_t port_id,
-+						 uint8_t queue_id);
-+
-+struct slb_xstats_port {
-+	const char *name_fmt;
-+	slb_xstats_port_get_value_fn get_value_fn;
-+	bool per_queue;
-+};
-+
-+static uint64_t
-+slb_xstats_dev_credits_on_loan(struct slb_evdev *slb)
++static int
++init_selftest_device(void)
 +{
-+	return rte_atomic_load_explicit(&slb->credits_on_loan,
-+					rte_memory_order_relaxed);
-+}
-+
-+static struct slb_xstat_dev slb_dev_xstats[] = {
-+	{ "dev_credits_on_loan", slb_xstats_dev_credits_on_loan }
-+};
-+
-+#define SLB_GEN_PORT_ACCESS_FN(_variable) \
-+	static uint64_t \
-+	slb_xstats_port_get_ ## _variable(struct slb_evdev *slb, \
-+					  uint8_t port_id, \
-+					  uint8_t queue_id __rte_unused) \
-+	{ \
-+		return slb->ports[port_id]._variable; \
-+	}
-+
-+SLB_GEN_PORT_ACCESS_FN(new_enqueued)
-+SLB_GEN_PORT_ACCESS_FN(forward_enqueued)
-+SLB_GEN_PORT_ACCESS_FN(release_enqueued)
-+
-+static uint64_t
-+slb_xstats_port_get_queue_enqueued(struct slb_evdev *slb, uint8_t port_id,
-+				   uint8_t queue_id)
-+{
-+	return slb->ports[port_id].queue_enqueued[queue_id];
-+}
-+
-+SLB_GEN_PORT_ACCESS_FN(dequeued)
-+
-+static uint64_t
-+slb_xstats_port_get_queue_dequeued(struct slb_evdev *slb, uint8_t port_id,
-+				   uint8_t queue_id)
-+{
-+	return slb->ports[port_id].queue_dequeued[queue_id];
-+}
-+
-+SLB_GEN_PORT_ACCESS_FN(inflight_credits)
-+SLB_GEN_PORT_ACCESS_FN(pending_releases)
-+SLB_GEN_PORT_ACCESS_FN(migrations_in)
-+SLB_GEN_PORT_ACCESS_FN(migrations_out)
-+
-+static struct slb_xstats_port slb_port_xstats[] = {
-+	{ "port_%u_new_enqueued", slb_xstats_port_get_new_enqueued,
-+	  false },
-+	{ "port_%u_forward_enqueued", slb_xstats_port_get_forward_enqueued,
-+	  false },
-+	{ "port_%u_release_enqueued", slb_xstats_port_get_release_enqueued,
-+	  false },
-+	{ "port_%u_queue_%u_enqueued", slb_xstats_port_get_queue_enqueued,
-+	  true },
-+	{ "port_%u_dequeued", slb_xstats_port_get_dequeued,
-+	  false },
-+	{ "port_%u_queue_%u_dequeued", slb_xstats_port_get_queue_dequeued,
-+	  true },
-+	{ "port_%u_inflight_credits", slb_xstats_port_get_inflight_credits,
-+	  false },
-+	{ "port_%u_pending_releases", slb_xstats_port_get_pending_releases,
-+	  false },
-+	{ "port_%u_migrations_in", slb_xstats_port_get_migrations_in,
-+	  false },
-+	{ "port_%u_migrations_out", slb_xstats_port_get_migrations_out,
-+	  false },
-+};
-+
-+typedef void (*slb_xstats_foreach_fn)(const char *xstats_name,
-+				      enum rte_event_dev_xstats_mode mode,
-+				      uint8_t queue_port_id,
-+				      uint64_t xstats_id,
-+				      void *data);
-+
-+static void
-+slb_xstats_dev_foreach(slb_xstats_foreach_fn fn, void *fn_data)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < RTE_DIM(slb_dev_xstats); i++)
-+		fn(slb_dev_xstats[i].name, RTE_EVENT_DEV_XSTATS_DEVICE, 0,
-+		   i, fn_data);
-+}
-+
-+static void
-+slb_xstats_port_foreach(struct slb_evdev *slb, uint8_t port_id,
-+			slb_xstats_foreach_fn fn, void *fn_data)
-+{
-+	uint8_t queue_id;
-+	unsigned int stat_idx;
-+
-+	for (stat_idx = 0, queue_id = 0;
-+	     stat_idx < RTE_DIM(slb_port_xstats);) {
-+		struct slb_xstats_port *xstat = &slb_port_xstats[stat_idx];
-+		char xstats_name[RTE_EVENT_DEV_XSTATS_NAME_SIZE];
-+		uint64_t xstats_id;
-+
-+		if (xstat->per_queue) {
-+			xstats_id = SLB_XSTATS_ID_CREATE(stat_idx, queue_id);
-+			snprintf(xstats_name, sizeof(xstats_name),
-+				 slb_port_xstats[stat_idx].name_fmt, port_id,
-+				 queue_id);
-+			queue_id++;
-+		} else {
-+			xstats_id = stat_idx;
-+			snprintf(xstats_name, sizeof(xstats_name),
-+				 slb_port_xstats[stat_idx].name_fmt, port_id);
-+		}
-+
-+		fn(xstats_name, RTE_EVENT_DEV_XSTATS_PORT, port_id,
-+		   xstats_id, fn_data);
-+
-+		if (!(xstat->per_queue && queue_id < slb->num_queues)) {
-+			stat_idx++;
-+			queue_id = 0;
-+		}
-+	}
-+}
-+
-+struct store_ctx {
-+	struct rte_event_dev_xstats_name *names;
-+	uint64_t *ids;
-+	unsigned int count;
-+	unsigned int capacity;
-+};
-+
-+static void
-+slb_xstats_store_stat(const char *xstats_name,
-+		      enum rte_event_dev_xstats_mode mode,
-+		      uint8_t queue_port_id, uint64_t xstats_id,
-+		      void *data)
-+{
-+	struct store_ctx *ctx = data;
-+
-+	RTE_SET_USED(mode);
-+	RTE_SET_USED(queue_port_id);
-+
-+	if (ctx->count < ctx->capacity) {
-+		if (ctx->names != NULL)
-+			strlcpy(ctx->names[ctx->count].name, xstats_name,
-+				RTE_EVENT_DEV_XSTATS_NAME_SIZE);
-+		if (ctx->ids != NULL)
-+			ctx->ids[ctx->count] = xstats_id;
-+	}
-+
-+	ctx->count++;
-+}
-+
-+int
-+slb_xstats_get_names(const struct rte_eventdev *dev,
-+		     enum rte_event_dev_xstats_mode mode,
-+		     uint8_t queue_port_id,
-+		     struct rte_event_dev_xstats_name *xstats_names,
-+		     uint64_t *ids, unsigned int capacity)
-+{
-+	struct slb_evdev *slb = slb_pmd_priv(dev);
-+	struct store_ctx ctx = {
-+		.names = xstats_names,
-+		.ids = ids,
-+		.capacity = capacity
++	struct rte_event_dev_config dev_conf = {
++		.dequeue_timeout_ns = 0,
++		.nb_event_queues = NUM_QUEUES,
++		.nb_event_ports = NUM_PORTS,
++		.nb_events_limit = 4096,
++		.nb_event_queue_flows = 1024,
++		.nb_event_port_dequeue_depth = 64,
++		.nb_event_port_enqueue_depth = 64,
 +	};
++	struct rte_event_queue_conf q_conf;
++	struct rte_event_port_conf p_conf = {
++		.dequeue_depth = 64,
++		.enqueue_depth = 64,
++		.new_event_threshold = 2048,
++		.event_port_cfg = 0
++	};
++	struct rte_event_dev_info info;
++	uint8_t ldb_queues[] = { Q_PARALLEL, Q_ATOMIC, Q_ORDERED };
++	uint8_t single_q = Q_SINGLE;
++	int ret;
++	int p;
 +
-+	switch (mode) {
-+	case RTE_EVENT_DEV_XSTATS_DEVICE:
-+		slb_xstats_dev_foreach(slb_xstats_store_stat, &ctx);
-+		return ctx.count;
-+	case RTE_EVENT_DEV_XSTATS_PORT:
-+		if (queue_port_id >= slb->num_ports)
-+			return -EINVAL;
-+		slb_xstats_port_foreach(slb, queue_port_id,
-+					slb_xstats_store_stat, &ctx);
-+		return ctx.count;
-+	case RTE_EVENT_DEV_XSTATS_QUEUE:
-+		return 0;
-+	default:
-+		return -EINVAL;
++	g_dev_id = rte_event_dev_get_dev_id(SLB_PMD_NAME);
++	if (g_dev_id < 0) {
++		ret = rte_vdev_init("event_slb_selftest", NULL);
++		if (ret < 0) {
++			SLB_LOG_LINE(ERR, "Failed to init vdev event_slb_selftest");
++			return -1;
++		}
++		g_dev_id = rte_event_dev_get_dev_id("event_slb_selftest");
++		if (g_dev_id < 0) {
++			SLB_LOG_LINE(ERR, "Cannot find initialized vdev");
++			return -1;
++		}
++	}
++
++	ret = rte_event_dev_info_get(g_dev_id, &info);
++	if (ret < 0) {
++		SLB_LOG_LINE(ERR, "Failed to get dev info");
++		return -1;
++	}
++
++	ret = rte_event_dev_configure(g_dev_id, &dev_conf);
++	if (ret < 0) {
++		SLB_LOG_LINE(ERR, "Failed to configure device, ret=%d", ret);
++		return -1;
++	}
++
++	/* Setup Queues */
++	memset(&q_conf, 0, sizeof(q_conf));
++	q_conf.nb_atomic_flows = 1024;
++	q_conf.nb_atomic_order_sequences = 1024;
++	q_conf.priority = RTE_EVENT_DEV_PRIORITY_NORMAL;
++
++	/* Q0: Parallel */
++	q_conf.schedule_type = RTE_SCHED_TYPE_PARALLEL;
++	q_conf.event_queue_cfg = 0;
++	ret = rte_event_queue_setup(g_dev_id, Q_PARALLEL, &q_conf);
++	if (ret < 0)
++		return -1;
++
++	/* Q1: Atomic */
++	q_conf.schedule_type = RTE_SCHED_TYPE_ATOMIC;
++	q_conf.event_queue_cfg = 0;
++	ret = rte_event_queue_setup(g_dev_id, Q_ATOMIC, &q_conf);
++	if (ret < 0)
++		return -1;
++
++	/* Q2: Ordered */
++	q_conf.schedule_type = RTE_SCHED_TYPE_ORDERED;
++	q_conf.event_queue_cfg = 0;
++	ret = rte_event_queue_setup(g_dev_id, Q_ORDERED, &q_conf);
++	if (ret < 0)
++		return -1;
++
++	/* Q3: Single-link */
++	q_conf.schedule_type = RTE_SCHED_TYPE_PARALLEL;
++	q_conf.event_queue_cfg = RTE_EVENT_QUEUE_CFG_SINGLE_LINK;
++	ret = rte_event_queue_setup(g_dev_id, Q_SINGLE, &q_conf);
++	if (ret < 0)
++		return -1;
++
++	/* Setup Ports */
++	for (p = 0; p < NUM_PORTS; p++) {
++		if (p == PORT_CONS)
++			p_conf.event_port_cfg = RTE_EVENT_PORT_CFG_SINGLE_LINK;
++		else
++			p_conf.event_port_cfg = 0;
++
++		ret = rte_event_port_setup(g_dev_id, p, &p_conf);
++		if (ret < 0)
++			return -1;
++	}
++
++	/* Link Queues */
++	ret = rte_event_port_link(g_dev_id, PORT_W1, ldb_queues, NULL, 3);
++	if (ret != 3)
++		return -1;
++
++	ret = rte_event_port_link(g_dev_id, PORT_W2, ldb_queues, NULL, 3);
++	if (ret != 3)
++		return -1;
++
++	ret = rte_event_port_link(g_dev_id, PORT_CONS, &single_q, NULL, 1);
++	if (ret != 1)
++		return -1;
++
++	ret = rte_event_dev_start(g_dev_id);
++	if (ret < 0)
++		return -1;
++
++	return 0;
++}
++
++static void
++cleanup_selftest_device(void)
++{
++	if (g_dev_id >= 0) {
++		rte_event_dev_stop(g_dev_id);
++		rte_event_dev_close(g_dev_id);
++		g_dev_id = -1;
 +	}
 +}
 +
 +static int
-+slb_xstats_dev_get(const struct rte_eventdev *dev,
-+		   const uint64_t ids[], uint64_t values[], unsigned int n)
++test_parallel_queue(void)
 +{
-+	struct slb_evdev *slb = slb_pmd_priv(dev);
-+	unsigned int i;
++	struct rte_event rx_ev[32];
++	struct rte_event ev[32];
++	uint16_t enqd, deqd = 0;
++	uint16_t n = 0;
++	int tries = 0;
++	int i;
 +
-+	for (i = 0; i < n; i++) {
-+		uint64_t id = ids[i];
-+		struct slb_xstat_dev *xstat;
++	memset(ev, 0, sizeof(ev));
 +
-+		if (id >= RTE_DIM(slb_dev_xstats))
-+			return -EINVAL;
-+
-+		xstat = &slb_dev_xstats[id];
-+		values[i] = xstat->get_value_fn(slb);
++	for (i = 0; i < 32; i++) {
++		ev[i].op = RTE_EVENT_OP_NEW;
++		ev[i].sched_type = RTE_SCHED_TYPE_PARALLEL;
++		ev[i].queue_id = Q_PARALLEL;
++		ev[i].u64 = 1000 + i;
 +	}
-+	return n;
++
++	enqd = rte_event_enqueue_burst(g_dev_id, PORT_PROD, ev, 32);
++	if (enqd != 32) {
++		SLB_LOG_LINE(ERR, "Parallel enqueue failed, expected 32, got %u", enqd);
++		return -1;
++	}
++
++	while (deqd < 32 && tries++ < 1000) {
++		n = rte_event_dequeue_burst(g_dev_id, PORT_W1, rx_ev + deqd,
++					    32 - deqd, 0);
++		deqd += n;
++		if (deqd < 32) {
++			n = rte_event_dequeue_burst(g_dev_id, PORT_W2,
++						    rx_ev + deqd, 32 - deqd, 0);
++			deqd += n;
++		}
++	}
++
++	if (deqd != 32) {
++		SLB_LOG_LINE(ERR, "Parallel dequeue failed, expected 32, got %u", deqd);
++		return -1;
++	}
++
++	/* Release events */
++	for (i = 0; i < 32; i++)
++		rx_ev[i].op = RTE_EVENT_OP_RELEASE;
++	rte_event_enqueue_burst(g_dev_id, PORT_W1, rx_ev, 32);
++
++	return 0;
 +}
 +
 +static int
-+slb_xstats_port_get(const struct rte_eventdev *dev, uint8_t port_id,
-+		    const uint64_t ids[], uint64_t values[], unsigned int n)
++test_atomic_queue(void)
 +{
-+	struct slb_evdev *slb = slb_pmd_priv(dev);
-+	unsigned int i;
++	struct rte_event rx_ev[64];
++	struct rte_event ev[64];
++	int expected_seq[NUM_FLOWS];
++	uint16_t enqd = 0;
++	uint16_t deqd = 0;
++	int tries = 0;
++	int idx = 0;
++	int e, f;
++	uint16_t i, n;
 +
-+	for (i = 0; i < n; i++) {
-+		uint64_t id = ids[i];
-+		unsigned int stat_idx = SLB_XSTATS_ID_GET_STAT(id);
-+		struct slb_xstats_port *xstat;
-+		uint8_t queue_id = 0;
++	memset(ev, 0, sizeof(ev));
 +
-+		if (stat_idx >= RTE_DIM(slb_port_xstats))
-+			return -EINVAL;
-+
-+		xstat = &slb_port_xstats[stat_idx];
-+
-+		if (xstat->per_queue) {
-+			queue_id = SLB_XSTATS_ID_GET_PARAM(id);
-+			if (queue_id >= slb->num_queues)
-+				return -EINVAL;
++	for (e = 0; e < EVENTS_PER_FLOW; e++) {
++		for (f = 0; f < NUM_FLOWS; f++) {
++			ev[idx].op = RTE_EVENT_OP_NEW;
++			ev[idx].sched_type = RTE_SCHED_TYPE_ATOMIC;
++			ev[idx].queue_id = Q_ATOMIC;
++			ev[idx].flow_id = f;
++			ev[idx].u64 = e; /* sequence number */
++			idx++;
 +		}
-+
-+		values[i] = xstat->get_value_fn(slb, port_id, queue_id);
 +	}
-+	return n;
++
++	while (enqd < TOTAL_ATOMIC_EVENTS) {
++		n = rte_event_enqueue_burst(g_dev_id, PORT_PROD, ev + enqd,
++					    TOTAL_ATOMIC_EVENTS - enqd);
++		if (n == 0)
++			break;
++		enqd += n;
++	}
++	if (enqd != TOTAL_ATOMIC_EVENTS) {
++		SLB_LOG_LINE(ERR, "Atomic enqueue failed, expected %d, got %u",
++			     TOTAL_ATOMIC_EVENTS, enqd);
++		return -1;
++	}
++
++	for (f = 0; f < NUM_FLOWS; f++)
++		expected_seq[f] = 0;
++
++	while (deqd < TOTAL_ATOMIC_EVENTS && tries++ < 2000) {
++		n = rte_event_dequeue_burst(g_dev_id, PORT_W1, rx_ev, 16, 0);
++		for (i = 0; i < n; i++) {
++			int fid = rx_ev[i].flow_id;
++
++			if (rx_ev[i].u64 != (uint64_t)expected_seq[fid]) {
++				SLB_LOG_LINE(ERR,
++					     "Flow %d out of order! Expected %d got %" PRIu64,
++					     fid, expected_seq[fid], rx_ev[i].u64);
++				return -1;
++			}
++			expected_seq[fid]++;
++			rx_ev[i].op = RTE_EVENT_OP_RELEASE;
++		}
++		if (n > 0)
++			rte_event_enqueue_burst(g_dev_id, PORT_W1, rx_ev, n);
++		deqd += n;
++
++		n = rte_event_dequeue_burst(g_dev_id, PORT_W2, rx_ev, 16, 0);
++		for (i = 0; i < n; i++) {
++			int fid = rx_ev[i].flow_id;
++
++			if (rx_ev[i].u64 != (uint64_t)expected_seq[fid]) {
++				SLB_LOG_LINE(ERR,
++					     "Flow %d out of order! Expected %d got %" PRIu64,
++					     fid, expected_seq[fid], rx_ev[i].u64);
++				return -1;
++			}
++			expected_seq[fid]++;
++			rx_ev[i].op = RTE_EVENT_OP_RELEASE;
++		}
++		if (n > 0)
++			rte_event_enqueue_burst(g_dev_id, PORT_W2, rx_ev, n);
++		deqd += n;
++	}
++
++	if (deqd != TOTAL_ATOMIC_EVENTS) {
++		SLB_LOG_LINE(ERR, "Atomic dequeue failed, expected %d got %u",
++			     TOTAL_ATOMIC_EVENTS, deqd);
++		return -1;
++	}
++
++	return 0;
++}
++
++static int
++test_ordered_forward(void)
++{
++	const int num_events = 32;
++	struct rte_event rx[16];
++	struct rte_event ev[32];
++	uint16_t enqd;
++	uint16_t fwd = 0;
++	uint16_t cons_rx = 0;
++	int tries = 0;
++	int i;
++	uint16_t n;
++
++	memset(ev, 0, sizeof(ev));
++
++	for (i = 0; i < num_events; i++) {
++		ev[i].op = RTE_EVENT_OP_NEW;
++		ev[i].sched_type = RTE_SCHED_TYPE_ORDERED;
++		ev[i].queue_id = Q_ORDERED;
++		ev[i].u64 = i;
++	}
++
++	enqd = rte_event_enqueue_burst(g_dev_id, PORT_PROD, ev, num_events);
++	if (enqd != num_events)
++		return -1;
++
++	/* Workers dequeue and forward to Q_SINGLE */
++	while (fwd < num_events && tries++ < 2000) {
++		n = rte_event_dequeue_burst(g_dev_id, PORT_W1, rx, 16, 0);
++		for (i = 0; i < n; i++) {
++			rx[i].op = RTE_EVENT_OP_FORWARD;
++			rx[i].queue_id = Q_SINGLE;
++			rx[i].sched_type = RTE_SCHED_TYPE_PARALLEL;
++		}
++		if (n > 0)
++			rte_event_enqueue_burst(g_dev_id, PORT_W1, rx, n);
++		fwd += n;
++
++		n = rte_event_dequeue_burst(g_dev_id, PORT_W2, rx, 16, 0);
++		for (i = 0; i < n; i++) {
++			rx[i].op = RTE_EVENT_OP_FORWARD;
++			rx[i].queue_id = Q_SINGLE;
++			rx[i].sched_type = RTE_SCHED_TYPE_PARALLEL;
++		}
++		if (n > 0)
++			rte_event_enqueue_burst(g_dev_id, PORT_W2, rx, n);
++		fwd += n;
++	}
++
++	if (fwd != num_events) {
++		SLB_LOG_LINE(ERR, "Ordered workers failed to forward all events (%u/%d)",
++			     fwd, num_events);
++		return -1;
++	}
++
++	/* Consumer on PORT_CONS must receive all events in exact sequence 0..num_events-1 */
++	tries = 0;
++	while (cons_rx < num_events && tries++ < 2000) {
++		n = rte_event_dequeue_burst(g_dev_id, PORT_CONS, rx, 16, 0);
++		for (i = 0; i < n; i++) {
++			if (rx[i].u64 != cons_rx) {
++				SLB_LOG_LINE(ERR,
++					     "Ordered seq violation! Expected %u got %" PRIu64,
++					     cons_rx, rx[i].u64);
++				return -1;
++			}
++			cons_rx++;
++			rx[i].op = RTE_EVENT_OP_RELEASE;
++		}
++		if (n > 0)
++			rte_event_enqueue_burst(g_dev_id, PORT_CONS, rx, n);
++	}
++
++	if (cons_rx != num_events) {
++		SLB_LOG_LINE(ERR, "Consumer received %u/%d ordered events",
++			     cons_rx, num_events);
++		return -1;
++	}
++
++	return 0;
++}
++
++static int
++test_single_link(void)
++{
++	struct rte_event rx[16];
++	struct rte_event ev[16];
++	uint16_t enqd;
++	uint16_t deqd = 0;
++	int tries = 0;
++	int i;
++	uint16_t n;
++
++	memset(ev, 0, sizeof(ev));
++
++	for (i = 0; i < 16; i++) {
++		ev[i].op = RTE_EVENT_OP_NEW;
++		ev[i].sched_type = RTE_SCHED_TYPE_PARALLEL;
++		ev[i].queue_id = Q_SINGLE;
++		ev[i].u64 = 5000 + i;
++	}
++
++	enqd = rte_event_enqueue_burst(g_dev_id, PORT_PROD, ev, 16);
++	if (enqd != 16)
++		return -1;
++
++	while (deqd < 16 && tries++ < 1000) {
++		n = rte_event_dequeue_burst(g_dev_id, PORT_CONS,
++					    rx + deqd, 16 - deqd, 0);
++		deqd += n;
++	}
++
++	if (deqd != 16) {
++		SLB_LOG_LINE(ERR, "Single-link dequeue failed (%u/16)", deqd);
++		return -1;
++	}
++
++	for (i = 0; i < 16; i++) {
++		if (rx[i].u64 != (uint64_t)(5000 + i))
++			return -1;
++		rx[i].op = RTE_EVENT_OP_RELEASE;
++	}
++	rte_event_enqueue_burst(g_dev_id, PORT_CONS, rx, 16);
++
++	return 0;
++}
++
++static int
++test_stop_flush(void)
++{
++	struct rte_event rx[16];
++	struct rte_event ev[16];
++	uint16_t enqd;
++	uint16_t deqd;
++	int ret;
++	int i;
++
++	memset(ev, 0, sizeof(ev));
++
++	for (i = 0; i < 16; i++) {
++		ev[i].op = RTE_EVENT_OP_NEW;
++		ev[i].sched_type = RTE_SCHED_TYPE_PARALLEL;
++		ev[i].queue_id = Q_PARALLEL;
++		ev[i].u64 = 9000 + i;
++	}
++
++	enqd = rte_event_enqueue_burst(g_dev_id, PORT_PROD, ev, 16);
++	if (enqd != 16)
++		return -1;
++
++	/* Stop device flushes all queued events */
++	rte_event_dev_stop(g_dev_id);
++
++	/* Restart device */
++	ret = rte_event_dev_start(g_dev_id);
++	if (ret < 0)
++		return -1;
++
++	/* Verify no leftover events */
++	deqd = rte_event_dequeue_burst(g_dev_id, PORT_W1, rx, 16, 0);
++	if (deqd != 0) {
++		SLB_LOG_LINE(ERR, "Stop flush failed, received %u events after restart",
++			     deqd);
++		return -1;
++	}
++
++	return 0;
 +}
 +
 +int
-+slb_xstats_get(const struct rte_eventdev *dev,
-+	       enum rte_event_dev_xstats_mode mode, uint8_t queue_port_id,
-+	       const uint64_t ids[], uint64_t values[], unsigned int n)
++test_slb_eventdev(void)
 +{
-+	struct slb_evdev *slb = slb_pmd_priv(dev);
++	SLB_LOG_LINE(INFO, "=== Running SLB Eventdev Selftest ===");
 +
-+	switch (mode) {
-+	case RTE_EVENT_DEV_XSTATS_DEVICE:
-+		return slb_xstats_dev_get(dev, ids, values, n);
-+	case RTE_EVENT_DEV_XSTATS_PORT:
-+		if (queue_port_id >= slb->num_ports)
-+			return -EINVAL;
-+		return slb_xstats_port_get(dev, queue_port_id, ids, values, n);
-+	case RTE_EVENT_DEV_XSTATS_QUEUE:
-+		return 0;
-+	default:
-+		return -EINVAL;
++	if (init_selftest_device() < 0) {
++		SLB_LOG_LINE(ERR, "Initialization failed");
++		cleanup_selftest_device();
++		return -1;
 +	}
-+}
 +
-+struct find_ctx {
-+	const struct rte_eventdev *dev;
-+	const char *name;
-+	uint64_t *id;
-+	uint64_t value;
-+};
-+
-+static void
-+slb_xstats_find_stat(const char *xstats_name,
-+		     enum rte_event_dev_xstats_mode mode,
-+		     uint8_t queue_port_id, uint64_t xstats_id,
-+		     void *data)
-+{
-+	struct find_ctx *ctx = data;
-+
-+	if (strcmp(ctx->name, xstats_name) == 0) {
-+		if (ctx->id != NULL)
-+			*ctx->id = xstats_id;
-+		slb_xstats_get(ctx->dev, mode, queue_port_id, &xstats_id,
-+			       &ctx->value, 1);
++	SLB_LOG_LINE(INFO, "  [1/5] Testing Parallel Queue...");
++	if (test_parallel_queue() < 0) {
++		SLB_LOG_LINE(ERR, "  FAILED: Parallel Queue test failed");
++		cleanup_selftest_device();
++		return -1;
 +	}
-+}
++	SLB_LOG_LINE(INFO, "  [1/5] Parallel Queue: PASS");
 +
-+uint64_t
-+slb_xstats_get_by_name(const struct rte_eventdev *dev, const char *name,
-+		       uint64_t *id)
-+{
-+	struct slb_evdev *slb = slb_pmd_priv(dev);
-+	struct find_ctx ctx = {
-+		.dev = dev,
-+		.name = name,
-+		.id = id,
-+		.value = -EINVAL
-+	};
-+	uint16_t port_id;
++	SLB_LOG_LINE(INFO, "  [2/5] Testing Atomic Queue...");
++	if (test_atomic_queue() < 0) {
++		SLB_LOG_LINE(ERR, "  FAILED: Atomic Queue test failed");
++		cleanup_selftest_device();
++		return -1;
++	}
++	SLB_LOG_LINE(INFO, "  [2/5] Atomic Queue: PASS");
 +
-+	if (id != NULL)
-+		*id = (uint64_t)-1;
++	SLB_LOG_LINE(INFO, "  [3/5] Testing Ordered Queue...");
++	if (test_ordered_forward() < 0) {
++		SLB_LOG_LINE(ERR, "  FAILED: Ordered Queue test failed");
++		cleanup_selftest_device();
++		return -1;
++	}
++	SLB_LOG_LINE(INFO, "  [3/5] Ordered Queue: PASS");
 +
-+	if (name == NULL)
-+		return -EINVAL;
++	SLB_LOG_LINE(INFO, "  [4/5] Testing Single-Link Queue...");
++	if (test_single_link() < 0) {
++		SLB_LOG_LINE(ERR, "  FAILED: Single-Link Queue test failed");
++		cleanup_selftest_device();
++		return -1;
++	}
++	SLB_LOG_LINE(INFO, "  [4/5] Single-Link Queue: PASS");
 +
-+	slb_xstats_dev_foreach(slb_xstats_find_stat, &ctx);
++	SLB_LOG_LINE(INFO, "  [5/5] Testing Device Stop & Flush...");
++	if (test_stop_flush() < 0) {
++		SLB_LOG_LINE(ERR, "  FAILED: Stop Flush test failed");
++		cleanup_selftest_device();
++		return -1;
++	}
++	SLB_LOG_LINE(INFO, "  [5/5] Device Stop & Flush: PASS");
 +
-+	for (port_id = 0; port_id < slb->num_ports; port_id++)
-+		slb_xstats_port_foreach(slb, port_id, slb_xstats_find_stat,
-+					&ctx);
-+
-+	return ctx.value;
++	cleanup_selftest_device();
++	SLB_LOG_LINE(INFO, "=== SLB Eventdev Selftest PASSED ===");
++	return 0;
 +}
 -- 
 2.53.0
