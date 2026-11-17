@@ -2,20 +2,20 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66821606A33B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 17:16:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7992B606A31C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 17:17:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4C135402BF;
-	Tue, 17 Nov 2026 18:16:57 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 32D4C402BF;
+	Tue, 17 Nov 2026 18:17:58 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTPS id 660F1402A4
- for <dev@dpdk.org>; Tue, 17 Nov 2026 18:16:56 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id AD776402A4
+ for <dev@dpdk.org>; Tue, 17 Nov 2026 18:17:56 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 57F514C1C8; Tue, 17 Nov 2026 18:16:56 +0100 (CET)
+ id A88A44C334; Tue, 17 Nov 2026 18:17:56 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 2139] net/mlx4: unreachable code warnings
-Date: Tue, 17 Nov 2026 17:16:56 +0000
+Subject: [DPDK/ethdev Bug 2140] net/mlx5: unreachable code
+Date: Tue, 17 Nov 2026 17:17:56 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -34,7 +34,7 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-2139-3@https.bugs.dpdk.org/>
+Message-ID: <bug-2140-3@https.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: https://bugs.dpdk.org/
@@ -56,10 +56,10 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D2139
+https://bugs.dpdk.org/show_bug.cgi?id=3D2140
 
-            Bug ID: 2139
-           Summary: net/mlx4: unreachable code warnings
+            Bug ID: 2140
+           Summary: net/mlx5: unreachable code
            Product: DPDK
            Version: 26.11
           Hardware: All
@@ -72,17 +72,15 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D2139
           Reporter: stephen@networkplumber.org
   Target Milestone: ---
 
-Building with clang and -Wunreachable-code generates warning:
-../drivers/net/mlx4/mlx4_flow.c:761:4: warning: code will never be executed
-[-Wunreachable-code]
-  761 |                         const struct rte_flow_action_queue *queue;
-      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Building with clang and -Wunreachable-code produces warning:
+
+[1202/3982] Compiling C object
+drivers/libtmp_rte_net_mlx5.a.p/net_mlx5_mlx5_flow_verbs.c.o
+../drivers/net/mlx5/mlx5_flow_verbs.c:92:7: warning: code will never be
+executed [-Wunreachable-code]
+   92 |         if (!drop->qp) {
+      |              ^~~~
 1 warning generated.
-
-This is caused by putting declarations at start of switch block.
-They need to be moved up to fix the warning.
-
-Clang is being overly picky in this case, but worth shutting up the warning
 
 --=20
 You are receiving this mail because:
