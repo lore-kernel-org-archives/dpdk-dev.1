@@ -2,31 +2,31 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD2C606A32A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 15:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41D3606A32A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 15:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=VBG0vXSA
+	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=D/fCxKG7
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 40AC940BA5;
-	Tue, 17 Nov 2026 16:57:54 +0100 (CET)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.4])
- by mails.dpdk.org (Postfix) with ESMTPS id 6018940616
+	by mails.dpdk.org (Postfix) with ESMTP id A41F940DD1;
+	Tue, 17 Nov 2026 16:57:55 +0100 (CET)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.223])
+ by mails.dpdk.org (Postfix) with ESMTPS id 0A348402BF
  for <dev@dpdk.org>; Tue, 17 Nov 2026 16:57:41 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=gtlhVFgdbhZoNk1QvLNN+yXbeJmY8dNNyb+lzN00iNk=;
- b=VBG0vXSAYYj1y6cp+m2jgaphJtzvd3DABIdf5gwruSjIs3GgCrHaT6qB+cz5jp
- lazCUw+ATgszXzHWghR5IMU61AgCJNkgo8I8QcaKN0cSk+IuoFRBfj3kJANZ9qeE
- /xKhK3SYkJ01RXy4NguYdUzq7OO8M6koVuKqBPQhUQFYI=
+ MIME-Version; bh=TsnPbOqzTmmG3rnIETCQ64XG6g+iJIKZVT6S39s6wwA=;
+ b=D/fCxKG7B8dQ2J2sh6Vu44FAfVkN5sAjNr+EIo/4uOPLc/TYylFQDKBoPm5xXO
+ aR0RFQICwot4BBERHag43kPEvewUYGt9s0gBkU7VkWoT4RUCZ7CpVGhOaQoSMwOX
+ MBB8wdHAgtHaceCg3xoZRNLwg86rrUGrFBvoFPzICgVYk=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
  Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v7 13/29] net/hinic3: add CIR drop statistics and VF LAG
- support
-Date: Tue, 17 Nov 2026 23:56:54 +0800
-Message-ID: <20261117155711.1048-14-yejiacheng4@h-partners.com>
+Subject: [PATCH v7 18/29] net/hinic3: convert cmdq ops to static global
+ variables
+Date: Tue, 17 Nov 2026 23:56:59 +0800
+Message-ID: <20261117155711.1048-19-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.53.0.windows.2
 In-Reply-To: <20261117155711.1048-1-yejiacheng4@h-partners.com>
 References: <20261109162033.1144-1-yejiacheng4@h-partners.com>
@@ -34,13 +34,13 @@ References: <20261109162033.1144-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Ac8vCgC3S5drefxqC7WJBQ--.4821S15
-X-Coremail-Antispam: 1Uf129KBjvJXoW3CFy8WF18Jr47Kw15WryUZFb_yoWktry8pF
- W5J39rArWDXF48XwnIg3yUua45Kwn3A34UK34xGF90kFn5Xrs8Zay5trWjvr1aqrZrAFy7
- Z3yFyrWDGa4jgaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07ULzV8UUUUU=
+X-CM-TRANSID: Ac8vCgC3S5drefxqC7WJBQ--.4821S20
+X-Coremail-Antispam: 1Uf129KBjvAXoWfJw1rtrWxGFy8Jry8XrWUJwb_yoW8Gr43Ao
+ WfJFyFyF1ftry8GF9xKFnYkay7X3srJFZ8Jan5Kr9rXasrJFy7WF9xXw4F9a4YvayrAanr
+ Aay7J3Wqga4xXw18n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+ AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUzgAwUUUUU
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNhFUXmr8eXEDLQAA3d
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNRNUXmr8eXMCkAAA3i
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,365 +57,309 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Expose the CIR drop counter through the per-port extended statistics and
-select the queue COS from the VF LAG bitmap when a VF runs on an
-aggregated link.
+Replace the per-device dynamically allocated cmdq_ops with static global
+instances (hinic3_htn_cmdq_ops and hinic3_stn_cmdq_ops), selected by NIC
+type.
 
-For an even queue of a VF that is in the LAG group, the driver flips the
-COS so the queue egresses through the peer port; other queues keep the
-default COS.
+The old code allocated the block with rte_zmalloc() and then overwrote the
+pointer with the static ops, leaking the allocation and passing a static
+pointer to rte_free() on the error path. Nothing is allocated per device
+now.
+
+Select the ops by NIC type through hinic3_cmdq_get_ops(), falling back to
+the STN ops for unknown IDs, instead of the NIC_F_HTN_CMDQ capability bit.
+
+Fixes: 9204b6b7bb1a ("net/hinic3: split new/old command queue operations")
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- doc/guides/rel_notes/release_26_11.rst   |  4 ++
- drivers/net/hinic3/base/hinic3_cmd.h     |  2 +
- drivers/net/hinic3/base/hinic3_nic_cfg.c | 62 +++++++++++++++++++
- drivers/net/hinic3/base/hinic3_nic_cfg.h | 45 +++++++++++++-
- drivers/net/hinic3/hinic3_ethdev.c       | 76 +++++++++++++++++++++++-
- drivers/net/hinic3/hinic3_ethdev.h       |  3 +
- 6 files changed, 189 insertions(+), 3 deletions(-)
+ drivers/net/hinic3/base/hinic3_nic_cfg.c      |  7 ++--
+ drivers/net/hinic3/hinic3_ethdev.c            | 37 +++++++++++--------
+ drivers/net/hinic3/hinic3_ethdev.h            |  1 -
+ drivers/net/hinic3/hinic3_nic_io.c            | 11 +++---
+ drivers/net/hinic3/hinic3_nic_io.h            | 11 ++++++
+ .../net/hinic3/htn_adapt/hinic3_htn_cmdq.c    | 21 ++++-------
+ .../net/hinic3/htn_adapt/hinic3_htn_cmdq.h    |  6 +--
+ .../net/hinic3/stn_adapt/hinic3_stn_cmdq.c    | 23 +++++-------
+ .../net/hinic3/stn_adapt/hinic3_stn_cmdq.h    |  6 +--
+ 9 files changed, 65 insertions(+), 58 deletions(-)
 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 8ca8379cc6..e0c0e700a7 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -163,6 +163,10 @@ New Features
-   * Advertised ``RTE_ETH_DEV_CAPA_FLOW_RULE_KEEP`` capability,
-     as flow rules were already kept across device restart.
- 
-+* **Updated Huawei hinic3 ethernet driver.**
-+
-+  * Added CIR drop statistics and VF link aggregation (LAG) support.
-+
- * **Updated Intel iavf driver.**
- 
-   * Runtime Rx/Tx queue setup is now automatically disabled
-diff --git a/drivers/net/hinic3/base/hinic3_cmd.h b/drivers/net/hinic3/base/hinic3_cmd.h
-index f2d5d47522..ecce94690e 100644
---- a/drivers/net/hinic3/base/hinic3_cmd.h
-+++ b/drivers/net/hinic3/base/hinic3_cmd.h
-@@ -94,6 +94,8 @@ enum hinic3_nic_cmd {
- 	/* PORT CFG */
- 	HINIC3_NIC_CMD_CFG_PAUSE_INFO			= 101,
- 	HINIC3_NIC_CMD_VF_COS				= 104,
-+	HINIC3_NIC_CMD_GET_CIR_DROP			= 115,
-+	HINIC3_NIC_CMD_CFG_VF_LAG			= 243,
- };
- 
- /* COMM commands between driver to MPU. */
 diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.c b/drivers/net/hinic3/base/hinic3_nic_cfg.c
-index fb9b6d4d19..853ca0a41b 100644
+index 4a0e216b69..3ba8b9bd41 100644
 --- a/drivers/net/hinic3/base/hinic3_nic_cfg.c
 +++ b/drivers/net/hinic3/base/hinic3_nic_cfg.c
-@@ -601,6 +601,33 @@ hinic3_get_pause_info(struct hinic3_hwdev *hwdev, struct nic_pause_config *nic_p
- 	return hinic3_cfg_hw_pause(hwdev, HINIC3_CMD_OP_GET, nic_pause);
- }
+@@ -1212,7 +1212,7 @@ hinic3_rss_get_indir_tbl(struct hinic3_hwdev *hwdev, uint32_t *indir_table)
+ 	cmd_buf->size = sizeof(struct nic_rss_indirect_tbl);
+ 	nic_dev = (struct hinic3_nic_dev *)hwdev->dev_handle;
  
-+int
-+hinic3_get_cir_drop(void *hwdev, struct hinic3_cir_drop *stats)
-+{
-+	struct hinic3_port_stats_info stats_info = { 0 };
-+	struct hinic3_cmd_get_dp_info_resp vport_stats = { 0 };
-+	uint16_t out_size = sizeof(vport_stats);
-+	int err;
-+
-+	if (!hwdev || !stats)
-+		return -EINVAL;
-+
-+	stats_info.func_id = hinic3_global_func_id(hwdev);
-+	err = hinic3_msg_to_mgmt_sync(hwdev, HINIC3_MOD_L2NIC,
-+				      HINIC3_NIC_CMD_GET_CIR_DROP,
-+				      &stats_info, sizeof(stats_info),
-+				      &vport_stats, &out_size);
-+	if (err || !out_size || vport_stats.msg_head.status) {
-+		PMD_DRV_LOG(ERR, "Get port stats failed, err: %d, status: 0x%x, out size: 0x%x",
-+			    err, vport_stats.msg_head.status, out_size);
-+		return -EIO;
-+	}
-+
-+	memcpy(stats, vport_stats.value, sizeof(*stats));
-+
-+	return 0;
-+}
-+
- int
- hinic3_get_vport_stats(struct hinic3_hwdev *hwdev, struct hinic3_vport_stats *stats)
- {
-@@ -1725,3 +1752,38 @@ hinic3_set_link_status_follow(struct hinic3_hwdev *hwdev,
+-	cmd = nic_dev->cmdq_ops->prepare_cmd_buf_get_rss_indir_table(nic_dev, cmd_buf);
++	cmd = hinic3_cmdq_get_ops(nic_dev)->prepare_cmd_buf_get_rss_indir_table(nic_dev, cmd_buf);
+ 	err = hinic3_cmdq_detail_resp(hwdev, HINIC3_MOD_L2NIC, cmd, cmd_buf, cmd_buf, 0);
+ 	if (err) {
+ 		PMD_DRV_LOG(ERR, "Get rss indir table failed");
+@@ -1220,7 +1220,7 @@ hinic3_rss_get_indir_tbl(struct hinic3_hwdev *hwdev, uint32_t *indir_table)
+ 		return err;
+ 	}
  
- 	return follow.head.status;
- }
-+
-+bool
-+hinic3_cmd_vf_lag(void *hwdev, uint16_t func_id, uint8_t opcode)
-+{
-+	struct hinic3_vf_lag_cmd vf_lag_info = { 0 };
-+	uint16_t out_size = sizeof(struct hinic3_vf_lag_cmd);
-+	int err;
-+
-+	if (!hwdev || func_id >= MAX_FUNCTION_NUM)
-+		return false;
-+	vf_lag_info.func_id = func_id;
-+	vf_lag_info.opcode = opcode;
-+	vf_lag_info.en_flag = 0;
-+
-+	err = hinic3_msg_to_mgmt_sync(hwdev, HINIC3_MOD_L2NIC,
-+				      HINIC3_NIC_CMD_CFG_VF_LAG,
-+				      &vf_lag_info, sizeof(vf_lag_info),
-+				      &vf_lag_info, &out_size);
-+	if (vf_lag_info.msg_head.status == HINIC3_MGMT_CMD_UNSUPPORTED)
-+		return false;
-+
-+	if (err || vf_lag_info.msg_head.status || !out_size) {
-+		PMD_DRV_LOG(ERR,
-+			    "Get vf_lag failed, err: %d, status: 0x%x, out size: 0x%x",
-+			    err, vf_lag_info.msg_head.status, out_size);
-+		return false;
-+	}
-+
-+	if (opcode == HINIC3_CMD_OPCODE_GET) {
-+		return !!(vf_lag_info.vf_lag_bitmap.vf_bit_map[func_id / VF_LAG_VF_NUM_PER_GROUP] &
-+			  RTE_BIT32(func_id % VF_LAG_VF_NUM_PER_GROUP));
-+	}
-+
-+	return false;
-+}
-diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.h b/drivers/net/hinic3/base/hinic3_nic_cfg.h
-index 6d3eb433bd..6fb56fff4f 100644
---- a/drivers/net/hinic3/base/hinic3_nic_cfg.h
-+++ b/drivers/net/hinic3/base/hinic3_nic_cfg.h
-@@ -17,6 +17,7 @@
- #define HINIC3_DCB_UP_MAX		0x8
+-	nic_dev->cmdq_ops->cmd_buf_to_rss_indir_table(cmd_buf, indir_table);
++	hinic3_cmdq_get_ops(nic_dev)->cmd_buf_to_rss_indir_table(cmd_buf, indir_table);
  
- #define HINIC3_MAX_NUM_RQ		256
-+#define MAX_FUNCTION_NUM		4096
+ 	hinic3_free_cmd_buf(cmd_buf);
+ 	return 0;
+@@ -1245,7 +1245,8 @@ hinic3_rss_set_indir_tbl(struct hinic3_hwdev *hwdev, const uint32_t *indir_table
+ 	}
  
- #define HINIC3_MAX_MTU_SIZE		9600
- #define HINIC3_MIN_MTU_SIZE		256
-@@ -371,6 +372,18 @@ struct hinic3_port_stats_info {
- 	uint16_t rsvd1;
- };
- 
-+#define HINIC3_CMD_MAX_DP_DATA_NUM 50
-+struct hinic3_cir_drop {
-+	uint64_t rx_discard_phy;
-+};
-+
-+struct hinic3_cmd_get_dp_info_resp {
-+	struct mgmt_msg_head msg_head;
-+	uint16_t length;
-+	uint16_t rsvd;
-+	uint64_t value[HINIC3_CMD_MAX_DP_DATA_NUM];
-+};
-+
- struct hinic3_vport_stats {
- 	uint64_t tx_unicast_pkts_vport;
- 	uint64_t tx_unicast_bytes_vport;
-@@ -390,6 +403,8 @@ struct hinic3_vport_stats {
- 	uint64_t rx_discard_vport;
- 	uint64_t tx_err_vport;
- 	uint64_t rx_err_vport;
-+	uint64_t rx_mtu_err_vport;
-+	uint64_t rx_out_of_buffer; /* fw: rx_nowqe */
- };
- 
- struct hinic3_cmd_vport_stats {
-@@ -398,7 +413,7 @@ struct hinic3_cmd_vport_stats {
- 	uint32_t stats_size;
- 	uint32_t rsvd1;
- 	struct hinic3_vport_stats stats;
--	uint64_t rsvd2[6];
-+	uint64_t rsvd2[4];
- };
- 
- struct hinic3_phy_port_stats {
-@@ -1540,4 +1555,32 @@ int hinic3_set_feature_to_hw(struct hinic3_hwdev *hwdev, uint64_t *s_feature, ui
- 
- int hinic3_set_link_status_follow(struct hinic3_hwdev *hwdev,
- 				  enum hinic3_link_follow_status status);
-+
-+/* VF LAG definitions */
-+#define VF_LAG_VF_NUM_GROUP_NUM 128
-+#define VF_LAG_VF_NUM_PER_GROUP 32
-+#define HINIC3_CMD_OPCODE_SET 0
-+#define HINIC3_CMD_OPCODE_GET 1
-+
-+typedef struct hinic3_vf_lag_bitmap_s {
-+	uint32_t vf_bit_map[VF_LAG_VF_NUM_GROUP_NUM];
-+} hinic3_vf_lag_bitmap;
-+
-+struct hinic3_vf_lag_cmd {
-+	struct mgmt_msg_head msg_head;
-+
-+	uint16_t func_id;
-+	uint8_t opcode; /* 0 -> set, 1 -> get */
-+	uint8_t en_flag; /* 0 -> disable, 1 -> enable  */
-+	uint8_t bond_active_num;
-+	uint8_t bond_active_bitmap;
-+	uint8_t mac_sync_flag;
-+	uint8_t rsvd;
-+	hinic3_vf_lag_bitmap vf_lag_bitmap;
-+};
-+
-+int hinic3_get_cir_drop(void *hwdev, struct hinic3_cir_drop *stats);
-+
-+bool hinic3_cmd_vf_lag(void *hwdev, uint16_t func_id, uint8_t opcode);
-+
- #endif /* _HINIC3_NIC_CFG_H_ */
+ 	nic_dev = (struct hinic3_nic_dev *)hwdev->dev_handle;
+-	cmd = nic_dev->cmdq_ops->prepare_cmd_buf_set_rss_indir_table(nic_dev, indir_table, cmd_buf);
++	cmd = hinic3_cmdq_get_ops(nic_dev)->prepare_cmd_buf_set_rss_indir_table(nic_dev,
++		indir_table, cmd_buf);
+ 	err = hinic3_cmdq_direct_resp(hwdev, HINIC3_MOD_L2NIC, cmd, cmd_buf, &out_param, 0);
+ 	if (err || out_param != 0) {
+ 		PMD_DRV_LOG(ERR, "Set rss indir table failed");
 diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index 1293762d88..005bc522ec 100644
+index aace4d74a0..df2072dea7 100644
 --- a/drivers/net/hinic3/hinic3_ethdev.c
 +++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -80,12 +80,25 @@ struct hinic3_xstats_name_off {
- 	uint32_t offset;
- };
- 
-+#define HINIC3_CIR_DROP_STAT(_stat_item)                                   \
-+	{                                                                  \
-+		.name = #_stat_item,                                       \
-+		.offset = offsetof(struct hinic3_cir_drop, _stat_item),    \
-+	}
-+
- #define HINIC3_FUNC_STAT(_stat_item)                                       \
- 	{                                                                  \
- 		.name = #_stat_item,                                       \
- 		.offset = offsetof(struct hinic3_vport_stats, _stat_item), \
+@@ -558,6 +558,27 @@ hinic3_get_nic_type(struct rte_pci_device *pci_dev)
  	}
- 
-+
-+static struct hinic3_xstats_name_off hinic3_cir_drop_stats_strings[] = {
-+	HINIC3_CIR_DROP_STAT(rx_discard_phy),
-+};
-+
-+#define HINIC3_CIR_DROP_XSTATS_NUM  RTE_DIM(hinic3_cir_drop_stats_strings)
-+
- static const struct hinic3_xstats_name_off hinic3_vport_stats_strings[] = {
- 	HINIC3_FUNC_STAT(tx_unicast_pkts_vport),
- 	HINIC3_FUNC_STAT(tx_unicast_bytes_vport),
-@@ -105,6 +118,8 @@ static const struct hinic3_xstats_name_off hinic3_vport_stats_strings[] = {
- 	HINIC3_FUNC_STAT(rx_discard_vport),
- 	HINIC3_FUNC_STAT(tx_err_vport),
- 	HINIC3_FUNC_STAT(rx_err_vport),
-+	HINIC3_FUNC_STAT(rx_mtu_err_vport),
-+	HINIC3_FUNC_STAT(rx_out_of_buffer),
- };
- 
- #define HINIC3_VPORT_XSTATS_NUM RTE_DIM(hinic3_vport_stats_strings)
-@@ -284,12 +299,16 @@ static const struct hinic3_xstats_name_off hinic3_txq_stats_strings[] = {
- static uint32_t
- hinic3_xstats_calc_num(struct hinic3_nic_dev *nic_dev)
- {
-+	uint32_t cir_drop_num = HINIC3_IS_SP620_NIC(nic_dev) ?
-+				HINIC3_CIR_DROP_XSTATS_NUM : 0;
-+
- 	if (HINIC3_IS_VF(nic_dev->hwdev)) {
--		return (HINIC3_VPORT_XSTATS_NUM +
-+		return (HINIC3_VPORT_XSTATS_NUM + cir_drop_num +
- 			HINIC3_RXQ_XSTATS_NUM * nic_dev->num_rqs +
- 			HINIC3_TXQ_XSTATS_NUM * nic_dev->num_sqs);
- 	} else {
- 		return (HINIC3_VPORT_XSTATS_NUM + HINIC3_PHYPORT_XSTATS_NUM +
-+			cir_drop_num +
- 			HINIC3_RXQ_XSTATS_NUM * nic_dev->num_rqs +
- 			HINIC3_TXQ_XSTATS_NUM * nic_dev->num_sqs);
- 	}
-@@ -1271,7 +1290,14 @@ hinic3_tx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
- 	txq->wqebb_size = (uint16_t)RTE_BIT32(txq->wqebb_shift);
- 	txq->tx_free_thresh = tx_free_thresh;
- 	txq->owner = 1;
--	txq->cos = nic_dev->default_cos;
-+
-+	if (!ODD_NUMBER_QUEUE_ID(qid) &&
-+		hinic3_cmd_vf_lag(nic_dev->hwdev, hinic3_global_func_id(nic_dev->hwdev),
-+				  HINIC3_CMD_OPCODE_GET))
-+		txq->cos = SELECT_OTHER_COS_ID(nic_dev->default_cos);
-+	else
-+		txq->cos = nic_dev->default_cos;
-+
- 	txq->tx_deferred_start = tx_conf->tx_deferred_start;
- 	txq->tx_wqe_compact_task = HINIC3_SUPPORT_TX_WQE_COMPACT_TASK(nic_dev);
- 
-@@ -2898,6 +2924,38 @@ hinic3_dev_stats_reset(struct rte_eth_dev *dev)
- 	return 0;
  }
  
-+static uint16_t
-+get_port_cir_drop(struct hinic3_nic_dev *nic_dev,
-+		  struct rte_eth_xstat *xstats, uint32_t base)
++/**
++ * Get cmdq ops for the given NIC device.
++ *
++ * @param[in] nic_dev
++ * Pointer to NIC device structure.
++ *
++ * @return
++ * Pointer to cmdq ops structure.
++ */
++const struct hinic3_nic_cmdq_ops *
++hinic3_cmdq_get_ops(struct hinic3_nic_dev *nic_dev)
 +{
-+	struct hinic3_cir_drop port_stats;
-+	uint16_t i;
-+	int err;
++	static const struct hinic3_nic_cmdq_ops *cmdq_ops[] = {
++		[NIC_SP620]   = &hinic3_stn_cmdq_ops,
++		[NIC_SP230]   = &hinic3_htn_cmdq_ops,
++		[NIC_UNKNOWN] = &hinic3_stn_cmdq_ops,
++	};
 +
-+	memset(&port_stats, 0, sizeof(port_stats));
-+
-+	err = hinic3_get_cir_drop(nic_dev->hwdev, &port_stats);
-+	if (err) {
-+		PMD_DRV_LOG(ERR, "Failed to get CPB cir drops from fw.");
-+
-+		for (i = 0; i < RTE_DIM(hinic3_cir_drop_stats_strings); i++) {
-+			xstats[i].value = 0;
-+			xstats[i].id = base + i;
-+		}
-+
-+		return RTE_DIM(hinic3_cir_drop_stats_strings);
-+	}
-+
-+	for (i = 0; i < RTE_DIM(hinic3_cir_drop_stats_strings); i++) {
-+		memcpy(&xstats[i].value,
-+		       (const char *)&port_stats + hinic3_cir_drop_stats_strings[i].offset,
-+		       sizeof(uint64_t));
-+		xstats[i].id = base + i;
-+	}
-+
-+	return RTE_DIM(hinic3_cir_drop_stats_strings);
++	return cmdq_ops[nic_dev->nic_type];
 +}
 +
  /**
-  * Get device extended statistics.
-  *
-@@ -2986,6 +3044,10 @@ hinic3_dev_xstats_get(struct rte_eth_dev *dev, struct rte_eth_xstat *xstats,
- 		count++;
+  * Initialize Class of Service (CoS). For PF devices, it also sync the link
+  * status with the physical port.
+@@ -3816,13 +3837,6 @@ hinic3_func_init(struct rte_eth_dev *eth_dev)
+ 		goto alloc_eth_addr_fail;
  	}
  
-+	/* Get stats from cir drop stats structure */
-+	if (HINIC3_IS_SP620_NIC(nic_dev))
-+		count += get_port_cir_drop(nic_dev, &xstats[count], count);
-+
- 	if (HINIC3_IS_VF(nic_dev->hwdev))
- 		return count;
- 
-@@ -3086,6 +3148,16 @@ hinic3_dev_xstats_get_names(struct rte_eth_dev *dev,
- 		count++;
+-	nic_dev->cmdq_ops = rte_zmalloc("cmdq_ops", sizeof(struct hinic3_nic_cmdq_ops), 0);
+-	if (!nic_dev->cmdq_ops) {
+-		PMD_DRV_LOG(ERR, "Allocate cmdq_ops memory failed");
+-		err = -ENOMEM;
+-		goto alloc_cmdq_ops_fail;
+-	}
+-
+ 	nic_dev->rx_ops = rte_zmalloc("rx_ops", sizeof(struct hinic3_nic_rx_ops), 0);
+ 	if (!nic_dev->rx_ops) {
+ 		PMD_DRV_LOG(ERR, "Allocate rx_ops memory failed");
+@@ -3890,11 +3904,6 @@ hinic3_func_init(struct rte_eth_dev *eth_dev)
+ 		goto get_cap_fail;
  	}
  
-+	/* Get cir drop stats name. */
-+	if (HINIC3_IS_SP620_NIC(nic_dev)) {
-+		for (i = 0; i < HINIC3_CIR_DROP_XSTATS_NUM; i++) {
-+			strlcpy(xstats_names[count].name,
-+				hinic3_cir_drop_stats_strings[i].name,
-+				sizeof(xstats_names[count].name));
-+			count++;
-+		}
-+	}
-+
- 	if (HINIC3_IS_VF(nic_dev->hwdev))
- 		return count;
+-	if (!(nic_dev->feature_cap & NIC_F_HTN_CMDQ))
+-		nic_dev->cmdq_ops = hinic3_nic_cmdq_get_stn_ops();
+-	else
+-		nic_dev->cmdq_ops = hinic3_nic_cmdq_get_htn_ops();
+-
+ 	hinic3_nic_tx_rx_ops_init(nic_dev);
+ 
+ 	err = hinic3_init_sw_rxtxqs(nic_dev);
+@@ -3993,10 +4002,6 @@ hinic3_func_init(struct rte_eth_dev *eth_dev)
+ 	nic_dev->rx_ops = NULL;
+ 
+ alloc_rx_ops_fail:
+-	rte_free(nic_dev->cmdq_ops);
+-	nic_dev->cmdq_ops = NULL;
+-
+-alloc_cmdq_ops_fail:
+ 	rte_free(eth_dev->data->mac_addrs);
+ 	eth_dev->data->mac_addrs = NULL;
  
 diff --git a/drivers/net/hinic3/hinic3_ethdev.h b/drivers/net/hinic3/hinic3_ethdev.h
-index f4d8c16640..c3384e5fd0 100644
+index a078120794..84f9b2db0e 100644
 --- a/drivers/net/hinic3/hinic3_ethdev.h
 +++ b/drivers/net/hinic3/hinic3_ethdev.h
-@@ -162,6 +162,9 @@ struct hinic3_nic_dev {
+@@ -159,7 +159,6 @@ struct hinic3_nic_dev {
+ 	struct hinic3_ethertype_filter_list filter_ethertype_list;
+ 	struct hinic3_fdir_rule_filter_list filter_fdir_rule_list;
+ 	uint8_t cos_map[HINIC3_COS_NUM_MAX];
+-	struct hinic3_nic_cmdq_ops *cmdq_ops;
+ 	struct hinic3_nic_rx_ops *rx_ops;
+ 	struct hinic3_nic_tx_ops *tx_ops;
+ 	enum nic_type nic_type; /**< NIC type. */
+diff --git a/drivers/net/hinic3/hinic3_nic_io.c b/drivers/net/hinic3/hinic3_nic_io.c
+index 9203dcce40..361586868e 100644
+--- a/drivers/net/hinic3/hinic3_nic_io.c
++++ b/drivers/net/hinic3/hinic3_nic_io.c
+@@ -391,8 +391,8 @@ init_sq_ctxts(struct hinic3_nic_dev *nic_dev)
+ 		max_ctxts = (nic_dev->num_sqs - q_id) > HINIC3_Q_CTXT_MAX
+ 				    ? HINIC3_Q_CTXT_MAX
+ 				    : (nic_dev->num_sqs - q_id);
+-		cmd = nic_dev->cmdq_ops->prepare_cmd_buf_qp_context_multi_store(nic_dev, cmd_buf,
+-			HINIC3_QP_CTXT_TYPE_SQ, q_id, max_ctxts);
++		cmd = hinic3_cmdq_get_ops(nic_dev)->prepare_cmd_buf_qp_context_multi_store(nic_dev,
++			cmd_buf, HINIC3_QP_CTXT_TYPE_SQ, q_id, max_ctxts);
+ 		rte_atomic_thread_fence(rte_memory_order_seq_cst);
+ 		err = hinic3_cmdq_direct_resp(nic_dev->hwdev, HINIC3_MOD_L2NIC,
+ 					      cmd, cmd_buf, &out_param, 0);
+@@ -443,8 +443,8 @@ init_rq_ctxts(struct hinic3_nic_dev *nic_dev)
+ 		max_ctxts = (nic_dev->num_rqs - q_id) > HINIC3_Q_CTXT_MAX
+ 				    ? HINIC3_Q_CTXT_MAX
+ 				    : (nic_dev->num_rqs - q_id);
+-		cmd = nic_dev->cmdq_ops->prepare_cmd_buf_qp_context_multi_store(nic_dev, cmd_buf,
+-			HINIC3_QP_CTXT_TYPE_RQ, q_id, max_ctxts);
++		cmd = hinic3_cmdq_get_ops(nic_dev)->prepare_cmd_buf_qp_context_multi_store(nic_dev,
++			cmd_buf, HINIC3_QP_CTXT_TYPE_RQ, q_id, max_ctxts);
+ 		rte_atomic_thread_fence(rte_memory_order_seq_cst);
+ 		err = hinic3_cmdq_direct_resp(nic_dev->hwdev, HINIC3_MOD_L2NIC,
+ 					      cmd, cmd_buf, &out_param, 0);
+@@ -491,7 +491,8 @@ clean_queue_offload_ctxt(struct hinic3_nic_dev *nic_dev,
+ 		return -ENOMEM;
+ 	}
  
+-	cmd = nic_dev->cmdq_ops->prepare_cmd_buf_clean_tso_lro_space(nic_dev, cmd_buf, ctxt_type);
++	cmd = hinic3_cmdq_get_ops(nic_dev)->prepare_cmd_buf_clean_tso_lro_space(nic_dev,
++		cmd_buf, ctxt_type);
+ 
+ 	/* Send a command to hardware to clean up queue offload context. */
+ 	err = hinic3_cmdq_direct_resp(nic_dev->hwdev, HINIC3_MOD_L2NIC,
+diff --git a/drivers/net/hinic3/hinic3_nic_io.h b/drivers/net/hinic3/hinic3_nic_io.h
+index e1741d1156..d7ec81f2e6 100644
+--- a/drivers/net/hinic3/hinic3_nic_io.h
++++ b/drivers/net/hinic3/hinic3_nic_io.h
+@@ -79,6 +79,17 @@ struct hinic3_nic_cmdq_ops {
+ 	cmd_buf_to_rss_indir_table_t			cmd_buf_to_rss_indir_table;
  };
  
-+#define SELECT_OTHER_COS_ID(cos_id) ((cos_id) ^ 4)
-+#define ODD_NUMBER_QUEUE_ID(q_id) ((q_id) & 1)
++/**
++ * Get cmdq ops for the given NIC device.
++ *
++ * @param[in] nic_dev
++ * Pointer to NIC device structure.
++ *
++ * @return
++ * Pointer to cmdq ops structure.
++ */
++const struct hinic3_nic_cmdq_ops *hinic3_cmdq_get_ops(struct hinic3_nic_dev *nic_dev);
 +
- #define HINIC3_IS_SP620_NIC(nic_dev) ((nic_dev)->nic_type == NIC_SP620)
- #define HINIC3_IS_SP230_NIC(nic_dev) ((nic_dev)->nic_type == NIC_SP230)
+ /* Doorbell info. */
+ struct hinic3_db {
+ 	uint32_t db_info;
+diff --git a/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.c b/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.c
+index 634dfe7239..607fe2d0fe 100644
+--- a/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.c
++++ b/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.c
+@@ -152,16 +152,11 @@ static void cmd_buf_to_rss_indir_table(const struct hinic3_cmd_buf *cmd_buf, uin
+ 		indir_table[i] = *(indir_tbl + i);
+ }
  
+-struct hinic3_nic_cmdq_ops *hinic3_nic_cmdq_get_htn_ops(void)
+-{
+-	static struct hinic3_nic_cmdq_ops cmdq_ops = {
+-		.prepare_cmd_buf_clean_tso_lro_space =    prepare_cmd_buf_clean_tso_lro_space,
+-		.prepare_cmd_buf_qp_context_multi_store = prepare_cmd_buf_qp_context_multi_store,
+-		.prepare_cmd_buf_modify_svlan =           prepare_cmd_buf_modify_svlan,
+-		.prepare_cmd_buf_set_rss_indir_table =    prepare_cmd_buf_set_rss_indir_table,
+-		.prepare_cmd_buf_get_rss_indir_table =    prepare_cmd_buf_get_rss_indir_table,
+-		.cmd_buf_to_rss_indir_table =             cmd_buf_to_rss_indir_table,
+-	};
+-
+-	return &cmdq_ops;
+-}
++const struct hinic3_nic_cmdq_ops hinic3_htn_cmdq_ops = {
++	.prepare_cmd_buf_clean_tso_lro_space =    prepare_cmd_buf_clean_tso_lro_space,
++	.prepare_cmd_buf_qp_context_multi_store = prepare_cmd_buf_qp_context_multi_store,
++	.prepare_cmd_buf_modify_svlan =           prepare_cmd_buf_modify_svlan,
++	.prepare_cmd_buf_set_rss_indir_table =    prepare_cmd_buf_set_rss_indir_table,
++	.prepare_cmd_buf_get_rss_indir_table =    prepare_cmd_buf_get_rss_indir_table,
++	.cmd_buf_to_rss_indir_table =             cmd_buf_to_rss_indir_table,
++};
+diff --git a/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.h b/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.h
+index 73f4922734..158cbc5f8e 100644
+--- a/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.h
++++ b/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.h
+@@ -53,11 +53,11 @@ struct hinic3_htn_vlan_ctx {
+ };
+ 
+ /**
+- * Get cmdq ops hardware tile NIC(htn) supported.
++ * Cmdq ops hardware tile NIC(htn) supported.
+  *
+  * @return
+- * Pointer to ops.
++ * Ops.
+  */
+-struct hinic3_nic_cmdq_ops *hinic3_nic_cmdq_get_htn_ops(void);
++extern const struct hinic3_nic_cmdq_ops hinic3_htn_cmdq_ops;
+ 
+ #endif /* _HINIC3_HTN_CMDQ_H_ */
+diff --git a/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.c b/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.c
+index f41f060d17..23adbc79f4 100644
+--- a/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.c
++++ b/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.c
+@@ -108,7 +108,7 @@ static uint8_t prepare_cmd_buf_set_rss_indir_table(struct hinic3_nic_dev *nic_de
+ 
+ 	for (i = 0; i < HINIC3_RSS_INDIR_SIZE; i++)
+ 		indir_tbl->entry[i] = (uint16_t)(*(indir_table + i));
+-	size = sizeof(indir_tbl->entry) / 4;
++	size = (size_t)sizeof(indir_tbl->entry) / sizeof(uint32_t);
+ 	temp = (uint32_t *)indir_tbl->entry;
+ 	for (i = 0; i < size; i++) {
+ 		rte_atomic_thread_fence(rte_memory_order_seq_cst);
+@@ -136,16 +136,11 @@ static void cmd_buf_to_rss_indir_table(const struct hinic3_cmd_buf *cmd_buf, uin
+ 		indir_table[i] = *(indir_tbl + i);
+ }
+ 
+-struct hinic3_nic_cmdq_ops *hinic3_nic_cmdq_get_stn_ops(void)
+-{
+-	static struct hinic3_nic_cmdq_ops cmdq_ops = {
+-		.prepare_cmd_buf_clean_tso_lro_space =    prepare_cmd_buf_clean_tso_lro_space,
+-		.prepare_cmd_buf_qp_context_multi_store = prepare_cmd_buf_qp_context_multi_store,
+-		.prepare_cmd_buf_modify_svlan =           prepare_cmd_buf_modify_svlan,
+-		.prepare_cmd_buf_set_rss_indir_table =    prepare_cmd_buf_set_rss_indir_table,
+-		.prepare_cmd_buf_get_rss_indir_table =    prepare_cmd_buf_get_rss_indir_table,
+-		.cmd_buf_to_rss_indir_table =             cmd_buf_to_rss_indir_table,
+-	};
+-
+-	return &cmdq_ops;
+-}
++const struct hinic3_nic_cmdq_ops hinic3_stn_cmdq_ops = {
++	.prepare_cmd_buf_clean_tso_lro_space =    prepare_cmd_buf_clean_tso_lro_space,
++	.prepare_cmd_buf_qp_context_multi_store = prepare_cmd_buf_qp_context_multi_store,
++	.prepare_cmd_buf_modify_svlan =           prepare_cmd_buf_modify_svlan,
++	.prepare_cmd_buf_set_rss_indir_table =    prepare_cmd_buf_set_rss_indir_table,
++	.prepare_cmd_buf_get_rss_indir_table =    prepare_cmd_buf_get_rss_indir_table,
++	.cmd_buf_to_rss_indir_table =             cmd_buf_to_rss_indir_table,
++};
+diff --git a/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.h b/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.h
+index f1720c29c7..ab1c73a977 100644
+--- a/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.h
++++ b/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.h
+@@ -36,11 +36,11 @@ struct hinic3_stn_vlan_ctx {
+ };
+ 
+ /**
+- * Get cmdq ops software tile NIC(stn) supported.
++ * Cmdq ops software tile NIC(stn) supported.
+  *
+  * @return
+- * Pointer to ops.
++ * Ops.
+  */
+-struct hinic3_nic_cmdq_ops *hinic3_nic_cmdq_get_stn_ops(void);
++extern const struct hinic3_nic_cmdq_ops hinic3_stn_cmdq_ops;
+ 
+ #endif /* _HINIC3_STN_CMDQ_H_ */
 -- 
 2.33.0
 
