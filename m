@@ -2,97 +2,79 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70DC0606A31C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 19:51:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044DB606A31C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 21:04:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=HUNCs1/V
+	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=FpJU1BYy
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 92F02402C9;
-	Tue, 17 Nov 2026 20:51:18 +0100 (CET)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com
- [209.85.218.49])
- by mails.dpdk.org (Postfix) with ESMTPS id EF7B1402BF
- for <dev@dpdk.org>; Tue, 17 Nov 2026 20:51:16 +0100 (CET)
-Received: by mail-ej1-f49.google.com with SMTP id
- a640c23a62f3a-c4d427836e9so10943466b.1
- for <dev@dpdk.org>; Tue, 17 Nov 2026 11:51:16 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794945076; cv=none;
- d=google.com; s=arc-20260327;
- b=Y2QMFby0b08w2/rdzIwAdKKHMFlaanmaJm3JnWliHCVl6TOGMRkQuYd0A7s/JAzEVY
- jrGv1OsY3sZpEFca7Pj6yHze4FSMN+eJZ/I8Uhu7CbrpHGD6p7qPjMn8d7IlbnQn1AQX
- tFnEUSvFeD1Aj9IKhFbLMDkL4Rlo+kTthTQDj2m7KwhfqrdYku8ni2FbtOg83a6mG1oS
- cUdrWMXH5AUf0Td28kUNWIYfLODLAdzwRyAoI/iJMpcyYXiuKyZMbcJgbs1Ah8lBxOqE
- GJh6TLF8D1GzR3kyGMFVLyIgw9ThEyVIzrX9pPr0ZvP/eh6AA7wr8bpKSl1OipjMn8BS
- gKJA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=HNGuZmaTEszQEJubdPl/OqcCnA/GN4V9ImR9FIgh+uw=;
- fh=hXaxD+23DhiDyZAj3l4CilxvwIsKEwORs7DBkLuQLjk=;
- b=EPOsA9VOG7SJ4f0xMafUcCQ8FxUISjJ0/QikHp7/meY2SEhmRr0JzDDLuygxhAmvAf
- 9upeudKRPuhNcbcfQLTnU80PslRyuKFWVfqfr82sW7HlibEEzx2VnbWkXQEMMnYQkm5E
- T7uY/3cut253q0fWTNE5UMx++uArhAu77y72eEBk1FPK9vB9dTP90yqJnwvoxZuSrvSg
- 6L3hB4oW8d759S0GwF+gnPSKVsjHTfR19mUpe2M/oDf9Xa5Tl5DB2CeRJEOotQzJZ9DE
- c2+AkWf5XRY1OeSwelIlKpEW6aCAmj0YAa+gCmJwpTevvXQvN60LBjrNBlAz6BjkCjgb
- WDSA==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id 8682A402BF;
+	Tue, 17 Nov 2026 22:04:33 +0100 (CET)
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com
+ [209.85.214.179])
+ by mails.dpdk.org (Postfix) with ESMTPS id 1F152402A4
+ for <dev@dpdk.org>; Tue, 17 Nov 2026 22:04:32 +0100 (CET)
+Received: by mail-pl1-f179.google.com with SMTP id
+ d9443c01a7336-2efef1516b5so1299485ad.3
+ for <dev@dpdk.org>; Tue, 17 Nov 2026 13:04:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1794945076; x=1795549876; darn=dpdk.org;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1794949470;
+ x=1795554270; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=HNGuZmaTEszQEJubdPl/OqcCnA/GN4V9ImR9FIgh+uw=;
- b=HUNCs1/VSuqrwowx1XnUT5oOYZMmLOnXa1IFqun5EHpDQu+duiv/7vkkguoEBzh5h2
- CjpBtkFtrXoEfh+ulmmZLCWdtF3ezK+WMzG9TvATf+os+21aMvfyIZKr2rOVV5uH878o
- 8h2vM2qPF7JM7+ziJtfdVS031OoZ3tGYYv6j3Eix3cEOvE1h5zoqAn2z/vHpyb9uXblb
- ilP87PuQGr9NTJb5jjx431P9cC0ZQvoOLxtx1beMVtktEh/1yhbYin8GRtauaOnKvbEM
- GHPwN/KxT+xjKrP68bmzxo22BGNrvk5VvFpAG2B3XhECEJotkt+Xnc4f8SVR7C99zb+6
- i2Ew==
+ bh=RIxCye6o8uOtmfk5GmrV9+Y8UwzCCXrkussgvHlIvM8=;
+ b=FpJU1BYyGCAcuRM5atDku1nGLsqaCnIGEA36+fTOd8XpnBL7zLb4N+iwJzIIpWUpyZ
+ vclk+G2+grzo0qW3aCqsOjnPqmWN/na+iDmpuqf4YEqlXiwjNaGGCHnYvZr87BHwnKbJ
+ /G6x6jjPbbhFBmMnOPjNt1/lfpuggllvdEJWQSK+ZHE5bW7NCoY+0XVHQ3DFL48exh2y
+ t/hQWJJlEAUjvKeAlak0BBqg2g4O0SSALfb5ipgJ/W8fROyh5FXjduy1GnRogET1x1Qc
+ rG0/qMlSk3cUtq9ZVGKjKPNtPnWEFDCvT5MkscS09OId2ZX7Qc10j19S+f8XibZcEeGr
+ 6CUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794945076; x=1795549876;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:x-gm-gg
+ d=1e100.net; s=20260707; t=1794949470; x=1795554270;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=HNGuZmaTEszQEJubdPl/OqcCnA/GN4V9ImR9FIgh+uw=;
- b=XMNxAK8eu0pXTQtdHrOzbG7BuXCwLlazeOUBoJJ0miJ9ZoyF9+zJIM7Rj4vV1FFImI
- zlOUh0pE/29tDauLFyBZf2phBTQcdGTQfvBB75/ICb1rJV1Z7LWkbQR76ka8eTAz+ExD
- gBv2BRXD6MuhxkGtYgWomN9jhKabrD1xPfY+jsd4eVI5Vv4SLBl/X+UXrdhabwjUWvZc
- CLieioTjfAfjFbKTHh1OlZdYHFcKftWC8ZpVN1f2yLUluTrk3fZXcKfHVhrM3ga08LKE
- rCIcmQLCbtYqkXw/Bxpiv7WhllSX414UJy9R3Y3a5jM8YJemnsz4aejPYR6AqZ7fW4Nj
- 75hw==
-X-Forwarded-Encrypted: i=1;
- AL+hErEtZFzPE2NkZyxzFRaU80UKrmU8m9oz6XehL3v3zzskckjaasrieq444L3ChrzRu73bm5s=@dpdk.org
-X-Gm-Message-State: APuU4Z/HuGBnBj67qqR9nlEBDi28VaX1Xqd6B5l0GxerOaj9eP9j+a1V
- +RSLgZ44Qx13oFGxeYM/bF85TyDxwjT0qbmFTCv4p+r1HICo/c3IeUr2Ti2YsUvR0sKXPkDbgRD
- qlNrMFWPWy+BPp3XMWEaFVOAQg4vazNI=
-X-Gm-Gg: AYBFou1WFuXB/SgRqPcCQegsaURFhC43dWnGRmn8QAYGQvnL+vLcW1Sb5ILVKRdwXXg
- rtrZSSSQoY07U+YvFp4GCc4Zxb+acmzcaSVVjOKQOUH7ZJ/Kk12f5KrUlEzh77OlDlN7hjVApuW
- Fi1EBff9lr0zgI6xuwXABJLAFW0uP6Iy6OQ0qtstjWCm0uQT9n+h0YsLjWubvdWid0svoZlL4jP
- uTlkBY2CqpAeay9BFxuk8PShzIJQP6XLeVqwNrDlHPCxZsth06HWUqF5aTTzQVMgEnZArZj6X3e
- Seud7abnHetNrrrYJqMysPR8U/4vCk45otS8GVPzhusMcyP9LE0b80OuWiclF9wPohkp7T8ORGh
- 5SINCycVDwxsq46F/e03vODNQ0ax8lDRSHpdA
-X-Received: by 2002:a17:907:c13:b0:c50:8d2b:4391 with SMTP id
- a640c23a62f3a-c510e3919e5mr26594866b.37.1794945076048; Tue, 17 Nov 2026
- 11:51:16 -0800 (PST)
+ bh=RIxCye6o8uOtmfk5GmrV9+Y8UwzCCXrkussgvHlIvM8=;
+ b=zg3m9NOkba2teTd+Wj1fT6fD1m3tWVyfCcaKy/Wdk0F/4VGQz+8/1vPVu6fBLq2OHP
+ kL0a9MDj4ZW4gYa3m81i+NdlxHHW72Khw0/tckMAcXWsW0jedw5J20LBFCY9FgulbeiC
+ Jl9u4HC4P8wgdOjHpwL8f1CvUjE9ry5ltl5a3zHlhDodkOJJdKtrh3w4Hj8flWhqmCHQ
+ sdksLnnDSqwwMm75uK2NahNmKBxr3jdwTbNH4gMXL61gJL0A7mmejw1YSTCamr/1QZ6w
+ mSmEzCwT9bzg98PVLRCZWASzznWb1OsiLKFvyuwht9mHgDcX8oCvtic+MKCS1HPh0uir
+ aofA==
+X-Gm-Message-State: APuU4Z/IU+gKoALzKSwS28aBwwMrc44I/YhkoRYh2Dp3NEsxD7DkePYV
+ HlVoB7tJX+vxfvF1o7FVbmaOcHhNsRrf0/v8TrVnl7KUCUWfN+80018wEqq5Fm8MVkk=
+X-Gm-Gg: AZFdTZdmhvxA5/dqhvXch37LBcrtilzuNwUc9fAFx8ywdoilEszW7jzJAt94ygVM3n4
+ kt4b9+wkFVpZxyOmNCX9N06VeXUC+gmBqDBiTEUyTnYM2KrFtVkiN4V82HikSrkVqyinI7fx2Pr
+ jKLK5IydVJ4kUg8y2xI3LzLiObo+3pNjHRnjx37FlsEgAdtQRD6dcwSEbTtMpBs6hF5JpLoe9aD
+ 1p2Tj2RPA196aEJbf6JGk2skfXtdOPHluPLkQMasGHh6V7GEwvvXsjFRzH1ir9v0jq0IyWXo/TZ
+ 8i/IbhlKrxA68Udgxd6q2VqM3E+p6uQikBEuEERSqOCRASBTk6nPheOOOxLYZaXur+LCVR1Cki1
+ LfhNMoAgESWdoZk3F55GABUp2JZJ0pcOtrg74wbp/3McYP3InrFLDFvi/MT6TcSs0zyCgQbKVA8
+ 0zdxyFEx1Rgkn94zvpeJkT8yKs5y8w4DUWzBW1oxwqtPkpxtXp0SfNul9bWcCuI3aiE6vZpaD4d
+ PrIOy4SoWSQPQDt9YWtuah0wGF5ikXlS1TwhWlk6esFiFVg+w19hl3GwxBsP4Vyu8k6S9Q2K285
+ cuX8/YpR3K1Y9EV6Q3uELBKsKnoTJ5lP3OMU4lJrLedY5LOJ5QU6QDf7tdpN2xQQVPQXcPa9Dw=
+ =
+X-Received: by 2002:a17:903:8c7:b0:2ef:f3df:7d7d with SMTP id
+ d9443c01a7336-2eff75632eamr4676415ad.51.1794949470354; 
+ Tue, 17 Nov 2026 13:04:30 -0800 (PST)
+Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-2eff6214565sm2529785ad.42.2026.11.17.13.04.29
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 17 Nov 2026 13:04:30 -0800 (PST)
+Date: Tue, 17 Nov 2026 13:04:27 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: <dev@dpdk.org>
+Subject: Re: [PATCH] eal: silence unreachable code warning
+Message-ID: <20261117130427.36f2c01d@phoenix.local>
+In-Reply-To: <avyoOHd2QAf6aoo7@bricha3-mobl1.ger.corp.intel.com>
+References: <20261117174059.736244-1-stephen@networkplumber.org>
+ <avyoOHd2QAf6aoo7@bricha3-mobl1.ger.corp.intel.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-References: <20261117124303.717447-1-iboukris@gmail.com>
- <20261117124303.717447-2-iboukris@gmail.com>
- <CAJFAV8zyPB1uqYmywdqzwBCO9mhXrpyEJLyPf8bELLSvFK-x1Q@mail.gmail.com>
-In-Reply-To: <CAJFAV8zyPB1uqYmywdqzwBCO9mhXrpyEJLyPf8bELLSvFK-x1Q@mail.gmail.com>
-From: Isaac Boukris <iboukris@gmail.com>
-Date: Tue, 17 Nov 2026 21:51:03 +0200
-X-Gm-Features: AclHuK81epQ1WZahWpmHH5JEn8oWgxIZsy4JEuw9_8BfvzHlpsD5WOZVZd9Wx1o
-Message-ID: <CAC-fF8Tzs4q4xR7DsrPuC9gNM6YyOTH+55MH1oXX9q9exx5Aaw@mail.gmail.com>
-Subject: Re: [PATCH 1/1] net/virtio: fix Rx interrupt setup with MSI-X
-To: David Marchand <david.marchand@redhat.com>
-Cc: Maxime Coquelin <maxime.coquelin@redhat.com>,
- Chenbo Xia <chenbox@nvidia.com>, dev@dpdk.org, 
- Anatoly Burakov <anatoly.burakov@intel.com>, stable@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -102,115 +84,58 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Hi David,
+On Tue, 17 Nov 2026 19:17:12 +0000
+Bruce Richardson <bruce.richardson@intel.com> wrote:
 
-On Tue, Nov 17, 2026 at 4:29=E2=80=AFPM David Marchand
-<david.marchand@redhat.com> wrote:
->
-> Hello,
->
-> On Tue, 17 Nov 2026 at 13:43, Isaac Boukris <iboukris@gmail.com> wrote:
-> >
-> > With Rx interrupts enabled, configuring a port initializes the device,
-> > and a second time when an offload or RSS is requested. Each
-> > initialization enables the interrupt eventfds.
-> >
-> > EAL now refuses to enable MSI-X eventfds twice, so such a configuration
-> > fails, and so does configuring a port a second time:
-> >
-> >   EAL: Interrupt eventfds are already enabled
-> >   virtio_configure_intr(): Fail to create eventfd
-> >   ETHDEV: Port0 dev_configure =3D -16
-> >
-> > Before that EAL change, the previous eventfds were leaked.
-> >
-> > Disable the interrupts and release the eventfds before enabling them
-> > again.
-> >
-> > Do it for a VFIO MSI-X handle only, the type whose eventfds EAL
-> > creates. The other type that gets here is virtio-user's: its eventfds
-> > are the backend's call fds, set once when the device is created.
-> > Releasing them would reset their count, which nothing sets again, and
-> > registering an Rx queue's interrupt would then fail.
-> >
-> > To reproduce, with a virtio-net PCI device bound to vfio-pci:
-> >
-> >   dpdk-l3fwd-power -l 0 -a 0000:0c:00.0 -- -p 1 --interrupt-only \
-> >       --parse-ptype --config=3D"(0,0,0)"
-> >
-> > Fixes: 3ba6b689893f ("eal/linux: fix eventfd leaks when enabling interr=
-upts")
-> > Cc: stable@dpdk.org
-> >
-> > Signed-off-by: Isaac Boukris <iboukris@gmail.com>
->
-> Thank you for the testing and report.
->
->
+> On Tue, Nov 17, 2026 at 09:40:59AM -0800, Stephen Hemminger wrote:
+> > Clang evalutes strlen of constant string at compile time, then
+> > complains about unreachable code. Use extra parenthesis to
+> > mark code as explcitly dead.
+> > 
+> > Bugzilla ID: 2135
+> > 
+> > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 > > ---
-> >  drivers/net/virtio/virtio_ethdev.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> >
-> > diff --git a/drivers/net/virtio/virtio_ethdev.c b/drivers/net/virtio/vi=
-rtio_ethdev.c
-> > index f2302089ee..37fc896fae 100644
-> > --- a/drivers/net/virtio/virtio_ethdev.c
-> > +++ b/drivers/net/virtio/virtio_ethdev.c
-> > @@ -1455,6 +1455,13 @@ virtio_configure_intr(struct rte_eth_dev *dev)
-> >                 return -ENOTSUP;
-> >         }
-> >
-> > +       /* Reinitialization: release the previous eventfds first. */
-> > +       if (rte_intr_type_get(dev->intr_handle) =3D=3D RTE_INTR_HANDLE_=
-VFIO_MSIX &&
-> > +           rte_intr_dp_is_en(dev->intr_handle)) {
->
-> The rte_intr_cap_multiple() guard right before should enough (for the
-> interrupt type check).
-
-Actually this check was added due to a real issue with virtio-user
-which also returns true for this guard.
-
-> > +               virtio_intr_disable(dev);
-> > +               rte_intr_efd_disable(dev->intr_handle);
-> > +       }
+> >  lib/eal/common/rte_version.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/lib/eal/common/rte_version.c b/lib/eal/common/rte_version.c
+> > index 627b89d4a8..62572428fc 100644
+> > --- a/lib/eal/common/rte_version.c
+> > +++ b/lib/eal/common/rte_version.c
+> > @@ -36,7 +36,9 @@ rte_version(void)
+> >  	static char version[32];
+> >  	if (version[0] != 0)
+> >  		return version;
+> > -	if (strlen(RTE_VER_SUFFIX) == 0)
 > > +
->
-> Can the number of rxq change at this point?
-> I don't think it is the case.
->
-> If it can't, why do we need to release/set up new eventfds?
->
-> The fix could be a simple:
->
-> + if (rte_intr_dp_is_en(dev->intr_handle)) {
->
-> >         ret =3D rte_intr_efd_enable(dev->intr_handle, dev->data->nb_rx_=
-queues);
-> >         if (ret < 0) {
-> >                 PMD_INIT_LOG(ERR, "Fail to create eventfd");
->
-> + }
+> > +	/* extra paren to silence unreachable warnings */
+> > +	if ((strlen(RTE_VER_SUFFIX) == 0))
+> >  		snprintf(version, sizeof(version), "%s %d.%02d.%d",
+> >  				RTE_VER_PREFIX,
+> >  				RTE_VER_YEAR,
+> > --   
+> 
+> Is it guaranteed that the checker won't look inside the double brackets? An
+> alternative suggestion is to change RTE_VER_SUFFIX to the function call to
+> the (public) API rte_version_suffix() and use strlen on that. We can even
+> mark the function as __rte_noinline to avoid optimizer getting rid of the
+> call in future and reintroducing the warning.
+> 
+> Also, when fixing this, I think it would be nice to also fix the indent of
+> the else leg.
+> 
+> /Bruce
 
-I think it could change if reconfigure is called multiple times, i'll
-try to test it but we could still limit iit to that case, which would
-make it even easier on the caller as it doesn't have to get the new
-efds if he didn't change rxq number (although for non-virtio drivers
-one probably still have to).
+Clang suggests it as a fix so I think that should always work.
+Gcc unreachable flag is a noop, the compiler structure makes it too
+hard for them to do the analysis.
 
-> We could probably move the rte_intr_vec_list_alloc call under this
-> check too, but iiuc, this helper does nothing when called multiple
-> times.
->
->
-> --
-> David Marchand
->
+Ok, can fix the indent as well.
