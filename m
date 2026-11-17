@@ -2,30 +2,30 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8121606A334
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 16:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75400606A330
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 16:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=NB7wrQzO
+	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=jRpa54Hl
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5ACE840DDE;
-	Tue, 17 Nov 2026 16:57:58 +0100 (CET)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.5])
- by mails.dpdk.org (Postfix) with ESMTPS id 88B4940612
- for <dev@dpdk.org>; Tue, 17 Nov 2026 16:57:43 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 39F8E40DF6;
+	Tue, 17 Nov 2026 16:57:59 +0100 (CET)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.222])
+ by mails.dpdk.org (Postfix) with ESMTPS id 533F64064F
+ for <dev@dpdk.org>; Tue, 17 Nov 2026 16:57:44 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=gzYXeU0jkdzRRTNmFSUcThNa8QXTlskOLOo+/J1bvFQ=;
- b=NB7wrQzOhCTLpozMTxLL9XcZRTUef20vqiRvzpNeBzt7jDnKtBme+/O0JRDOz5
- xRJOiFNcP12f+RNkzfxoCA3KFGsOaYyiwVTkedmHpfcBFaqBhVVxVdlLl4E+F4z5
- rjEJbkYA5aZ4g7e3VQcZsQW2ahEM1pePeROjoM+UND6yw=
+ MIME-Version; bh=yqt+DbCtdMNgKqVfLPuO/azy6a0/EfJWw8AKKPHv44c=;
+ b=jRpa54HlIrmeDVOJSF2O9zlka3/TtPBL82H6rfn48TqMAC3WFIsSEbiIzWSrPv
+ sAKH8/C5tI8yrg6w7cg6GFk24MbBpYb7jLvGaDcgto/yCsr+wkHFi/lDo4YnM+76
+ EYEjU1FJtWEoQ/HXb87brphorGH49NT+aKeaWqIbLvejU=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
  Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v7 22/29] net/hinic3: add device kvargs parameters support
-Date: Tue, 17 Nov 2026 23:57:03 +0800
-Message-ID: <20261117155711.1048-23-yejiacheng4@h-partners.com>
+Subject: [PATCH v7 24/29] net/hinic3: ensure queue depth and state consistency
+Date: Tue, 17 Nov 2026 23:57:05 +0800
+Message-ID: <20261117155711.1048-25-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.53.0.windows.2
 In-Reply-To: <20261117155711.1048-1-yejiacheng4@h-partners.com>
 References: <20261109162033.1144-1-yejiacheng4@h-partners.com>
@@ -33,13 +33,13 @@ References: <20261109162033.1144-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Ac8vCgC3S5drefxqC7WJBQ--.4821S24
-X-Coremail-Antispam: 1Uf129KBjvJXoWfGF43JrWrGr17Gr1DWw1UGFg_yoWkXw4rpF
- W3GF9rAFyDJrsrX3ZYka1xua45Xws3X3y2vayxJayFkr1rZrWUA34DKrW7ZFsxGrZrAa17
- Zr4jgayqk3Z0q3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07URMKZUUUUU=
+X-CM-TRANSID: Ac8vCgC3S5drefxqC7WJBQ--.4821S26
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Xw1fJw1fZF4DAw4rXw47Jwb_yoWxKw43pF
+ WDKayDta47JrsF9ws8Ka1fuF13XFsay34UGFySq3WYyw15XF4UZa43tF4Fvrs7J395AF47
+ Zr1vya1vgw1jgaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j8b18UUUUU=
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNxVVX2r8eXUDqQAA3Y
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiMxVVX2r8eXU2hwAA3H
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,325 +56,219 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Expose the TX completion coalescing (tx_pending_limit,
-tx_coalescing_time) and RX CQE coalescing (rx_cqe_coalesce_num,
-rx_cqe_timer_loop) tunables through device kvargs, so they can be set per
-deployment without recompiling the driver, and program them into the
-hardware contexts.
+The hardware tracks a single queue depth, which the root context takes
+from queue 0. A queue configured with a different depth used to be
+silently coerced to the first queue's depth; reject it with -EINVAL
+instead, since the application sized its mempool for the requested
+depth.
 
-The defaults are 2/2 and 7/5, down from the previous hardcoded 3/16 and
-63/15.
+Keep the expected depth in the per-port state, reset it in
+dev_configure() and dev_stop(), and validate in dev_start() that every
+configured queue is present and shares queue 0's depth.
 
-The two RX CQE coalescing parameters take effect only with HW compact
-CQE; they are ignored with SW compact and split CQE.
+Reset the rx/tx queue states in dev_stop, including the tx queue status
+used by the Tx path, so the queue state reflects the stopped device
+before the next start.
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- doc/guides/nics/hinic3.rst             |  22 +++++
- doc/guides/rel_notes/release_26_11.rst |   1 +
- drivers/net/hinic3/hinic3_ethdev.c     | 125 ++++++++++++++++++++++++-
- drivers/net/hinic3/hinic3_ethdev.h     |  17 ++++
- drivers/net/hinic3/hinic3_nic_io.c     |  14 +--
- 5 files changed, 168 insertions(+), 11 deletions(-)
+ drivers/net/hinic3/hinic3_ethdev.c | 88 +++++++++++++++++++++++++-----
+ drivers/net/hinic3/hinic3_ethdev.h |  5 ++
+ 2 files changed, 80 insertions(+), 13 deletions(-)
 
-diff --git a/doc/guides/nics/hinic3.rst b/doc/guides/nics/hinic3.rst
-index bc518ce7fc..338b5ef691 100644
---- a/doc/guides/nics/hinic3.rst
-+++ b/doc/guides/nics/hinic3.rst
-@@ -48,6 +48,28 @@ Driver compilation and testing
- Refer to the document :doc:`build_and_test` for details.
- 
- 
-+Runtime Configuration
-+---------------------
-+
-+The driver can be configured at initialization via EAL device parameters.
-+The following parameters are supported:
-+
-+- ``tx_pending_limit`` (default **2**): TX completion index coalescing
-+  pending limit, in units of 8 packets.
-+
-+- ``tx_coalescing_time`` (default **2**): TX completion index coalescing
-+  time, in microseconds.
-+
-+- ``rx_cqe_coalesce_num`` (default **7**): RX CQE coalescing count, in
-+  units of 8 packets.
-+
-+- ``rx_cqe_timer_loop`` (default **5**): RX CQE coalescing timer loop, in
-+  microseconds.
-+
-+The two coalescing parameters above apply only to the HW compact CQE
-+mode; they are ignored with the SW compact and split CQE modes.
-+
-+
- Limitations or Known issues
- ---------------------------
- 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 059fd29035..2b8583fefb 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -171,6 +171,7 @@ New Features
-   * Updated RSS hash type configuration.
-   * Added mailbox message counter reporting through the device private dump API.
-   * Added support for the SP560 NIC.
-+  * Added device parameters for runtime configuration.
- 
- * **Updated Intel iavf driver.**
- 
 diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index aa4e733452..3314a48bf9 100644
+index 54aa10295b..41a21c4c63 100644
 --- a/drivers/net/hinic3/hinic3_ethdev.c
 +++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -4019,10 +4019,107 @@ hinic3_func_init(struct rte_eth_dev *eth_dev)
- 	return err;
+@@ -318,8 +318,6 @@ hinic3_xstats_calc_num(struct hinic3_nic_dev *nic_dev)
+ 	}
  }
  
-+static int
-+hinic3_nic_common_args_check_handler(const char *key, const char *val, void *opaque)
-+{
-+	struct hinic3_nic_common_dev_config *config = opaque;
-+	char *end;
-+	signed long tmp;
-+
-+	if (val == NULL || *val == '\0') {
-+		PMD_DRV_LOG(ERR, "Key %s is missing value.", key);
-+		return -EINVAL;
-+	}
-+
-+	errno = 0;
-+	tmp = strtol(val, &end, 10);
-+	if (errno != 0 || *end != '\0' || tmp < 0) {
-+		PMD_DRV_LOG(ERR, "%s: \"%s\" is an invalid integer.", key, val);
-+		return -EINVAL;
-+	}
-+
-+	if (strcmp(key, "tx_pending_limit") == 0) {
-+		if (tmp > UINT8_MAX)
-+			goto out_of_range;
-+		config->tx_pending_limit = tmp;
-+	} else if (strcmp(key, "tx_coalescing_time") == 0) {
-+		if (tmp > UINT8_MAX)
-+			goto out_of_range;
-+		config->tx_coalescing_time = tmp;
-+	} else if (strcmp(key, "rx_cqe_coalesce_num") == 0) {
-+		if (tmp > UINT8_MAX)
-+			goto out_of_range;
-+		config->rx_cqe_coalesce_num = tmp;
-+	} else if (strcmp(key, "rx_cqe_timer_loop") == 0) {
-+		if (tmp > UINT8_MAX)
-+			goto out_of_range;
-+		config->rx_cqe_timer_loop = tmp;
-+	} else {
-+		PMD_DRV_LOG(ERR, "Unknown parameter: %s", key);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+
-+out_of_range:
-+	PMD_DRV_LOG(ERR, "%s: value exceeds the maximum allowed value.", key);
-+	return -EINVAL;
-+}
-+
-+static const char *const hinic3_nic_common_valid_args[] = {
-+	"tx_pending_limit",
-+	"tx_coalescing_time",
-+	"rx_cqe_coalesce_num",
-+	"rx_cqe_timer_loop",
-+	NULL
-+};
-+
-+static int
-+hinic3_nic_common_config_get(struct rte_pci_device *pci_dev,
-+			     struct hinic3_nic_common_dev_config *config)
-+{
-+	int ret = 0;
-+	struct rte_kvargs *kvlist;
-+	struct rte_device *eal_dev = &pci_dev->device;
-+
-+	/* Set private param defaults. */
-+	config->tx_pending_limit = HINIC3_DEFAULT_TX_CI_PENDING_LIMIT;
-+	config->tx_coalescing_time = HINIC3_DEFAULT_TX_CI_COALESCING_TIME;
-+	config->rx_cqe_coalesce_num = HINIC3_RX_CQE_COALESCE_NUM;
-+	config->rx_cqe_timer_loop = HINIC3_RX_CQE_TIMER_LOOP;
-+
-+	if (eal_dev->devargs == NULL || eal_dev->devargs->args == NULL)
-+		return 0;
-+
-+	kvlist = rte_kvargs_parse(eal_dev->devargs->args,
-+				  hinic3_nic_common_valid_args);
-+	if (kvlist == NULL) {
-+		PMD_DRV_LOG(ERR, "nic private parameter err, the format must be '-a dev,[key]=[value]'.");
-+		return -EINVAL;
-+	}
-+
-+	ret = rte_kvargs_process(kvlist, NULL, hinic3_nic_common_args_check_handler, config);
-+	if (ret < 0)
-+		ret = -EINVAL;
-+
-+	rte_kvargs_free(kvlist);
-+
-+	PMD_DRV_LOG(INFO, "tx_pending_limit:%upkt, tx_coalescing_time:%uus, "
-+		"rx_cqe_coalesce_num:%upkt, rx_cqe_timer_loop:%uus.",
-+		config->tx_pending_limit * HINIC3_COALESCING_UNIT_PKTS,
-+		config->tx_coalescing_time,
-+		config->rx_cqe_coalesce_num * HINIC3_COALESCING_UNIT_PKTS,
-+		config->rx_cqe_timer_loop);
-+	return ret;
-+}
-+
- static int
- hinic3_dev_init(struct rte_eth_dev *eth_dev)
- {
- 	struct rte_pci_device *pci_dev;
-+	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(eth_dev);
-+	struct hinic3_nic_common_dev_config config;
-+	int err = 0;
+-#define HINIC3_MAX_QUEUE_DEPTH 16384
+-#define HINIC3_MIN_QUEUE_DEPTH 128
+ #define HINIC3_TXD_ALIGN       1
+ #define HINIC3_RXD_ALIGN       1
  
- 	pci_dev = RTE_CLASS_TO_BUS_DEVICE(eth_dev, *pci_dev);
+@@ -739,6 +737,8 @@ hinic3_dev_configure(struct rte_eth_dev *dev)
  
-@@ -4035,11 +4132,32 @@ hinic3_dev_init(struct rte_eth_dev *eth_dev)
- 	PMD_DRV_LOG(DEBUG, "Network Interface pmd driver version: %s",
- 		    HINIC3_PMD_DRV_VERSION);
+ 	nic_dev->num_sqs = dev->data->nb_tx_queues;
+ 	nic_dev->num_rqs = dev->data->nb_rx_queues;
++	nic_dev->rxq_depth = 0;
++	nic_dev->txq_depth = 0;
+ 
+ 	nic_dev->mtu_size =
+ 		(uint16_t)HINIC3_PKTLEN_TO_MTU(HINIC3_MAX_RX_PKT_LEN(dev->data->dev_conf.rxmode));
+@@ -1118,16 +1118,8 @@ hinic3_rx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
+ 
+ 	nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
+ 
+-	/* Queue depth must be equal to queue 0 */
+-	if (qid != 0 && nb_desc != nic_dev->rxqs[0]->q_depth) {
+-		PMD_DRV_LOG(WARNING, "rxq%u depth:%u is not equal to queue0 depth:%u.",
+-			    qid, nb_desc, nic_dev->rxqs[0]->q_depth);
+-		nb_desc = nic_dev->rxqs[0]->q_depth;
+-	}
+-
+ 	/* Queue depth must be power of 2, otherwise will be aligned up. */
+-	rq_depth = (nb_desc & (nb_desc - 1))
+-			? ((uint16_t)(1U << (rte_log2_u32(nb_desc) + 1))) : nb_desc;
++	rq_depth = (uint16_t)rte_align32pow2(nb_desc);
+ 
+ 	/*
+ 	 * Validate number of receive descriptors.
+@@ -1144,6 +1136,19 @@ hinic3_rx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
+ 		return -EINVAL;
+ 	}
  
 +	/*
-+	 * Parse device arguments before allocating any resources so that an
-+	 * invalid argument fails the probe without leaking memory. Secondary
-+	 * processes re-use the primary's configuration and must not re-parse
-+	 * devargs or overwrite the primary's settings.
++	 * The hardware tracks a single queue depth. Keep the value chosen by
++	 * the first queue of this configuration and compare against it, so a
++	 * runtime reconfiguration with a different depth is not rejected by
++	 * queues that still hold the previous depth.
 +	 */
-+	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
-+		err = hinic3_nic_common_config_get(pci_dev, &config);
-+		if (err < 0) {
-+			PMD_DRV_LOG(ERR, "Failed to get nic device arguments.");
-+			return err;
++	if (nic_dev->rxq_depth != 0 && nic_dev->rxq_depth != rq_depth) {
++		PMD_DRV_LOG(ERR,
++			    "rxq%u depth:%u is not equal to the port depth:%u.",
++			    qid, rq_depth, nic_dev->rxq_depth);
++		return -EINVAL;
++	}
++
+ 	/*
+ 	 * The RX descriptor ring will be cleaned after rxq->rx_free_thresh
+ 	 * descriptors are used or if the number of descriptors required
+@@ -1297,6 +1302,7 @@ hinic3_rx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
+ 		}
+ 	}
+ 	dev->data->rx_queues[qid] = rxq;
++	nic_dev->rxq_depth = rq_depth;
+ 
+ 	return 0;
+ 
+@@ -1353,8 +1359,7 @@ hinic3_tx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
+ 	hwdev = nic_dev->hwdev;
+ 
+ 	/* Queue depth must be power of 2, otherwise will be aligned up. */
+-	sq_depth = (nb_desc & (nb_desc - 1))
+-				? ((uint16_t)(1U << (rte_log2_u32(nb_desc) + 1))) : nb_desc;
++	sq_depth = (uint16_t)rte_align32pow2(nb_desc);
+ 
+ 	/*
+ 	 * Validate number of transmit descriptors.
+@@ -1371,6 +1376,19 @@ hinic3_tx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
+ 		return -EINVAL;
+ 	}
+ 
++	/*
++	 * The hardware tracks a single queue depth. Keep the value chosen by
++	 * the first queue of this configuration and compare against it, so a
++	 * runtime reconfiguration with a different depth is not rejected by
++	 * queues that still hold the previous depth.
++	 */
++	if (nic_dev->txq_depth != 0 && nic_dev->txq_depth != sq_depth) {
++		PMD_DRV_LOG(ERR,
++			    "txq%u depth:%u is not equal to the port depth:%u.",
++			    qid, sq_depth, nic_dev->txq_depth);
++		return -EINVAL;
++	}
++
+ 	/*
+ 	 * The TX descriptor ring will be cleaned after txq->tx_free_thresh
+ 	 * descriptors are used or if the number of descriptors required
+@@ -1468,6 +1486,7 @@ hinic3_tx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
+ 	}
+ 
+ 	dev->data->tx_queues[qid] = txq;
++	nic_dev->txq_depth = sq_depth;
+ 
+ 	return 0;
+ 
+@@ -2072,6 +2091,33 @@ hinic3_dev_start(struct rte_eth_dev *eth_dev)
+ 	int err;
+ 
+ 	nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(eth_dev);
++
++	/*
++	 * The root context carries a single depth per direction, taken from
++	 * queue 0, and a queue setup cannot change the other queues. A partial
++	 * reconfiguration would therefore leave the rings sized differently
++	 * from the root context, so refuse to start unless every configured
++	 * queue is present and shares the depth of queue 0.
++	 */
++	for (i = 0; i < nic_dev->num_rqs; i++) {
++		if (nic_dev->rxqs[i] == NULL ||
++		    nic_dev->rxqs[i]->q_depth != nic_dev->rxqs[0]->q_depth) {
++			PMD_DRV_LOG(ERR,
++				    "rxq%u is missing or has a different depth than rxq0.",
++				    i);
++			return -EINVAL;
++		}
++	}
++	for (i = 0; i < nic_dev->num_sqs; i++) {
++		if (nic_dev->txqs[i] == NULL ||
++		    nic_dev->txqs[i]->q_depth != nic_dev->txqs[0]->q_depth) {
++			PMD_DRV_LOG(ERR,
++				    "txq%u is missing or has a different depth than txq0.",
++				    i);
++			return -EINVAL;
 +		}
 +	}
 +
-+	err = hinic3_func_init(eth_dev);
-+	if (err)
-+		return err;
-+
-+	if (rte_eal_process_type() == RTE_PROC_PRIMARY)
-+		nic_dev->config = config;
-+
- 	eth_dev->rx_pkt_burst = hinic3_recv_pkts;
- 	eth_dev->tx_pkt_burst = hinic3_xmit_pkts;
- 	eth_dev->tx_pkt_prepare = hinic3_prep_pkts;
+ 	err = hinic3_copy_mempool_init(nic_dev);
+ 	if (err) {
+ 		PMD_DRV_LOG(ERR, "Create copy mempool failed, dev_name: %s",
+@@ -2222,6 +2268,7 @@ hinic3_dev_stop(struct rte_eth_dev *dev)
+ {
+ 	struct hinic3_nic_dev *nic_dev;
+ 	struct rte_eth_link link;
++	uint16_t i;
+ 	int err;
  
--	return hinic3_func_init(eth_dev);
-+	return 0;
+ 	nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
+@@ -2273,6 +2320,21 @@ hinic3_dev_stop(struct rte_eth_dev *dev)
+ 
+ 	/* Free mempool. */
+ 	hinic3_copy_mempool_uninit(nic_dev);
++
++	/* A stopped device starts a new queue configuration. */
++	nic_dev->rxq_depth = 0;
++	nic_dev->txq_depth = 0;
++
++	for (i = 0; i < dev->data->nb_rx_queues; i++)
++		dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
++	for (i = 0; i < dev->data->nb_tx_queues; i++) {
++		struct hinic3_txq *txq = dev->data->tx_queues[i];
++
++		if (txq != NULL)
++			HINIC3_SET_TXQ_STOPPED(txq);
++		dev->data->tx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
++	}
++
+ 	return 0;
  }
  
- static int
-@@ -4094,6 +4212,11 @@ static struct rte_pci_driver rte_hinic3_pmd = {
- 
- RTE_PMD_REGISTER_PCI(net_hinic3, rte_hinic3_pmd);
- RTE_PMD_REGISTER_PCI_TABLE(net_hinic3, pci_id_hinic3_map);
-+RTE_PMD_REGISTER_PARAM_STRING(net_hinic3,
-+	"tx_pending_limit=<int> "
-+	"tx_coalescing_time=<int> "
-+	"rx_cqe_coalesce_num=<int> "
-+	"rx_cqe_timer_loop=<int>");
- 
- RTE_INIT(hinic3_init_log)
- {
 diff --git a/drivers/net/hinic3/hinic3_ethdev.h b/drivers/net/hinic3/hinic3_ethdev.h
-index e4f1a5b51c..f8d146f3bc 100644
+index 0763665885..eff0bca29e 100644
 --- a/drivers/net/hinic3/hinic3_ethdev.h
 +++ b/drivers/net/hinic3/hinic3_ethdev.h
-@@ -6,6 +6,8 @@
- #define _HINIC3_ETHDEV_H_
+@@ -15,6 +15,9 @@
  
- #include <rte_ethdev.h>
-+#include <rte_kvargs.h>
-+#include <rte_devargs.h>
- #include <rte_ethdev_core.h>
+ #define HINIC3_PMD_DRV_VERSION "B106"
  
- #include "hinic3_fdir.h"
-@@ -60,6 +62,12 @@
- #define HINIC3_VFTA_SIZE		(4096 / HINIC3_UINT32_BIT_SIZE)
- #define HINIC3_MAX_QUEUE_NUM		256
- 
-+#define HINIC3_DEFAULT_TX_CI_PENDING_LIMIT	2
-+#define HINIC3_DEFAULT_TX_CI_COALESCING_TIME	2
-+#define HINIC3_RX_CQE_TIMER_LOOP		5
-+#define HINIC3_RX_CQE_COALESCE_NUM		7
-+#define HINIC3_COALESCING_UNIT_PKTS		8 /**< Coalescing unit: 8 packets. */
++#define HINIC3_MAX_QUEUE_DEPTH         16384
++#define HINIC3_MIN_QUEUE_DEPTH         128
 +
- #define HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev) \
- 	((struct hinic3_nic_dev *)(dev)->data->dev_private)
+ #define PCI_DEV_TO_INTR_HANDLE(pci_dev) ((pci_dev)->intr_handle)
  
-@@ -107,6 +115,14 @@ enum nic_feature_cap {
- TAILQ_HEAD(hinic3_ethertype_filter_list, rte_flow);
- TAILQ_HEAD(hinic3_fdir_rule_filter_list, rte_flow);
+ #define HINIC3_PKT_RX_L4_CKSUM_BAD	RTE_MBUF_F_RX_L4_CKSUM_BAD
+@@ -144,6 +147,8 @@ struct hinic3_nic_dev {
  
-+struct hinic3_nic_common_dev_config {
-+	unsigned int tx_pending_limit; /**< TX CI coalescing parameter pending_limit. */
-+	unsigned int tx_coalescing_time; /**< TX CI coalescing parameter coalescing_time. */
-+	unsigned int rx_cqe_compact_en; /**< cqe mode, 0 -- separate cqe, 1 -- compact cqe. */
-+	unsigned int rx_cqe_coalesce_num; /**< RX CQE parameter coalesce_num. */
-+	unsigned int rx_cqe_timer_loop; /**< RX CQE parameter time_loop. */
-+};
-+
- enum nic_type {
- 	NIC_SP620 = 0,
- 	NIC_SP230 = 1,
-@@ -148,6 +164,7 @@ struct hinic3_nic_dev {
+ 	uint16_t num_sqs;
+ 	uint16_t num_rqs;
++	uint16_t rxq_depth;
++	uint16_t txq_depth;
+ 	uint16_t max_sqs;
+ 	uint16_t max_rqs;
  
- 	uint8_t pause_set; /**< Flag of PAUSE frame setting. */
- 	struct nic_pause_config nic_pause;
-+	struct hinic3_nic_common_dev_config config;
- 
- 	struct rte_ether_addr default_addr;
- 	struct rte_ether_addr *mc_list;
-diff --git a/drivers/net/hinic3/hinic3_nic_io.c b/drivers/net/hinic3/hinic3_nic_io.c
-index d4c53645c4..c66748da2a 100644
---- a/drivers/net/hinic3/hinic3_nic_io.c
-+++ b/drivers/net/hinic3/hinic3_nic_io.c
-@@ -11,9 +11,6 @@
- #include "hinic3_rx.h"
- #include "hinic3_tx.h"
- 
--#define HINIC3_DEAULT_TX_CI_PENDING_LIMIT	3
--#define HINIC3_DEAULT_TX_CI_COALESCING_TIME	16
--
- #define CI_IDX_HIGH_SHIFH			12
- 
- #define CI_HIGN_IDX(val) ((val) >> CI_IDX_HIGH_SHIFH)
-@@ -456,9 +453,6 @@ hinic3_get_func_rx_buf_size(struct hinic3_nic_dev *nic_dev)
- 	nic_dev->rx_buff_len = buf_size;
- }
- 
--#define HINIC3_RX_CQE_TIMER_LOOP		15
--#define HINIC3_RX_CQE_COALESCE_NUM		63
--
- int
- hinic3_init_rq_cqe_ctxts(struct hinic3_nic_dev *nic_dev)
- {
-@@ -487,8 +481,8 @@ hinic3_init_rq_cqe_ctxts(struct hinic3_nic_dev *nic_dev)
- 			rq_ci_paddr = rxq->rq_ci_paddr >> CQE_CTX_CI_ADDR_SHIFT;
- 			cqe_ctx.ci_addr_hi = upper_32_bits(rq_ci_paddr);
- 			cqe_ctx.ci_addr_lo = lower_32_bits(rq_ci_paddr);
--			cqe_ctx.threshold_cqe_num = HINIC3_RX_CQE_COALESCE_NUM;
--			cqe_ctx.timer_loop = HINIC3_RX_CQE_TIMER_LOOP;
-+			cqe_ctx.threshold_cqe_num = nic_dev->config.rx_cqe_coalesce_num;
-+			cqe_ctx.timer_loop = nic_dev->config.rx_cqe_timer_loop;
- 		} else {
- 			cqe_ctx.threshold_cqe_num = 0;
- 			cqe_ctx.timer_loop = 0;
-@@ -562,8 +556,8 @@ hinic3_init_qp_ctxts(struct hinic3_nic_dev *nic_dev)
- 	/* Configure CI tables for each SQ. */
- 	for (q_id = 0; q_id < nic_dev->num_sqs; q_id++) {
- 		sq_attr.ci_dma_base = nic_dev->txqs[q_id]->ci_dma_base >> 0x2;
--		sq_attr.pending_limit = HINIC3_DEAULT_TX_CI_PENDING_LIMIT;
--		sq_attr.coalescing_time = HINIC3_DEAULT_TX_CI_COALESCING_TIME;
-+		sq_attr.pending_limit = nic_dev->config.tx_pending_limit;
-+		sq_attr.coalescing_time = nic_dev->config.tx_coalescing_time;
- 		sq_attr.intr_en = 0;
- 		sq_attr.intr_idx = 0; /**< Tx doesn't need interrupt. */
- 		sq_attr.l2nic_sqn = q_id;
 -- 
 2.33.0
 
