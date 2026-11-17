@@ -2,77 +2,59 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA11606A33F
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 08:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0CC606A33F
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 09:23:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=DgKT0Ipx
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=b+N0PFLL
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B0B124026F;
-	Tue, 17 Nov 2026 09:50:16 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id DC6C9402C4;
+	Tue, 17 Nov 2026 10:22:58 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTPS id B62CE40041
- for <dev@dpdk.org>; Tue, 17 Nov 2026 09:50:14 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTPS id E5F38402C3
+ for <dev@dpdk.org>; Tue, 17 Nov 2026 10:22:57 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1794905413;
+ s=mimecast20190719; t=1794907377;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=VPNwuSkSoUHgxCsMFKb6H0ztS8LZ0AxmJoHNYtlGD0I=;
- b=DgKT0IpxzEN30g4nZCuJ3ZPnuqTV1sTVPjn97N3Lu/O8GPTYQ5C/147SZDGTTjXHw1PmIZ
- ++yAKZsXZR+cQTAMY7P1HGXyHPVN53jy6uTC8K//d14QNmZYpWWNyRih8Alf2Beic785xI
- Mo5MdZdD5852o4BKyE2w4x9zh02SLpM=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-629-8x6ljltBPvqzedA9JXLhRQ-1; Tue, 17 Nov 2026 03:50:11 -0500
-X-MC-Unique: 8x6ljltBPvqzedA9JXLhRQ-1
-X-Mimecast-MFC-AGG-ID: 8x6ljltBPvqzedA9JXLhRQ_1794905410
-Received: by mail-lj1-f200.google.com with SMTP id
- 38308e7fff4ca-3adf220e5e2so21657031fa.3
- for <dev@dpdk.org>; Tue, 17 Nov 2026 00:50:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794905410; x=1795510210;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=VPNwuSkSoUHgxCsMFKb6H0ztS8LZ0AxmJoHNYtlGD0I=;
- b=HMtj/YLsYmLT1/QT5lKfUwCH/+ONefPNLqZjBemudXrsgDDSZlcTh7aakj2OuBpJ0b
- Bo6yBUd4iLQMD7sjEBqNoow390ccc8YY+InB3QySZm0n4WNR6YgUOIrnpiWnwmvM2jCd
- In4jj7d452lw12yb2dCt2z/hwQOH8ia1qsk7rRVWRewqkYK5G88IIkSKGqySjnqiSqIh
- NYnnX+krt9E9rNEVtzqtwNhkqrYxD6StBekeWBBrV8cCWmemH8DIYyPIAZSUSiMyEITM
- sqq68tCHBm+0TcbGRK9D+EKUOid8Qh8l2ZW7plm8oXXf6mVVA7mQK0nX+WaOSJNbSwdq
- BFwQ==
-X-Gm-Message-State: APuU4Z9mufKN/v1lgoEQYcJQxgym/+peAtLK4Ccp11AWkTOngMd9qnYW
- nw+4vOk2Z5Z/ltTsyctVBwbg4AI+/EdlNx/gWe63rdg0X0pWC8Cof4axmEzmDvy6W1bvp0rAb2d
- Vy8ErzEki/PwCmHQk3CyktQkWqjp8OOy8pypavWR1chHTnie3My6JvdkzKBKD9skpLD1v2Fwx71
- FF5UaiUfBx6dzamRdfEcI=
-X-Gm-Gg: AYBFou3zFqq2v88rURHao0M57TsVFtY6k/SkwcYd/GKbsKsvazidIn8sbKO64gVdddk
- Di+vkXgTJwfhdP/v5QUfzoiGifybGFGICSDpN+5huP54TFcZKGOT7dGVNOQqqCkZbd5NqLlshf3
- B8cE/6y8uUU82cNSl7pimt9TW1jh2Ds/CdkBXQD/jsuXNKMzdo88wFN10gv5McKWkqSAl4CmtFg
- 8HG+m49WN56T1huDc2rB0Y7q/aGC6YahSAZ398gvooGAhDR
-X-Received: by 2002:a2e:a105:0:b0:3a9:a1ed:634a with SMTP id
- 38308e7fff4ca-3ae2b5223dbmr37466291fa.21.1794905409944; 
- Tue, 17 Nov 2026 00:50:09 -0800 (PST)
-X-Received: by 2002:a2e:a105:0:b0:3a9:a1ed:634a with SMTP id
- 38308e7fff4ca-3ae2b5223dbmr37466181fa.21.1794905409429; Tue, 17 Nov 2026
- 00:50:09 -0800 (PST)
+ content-transfer-encoding:content-transfer-encoding;
+ bh=kEsBkUXqvHrdzGLElNhDwOhrumMMar3GWllb6RazuFo=;
+ b=b+N0PFLL5Oo8eNvJZvGc3a+ZPAIWzWr0Pvys+0VLN3vnSI/iNe9+RfgOxkE3X00MKYEEg1
+ X7b2WdN9kAOkuryp2yLPH1QvlGzmgZY0kHfPTGpcI2fFIDSRXDLdH568bMdTxCJzk6Qh/z
+ RgLbukarmrHNHGWNmPrGuDuvwFmN+WI=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-74-Ees6vmNCOWSjk-FpZ-9O-A-1; Tue,
+ 17 Nov 2026 04:22:53 -0500
+X-MC-Unique: Ees6vmNCOWSjk-FpZ-9O-A-1
+X-Mimecast-MFC-AGG-ID: Ees6vmNCOWSjk-FpZ-9O-A_1794907373
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id D1A0418003FD; Tue, 17 Nov 2026 09:22:52 +0000 (UTC)
+Received: from dmarchan-thinkpadx1carbongen13.rmtfr.csb
+ (headnet04.pony-001.prod.iad2.dc.redhat.com [10.2.32.116])
+ by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id B2ACC1956047; Tue, 17 Nov 2026 09:22:51 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
+To: dev@dpdk.org
+Cc: stable@dpdk.org,
+	Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH] eal/linux: skip hugetlbfs locking for in-memory
+Date: Tue, 17 Nov 2026 10:22:17 +0100
+Message-ID: <20261117092218.1067506-1-david.marchand@redhat.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-References: <20260602090847.905721-1-bruce.richardson@intel.com>
- <20261104201506.4091374-1-bruce.richardson@intel.com>
-In-Reply-To: <20261104201506.4091374-1-bruce.richardson@intel.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Tue, 17 Nov 2026 09:49:57 +0100
-X-Gm-Features: AclHuK8Us6BkMb19CQbLLRILklw5OkmSjbiQyMLyRnlXaHdWlxuCTbdS7OQ-1VU
-Message-ID: <CAJFAV8zg33QXRMkeoCqOAbbc4DFH7Ptrws+PBatwA8WQN-mUrw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] deprecate unneeded build options/support
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Z0Y0-eRatAuSFmlXX3w39fmxnaRPLkSq9byXhTv1WZk_1794905410
+X-Mimecast-MFC-PROC-ID: GCrMVE0rgX2PaFYsvMgOoC6pEv0_5jMwFKhJsx7XKIw_1794907373
 X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,35 +71,79 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Wed, 4 Nov 2026 at 21:15, Bruce Richardson
-<bruce.richardson@intel.com> wrote:
->
-> Having unnecessary build options just makes things confusing for
-> the user, and expands the set of potential builds. This set
-> deprecates 3 build options, including deprecating all HPET support,
-> and marks them for future removal.
->
-> ---
-> v2: rather than always building HPET to remove the option, deprecate
->     all HPET support, which will also allow option removal in future.
->
-> Bruce Richardson (3):
->   build: deprecate kernel dir option
->   build: deprecate standalone tests option
->   build: deprecate HPET support
->
->  app/meson.build                      |  6 +-----
->  doc/guides/linux_gsg/enable_func.rst | 32 ----------------------------
->  doc/guides/linux_gsg/sys_reqs.rst    |  3 ---
->  doc/guides/rel_notes/deprecation.rst | 11 ++++++++++
->  meson_options.txt                    |  6 +++---
->  5 files changed, 15 insertions(+), 43 deletions(-)
+When running with --in-memory, EAL uses anonymous hugepages via
+memfd_create() and never needs hugetlbfs files.
 
-For the series,
+However, hugepage_info_init() only skipped the mountpoint and
+directory locking when no hugetlbfs mount was found.
+When a mount existed, the code fell through to open and flock()
+the hugepage directory regardless of --in-memory.
 
-Acked-by: David Marchand <david.marchand@redhat.com>
+This causes initialization failures when EAL encounters a hugetlbfs
+mount it cannot access (e.g., mounts owned by another component on
+the system), even though in-memory mode does not need the mount at all.
 
+Skip the mountpoint lookup and directory locking entirely when
+--in-memory is set.
+The hugepage sizes and counts are read from sysfs, which is all
+that in-memory mode needs.
 
+Fixes: 72b49ff623c4 ("mem: support --in-memory mode")
+Cc: stable@dpdk.org
+
+Signed-off-by: David Marchand <david.marchand@redhat.com>
+---
+ lib/eal/linux/eal_hugepage_info.c | 30 ++++++++++++++----------------
+ 1 file changed, 14 insertions(+), 16 deletions(-)
+
+diff --git a/lib/eal/linux/eal_hugepage_info.c b/lib/eal/linux/eal_hugepage_info.c
+index 05c5b3f613..781eb3787b 100644
+--- a/lib/eal/linux/eal_hugepage_info.c
++++ b/lib/eal/linux/eal_hugepage_info.c
+@@ -480,6 +480,20 @@ hugepage_info_init(void)
+ 		hpi->hugepage_sz =
+ 			rte_str_to_size(&dirent->d_name[dirent_start_len]);
+ 
++#ifdef MAP_HUGE_SHIFT
++		/* if we have kernel support for reserving hugepages
++		 * through mmap, and we're in in-memory mode, treat this
++		 * page size as valid. we cannot be in legacy mode at
++		 * this point because we've checked this earlier in the
++		 * init process.
++		 */
++		if (internal_conf->in_memory) {
++			calc_num_pages(hpi, dirent, 0);
++			num_sizes++;
++			continue;
++		}
++#endif
++
+ 		/* first, check if we have a mountpoint */
+ 		if (get_hugepage_dir(hpi->hugepage_sz,
+ 			hpi->hugedir, sizeof(hpi->hugedir)) < 0) {
+@@ -493,22 +507,6 @@ hugepage_info_init(void)
+ 					"%" PRIu64 " reserved, but no mounted "
+ 					"hugetlbfs found for that size",
+ 					num_pages, hpi->hugepage_sz);
+-			/* if we have kernel support for reserving hugepages
+-			 * through mmap, and we're in in-memory mode, treat this
+-			 * page size as valid. we cannot be in legacy mode at
+-			 * this point because we've checked this earlier in the
+-			 * init process.
+-			 */
+-#ifdef MAP_HUGE_SHIFT
+-			if (internal_conf->in_memory) {
+-				EAL_LOG(DEBUG, "In-memory mode enabled, "
+-					"hugepages of size %" PRIu64 " bytes "
+-					"will be allocated anonymously",
+-					hpi->hugepage_sz);
+-				calc_num_pages(hpi, dirent, 0);
+-				num_sizes++;
+-			}
+-#endif
+ 			continue;
+ 		}
+ 
 -- 
-David Marchand
+2.56.1
 
