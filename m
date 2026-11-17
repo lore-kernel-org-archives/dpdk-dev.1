@@ -2,30 +2,30 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48968606A32C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 15:59:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6EC606A335
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 15:59:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=KnrhiEGU
+	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=fHB3U1rH
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1532D40A79;
+	by mails.dpdk.org (Postfix) with ESMTP id DDCB340A84;
 	Tue, 17 Nov 2026 16:57:51 +0100 (CET)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.222])
- by mails.dpdk.org (Postfix) with ESMTPS id 09C8C402EB
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.221])
+ by mails.dpdk.org (Postfix) with ESMTPS id 283CE40615
  for <dev@dpdk.org>; Tue, 17 Nov 2026 16:57:40 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=mEKIvFwX8r9YtlMSFVVmomSfi3Y8g1KIjy7GHd1GTrY=;
- b=KnrhiEGUzjHWmmavrguaT5OI7eRFg5QRKZDuDnxk639hHQqZpoJeaDiJ1ofSGW
- AX52BzqymFtr3vNJljm+U2NDhB/GtpfDyoQGba9D3g3ouBX1xKuuftzD+VwFvbI2
- AB8zzchFxXZZZRMRwZ0PE37FLvt82BqkYCoqu6a1OIJso=
+ MIME-Version; bh=frhIUcMuAyrx0M+A674+fZn451ZkwFrtiDxbKkbvTk8=;
+ b=fHB3U1rHWz9OTt054siKKU2BN+yBnj4oUnOiX/9Aq8ZnA6QPGWNdO/D0JxVR8j
+ 2jkSTWcnuKpYDvj1lEGYcFgwVYSiUAWTo4UnQI1kYx2AD5DI3NyE263VvOl9N7fL
+ T2pc/CNlRW3AHBpKGgFBfFcQdEpH252FwxZC52CAQcvf0=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
  Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v7 16/29] net/hinic3: add COS mask and COS map support
-Date: Tue, 17 Nov 2026 23:56:57 +0800
-Message-ID: <20261117155711.1048-17-yejiacheng4@h-partners.com>
+Subject: [PATCH v7 15/29] net/hinic3: add mbox message recording and debug dump
+Date: Tue, 17 Nov 2026 23:56:56 +0800
+Message-ID: <20261117155711.1048-16-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.53.0.windows.2
 In-Reply-To: <20261117155711.1048-1-yejiacheng4@h-partners.com>
 References: <20261109162033.1144-1-yejiacheng4@h-partners.com>
@@ -33,13 +33,13 @@ References: <20261109162033.1144-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Ac8vCgC3S5drefxqC7WJBQ--.4821S18
-X-Coremail-Antispam: 1Uf129KBjvJXoWxKFykJr4DGF13uFW5WrWkXrb_yoWfGr47pF
- WUGayDAFZrtr4Utwn7J3yDA3W5X3sFk342k340kas09Fs5ZFyDZ34UKFW7Ar4FqrW7AF17
- Zr4jk39F9w10qwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07ULzV8UUUUU=
+X-CM-TRANSID: Ac8vCgC3S5drefxqC7WJBQ--.4821S17
+X-Coremail-Antispam: 1Uf129KBjvAXoW3ZFWxJF4kWrWrur13Ary7Wrg_yoW8Jw1fJo
+ WfXFWakF4Fgrn7A34jvFn7ZFs3Xw1DGrn8J39xCanxXa9rury5JFn8Grn3Ja4xX3yUCFnr
+ AF97G3yktw47Xw4Dn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+ AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUzgAwUUUUU
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiMhJUXmr8eXI0XQAA3e
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNRJUXmr8eXICjQAA3-
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,246 +56,362 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Apply the firmware COS mask/map when setting up Tx queues so the configured
-COS value selects the intended queue.
+Provide recorded mbox send/receive history and a dump of it together with
+the AEQ state so mailbox timeouts and response mismatches can be diagnosed.
 
-The VF default COS limit HINIC3_COS_NUM_MAX_HTN (4) only applies to the
-HTN tile used by SP230, where the firmware cos_mask can select four
-non-contiguous COS values for the NIC and cos_map[] maps every other COS
-to default_cos. SP620 and SP560 assign all eight COS to the NIC, so drop
-the clamp there.
-
-Fixes: 9204b6b7bb1a ("net/hinic3: split new/old command queue operations")
+eth_dev_priv_dump is also registered for secondary processes, where
+hwdev->pci_dev is not valid. Pass the rte_pci_device obtained from the
+ethdev down to the dump instead of reading it from hwdev.
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- doc/guides/rel_notes/release_26_11.rst   |  1 +
- drivers/net/hinic3/base/hinic3_hw_cfg.c  |  2 +
- drivers/net/hinic3/base/hinic3_hw_cfg.h  |  8 +++-
- drivers/net/hinic3/base/hinic3_nic_cfg.c |  2 +-
- drivers/net/hinic3/base/hinic3_nic_cfg.h |  1 -
- drivers/net/hinic3/hinic3_ethdev.c       | 59 +++++++++++++++++++++---
- drivers/net/hinic3/hinic3_ethdev.h       |  2 +
- 7 files changed, 64 insertions(+), 11 deletions(-)
+ doc/guides/rel_notes/release_26_11.rst |  1 +
+ drivers/net/hinic3/base/hinic3_eqs.c   | 64 ++++++++++++++++++++++++--
+ drivers/net/hinic3/base/hinic3_eqs.h   |  9 +++-
+ drivers/net/hinic3/base/hinic3_mbox.c  | 45 ++++++++++++++++++
+ drivers/net/hinic3/base/hinic3_mbox.h  | 19 ++++++++
+ drivers/net/hinic3/hinic3_ethdev.c     | 29 ++++++++++++
+ 6 files changed, 161 insertions(+), 6 deletions(-)
 
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 1c3976c631..bbe363b8ae 100644
+index 8a353476e5..1c3976c631 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
 @@ -167,6 +167,7 @@ New Features
  
    * Added CIR drop statistics and VF link aggregation (LAG) support.
    * Added FEC mode get and set support.
-+  * Added Class of Service (COS) mask and map support.
-   * Added mailbox message counter reporting through the device private dump API.
++  * Added mailbox message counter reporting through the device private dump API.
  
  * **Updated Intel iavf driver.**
-diff --git a/drivers/net/hinic3/base/hinic3_hw_cfg.c b/drivers/net/hinic3/base/hinic3_hw_cfg.c
-index 8899f98515..e7971509d5 100644
---- a/drivers/net/hinic3/base/hinic3_hw_cfg.c
-+++ b/drivers/net/hinic3/base/hinic3_hw_cfg.c
-@@ -22,6 +22,8 @@ parse_pub_res_cap(struct service_cap *cap,
- 	cap->chip_svc_type = cap->svc_type;
  
- 	cap->cos_valid_bitmap = dev_cap->valid_cos_bitmap;
-+	cap->cos_mask_mode = dev_cap->cos_mask_mode;
-+	cap->cos_mask_bitmap = dev_cap->cos_mask_bitmap;
- 	cap->flexq_en = dev_cap->flexq_en;
+diff --git a/drivers/net/hinic3/base/hinic3_eqs.c b/drivers/net/hinic3/base/hinic3_eqs.c
+index 1fc78adc85..95b6ed59d0 100644
+--- a/drivers/net/hinic3/base/hinic3_eqs.c
++++ b/drivers/net/hinic3/base/hinic3_eqs.c
+@@ -553,7 +553,7 @@ hinic3_aeqs_free(struct hinic3_hwdev *hwdev)
+ }
  
- 	cap->host_total_function = dev_cap->host_total_func;
-diff --git a/drivers/net/hinic3/base/hinic3_hw_cfg.h b/drivers/net/hinic3/base/hinic3_hw_cfg.h
-index 46a9c9bf4b..62af1daa25 100644
---- a/drivers/net/hinic3/base/hinic3_hw_cfg.h
-+++ b/drivers/net/hinic3/base/hinic3_hw_cfg.h
-@@ -40,6 +40,8 @@ struct service_cap {
- 
- 	uint8_t flexq_en;
- 	uint8_t cos_valid_bitmap;
-+	uint8_t cos_mask_mode;
-+	uint8_t cos_mask_bitmap;
- 	uint16_t max_vf; /**< Max VF number that PF supported. */
- 
- 	struct nic_service_cap nic_cap; /**< NIC capability. */
-@@ -80,9 +82,11 @@ struct hinic3_cfg_cmd_dev_cap {
- 	uint8_t flexq_en;
- 	uint8_t valid_cos_bitmap;
- 	/* Reserved for func_valid_cos_bitmap. */
--	uint16_t rsvd_cos;
-+	uint16_t rsvd_valid_cos[2];
-+	uint8_t cos_mask_mode;
-+	uint8_t cos_mask_bitmap;
- 
--	uint32_t rsvd[11];
-+	uint32_t rsvd[10];
- 
- 	/* l2nic */
- 	uint16_t nic_max_sq_id;
-diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.c b/drivers/net/hinic3/base/hinic3_nic_cfg.c
-index 5fcc641ac3..2725f49df5 100644
---- a/drivers/net/hinic3/base/hinic3_nic_cfg.c
-+++ b/drivers/net/hinic3/base/hinic3_nic_cfg.c
-@@ -1492,7 +1492,7 @@ hinic3_vf_get_default_cos(struct hinic3_hwdev *hwdev, uint8_t *cos_id)
- 		return -EIO;
+ void
+-hinic3_dump_aeq_info(struct hinic3_hwdev *hwdev)
++hinic3_dump_aeq_info(struct hinic3_hwdev *hwdev, FILE *file)
+ {
+ 	struct hinic3_aeq_elem *aeqe_pos = NULL;
+ 	struct hinic3_eq *eq = NULL;
+@@ -580,10 +580,64 @@ hinic3_dump_aeq_info(struct hinic3_hwdev *hwdev)
+ 		addr = HINIC3_CSR_AEQ_PROD_IDX_ADDR;
+ 		pi = hinic3_hwif_read_reg(hwdev->hwif, addr);
+ 		aeqe_pos = GET_AEQ_ELEM(eq, eq->cons_idx);
+-		PMD_DRV_LOG(ERR,
+-			    "Aeq id: %d, idx: %u, ctrl0: 0x%08x, wrap: %d, pi: 0x%x, ci: 0x%08x, desc: 0x%x",
+-			    q_id, idx, ctrl0, eq->wrapped, pi, ci,
+-			    rte_be_to_cpu_32(aeqe_pos->desc));
++		fprintf(file, "Aeq id: %d, idx: %u, ctrl0: 0x%08x, wrap: %d, pi: 0x%x, ci: 0x%08x, desc: 0x%x\n",
++				q_id, idx, ctrl0, eq->wrapped, pi, ci,
++				rte_be_to_cpu_32(aeqe_pos->desc));
++	}
++}
++
++void
++hinic3_dump_aeq_mbox_info(struct hinic3_hwdev *hwdev,
++			  struct rte_pci_device *pci_dev, FILE *file)
++{
++	struct save_mbox_info *save_mbox = NULL;
++	struct hinic3_eq *aeq = NULL;
++	struct hinic3_aeq_elem *aeqe_pos = NULL;
++	uint32_t i, pos;
++	uint8_t src, size, wrapped, seq_id, seg_len, msg_id, mod;
++	uint8_t data[HINIC3_AEQE_DATA_SIZE];
++	uint16_t src_func_idx, cmd;
++	uint32_t aeqe_desc;
++	uint64_t mbox_header;
++	enum hinic3_aeq_type event;
++
++	save_mbox = hwdev->func_to_func->save_mbox;
++	aeq = &hwdev->aeqs->aeq[HINIC3_MBOX_RSP_MSG_AEQ];
++
++	fprintf(file, "Sending the latest mbox messages:\n");
++	for (i = 0; i < HINIC3_MBOX_SAVE_NUM; i++) {
++		pos = (hwdev->func_to_func->save_mbox->start + i) % HINIC3_MBOX_SAVE_NUM;
++		fprintf(file, "send_msg_id: %u, cmd: %u, mod: %u\n",
++			save_mbox->send_info[pos].send_msg_id, save_mbox->send_info[pos].cmd,
++			save_mbox->send_info[pos].mod);
++	}
++
++	fprintf(file, "dump aeqe info:\n");
++	fprintf(file, "port: %u, eq cid: %u, func id: %u, bus: %u, devid: %u, wrapped: %u\n",
++		hwdev->port_id, aeq->cons_idx, pci_dev->addr.function, pci_dev->addr.bus,
++		pci_dev->addr.devid, aeq->wrapped);
++	for (i = 0; i < aeq->eq_len; i++) {
++		/* Parsing the data field. */
++		aeqe_pos = GET_AEQ_ELEM(aeq, i);
++		aeqe_desc = rte_be_to_cpu_32(aeqe_pos->desc);
++		memcpy(data, aeqe_pos->aeqe_data, HINIC3_AEQE_DATA_SIZE);
++		hinic3_be32_to_cpu(data, HINIC3_AEQE_DATA_SIZE);
++		memcpy(&mbox_header, data, sizeof(mbox_header));
++		seq_id = HINIC3_MSG_HEADER_GET(mbox_header, SEQID);
++		seg_len = HINIC3_MSG_HEADER_GET(mbox_header, SEG_LEN);
++		src_func_idx = HINIC3_MSG_HEADER_GET(mbox_header, SRC_GLB_FUNC_IDX);
++		msg_id = HINIC3_MSG_HEADER_GET(mbox_header, MSG_ID);
++		mod = HINIC3_MSG_HEADER_GET(mbox_header, MODULE);
++		cmd = HINIC3_MSG_HEADER_GET(mbox_header, CMD);
++		/* Parsing the desc field. */
++		event = EQ_ELEM_DESC_GET(aeqe_desc, TYPE);
++		src = EQ_ELEM_DESC_GET(aeqe_desc, SRC);
++		size = EQ_ELEM_DESC_GET(aeqe_desc, SIZE);
++		wrapped = EQ_ELEM_DESC_GET(aeqe_desc, WRAPPED);
++
++		fprintf(file, "index: %d, msg_id: %u, mod: %u, cmd: %u, seq_id: %u, seg_len: %u, src_func_idx: %u, event: %u, src: %u, size: %u, wrapped: %u\n",
++			i, msg_id, mod, cmd, seq_id, seg_len, src_func_idx,
++			event, src, size, wrapped);
  	}
+ }
  
--	*cos_id = vf_dcb.state.default_cos % HINIC3_COS_NUM_MAX_HTN;
-+	*cos_id = vf_dcb.state.default_cos;
+diff --git a/drivers/net/hinic3/base/hinic3_eqs.h b/drivers/net/hinic3/base/hinic3_eqs.h
+index 365c9cbf39..4c1b03da11 100644
+--- a/drivers/net/hinic3/base/hinic3_eqs.h
++++ b/drivers/net/hinic3/base/hinic3_eqs.h
+@@ -5,6 +5,10 @@
+ #ifndef _HINIC3_EQS_H_
+ #define _HINIC3_EQS_H_
  
++#include <stdio.h>
++
++struct rte_pci_device;
++
+ #define HINIC3_MAX_AEQS	    4
+ #define HINIC3_MIN_AEQS	    2
+ #define HINIC3_EQ_MAX_PAGES 4
+@@ -83,7 +87,10 @@ int hinic3_aeqs_init(struct hinic3_hwdev *hwdev);
+ 
+ void hinic3_aeqs_free(struct hinic3_hwdev *hwdev);
+ 
+-void hinic3_dump_aeq_info(struct hinic3_hwdev *hwdev);
++void hinic3_dump_aeq_info(struct hinic3_hwdev *hwdev, FILE *file);
++
++void hinic3_dump_aeq_mbox_info(struct hinic3_hwdev *hwdev,
++			       struct rte_pci_device *pci_dev, FILE *file);
+ 
+ int hinic3_aeq_poll_msg(struct hinic3_eq *eq, uint32_t timeout, void *param);
+ 
+diff --git a/drivers/net/hinic3/base/hinic3_mbox.c b/drivers/net/hinic3/base/hinic3_mbox.c
+index c4ca2ed7ba..6d0d4cce2b 100644
+--- a/drivers/net/hinic3/base/hinic3_mbox.c
++++ b/drivers/net/hinic3/base/hinic3_mbox.c
+@@ -711,6 +711,27 @@ send_tlp_mbox_seg(struct hinic3_mbox *func_to_func, uint64_t header, uint16_t ds
  	return 0;
  }
-diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.h b/drivers/net/hinic3/base/hinic3_nic_cfg.h
-index 9458a576c4..b5d7ce07a1 100644
---- a/drivers/net/hinic3/base/hinic3_nic_cfg.h
-+++ b/drivers/net/hinic3/base/hinic3_nic_cfg.h
-@@ -23,7 +23,6 @@
- #define HINIC3_MIN_MTU_SIZE		256
  
- #define HINIC3_COS_NUM_MAX		8
--#define HINIC3_COS_NUM_MAX_HTN		4
++static void hinic3_record_mbox_info(struct hinic3_mbox *func_to_func,
++				    enum hinic3_mod_type mod, uint16_t cmd,
++				    uint8_t msg_id)
++{
++	struct mbox_send_info send_mbox;
++
++	send_mbox.cmd = cmd;
++	send_mbox.mod = mod;
++	send_mbox.send_msg_id = msg_id;
++
++	uint8_t pos = (func_to_func->save_mbox->start + func_to_func->save_mbox->count) %
++		      HINIC3_MBOX_SAVE_NUM;
++	func_to_func->save_mbox->send_info[pos] = send_mbox;
++
++	if (func_to_func->save_mbox->count < HINIC3_MBOX_SAVE_NUM)
++		func_to_func->save_mbox->count++;
++	else
++		func_to_func->save_mbox->start = (func_to_func->save_mbox->start + 1) %
++						 HINIC3_MBOX_SAVE_NUM;
++}
++
+ static int
+ send_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type mod,
+ 		struct hinic3_handler_info *handler_info, struct mbox_msg_info *msg_info)
+@@ -724,6 +745,9 @@ send_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type mod,
  
- #define HINIC3_VLAN_TAG_SIZE	4
- #define HINIC3_ETH_OVERHEAD \
+ 	rsp_aeq_id = HINIC3_MBOX_RSP_MSG_AEQ;
+ 
++	hinic3_record_mbox_info(func_to_func, mod, handler_info->cmd,
++				msg_info->msg_id);
++
+ 	/* Set the header message. */
+ 	header = HINIC3_MSG_HEADER_SET(handler_info->in_size, MSG_LEN) |
+ 		 HINIC3_MSG_HEADER_SET(mod, MODULE) |
+@@ -782,6 +806,9 @@ send_tlp_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type mod
+ 
+ 	rsp_aeq_id = HINIC3_MBOX_RSP_MSG_AEQ;
+ 
++	hinic3_record_mbox_info(func_to_func, mod, handler_info->cmd,
++				msg_info->msg_id);
++
+ 	/* Set the header message. */
+ 	header = HINIC3_MSG_HEADER_SET(MBOX_TLP_HEADER_SZ, MSG_LEN) |
+ 		 HINIC3_MSG_HEADER_SET(MBOX_TLP_HEADER_SZ, SEG_LEN) |
+@@ -873,6 +900,7 @@ hinic3_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type mod,
+ 		goto send_err;
+ 	}
+ 
++	func_to_func->mbox_send_cnt++;
+ 	/* Wait for the response message. */
+ 	time = timeout ? timeout : HINIC3_MBOX_COMP_TIME;
+ 	aeq = &func_to_func->hwdev->aeqs->aeq[HINIC3_MBOX_RSP_MSG_AEQ];
+@@ -884,6 +912,7 @@ hinic3_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type mod,
+ 		goto send_err;
+ 	}
+ 
++	func_to_func->mbox_ack_cnt++;
+ 	/* Check whether mod and command of the rsp message match the sent message. */
+ 	if (mod != mbox_for_resp->mod || handler_info->cmd != mbox_for_resp->cmd) {
+ 		PMD_DRV_LOG(ERR,
+@@ -917,6 +946,8 @@ hinic3_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type mod,
+ 		*handler_info->out_size = mbox_for_resp->mbox_len;
+ 	}
+ send_err:
++	if (err != 0)
++		func_to_func->mbox_error = true;
+ 	return err;
+ }
+ 
+@@ -1129,6 +1160,16 @@ hinic3_func_to_func_init(struct hinic3_hwdev *hwdev)
+ 
+ 	hwdev->func_to_func = func_to_func;
+ 	func_to_func->hwdev = hwdev;
++
++	struct save_mbox_info *save_mbox = rte_zmalloc("save_mbox_info",
++						      sizeof(struct save_mbox_info), 0);
++	if (!save_mbox) {
++		err = -ENOMEM;
++		goto alloc_save_mbox_err;
++	}
++
++	func_to_func->save_mbox = save_mbox;
++
+ 	rte_spinlock_init(&func_to_func->mbox_lock);
+ 
+ 	/* Alloc the memory required by the mailbox. */
+@@ -1170,6 +1211,9 @@ hinic3_func_to_func_init(struct hinic3_hwdev *hwdev)
+ 	free_mbox_info(func_to_func->mbox_send);
+ 
+ alloc_mbox_for_send_err:
++	rte_free(save_mbox);
++alloc_save_mbox_err:
++	hwdev->func_to_func = NULL;
+ 	rte_free(func_to_func);
+ 
+ 	return err;
+@@ -1184,5 +1228,6 @@ hinic3_func_to_func_free(struct hinic3_hwdev *hwdev)
+ 	free_mbox_tlp_buffer(func_to_func);
+ 	free_mbox_info(func_to_func->mbox_resp);
+ 	free_mbox_info(func_to_func->mbox_send);
++	rte_free(func_to_func->save_mbox);
+ 	rte_free(func_to_func);
+ }
+diff --git a/drivers/net/hinic3/base/hinic3_mbox.h b/drivers/net/hinic3/base/hinic3_mbox.h
+index df6de062e2..8797c19697 100644
+--- a/drivers/net/hinic3/base/hinic3_mbox.h
++++ b/drivers/net/hinic3/base/hinic3_mbox.h
+@@ -15,6 +15,8 @@
+ 
+ #define HINIC3_MAX_PF_FUNCS 32
+ 
++#define HINIC3_MBOX_SAVE_NUM          20
++
+ /* Message header define. */
+ #define HINIC3_MSG_HEADER_SRC_GLB_FUNC_IDX_SHIFT 0
+ #define HINIC3_MSG_HEADER_STATUS_SHIFT		 13
+@@ -150,8 +152,21 @@ enum hinic3_mbox_cb_state {
+ 	HINIC3_PPF_TO_PF_MBOX_CB_RUNNING
+ };
+ 
++struct mbox_send_info {
++	uint16_t cmd;
++	enum hinic3_mod_type mod;
++	uint8_t send_msg_id;
++};
++
++struct save_mbox_info {
++	struct mbox_send_info send_info[HINIC3_MBOX_SAVE_NUM];
++	uint8_t start;
++	uint8_t count;
++};
++
+ struct hinic3_mbox {
+ 	struct hinic3_hwdev *hwdev;
++	struct save_mbox_info *save_mbox;
+ 
+ 	struct hinic3_send_mbox send_mbox;
+ 
+@@ -163,6 +178,10 @@ struct hinic3_mbox {
+ 	enum mbox_event_state event_flag;
+ 	/* Lock for mbox event flag. */
+ 	rte_spinlock_t mbox_lock;
++
++	uint64_t mbox_send_cnt;
++	uint64_t mbox_ack_cnt;
++	bool mbox_error;
+ };
+ 
+ int hinic3_mbox_func_aeqe_handler(struct hinic3_hwdev *hwdev, uint8_t *header,
 diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index 6114f8a925..2062f63892 100644
+index 417c86caf4..6114f8a925 100644
 --- a/drivers/net/hinic3/hinic3_ethdev.c
 +++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -76,6 +76,9 @@ enum hinic3_rx_mod {
- #define HINIC3_DEFAULT_RX_MODE \
- 	(HINIC3_RX_MODE_UC | HINIC3_RX_MODE_MC | HINIC3_RX_MODE_BC)
- 
-+#define HINIC3_DEFAULT_COS_MASK		0x7
-+#define HINIC3_DEFAULT_COS_MASK_BITMAP	0xff
-+
- struct hinic3_xstats_name_off {
- 	char name[RTE_ETH_XSTATS_NAME_SIZE];
- 	uint32_t offset;
-@@ -451,10 +454,8 @@ hinic3_deinit_mac_addr(struct rte_eth_dev *eth_dev)
- static int
- hinic3_pf_get_default_cos(struct hinic3_hwdev *hwdev, uint8_t *cos_id)
- {
--	struct hinic3_nic_dev *nic_dev = hwdev->dev_handle;
- 	uint8_t default_cos = 0;
- 	uint8_t valid_cos_bitmap;
--	uint8_t cos_num_max;
- 	uint8_t i;
- 
- 	valid_cos_bitmap = hwdev->cfg_mgmt->svc_cap.cos_valid_bitmap;
-@@ -463,10 +464,7 @@ hinic3_pf_get_default_cos(struct hinic3_hwdev *hwdev, uint8_t *cos_id)
- 		return -EFAULT;
- 	}
- 
--	cos_num_max = nic_dev->feature_cap & NIC_F_HTN_CMDQ ?
--		      HINIC3_COS_NUM_MAX_HTN : HINIC3_COS_NUM_MAX;
--
--	for (i = 0; i < cos_num_max; i++) {
-+	for (i = 0; i < HINIC3_COS_NUM_MAX; i++) {
- 		if (valid_cos_bitmap & RTE_BIT32(i))
- 			/* Find max cos id as default cos. */
- 			default_cos = i;
-@@ -477,12 +475,53 @@ hinic3_pf_get_default_cos(struct hinic3_hwdev *hwdev, uint8_t *cos_id)
- 	return 0;
+@@ -10,6 +10,7 @@
+ #include "base/hinic3_eqs.h"
+ #include "base/hinic3_cmdq.h"
+ #include "base/hinic3_hwdev.h"
++#include "base/hinic3_mbox.h"
+ #include "base/hinic3_hwif.h"
+ #include "base/hinic3_hw_cfg.h"
+ #include "base/hinic3_hw_comm.h"
+@@ -3518,6 +3519,32 @@ hinic3_fec_capability_get(struct rte_eth_dev *dev,
+ 	return HINIC3_FEC_CAPA_NUM_PER_SPEED;
  }
  
-+static void
-+hinic3_get_cos_mask(struct hinic3_hwdev *hwdev, uint8_t *cos_mask)
++static int
++hinic3_eth_dev_priv_dump(struct rte_eth_dev *dev, FILE *file)
 +{
-+	uint8_t cos_mask_mode;
++	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++	struct rte_pci_device *pci_dev = RTE_CLASS_TO_BUS_DEVICE(dev, *pci_dev);
++	struct hinic3_hwdev *hwdev;
 +
-+	cos_mask_mode = hwdev->cfg_mgmt->svc_cap.cos_mask_mode;
-+	if (!cos_mask_mode) {
-+		*cos_mask = HINIC3_DEFAULT_COS_MASK; /* default: 8 COS*/
-+		PMD_DRV_LOG(INFO,
-+			"cos mask not provided by firmware, use default 0x%x",
-+			HINIC3_DEFAULT_COS_MASK);
-+		return;
-+	}
++	if (file == NULL)
++		return -EINVAL;
 +
-+	*cos_mask = cos_mask_mode;
++	hwdev = nic_dev->hwdev;
++	if (hwdev == NULL || hwdev->func_to_func == NULL)
++		return 0;
++
++	fprintf(file, "mbox_send_cnt: %" PRIu64 "\n",
++		hwdev->func_to_func->mbox_send_cnt);
++	fprintf(file, "mbox_ack_cnt: %" PRIu64 "\n",
++		hwdev->func_to_func->mbox_ack_cnt);
++
++	hinic3_dump_aeq_info(hwdev, file);
++	if (hwdev->func_to_func->mbox_error)
++		hinic3_dump_aeq_mbox_info(hwdev, pci_dev, file);
++
++	return 0;
 +}
 +
-+static void
-+hinic3_get_cos_mask_bitmap(struct hinic3_nic_dev *nic_dev)
-+{
-+	int i;
-+	uint8_t default_cos = 0;
-+	uint8_t cos_mask_bitmap = nic_dev->hwdev->cfg_mgmt->svc_cap.cos_mask_bitmap == 0
-+			? HINIC3_DEFAULT_COS_MASK_BITMAP
-+			: nic_dev->hwdev->cfg_mgmt->svc_cap.cos_mask_bitmap;
-+
-+	PMD_DRV_LOG(INFO, "cos_mask_bitmap: 0x%x", cos_mask_bitmap);
-+	for (i = HINIC3_COS_NUM_MAX - 1; i >= 0; i--) {
-+		if (cos_mask_bitmap & RTE_BIT32(i)) {
-+			default_cos = i;
-+			break;
-+		}
-+	}
-+
-+	for (i = 0; i < HINIC3_COS_NUM_MAX; i++)
-+		nic_dev->cos_map[i] = ((RTE_BIT32(i) & cos_mask_bitmap) == 0) ? default_cos : i;
-+}
-+
- static int
- hinic3_init_default_cos(struct hinic3_nic_dev *nic_dev)
- {
-+	uint8_t cos_mask = 0;
- 	uint8_t cos_id = 0;
- 	int err;
+ static const struct eth_dev_ops hinic3_pmd_ops = {
+ 	.dev_configure                 = hinic3_dev_configure,
+ 	.dev_infos_get                 = hinic3_dev_infos_get,
+@@ -3567,6 +3594,7 @@ static const struct eth_dev_ops hinic3_pmd_ops = {
+ 	.fec_get_capability            = hinic3_fec_capability_get,
+ 	.fec_get                       = hinic3_fec_get,
+ 	.fec_set                       = hinic3_fec_set,
++	.eth_dev_priv_dump             = hinic3_eth_dev_priv_dump,
+ };
  
-+	hinic3_get_cos_mask(nic_dev->hwdev, &cos_mask);
-+
- 	if (!HINIC3_IS_VF(nic_dev->hwdev)) {
- 		err = hinic3_pf_get_default_cos(nic_dev->hwdev, &cos_id);
- 		if (err) {
-@@ -497,8 +536,9 @@ hinic3_init_default_cos(struct hinic3_nic_dev *nic_dev)
- 		}
- 	}
+ static const struct eth_dev_ops hinic3_pmd_vf_ops = {
+@@ -3611,6 +3639,7 @@ static const struct eth_dev_ops hinic3_pmd_vf_ops = {
+ 	.mac_addr_add                  = hinic3_mac_addr_add,
+ 	.set_mc_addr_list              = hinic3_set_mc_addr_list,
+ 	.flow_ops_get                  = hinic3_dev_filter_ctrl,
++	.eth_dev_priv_dump             = hinic3_eth_dev_priv_dump,
+ };
  
-+	nic_dev->cos_mask = cos_mask;
- 	nic_dev->default_cos = cos_id;
--	PMD_DRV_LOG(DEBUG, "Default cos %d", nic_dev->default_cos);
-+	PMD_DRV_LOG(DEBUG, "Default cos %d, cos mask %d", nic_dev->default_cos, nic_dev->cos_mask);
- 	return 0;
- }
- 
-@@ -533,6 +573,7 @@ hinic3_set_default_hw_feature(struct hinic3_nic_dev *nic_dev)
- {
- 	int err;
- 
-+	hinic3_get_cos_mask_bitmap(nic_dev);
- 	err = hinic3_init_default_cos(nic_dev);
- 	if (err)
- 		return err;
-@@ -1299,6 +1340,10 @@ hinic3_tx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
- 	else
- 		txq->cos = nic_dev->default_cos;
- 
-+	if (HINIC3_IS_SP230_NIC(nic_dev))
-+		txq->cos = nic_dev->cos_map[txq->cos &
-+			(HINIC3_COS_NUM_MAX - 1) & nic_dev->cos_mask];
-+
- 	txq->tx_deferred_start = tx_conf->tx_deferred_start;
- 	txq->tx_wqe_compact_task = HINIC3_SUPPORT_TX_WQE_COMPACT_TASK(nic_dev);
- 
-diff --git a/drivers/net/hinic3/hinic3_ethdev.h b/drivers/net/hinic3/hinic3_ethdev.h
-index c3384e5fd0..935b7719ca 100644
---- a/drivers/net/hinic3/hinic3_ethdev.h
-+++ b/drivers/net/hinic3/hinic3_ethdev.h
-@@ -133,6 +133,7 @@ struct hinic3_nic_dev {
- 	uint8_t rx_queue_list[HINIC3_MAX_QUEUE_NUM];
- 	rte_spinlock_t queue_list_lock;
- 
-+	uint32_t cos_mask;
- 	uint32_t default_cos;
- 	uint32_t rx_csum_en;
- 
-@@ -155,6 +156,7 @@ struct hinic3_nic_dev {
- 	struct hinic3_tcam_info tcam;
- 	struct hinic3_ethertype_filter_list filter_ethertype_list;
- 	struct hinic3_fdir_rule_filter_list filter_fdir_rule_list;
-+	uint8_t cos_map[HINIC3_COS_NUM_MAX];
- 	struct hinic3_nic_cmdq_ops *cmdq_ops;
- 	struct hinic3_nic_rx_ops *rx_ops;
- 	struct hinic3_nic_tx_ops *tx_ops;
+ static void hinic3_nic_tx_rx_ops_init(struct hinic3_nic_dev *nic_dev)
 -- 
 2.33.0
 
