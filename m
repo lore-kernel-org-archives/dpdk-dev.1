@@ -2,20 +2,20 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64AA1606A32C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 17:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F1C606A31C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 17:19:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 224E2402BF;
-	Tue, 17 Nov 2026 18:18:49 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D9973402BF;
+	Tue, 17 Nov 2026 18:19:49 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTPS id 2CF0A402A4
- for <dev@dpdk.org>; Tue, 17 Nov 2026 18:18:47 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id E5EB1402A4
+ for <dev@dpdk.org>; Tue, 17 Nov 2026 18:19:48 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 1A96B4D604; Tue, 17 Nov 2026 18:18:46 +0100 (CET)
+ id E091A4D4A3; Tue, 17 Nov 2026 18:19:48 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 2141] net/ngbe: unreachable code
-Date: Tue, 17 Nov 2026 17:18:47 +0000
+Subject: [DPDK/ethdev Bug 2142] net/txgbe: unreachable code
+Date: Tue, 17 Nov 2026 17:19:49 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -34,7 +34,7 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-2141-3@https.bugs.dpdk.org/>
+Message-ID: <bug-2142-3@https.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: https://bugs.dpdk.org/
@@ -56,10 +56,10 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D2141
+https://bugs.dpdk.org/show_bug.cgi?id=3D2142
 
-            Bug ID: 2141
-           Summary: net/ngbe: unreachable code
+            Bug ID: 2142
+           Summary: net/txgbe: unreachable code
            Product: DPDK
            Version: 26.11
           Hardware: All
@@ -72,11 +72,12 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D2141
           Reporter: stephen@networkplumber.org
   Target Milestone: ---
 
-Building with clang and -Wunreachable-code gets a warning:
-../drivers/net/ngbe/base/ngbe_hw.c:1298:3: warning: code will never be exec=
-uted
-[-Wunreachable-code]
- 1298 |                 goto done;
+Building with clang and -Wunreachable-code finds dead code here:
+[1573/3982] Compiling C object
+drivers/libtmp_rte_net_txgbe.a.p/net_txgbe_base_txgbe_hw.c.o
+../drivers/net/txgbe/base/txgbe_hw.c:1603:3: warning: code will never be
+executed [-Wunreachable-code]
+ 1603 |                 goto done;
       |                 ^~~~~~~~~
 1 warning generated.
 
