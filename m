@@ -2,25 +2,25 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F1C606A31C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 17:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3640606A338
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 17:20:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D9973402BF;
-	Tue, 17 Nov 2026 18:19:49 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A159F402BF;
+	Tue, 17 Nov 2026 18:20:46 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTPS id E5EB1402A4
- for <dev@dpdk.org>; Tue, 17 Nov 2026 18:19:48 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id D9931402A4
+ for <dev@dpdk.org>; Tue, 17 Nov 2026 18:20:45 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id E091A4D4A3; Tue, 17 Nov 2026 18:19:48 +0100 (CET)
+ id CE7614D4E2; Tue, 17 Nov 2026 18:20:45 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 2142] net/txgbe: unreachable code
-Date: Tue, 17 Nov 2026 17:19:49 +0000
+Subject: [DPDK/other Bug 2143] common/sfc_efx: unreachable code
+Date: Tue, 17 Nov 2026 17:20:46 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: ethdev
+X-Bugzilla-Component: other
 X-Bugzilla-Version: 26.11
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: normal
@@ -34,7 +34,7 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-2142-3@https.bugs.dpdk.org/>
+Message-ID: <bug-2143-3@https.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: https://bugs.dpdk.org/
@@ -56,10 +56,10 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D2142
+https://bugs.dpdk.org/show_bug.cgi?id=3D2143
 
-            Bug ID: 2142
-           Summary: net/txgbe: unreachable code
+            Bug ID: 2143
+           Summary: common/sfc_efx: unreachable code
            Product: DPDK
            Version: 26.11
           Hardware: All
@@ -67,18 +67,19 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D2142
             Status: UNCONFIRMED
           Severity: normal
           Priority: Normal
-         Component: ethdev
+         Component: other
           Assignee: dev@dpdk.org
           Reporter: stephen@networkplumber.org
   Target Milestone: ---
 
-Building with clang and -Wunreachable-code finds dead code here:
-[1573/3982] Compiling C object
-drivers/libtmp_rte_net_txgbe.a.p/net_txgbe_base_txgbe_hw.c.o
-../drivers/net/txgbe/base/txgbe_hw.c:1603:3: warning: code will never be
+Building with clang and -Wunreachable-code finds:
+
+[1911/3982] Compiling C object
+drivers/librte_common_qat_base_lib.a.p/common_sfc_efx_base_efx_mon.c.o
+../drivers/common/sfc_efx/base/efx_mon.c:83:17: warning: code will never be
 executed [-Wunreachable-code]
- 1603 |                 goto done;
-      |                 ^~~~~~~~~
+   83 |         emp->em_emop =3D emop;
+      |                        ^~~~
 1 warning generated.
 
 --=20
