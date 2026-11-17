@@ -2,20 +2,20 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7CB606A330
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 17:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D37606A887
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 17:11:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A718E402CE;
-	Tue, 17 Nov 2026 18:10:20 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 946BF402BF;
+	Tue, 17 Nov 2026 18:11:22 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTPS id E9663402D4
- for <dev@dpdk.org>; Tue, 17 Nov 2026 18:10:18 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id 94240402A4
+ for <dev@dpdk.org>; Tue, 17 Nov 2026 18:11:20 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id D870F4D4F0; Tue, 17 Nov 2026 18:10:18 +0100 (CET)
+ id 894BF4D5EA; Tue, 17 Nov 2026 18:11:20 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 2137] net/dpaa2: unreachable code
-Date: Tue, 17 Nov 2026 17:10:18 +0000
+Subject: [DPDK/ethdev Bug 2138] net/octeontx: unreachable code
+Date: Tue, 17 Nov 2026 17:11:20 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -23,18 +23,18 @@ X-Bugzilla-Product: DPDK
 X-Bugzilla-Component: ethdev
 X-Bugzilla-Version: 26.11
 X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
+X-Bugzilla-Severity: minor
 X-Bugzilla-Who: stephen@networkplumber.org
 X-Bugzilla-Status: UNCONFIRMED
 X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
+X-Bugzilla-Priority: Low
 X-Bugzilla-Assigned-To: dev@dpdk.org
 X-Bugzilla-Target-Milestone: ---
 X-Bugzilla-Flags: 
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-2137-3@https.bugs.dpdk.org/>
+Message-ID: <bug-2138-3@https.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: https://bugs.dpdk.org/
@@ -56,30 +56,34 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D2137
+https://bugs.dpdk.org/show_bug.cgi?id=3D2138
 
-            Bug ID: 2137
-           Summary: net/dpaa2: unreachable code
+            Bug ID: 2138
+           Summary: net/octeontx: unreachable code
            Product: DPDK
            Version: 26.11
           Hardware: All
                 OS: All
             Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
+          Severity: minor
+          Priority: Low
          Component: ethdev
           Assignee: dev@dpdk.org
           Reporter: stephen@networkplumber.org
   Target Milestone: ---
 
-Building with clang and  -Wunreachable-code results in:
-[547/3982] Compiling C object
-drivers/libtmp_rte_net_dpaa2.a.p/net_dpaa2_dpaa2_flow.c.o
-../drivers/net/dpaa2/dpaa2_flow.c:5402:5: warning: code will never be execu=
-ted
-[-Wunreachable-code]
- 5402 |                                 goto error;
-      |                                 ^~~~~~~~~~
+Building with clang and -Wunreachable-code show:
+
+[570/3982] Compiling C object
+drivers/libtmp_rte_net_octeontx.a.p/net_octeontx_base_octeontx_pkovf.c.o
+../drivers/net/octeontx/base/octeontx_pkovf.c:526:57: warning: code will ne=
+ver
+be executed [-Wunreachable-code]
+  526 |                     (((PKO_DQ_FC_STRIDE =3D=3D PKO_DQ_FC_STRIDE_16)=
+ ? 1 :
+0) << 2) |
+      |                                                                    =
+   ^
 1 warning generated.
 
 --=20
