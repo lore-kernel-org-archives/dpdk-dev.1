@@ -2,25 +2,25 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3640606A338
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 17:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C411960A3818
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 17:21:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A159F402BF;
-	Tue, 17 Nov 2026 18:20:46 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 8E5FB402C9;
+	Tue, 17 Nov 2026 18:21:50 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTPS id D9931402A4
- for <dev@dpdk.org>; Tue, 17 Nov 2026 18:20:45 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id EA5B8402A4
+ for <dev@dpdk.org>; Tue, 17 Nov 2026 18:21:48 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id CE7614D4E2; Tue, 17 Nov 2026 18:20:45 +0100 (CET)
+ id E3B814D607; Tue, 17 Nov 2026 18:21:48 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/other Bug 2143] common/sfc_efx: unreachable code
-Date: Tue, 17 Nov 2026 17:20:46 +0000
+Subject: [DPDK/examples Bug 2144] ipsec-gw: unreachable code
+Date: Tue, 17 Nov 2026 17:21:49 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: other
+X-Bugzilla-Component: examples
 X-Bugzilla-Version: 26.11
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: normal
@@ -34,7 +34,7 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-2143-3@https.bugs.dpdk.org/>
+Message-ID: <bug-2144-3@https.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: https://bugs.dpdk.org/
@@ -56,10 +56,10 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D2143
+https://bugs.dpdk.org/show_bug.cgi?id=3D2144
 
-            Bug ID: 2143
-           Summary: common/sfc_efx: unreachable code
+            Bug ID: 2144
+           Summary: ipsec-gw: unreachable code
            Product: DPDK
            Version: 26.11
           Hardware: All
@@ -67,20 +67,49 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D2143
             Status: UNCONFIRMED
           Severity: normal
           Priority: Normal
-         Component: other
+         Component: examples
           Assignee: dev@dpdk.org
           Reporter: stephen@networkplumber.org
   Target Milestone: ---
 
-Building with clang and -Wunreachable-code finds:
+Building with clang and -Wunreachable-code finds lots of dead error handlin=
+g:
 
-[1911/3982] Compiling C object
-drivers/librte_common_qat_base_lib.a.p/common_sfc_efx_base_efx_mon.c.o
-../drivers/common/sfc_efx/base/efx_mon.c:83:17: warning: code will never be
-executed [-Wunreachable-code]
-   83 |         emp->em_emop =3D emop;
-      |                        ^~~~
-1 warning generated.
+[3664/3982] Compiling C object
+examples/dpdk-ipsec-secgw.p/ipsec-secgw_parser.c.o
+../examples/ipsec-secgw/parser.c:439:3: warning: code will never be executed
+[-Wunreachable-code]
+  439 |                 goto error_exit;
+      |                 ^~~~~~~~~~~~~~~
+../examples/ipsec-secgw/parser.c:444:3: warning: code will never be executed
+[-Wunreachable-code]
+  444 |                 goto error_exit;
+      |                 ^~~~~~~~~~~~~~~
+../examples/ipsec-secgw/parser.c:467:4: warning: code will never be executed
+[-Wunreachable-code]
+  467 |                         goto error_exit;
+      |                         ^~~~~~~~~~~~~~~
+../examples/ipsec-secgw/parser.c:485:5: warning: code will never be executed
+[-Wunreachable-code]
+  485 |                                 goto error_exit;
+      |                                 ^~~~~~~~~~~~~~~
+../examples/ipsec-secgw/parser.c:494:5: warning: code will never be executed
+[-Wunreachable-code]
+  494 |                                 goto error_exit;
+      |                                 ^~~~~~~~~~~~~~~
+../examples/ipsec-secgw/parser.c:506:4: warning: code will never be executed
+[-Wunreachable-code]
+  506 |                         goto error_exit;
+      |                         ^~~~~~~~~~~~~~~
+../examples/ipsec-secgw/parser.c:514:4: warning: code will never be executed
+[-Wunreachable-code]
+  514 |                         goto error_exit;
+      |                         ^~~~~~~~~~~~~~~
+../examples/ipsec-secgw/parser.c:520:4: warning: code will never be executed
+[-Wunreachable-code]
+  520 |                         goto error_exit;
+      |                         ^~~~~~~~~~~~~~~
+8 warnings generated.
 
 --=20
 You are receiving this mail because:
