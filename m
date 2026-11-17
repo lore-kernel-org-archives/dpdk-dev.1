@@ -2,78 +2,80 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BBC8606A895
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 16:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9BA606A32C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 17:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.a=rsa-sha256 header.s=pfpt0220 header.b=H8l732Iy
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=gI+IgJdG
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5BC15402C3;
-	Tue, 17 Nov 2026 17:47:00 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTPS id 8527C402A4
- for <dev@dpdk.org>; Tue, 17 Nov 2026 17:46:59 +0100 (CET)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 6AHFSgas1878888 for <dev@dpdk.org>; Tue, 17 Nov 2026 08:46:58 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=Mqrf/qTPZt0UGFNXnRAmsKv
- +BxaY/+aT760UZuDTAQo=; b=H8l732IypLnW8qBA0bjXD15unGBcEYv5Ag8eWIk
- IgJbqg6XfmYKPVcIE+ymUB5gl4d0znchLcXcZlkeinP1F2i+ZYIfP6OynJ5/NLqX
- 6DbEWikNOLnmv/vB78F44UzHC5WfAexJjNEw3eEWbmvwwToOc8BkCCC8ZIgVQeO7
- vDEJfsk3zRRSM93ZOd1Bak9eXR5FUvDaZ6N3ZD/1K+mENqiYM17RjI7iHjwWTwf1
- 3Z6ZQHHRlkO0tXl6zPeX5l0BmVVyGN078nlmzluawBrlPgF5NcW9Dp5fiiqkMHFB
- yOUYMoVU45ZOLA+1K+lR4YKeHHhzGPoXsuxFsyydL9krxQg==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4j0kqn1vxa-3
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Tue, 17 Nov 2026 08:46:58 -0800 (PST)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Tue, 17 Nov 2026 08:46:44 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Tue, 17 Nov 2026 08:46:44 -0800
-Received: from cavium-System-Product-Name.. (unknown [10.28.38.196])
- by maili.marvell.com (Postfix) with ESMTP id B93793F704E;
- Tue, 17 Nov 2026 08:46:52 -0800 (PST)
-From: Harman Kalra <hkalra@marvell.com>
-To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
- <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
- <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>, "Mohit Kumar
- Parjapat" <mprajapat@marvell.com>
-CC: <dev@dpdk.org>
-Subject: [PATCH] common/cnxk: fix inline CPT IRQ double registration
-Date: Tue, 17 Nov 2026 22:16:46 +0530
-Message-ID: <20261117164646.236458-1-hkalra@marvell.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id 7AAF2402BF;
+	Tue, 17 Nov 2026 18:04:40 +0100 (CET)
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com
+ [209.85.215.181])
+ by mails.dpdk.org (Postfix) with ESMTPS id 18158402A4
+ for <dev@dpdk.org>; Tue, 17 Nov 2026 18:04:39 +0100 (CET)
+Received: by mail-pg1-f181.google.com with SMTP id
+ 41be03b00d2f7-cdb2893531bso73846a12.1
+ for <dev@dpdk.org>; Tue, 17 Nov 2026 09:04:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1794935078;
+ x=1795539878; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=1bJJivcvbRh1Wxl7SnAosdA2t+8StDwcQMURvzb6/mE=;
+ b=gI+IgJdGuk/7z4OHluBGqNMED4kwKCrf4f4CfSbhrkcFBvIN7zKplkTnPQ7aI0dSmP
+ DesLzDYR601LaR/sM5IKvLCnECLYHOvE9Mvs/Ph+0RyVDRjmcDijyA/0d3BRrss3Njem
+ egba6oV0aXYrWBrFfUJcVex3GL6Na8sFxdj86zk7AJhcLwziRY7gv6EfjK/9XMqXi1JX
+ NwHGtX9jDc5xT7wLirZyjVrlfxgvOSjaY3+ZzAN0cdgEDvVxeuEz37eD3r1S6ZYfHPNe
+ Spc3zHwvHqY/tWry1/LOwOH9qPgYi0gIeUdzymDr/ZMJDY60vV7EV4d10a8SMPAT0yD4
+ dYZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1794935078; x=1795539878;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=1bJJivcvbRh1Wxl7SnAosdA2t+8StDwcQMURvzb6/mE=;
+ b=F3bQ2C8WSsuEnD31Wieiba3yZtn0GjWJ0enyFEjh9LvK3LXASFdP3nNXCZrqSlz3lU
+ 8NLltLJcM0CdT+ZozKHqE1O0Rq9lnCy5zUmkAOJPR2yzNUB5cgcOrOS8oQGnFk98k23D
+ b8TXBYRPM+pX53o/x/Vve8+nzNrVZzaSyxIfrPsHmpRFuAuSoio/GIG86L7pVjJ3RRW8
+ Mat8859yUYJ9wjszvRIQzX2gYKqhaBtRN3prTO7jm8w4rVCAtm2Y6ZdsekW73l/Xw0LO
+ 5nVU35QuHLORvYX0veiYt+JrjAwu1ffmCVU+epTfGeMsI3jMABW66+lSSnBrs22C+14s
+ m+Nw==
+X-Gm-Message-State: APuU4Z8ZJAjM0rPllJhjS8hV0LHiOKi0e++vFOLWcbqcZZW/VU2z1CZZ
+ HC1NCf4SzfyS/nn2JYY230cWVwThVGHEdMQ7lnVs0qvAyqe3pPGjYPvBFshFSYo3VLJO3deF4Zk
+ 97AsSmcU=
+X-Gm-Gg: AZFdTZc3CNVYK5Td9gTO4allIFeOSUaluNPGOB3oSoY7w74R9jJ3ktTkqQ1MGtBr3Gx
+ Gal14Ih69qwQjfcy54ruVg2d8tDNoLZ+VY/kMv/vdY8FermJa85FpikqhIuPKAH68QdEsb9fIsZ
+ j7Ef2mtaWKn/oH+pJIKi5Dxr+vPZXSKp6YWhpcCpBX3hnNjxk05mel9GSgS2pnOcgWxf/51GcN6
+ DA2kx/ELN7hxDUAKcdAmVrX3sQSA+9wSPkdoTcJsk8WpYNLJNWI1VEcVx6B2GwPqvodCLSpwp/M
+ RW1MsL3bEpcfBsCqQ6qKNKS2m7/ocs0BThuvP7eTeC4aPrNiOVk9YneRchfu3zd5r3DPqGOg2hH
+ 0uijPqt64IaEJXUm0yU9vudKPLL2uCLuHbqW838uyU+ARSBgkg4QwF2dD7X2gGChwzwDROngLTV
+ A6czUf0k4+C+ef/ziaOEEtG7rThXgDXztm4eyDUiYS8zbZFWfvwv28SER9Atuk8UP9f6xCUBadW
+ zXIxnrO5JiH4GhoUBWgyVEB0z8qATzCNwZcqO2c0S/KBYsred4Wm1PG7xzkATBd6WV3mKoRRx0M
+ 2HJCi3qno6gSKax8P9u0aVXsohHUMZ90YKHuaFhqNszWfFvCazDNc9yl5bVUIKDZG5+QvGSdWKC
+ qxrhMeMSB2Y/0G5iths4=
+X-Received: by 2002:a17:90b:55c7:b0:3b0:d0c5:c110 with SMTP id
+ 98e67ed59e1d1-3b3d07c6131mr45200a91.56.1794935078126; 
+ Tue, 17 Nov 2026 09:04:38 -0800 (PST)
+Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-3b1b39d73c9sm12130493a91.2.2026.11.17.09.04.35
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 17 Nov 2026 09:04:37 -0800 (PST)
+Date: Tue, 17 Nov 2026 09:04:32 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: "Renyong Wan" <wanry@yunsilicon.com>
+Cc: <dev@dpdk.org>, <nana@yunsilicon.com>, <qianr@yunsilicon.com>,
+ <zhangxx@yunsilicon.com>, <xudw@yunsilicon.com>
+Subject: Re: [PATCH v4 0/3] net/xsc: fix issues reported by GCC analyzer
+Message-ID: <20261117090432.5fe1115b@phoenix.local>
+In-Reply-To: <1794914060.606144@yunsilicon.com>
+References: <1794914060.606144@yunsilicon.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=PZpqFShd c=1 sm=1 tr=0 ts=6afc8502 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=zJRp6_cAMcgA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=QXcCYyLzdtTjyudCfB6f:22 a=M5GUcnROAAAA:8 a=bp1g5Iz1D7c7guLF1_8A:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTE3MDA2NiBTYWx0ZWRfX8ZIRHVB/WtGE
- UNfT1+cIWc/iajXhWIjRh47Ix9iStkamjqAX0QxvjrfXAq6kHabif34FSF1xrW9rJWN1aYLqvxm
- p+pmt4bZ4j+CTsc2dpEsuR1/lU1K2Ls=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTE3MDA2NiBTYWx0ZWRfX5x4CDPWpnCAP
- f0CghaSL1VDdwEtI2fYUAUUwjWHmshaXaH1I+//pOybDCNvj/NXrx+vCBQ5QWDDtDbe+JlwP2BW
- CWdPoXpjjBv3TfvYATJQCxHsIwPNed0NmahKn5mkCQZ5Mpb7YU/iSZ9G2vq1aBk3994cSWyxFY/
- FdIKRbJwz8JA4mvj5YI/5quDqL3qXo6WvQZIB5ld4GpXOuaIne3v2ffz6rys/ogC04uy82ZzAK/
- rpaRaLEfDx1sMU3HfS/nbsvKBhXoTKaDalgwz2oDL9JIdvUl7h8NAT3JX5qfT/obgowGofMs5VG
- QpntPW+QarZcOn5Ew4hw/Qvv6+dWP0KgWNXjTygpWBZxP7xI6eddc8wh1sOLakcvawSfJRTqkKe
- lsN1mWq4E8Tx3yHSVC73sS8rTdNs/SjNkaNIGTT6hxqqNk41R765D0T454JRXkJqUEjWcD6q6Z3
- jMCheqtjOhr/oJAZUZQ==
-X-Proofpoint-ORIG-GUID: wAoj0nO6hQy7gecnBcvgjjHVIvVWfkxf
-X-Proofpoint-GUID: wAoj0nO6hQy7gecnBcvgjjHVIvVWfkxf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-17_03,2026-11-16_01,2025-10-01_01
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,66 +85,42 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-From: Mohit Kumar Parjapat <mprajapat@marvell.com>
+On Tue, 17 Nov 2026 19:14:20 +0800
+"Renyong Wan" <wanry@yunsilicon.com> wrote:
 
-Defer inbound CPT LF IRQ setup to nix_inl_cpt_cq_inb_setup() when
-CQ is enabled so the same MSI-X vector is not registered twice.
+> v4:
+> - free the jumbo buffer only when the last representor stops the device, it
+>   is shared by every port and their Rx queues still point at it
+> 
+> v3:
+> - free the jumbo buffer in xsc_dev_close(), the device removal path does not
+>   go through xsc_dev_uninit()
+> - drop the redundant parentheses reported by checkpatch, no functional
+>   change
+> 
+> v2:
+> - address the AI review of v1: allocate the jumbo buffer once per device,
+>   fail the queue setup when there is no IOVA, and free it on device close
+> - fix the leak in xsc_dev_init() and the unchecked rte_malloc_socket()
+> - rename the jumbo buffer fields, they held the opposite of what their
+>   names say
+> 
+> Renyong Wan (3):
+>   net/xsc: fix jumbo buffer allocation and leak
+>   net/xsc: fix leak and missing null check
+>   net/xsc: rename jumbo buffer fields
+> 
+>  drivers/net/xsc/xsc_dev.c    | 17 ++++++++++--
+>  drivers/net/xsc/xsc_dev.h    |  4 +--
+>  drivers/net/xsc/xsc_ethdev.c |  6 ++++
+>  drivers/net/xsc/xsc_rx.c     | 53 ++++++++++++++++++++----------------
+>  4 files changed, 51 insertions(+), 29 deletions(-)
 
-Fixes: 42a7770cd0c9 ("common/cnxk: use one interrupt handle per vector")
-
-Signed-off-by: Mohit Kumar Parjapat <mprajapat@marvell.com>
----
- drivers/common/cnxk/roc_nix_inl_dev.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/common/cnxk/roc_nix_inl_dev.c b/drivers/common/cnxk/roc_nix_inl_dev.c
-index bfdeef2688..f0703f3154 100644
---- a/drivers/common/cnxk/roc_nix_inl_dev.c
-+++ b/drivers/common/cnxk/roc_nix_inl_dev.c
-@@ -420,6 +420,18 @@ nix_inl_nix_ipsec_cfg(struct nix_inl_dev *inl_dev, bool ena)
- 	return rc;
- }
- 
-+/*
-+ * With CPT CQ enabled, inbound LF IRQs are registered later by
-+ * nix_inl_cpt_cq_inb_setup() with the CQ-aware done callback.
-+ */
-+static bool
-+nix_inl_cpt_irq_defer(struct nix_inl_dev *inl_dev, int lf_id)
-+{
-+	return roc_feature_nix_has_cpt_cq_support() && inl_dev->cpt_cq_ena &&
-+	       lf_id >= inl_dev->inb_cpt_lf_id &&
-+	       lf_id < inl_dev->inb_cpt_lf_id + inl_dev->nb_inb_cptlfs;
-+}
-+
- static int
- nix_inl_cpt_setup(struct nix_inl_dev *inl_dev, bool inl_dev_sso)
- {
-@@ -458,7 +470,7 @@ nix_inl_cpt_setup(struct nix_inl_dev *inl_dev, bool inl_dev_sso)
- 		lf->msixoff = inl_dev->cpt_msixoff[i];
- 		lf->pci_dev = inl_dev->pci_dev;
- 
--		rc = cpt_lf_init(lf, false);
-+		rc = cpt_lf_init(lf, nix_inl_cpt_irq_defer(inl_dev, i));
- 		if (rc) {
- 			plt_err("Failed to initialize CPT LF, rc=%d", rc);
- 			goto lf_free;
-@@ -485,7 +497,7 @@ nix_inl_cpt_setup(struct nix_inl_dev *inl_dev, bool inl_dev_sso)
- lf_fini:
- 	for (i = 0; i < inl_dev->nb_cptlf; i++) {
- 		struct roc_cpt_lf *lf = &inl_dev->cpt_lf[i];
--		cpt_lf_fini(lf, false);
-+		cpt_lf_fini(lf, nix_inl_cpt_irq_defer(inl_dev, i));
- 	}
- lf_free:
- 	rc |= cpt_lfs_free(dev);
--- 
-2.43.0
-
+Too late for 26.11 but added to next-net to be picked up in 27.03
