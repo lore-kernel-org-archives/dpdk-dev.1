@@ -2,30 +2,30 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3DBA606A32C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 15:58:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53BC3606A336
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 15:58:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=lsr7BQnM
+	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=gY4YJvlp
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 65957406A2;
-	Tue, 17 Nov 2026 16:57:47 +0100 (CET)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.220])
- by mails.dpdk.org (Postfix) with ESMTPS id 5DCB1402EB
- for <dev@dpdk.org>; Tue, 17 Nov 2026 16:57:39 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 4DA47409FA;
+	Tue, 17 Nov 2026 16:57:48 +0100 (CET)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.222])
+ by mails.dpdk.org (Postfix) with ESMTPS id 5564B402DF;
+ Tue, 17 Nov 2026 16:57:39 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=mnfQVfoSm1rEHtkJ+al4iLIgFRGgw9ntbfSqVrgHYFQ=;
- b=lsr7BQnMvJrkfHpVJx4HByis3tLnXJzcLZfmdSn+YHf5zSk/YpYtGI87oGh03w
- WB3wpmUtiVyDI3N0Dk9ahiUVUOPvXX7JCEjy+wQ9iO2Dgort5S7pqvaJ1M+6EhUp
- 6BSRLRtmCEy5erqs7zyunazem2f4NMZ+lHEPu6rgU2mhU=
+ MIME-Version; bh=CA2LyP21Xg1eJ0dlOmeBzMtO8IqZLkm0H39RIoiwelA=;
+ b=gY4YJvlpxv/ls5+dtnRFWYQpOI9E27RCPjpp3//vnc+hyV/uxs/AYtfdq3vR6f
+ WF3/eYLh8cXKf4gTXLPmVFdNeJPaTs2ZT7NgBRGyk1Iru+ROZh7ItMQwcuOlAYm2
+ O0V7KgZjv1mAV8fc0K2/ri8PoIA/O3E0+jX6UPxTax0H4=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v7 11/29] net/hinic3: add SP230 Rx queue interrupt handling
-Date: Tue, 17 Nov 2026 23:56:52 +0800
-Message-ID: <20261117155711.1048-12-yejiacheng4@h-partners.com>
+ Anatoly Burakov <anatoly.burakov@intel.com>, stable@dpdk.org
+Subject: [PATCH v7 10/29] net/hinic3: fix pseudo-header checksum calculation
+Date: Tue, 17 Nov 2026 23:56:51 +0800
+Message-ID: <20261117155711.1048-11-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.53.0.windows.2
 In-Reply-To: <20261117155711.1048-1-yejiacheng4@h-partners.com>
 References: <20261109162033.1144-1-yejiacheng4@h-partners.com>
@@ -33,13 +33,13 @@ References: <20261109162033.1144-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Ac8vCgC3S5drefxqC7WJBQ--.4821S13
-X-Coremail-Antispam: 1Uf129KBjvJXoWxWr45tr15Jry7XryDXw1xAFb_yoWrXw15pF
- W5KF9Yyry8XF429rsxCa17uw13Wws7KryUWF97Ca4j9ryaqrn5XFyUJa45ZFn2krWDA3W2
- vr4rCayqgF1jq3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Uio7tUUUUU=
+X-CM-TRANSID: Ac8vCgC3S5drefxqC7WJBQ--.4821S12
+X-Coremail-Antispam: 1Uf129KBjvJXoW3tw4rAw1UKFW3XF4Dur1xKrg_yoWktFWrpF
+ Z8GFW3JFZ8JrWUXr4kWwnxCwn0q3s8Wr92k3s5KF1q9FyfJrn7ta40qFWj9r15tw47AFnF
+ vFn8Aa9rWF1UKFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j83kZUUUUU=
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNxBUXmr8eXADoQAA3Q
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNxBUXmr8eXADnwAA3u
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,108 +56,324 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-SP230 raises the aggregated Rx interrupt even when the application does
-not request queue interrupts, and nothing acknowledges it. The HTN tile
-has no microcode to mask it and its RQ context has no invalid-INTR
-encoding, unlike the STN tile used by SP560.
+SP620 expects the driver to precompute the L4 pseudo-header checksum for
+TCP/UDP checksum and TSO offload; without it the hardware writes a wrong
+checksum. Compute the inner and outer pseudo-header checksums in the Tx
+prepare callback, with the L4 protocol derived from the offload flags.
 
-The INTR field is a plain vector index, so 0 selects the AEQ vector and
-every Rx queue raises there. With per-queue MSI-X vectors available,
-program the queue vector and leave it disabled: Rx keeps polling and no
-interrupt is delivered. hinic3_dev_rx_queue_intr_enable() returns 0 for
-SP230 without touching the hardware, so an application that needs Rx
-interrupts must set intr_conf.rxq at configure time.
+The checksum is written back into the packet headers, so reject a shared
+or indirect mbuf only when the offload modifies the packet: L4 checksum,
+TSO and outer UDP checksum. Reject a packet whose headers do not fit in
+the first segment.
+
+Fixes: 7608f0367d5a ("net/hinic3: add basic ethdev operations")
+Cc: stable@dpdk.org
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- drivers/net/hinic3/hinic3_ethdev.c | 36 +++++++++++++++++++++++++-----
- 1 file changed, 30 insertions(+), 6 deletions(-)
+ drivers/net/hinic3/hinic3_ethdev.c |   1 +
+ drivers/net/hinic3/hinic3_ethdev.h |   1 +
+ drivers/net/hinic3/hinic3_tx.c     | 217 ++++++++++++++++++++++++++---
+ drivers/net/hinic3/hinic3_tx.h     |   1 +
+ 4 files changed, 204 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index 391967dbe4..75f2f5f6fc 100644
+index 69b7a23d6a..391967dbe4 100644
 --- a/drivers/net/hinic3/hinic3_ethdev.c
 +++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -1505,6 +1505,9 @@ hinic3_dev_rx_queue_intr_enable(struct rte_eth_dev *dev, uint16_t queue_id)
- 	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
- 	uint16_t msix_intr;
+@@ -3670,6 +3670,7 @@ hinic3_dev_init(struct rte_eth_dev *eth_dev)
  
-+	if (HINIC3_IS_SP230_NIC(nic_dev) && !dev->data->dev_conf.intr_conf.rxq)
-+		return 0;
+ 	eth_dev->rx_pkt_burst = hinic3_recv_pkts;
+ 	eth_dev->tx_pkt_burst = hinic3_xmit_pkts;
++	eth_dev->tx_pkt_prepare = hinic3_prep_pkts;
+ 
+ 	return hinic3_func_init(eth_dev);
+ }
+diff --git a/drivers/net/hinic3/hinic3_ethdev.h b/drivers/net/hinic3/hinic3_ethdev.h
+index c46fcfcbec..8bbab2ad53 100644
+--- a/drivers/net/hinic3/hinic3_ethdev.h
++++ b/drivers/net/hinic3/hinic3_ethdev.h
+@@ -41,6 +41,7 @@
+ #define HINIC3_PKT_TX_OUTER_IP_CKSUM	RTE_MBUF_F_TX_OUTER_IP_CKSUM
+ #define HINIC3_PKT_TX_OUTER_UDP_CKSUM	RTE_MBUF_F_TX_OUTER_UDP_CKSUM
+ #define HINIC3_PKT_TX_OUTER_IPV6	RTE_MBUF_F_TX_OUTER_IPV6
++#define HINIC3_PKT_TX_OUTER_IPV4	RTE_MBUF_F_TX_OUTER_IPV4
+ #define HINIC3_PKT_RX_LRO		RTE_MBUF_F_RX_LRO
+ #define HINIC3_PKT_TX_L4_NO_CKSUM	RTE_MBUF_F_TX_L4_NO_CKSUM
+ 
+diff --git a/drivers/net/hinic3/hinic3_tx.c b/drivers/net/hinic3/hinic3_tx.c
+index 6b2bffb14e..ca84118b27 100644
+--- a/drivers/net/hinic3/hinic3_tx.c
++++ b/drivers/net/hinic3/hinic3_tx.c
+@@ -285,6 +285,28 @@ hinic3_tx_done_cleanup(void *txq, uint32_t free_cnt)
+ 	return hinic3_xmit_mbuf_cleanup(tx_queue, try_free_cnt);
+ }
+ 
++static uint16_t
++hinic3_ipv6_phdr_cksum(const struct rte_ipv6_hdr *ipv6_hdr, uint16_t l3_len,
++		       uint8_t proto, uint64_t ol_flags)
++{
++	uint32_t sum;
++	rte_be32_t l4_len;
++	rte_be32_t l4_proto;
 +
- 	if (!rte_intr_dp_is_en(intr_handle) || !intr_handle->intr_vec)
- 		return 0;
++	l4_proto = rte_cpu_to_be_32(proto);
++	if (ol_flags & HINIC3_PKT_TX_TCP_SEG)
++		l4_len = 0;
++	else
++		l4_len = rte_cpu_to_be_16(rte_be_to_cpu_16(ipv6_hdr->payload_len) -
++					  l3_len + sizeof(*ipv6_hdr));
++
++	sum = __rte_raw_cksum(ipv6_hdr->src_addr.a,
++			      sizeof(ipv6_hdr->src_addr.a) + sizeof(ipv6_hdr->dst_addr.a), 0);
++	sum = __rte_raw_cksum(&l4_len, sizeof(l4_len), sum);
++	sum = __rte_raw_cksum(&l4_proto, sizeof(l4_proto), sum);
++
++	return __rte_raw_cksum_reduce(sum);
++}
+ /**
+  * Prepare the data packet to be sent and calculate the internal L3 offset.
+  *
+@@ -297,19 +319,111 @@ hinic3_tx_done_cleanup(void *txq, uint32_t free_cnt)
+  * @return
+  * 0 as success, -EINVAL as failure.
+  */
+-static int
+-hinic3_tx_offload_pkt_prepare(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *mbuf,
+-			      uint16_t *inner_l3_offset)
++static inline uint16_t
++hinic3_calculate_l4_cksum(struct rte_mbuf *mbuf, uint16_t inner_l3_offset,
++			  uint16_t l3_len, uint8_t l4_proto)
++{
++	struct rte_ipv4_hdr *ipv4_hdr;
++	struct rte_ipv6_hdr *ipv6_hdr;
++	uint64_t ol_flags = mbuf->ol_flags;
++
++	if (ol_flags & HINIC3_PKT_TX_IPV4) {
++		ipv4_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_ipv4_hdr *,
++						   inner_l3_offset);
++
++		if (ol_flags & HINIC3_PKT_TX_IP_CKSUM)
++			ipv4_hdr->hdr_checksum = 0;
++
++		return rte_ipv4_phdr_cksum(ipv4_hdr, ol_flags);
++	}
++
++	ipv6_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_ipv6_hdr *,
++					   inner_l3_offset);
++
++	return hinic3_ipv6_phdr_cksum(ipv6_hdr, l3_len, l4_proto, ol_flags);
++}
++
++static inline void hinic3_calculate_outer_udp_checksum(struct rte_mbuf *mbuf,
++						       uint16_t outer_l3_offset)
++{
++	struct rte_ipv4_hdr *ipv4_hdr;
++	struct rte_ipv6_hdr *ipv6_hdr;
++	struct rte_udp_hdr *udp_hdr;
++	uint64_t ol_flags = mbuf->ol_flags;
++
++	if (ol_flags & HINIC3_PKT_TX_OUTER_IPV4) {
++		ipv4_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_ipv4_hdr *, outer_l3_offset);
++		if (ol_flags & HINIC3_PKT_TX_OUTER_IP_CKSUM)
++			ipv4_hdr->hdr_checksum = 0;
++		udp_hdr = (struct rte_udp_hdr *)((char *)ipv4_hdr + mbuf->outer_l3_len);
++		udp_hdr->dgram_cksum = rte_ipv4_phdr_cksum(ipv4_hdr, ol_flags);
++	} else if (ol_flags & HINIC3_PKT_TX_OUTER_IPV6) {
++		ipv6_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_ipv6_hdr *, outer_l3_offset);
++		udp_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_udp_hdr *,
++						  (outer_l3_offset + mbuf->outer_l3_len));
++		udp_hdr->dgram_cksum = hinic3_ipv6_phdr_cksum(ipv6_hdr, mbuf->outer_l3_len,
++							      IPPROTO_UDP, ol_flags);
++	}
++}
++
++static inline void hinic3_calculate_outer_phdr_checksum(struct rte_mbuf *mbuf,
++							uint16_t outer_l3_offset)
++{
++	uint64_t ol_flags = mbuf->ol_flags;
++
++	if (ol_flags & HINIC3_PKT_TX_OUTER_UDP_CKSUM)
++		hinic3_calculate_outer_udp_checksum(mbuf, outer_l3_offset);
++}
++
++static inline void hinic3_calculate_phdr_checksum(struct rte_mbuf *mbuf,
++						  uint16_t inner_l3_offset)
+ {
+ 	uint64_t ol_flags = mbuf->ol_flags;
++	struct rte_tcp_hdr *tcp_hdr;
++	struct rte_udp_hdr *udp_hdr;
++	uint16_t l3_len = mbuf->l3_len;
++	uint16_t l4_offset;
++
++	l4_offset = inner_l3_offset + l3_len;
++
++	switch (ol_flags & HINIC3_PKT_TX_L4_MASK) {
++	case HINIC3_PKT_TX_UDP_CKSUM:
++		udp_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_udp_hdr *, l4_offset);
++		udp_hdr->dgram_cksum = hinic3_calculate_l4_cksum(mbuf, inner_l3_offset,
++								 l3_len, IPPROTO_UDP);
++		break;
++	case HINIC3_PKT_TX_TCP_CKSUM:
++		tcp_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_tcp_hdr *, l4_offset);
++		tcp_hdr->cksum = hinic3_calculate_l4_cksum(mbuf, inner_l3_offset,
++							   l3_len, IPPROTO_TCP);
++		break;
++	case HINIC3_PKT_TX_SCTP_CKSUM:
++		/* Sctp csum no need to calculate pseudo-header */
++		break;
++	default:
++		if (ol_flags & HINIC3_PKT_TX_TCP_SEG) {
++			tcp_hdr = rte_pktmbuf_mtod_offset(mbuf, struct rte_tcp_hdr *, l4_offset);
++			tcp_hdr->cksum = hinic3_calculate_l4_cksum(mbuf, inner_l3_offset,
++								   l3_len, IPPROTO_TCP);
++		}
++		break;
++	}
++}
  
-@@ -1767,11 +1770,8 @@ hinic3_init_rxq_msix_attr(void *hwdev, uint16_t msix_index)
- 	info.resend_timer_cfg = HINIC3_TXRX_MSIX_RESEND_TIMER_CFG;
- 	info.msix_index = msix_index;
- 	err = hinic3_set_interrupt_cfg(hwdev, info);
--	if (err) {
--		PMD_DRV_LOG(ERR, "Set msix attr failed, msix_index %d",
--			    msix_index);
-+	if (err)
- 		return -EFAULT;
--	}
+-	if ((ol_flags & HINIC3_PKT_TX_TUNNEL_MASK)) {
+-		if (!(((ol_flags & HINIC3_PKT_TX_TUNNEL_VXLAN) &&
+-				HINIC3_SUPPORT_VXLAN_OFFLOAD(nic_dev)) ||
+-		      ((ol_flags & HINIC3_PKT_TX_TUNNEL_GENEVE) &&
+-				HINIC3_SUPPORT_GENEVE_OFFLOAD(nic_dev)) ||
+-		      ((ol_flags & HINIC3_PKT_TX_TUNNEL_IPIP) &&
+-				HINIC3_SUPPORT_IPXIP_OFFLOAD(nic_dev))))
++static int
++hinic3_get_inner_l3_offset(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *mbuf,
++			   uint16_t *inner_l3_offset)
++{
++	uint64_t ol_flags = mbuf->ol_flags;
++	uint64_t tunnel_type = ol_flags & HINIC3_PKT_TX_TUNNEL_MASK;
++
++	if (tunnel_type) {
++		if (!((tunnel_type == HINIC3_PKT_TX_TUNNEL_VXLAN &&
++		       HINIC3_SUPPORT_VXLAN_OFFLOAD(nic_dev)) ||
++		      (tunnel_type == HINIC3_PKT_TX_TUNNEL_GENEVE &&
++		       HINIC3_SUPPORT_GENEVE_OFFLOAD(nic_dev)) ||
++		      (tunnel_type == HINIC3_PKT_TX_TUNNEL_IPIP &&
++		       HINIC3_SUPPORT_IPXIP_OFFLOAD(nic_dev))))
+ 			return -EINVAL;
+ 	}
  
+@@ -318,13 +432,28 @@ hinic3_tx_offload_pkt_prepare(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *m
+ 		return -EINVAL;
+ #endif
+ 	/* Support tunnel. */
+-	if ((ol_flags & HINIC3_PKT_TX_TUNNEL_MASK)) {
+-		if ((ol_flags & HINIC3_PKT_TX_OUTER_IP_CKSUM) ||
+-		    (ol_flags & HINIC3_PKT_TX_OUTER_IPV6) ||
+-		    (ol_flags & HINIC3_PKT_TX_TCP_SEG)) {
++	if (tunnel_type) {
++		/*
++		 * For IPv6-in-IPv6 packets, ol_flags cannot be used to determine
++		 * whether the delivered port offload value contains UDP and IP
++		 * hardware offload flags, so it is impossible to determine how
++		 * l2_len is populated. Here, the property that l2_len is 0 for
++		 * IP-in-IP is used to distinguish population modes. If
++		 * mbuf->l2_len == 0, the upper layer has enabled UDP and IP
++		 * hardware offload flags; the inner L3 offset is then
++		 * outer_l2_len + outer_l3_len.
++		 */
++		if (tunnel_type == HINIC3_PKT_TX_TUNNEL_IPIP) {
++			if (mbuf->l2_len == 0)
++				*inner_l3_offset = mbuf->outer_l2_len + mbuf->outer_l3_len;
++			else
++				*inner_l3_offset = mbuf->l2_len;
++		} else if ((ol_flags & HINIC3_PKT_TX_OUTER_IP_CKSUM) ||
++			   (ol_flags & HINIC3_PKT_TX_OUTER_UDP_CKSUM) ||
++			   (ol_flags & HINIC3_PKT_TX_TCP_SEG)) {
+ 			/*
+ 			 * For this senmatic, l2_len of mbuf means
+-			 * len(out_udp + vxlan + in_eth).
++			 * len(out_udp + vxlan/geneve + in_eth).
+ 			 */
+ 			*inner_l3_offset = mbuf->l2_len + mbuf->outer_l2_len +
+ 					   mbuf->outer_l3_len;
+@@ -343,6 +472,62 @@ hinic3_tx_offload_pkt_prepare(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *m
  	return 0;
  }
-@@ -1800,6 +1800,10 @@ hinic3_deinit_rxq_intr(struct rte_eth_dev *dev)
-  * - -ENOTSUP if MSI-X interrupts are not supported.
-  * - Error code if enabling event file descriptors fails.
-  * - -ENOMEM if allocating interrupt vectors fails.
-+ *
-+ * On SP230 with per-queue MSI-X vectors, when the application does not
-+ * request Rx interrupts, the queue vector is named in each RQ context but
-+ * never enabled, and no interrupt resources are allocated.
-  */
- static int
- hinic3_init_rxq_intr(struct rte_eth_dev *dev)
-@@ -1812,8 +1816,25 @@ hinic3_init_rxq_intr(struct rte_eth_dev *dev)
  
- 	intr_handle = dev->intr_handle;
- 	nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
--	if (!dev->data->dev_conf.intr_conf.rxq)
 +
-+	if (!dev->data->dev_conf.intr_conf.rxq) {
-+		/*
-+		 * SP230 raises the Rx MSI-X vector even without Rx interrupts.
-+		 * Name a valid vector in the RQ context; the vector is never
-+		 * enabled, so no interrupt is reported.
-+		 */
-+		if (!HINIC3_IS_SP230_NIC(nic_dev) ||
-+		    !rte_intr_cap_multiple(intr_handle))
-+			return 0;
++uint16_t
++hinic3_prep_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
++{
++	struct hinic3_txq *txq = tx_queue;
++	struct hinic3_nic_dev *nic_dev = txq->nic_dev;
++	struct rte_mbuf *mbuf;
++	uint16_t inner_l3_offset;
++	int ret;
++	int i;
 +
-+		for (i = 0; i < dev->data->nb_rx_queues; i++) {
-+			rxq = dev->data->rx_queues[i];
-+			rxq->dp_intr_en = 1;
-+			rxq->msix_entry_idx = (uint16_t)(i + HINIC3_RX_VEC_START);
++	for (i = 0; i != nb_pkts; i++) {
++		mbuf = tx_pkts[i];
++
++		if (!(mbuf->ol_flags & HINIC3_TX_OFFLOAD_MASK))
++			continue;
++
++		ret = hinic3_get_inner_l3_offset(nic_dev, mbuf, &inner_l3_offset);
++		if (unlikely(ret)) {
++			rte_errno = -ret;
++			return i;
 +		}
 +
- 		return 0;
++		if (!HINIC3_IS_SP230_NIC(nic_dev)) {
++			/*
++			 * The pseudo-header checksum is written back into the
++			 * packet's L3/L4 header, which would corrupt data still
++			 * referenced by another consumer for a shared or indirect
++			 * mbuf, so fail those packets instead. Only L4 checksum,
++			 * TSO and outer UDP checksum write into the packet.
++			 */
++			if (unlikely((mbuf->ol_flags & (HINIC3_PKT_TX_L4_MASK |
++							HINIC3_PKT_TX_TCP_SEG |
++							HINIC3_PKT_TX_OUTER_UDP_CKSUM)) &&
++				     (rte_mbuf_refcnt_read(mbuf) > 1 ||
++				      RTE_MBUF_CLONED(mbuf)))) {
++				rte_errno = EINVAL;
++				return i;
++			}
++
++			/* The headers must be contiguous in the first segment. */
++			if (unlikely(rte_pktmbuf_data_len(mbuf) <
++				     inner_l3_offset + mbuf->l3_len + mbuf->l4_len)) {
++				rte_errno = ENOTSUP;
++				return i;
++			}
++
++			/* Process the outer and inner pseudo-header checksums. */
++			hinic3_calculate_outer_phdr_checksum(mbuf, mbuf->outer_l2_len);
++			hinic3_calculate_phdr_checksum(mbuf, inner_l3_offset);
++		}
 +	}
- 
- 	if (!rte_intr_cap_multiple(intr_handle)) {
- 		PMD_DRV_LOG(ERR, "Rx queue interrupts require MSI-X interrupts (vfio-pci driver)");
-@@ -1831,8 +1852,8 @@ hinic3_init_rxq_intr(struct rte_eth_dev *dev)
- 	intr_handle->intr_vec =
- 		rte_zmalloc("hinic_intr_vec", nb_rx_queues * sizeof(int), 0);
- 	if (intr_handle->intr_vec == NULL) {
--		PMD_DRV_LOG(ERR, "Failed to allocate intr_vec");
- 		rte_intr_efd_disable(intr_handle);
-+		PMD_DRV_LOG(ERR, "Failed to allocate intr_vec");
- 		return -ENOMEM;
++
++	return i;
++}
++
+ void
+ hinic3_tx_set_normal_task_offload(struct hinic3_wqe_info *wqe_info,
+ 				  struct hinic3_sq_wqe_combo *wqe_combo)
+@@ -622,7 +807,7 @@ hinic3_get_tx_offload(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *mbuf,
  	}
- 	intr_handle->vec_list_size = nb_rx_queues;
-@@ -1847,6 +1868,9 @@ hinic3_init_rxq_intr(struct rte_eth_dev *dev)
- 		err = hinic3_init_rxq_msix_attr(nic_dev->hwdev,
- 						rxq->msix_entry_idx);
- 		if (err) {
-+			PMD_DRV_LOG(ERR,
-+				    "Set msix attr failed, msix_index %d",
-+				    rxq->msix_entry_idx);
- 			hinic3_deinit_rxq_intr(dev);
- 			return err;
- 		}
+ 
+ 	wqe_info->offload = 1;
+-	err = hinic3_tx_offload_pkt_prepare(nic_dev, mbuf, &inner_l3_offset);
++	err = hinic3_get_inner_l3_offset(nic_dev, mbuf, &inner_l3_offset);
+ 	if (err)
+ 		return err;
+ 
+diff --git a/drivers/net/hinic3/hinic3_tx.h b/drivers/net/hinic3/hinic3_tx.h
+index e0ed9908ad..3b1580dd3a 100644
+--- a/drivers/net/hinic3/hinic3_tx.h
++++ b/drivers/net/hinic3/hinic3_tx.h
+@@ -394,6 +394,7 @@ void hinic3_flush_txqs(struct hinic3_nic_dev *nic_dev);
+ void hinic3_free_txq_mbufs(struct hinic3_txq *txq);
+ void hinic3_free_all_txq_mbufs(struct hinic3_nic_dev *nic_dev);
+ uint16_t hinic3_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
++uint16_t hinic3_prep_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
+ int hinic3_stop_sq(struct hinic3_txq *txq);
+ int hinic3_start_all_sqs(struct rte_eth_dev *eth_dev);
+ int hinic3_tx_done_cleanup(void *txq, uint32_t free_cnt);
 -- 
 2.33.0
 
