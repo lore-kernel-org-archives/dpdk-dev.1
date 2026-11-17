@@ -2,30 +2,30 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A06606A31C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 15:59:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48968606A32C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 15:59:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=SH0+U6l4
+	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=KnrhiEGU
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2E38840A76;
-	Tue, 17 Nov 2026 16:57:50 +0100 (CET)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.2])
- by mails.dpdk.org (Postfix) with ESMTPS id E3C22402DF
+	by mails.dpdk.org (Postfix) with ESMTP id 1532D40A79;
+	Tue, 17 Nov 2026 16:57:51 +0100 (CET)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.222])
+ by mails.dpdk.org (Postfix) with ESMTPS id 09C8C402EB
  for <dev@dpdk.org>; Tue, 17 Nov 2026 16:57:40 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=+pKMDBVdgNWLG+zxnXyfb/6V3lY7ATZCfFDDeNcaVSE=;
- b=SH0+U6l4P7sH0LfA4Y6rBA8WeNbElON5BNag3JcGIO4NDobMtJcJFTkfJh50As
- ZdEDbcThEdXmLGmHJIyC02p4vj+brsbT2d3gCAhsMxyy4q9wdJ/62v14RvgcvwuB
- R/yBDCaywXrLBk1c7N+VA9tYVeIYUo+68pbEQlq/MeXBQ=
+ MIME-Version; bh=mEKIvFwX8r9YtlMSFVVmomSfi3Y8g1KIjy7GHd1GTrY=;
+ b=KnrhiEGUzjHWmmavrguaT5OI7eRFg5QRKZDuDnxk639hHQqZpoJeaDiJ1ofSGW
+ AX52BzqymFtr3vNJljm+U2NDhB/GtpfDyoQGba9D3g3ouBX1xKuuftzD+VwFvbI2
+ AB8zzchFxXZZZRMRwZ0PE37FLvt82BqkYCoqu6a1OIJso=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
  Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v7 09/29] net/hinic3: add NIC type identification
-Date: Tue, 17 Nov 2026 23:56:50 +0800
-Message-ID: <20261117155711.1048-10-yejiacheng4@h-partners.com>
+Subject: [PATCH v7 16/29] net/hinic3: add COS mask and COS map support
+Date: Tue, 17 Nov 2026 23:56:57 +0800
+Message-ID: <20261117155711.1048-17-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.53.0.windows.2
 In-Reply-To: <20261117155711.1048-1-yejiacheng4@h-partners.com>
 References: <20261109162033.1144-1-yejiacheng4@h-partners.com>
@@ -33,13 +33,13 @@ References: <20261109162033.1144-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Ac8vCgC3S5drefxqC7WJBQ--.4821S11
-X-Coremail-Antispam: 1Uf129KBjvJXoWxCryUKF4DAr4kZF18AFy8uFg_yoW5Xr13pa
- y7Ka97ZFWDGw4vv3ZxGa9IyF15Za1xu34jga4kAas09F15Zr1UAa4UJrWSyrnxKrW7uFy2
- vF12kw1v93Wjqw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UtsqAUUUUU=
+X-CM-TRANSID: Ac8vCgC3S5drefxqC7WJBQ--.4821S18
+X-Coremail-Antispam: 1Uf129KBjvJXoWxKFykJr4DGF13uFW5WrWkXrb_yoWfGr47pF
+ WUGayDAFZrtr4Utwn7J3yDA3W5X3sFk342k340kas09Fs5ZFyDZ34UKFW7Ar4FqrW7AF17
+ Zr4jk39F9w10qwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07ULzV8UUUUU=
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNg9TXWr8eW8DJAAA3Q
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiMhJUXmr8eXI0XQAA3e
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,82 +56,246 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Identify the NIC type from its PCI device ID at initialization and store
-it in the NIC private data, so per-model behaviour can be selected
-without scattered PCI device ID comparisons.
+Apply the firmware COS mask/map when setting up Tx queues so the configured
+COS value selects the intended queue.
+
+The VF default COS limit HINIC3_COS_NUM_MAX_HTN (4) only applies to the
+HTN tile used by SP230, where the firmware cos_mask can select four
+non-contiguous COS values for the NIC and cos_map[] maps every other COS
+to default_cos. SP620 and SP560 assign all eight COS to the NIC, so drop
+the clamp there.
+
+Fixes: 9204b6b7bb1a ("net/hinic3: split new/old command queue operations")
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- drivers/net/hinic3/hinic3_ethdev.c | 17 +++++++++++++++++
- drivers/net/hinic3/hinic3_ethdev.h | 10 ++++++++++
- 2 files changed, 27 insertions(+)
+ doc/guides/rel_notes/release_26_11.rst   |  1 +
+ drivers/net/hinic3/base/hinic3_hw_cfg.c  |  2 +
+ drivers/net/hinic3/base/hinic3_hw_cfg.h  |  8 +++-
+ drivers/net/hinic3/base/hinic3_nic_cfg.c |  2 +-
+ drivers/net/hinic3/base/hinic3_nic_cfg.h |  1 -
+ drivers/net/hinic3/hinic3_ethdev.c       | 59 +++++++++++++++++++++---
+ drivers/net/hinic3/hinic3_ethdev.h       |  2 +
+ 7 files changed, 64 insertions(+), 11 deletions(-)
 
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index 1c3976c631..bbe363b8ae 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -167,6 +167,7 @@ New Features
+ 
+   * Added CIR drop statistics and VF link aggregation (LAG) support.
+   * Added FEC mode get and set support.
++  * Added Class of Service (COS) mask and map support.
+   * Added mailbox message counter reporting through the device private dump API.
+ 
+ * **Updated Intel iavf driver.**
+diff --git a/drivers/net/hinic3/base/hinic3_hw_cfg.c b/drivers/net/hinic3/base/hinic3_hw_cfg.c
+index 8899f98515..e7971509d5 100644
+--- a/drivers/net/hinic3/base/hinic3_hw_cfg.c
++++ b/drivers/net/hinic3/base/hinic3_hw_cfg.c
+@@ -22,6 +22,8 @@ parse_pub_res_cap(struct service_cap *cap,
+ 	cap->chip_svc_type = cap->svc_type;
+ 
+ 	cap->cos_valid_bitmap = dev_cap->valid_cos_bitmap;
++	cap->cos_mask_mode = dev_cap->cos_mask_mode;
++	cap->cos_mask_bitmap = dev_cap->cos_mask_bitmap;
+ 	cap->flexq_en = dev_cap->flexq_en;
+ 
+ 	cap->host_total_function = dev_cap->host_total_func;
+diff --git a/drivers/net/hinic3/base/hinic3_hw_cfg.h b/drivers/net/hinic3/base/hinic3_hw_cfg.h
+index 46a9c9bf4b..62af1daa25 100644
+--- a/drivers/net/hinic3/base/hinic3_hw_cfg.h
++++ b/drivers/net/hinic3/base/hinic3_hw_cfg.h
+@@ -40,6 +40,8 @@ struct service_cap {
+ 
+ 	uint8_t flexq_en;
+ 	uint8_t cos_valid_bitmap;
++	uint8_t cos_mask_mode;
++	uint8_t cos_mask_bitmap;
+ 	uint16_t max_vf; /**< Max VF number that PF supported. */
+ 
+ 	struct nic_service_cap nic_cap; /**< NIC capability. */
+@@ -80,9 +82,11 @@ struct hinic3_cfg_cmd_dev_cap {
+ 	uint8_t flexq_en;
+ 	uint8_t valid_cos_bitmap;
+ 	/* Reserved for func_valid_cos_bitmap. */
+-	uint16_t rsvd_cos;
++	uint16_t rsvd_valid_cos[2];
++	uint8_t cos_mask_mode;
++	uint8_t cos_mask_bitmap;
+ 
+-	uint32_t rsvd[11];
++	uint32_t rsvd[10];
+ 
+ 	/* l2nic */
+ 	uint16_t nic_max_sq_id;
+diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.c b/drivers/net/hinic3/base/hinic3_nic_cfg.c
+index 5fcc641ac3..2725f49df5 100644
+--- a/drivers/net/hinic3/base/hinic3_nic_cfg.c
++++ b/drivers/net/hinic3/base/hinic3_nic_cfg.c
+@@ -1492,7 +1492,7 @@ hinic3_vf_get_default_cos(struct hinic3_hwdev *hwdev, uint8_t *cos_id)
+ 		return -EIO;
+ 	}
+ 
+-	*cos_id = vf_dcb.state.default_cos % HINIC3_COS_NUM_MAX_HTN;
++	*cos_id = vf_dcb.state.default_cos;
+ 
+ 	return 0;
+ }
+diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.h b/drivers/net/hinic3/base/hinic3_nic_cfg.h
+index 9458a576c4..b5d7ce07a1 100644
+--- a/drivers/net/hinic3/base/hinic3_nic_cfg.h
++++ b/drivers/net/hinic3/base/hinic3_nic_cfg.h
+@@ -23,7 +23,6 @@
+ #define HINIC3_MIN_MTU_SIZE		256
+ 
+ #define HINIC3_COS_NUM_MAX		8
+-#define HINIC3_COS_NUM_MAX_HTN		4
+ 
+ #define HINIC3_VLAN_TAG_SIZE	4
+ #define HINIC3_ETH_OVERHEAD \
 diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index 4e9e936b10..69b7a23d6a 100644
+index 6114f8a925..2062f63892 100644
 --- a/drivers/net/hinic3/hinic3_ethdev.c
 +++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -482,6 +482,22 @@ hinic3_init_default_cos(struct hinic3_nic_dev *nic_dev)
+@@ -76,6 +76,9 @@ enum hinic3_rx_mod {
+ #define HINIC3_DEFAULT_RX_MODE \
+ 	(HINIC3_RX_MODE_UC | HINIC3_RX_MODE_MC | HINIC3_RX_MODE_BC)
+ 
++#define HINIC3_DEFAULT_COS_MASK		0x7
++#define HINIC3_DEFAULT_COS_MASK_BITMAP	0xff
++
+ struct hinic3_xstats_name_off {
+ 	char name[RTE_ETH_XSTATS_NAME_SIZE];
+ 	uint32_t offset;
+@@ -451,10 +454,8 @@ hinic3_deinit_mac_addr(struct rte_eth_dev *eth_dev)
+ static int
+ hinic3_pf_get_default_cos(struct hinic3_hwdev *hwdev, uint8_t *cos_id)
+ {
+-	struct hinic3_nic_dev *nic_dev = hwdev->dev_handle;
+ 	uint8_t default_cos = 0;
+ 	uint8_t valid_cos_bitmap;
+-	uint8_t cos_num_max;
+ 	uint8_t i;
+ 
+ 	valid_cos_bitmap = hwdev->cfg_mgmt->svc_cap.cos_valid_bitmap;
+@@ -463,10 +464,7 @@ hinic3_pf_get_default_cos(struct hinic3_hwdev *hwdev, uint8_t *cos_id)
+ 		return -EFAULT;
+ 	}
+ 
+-	cos_num_max = nic_dev->feature_cap & NIC_F_HTN_CMDQ ?
+-		      HINIC3_COS_NUM_MAX_HTN : HINIC3_COS_NUM_MAX;
+-
+-	for (i = 0; i < cos_num_max; i++) {
++	for (i = 0; i < HINIC3_COS_NUM_MAX; i++) {
+ 		if (valid_cos_bitmap & RTE_BIT32(i))
+ 			/* Find max cos id as default cos. */
+ 			default_cos = i;
+@@ -477,12 +475,53 @@ hinic3_pf_get_default_cos(struct hinic3_hwdev *hwdev, uint8_t *cos_id)
  	return 0;
  }
  
-+static enum nic_type
-+hinic3_get_nic_type(struct rte_pci_device *pci_dev)
++static void
++hinic3_get_cos_mask(struct hinic3_hwdev *hwdev, uint8_t *cos_mask)
 +{
-+	switch (pci_dev->id.device_id) {
-+	case HINIC3_DEV_ID_SP620:
-+	case HINIC3_DEV_ID_VF_SP620:
-+	case HINIC3_DEV_ID_SP920: /* SP920 is the DPU card of SP620. */
-+		return NIC_SP620;
-+	case HINIC3_DEV_ID_SP230:
-+	case HINIC3_DEV_ID_VF_SP230:
-+		return NIC_SP230;
-+	default:
-+		return NIC_UNKNOWN;
++	uint8_t cos_mask_mode;
++
++	cos_mask_mode = hwdev->cfg_mgmt->svc_cap.cos_mask_mode;
++	if (!cos_mask_mode) {
++		*cos_mask = HINIC3_DEFAULT_COS_MASK; /* default: 8 COS*/
++		PMD_DRV_LOG(INFO,
++			"cos mask not provided by firmware, use default 0x%x",
++			HINIC3_DEFAULT_COS_MASK);
++		return;
 +	}
++
++	*cos_mask = cos_mask_mode;
 +}
 +
- /**
-  * Initialize Class of Service (CoS). For PF devices, it also sync the link
-  * status with the physical port.
-@@ -3430,6 +3446,7 @@ hinic3_func_init(struct rte_eth_dev *eth_dev)
++static void
++hinic3_get_cos_mask_bitmap(struct hinic3_nic_dev *nic_dev)
++{
++	int i;
++	uint8_t default_cos = 0;
++	uint8_t cos_mask_bitmap = nic_dev->hwdev->cfg_mgmt->svc_cap.cos_mask_bitmap == 0
++			? HINIC3_DEFAULT_COS_MASK_BITMAP
++			: nic_dev->hwdev->cfg_mgmt->svc_cap.cos_mask_bitmap;
++
++	PMD_DRV_LOG(INFO, "cos_mask_bitmap: 0x%x", cos_mask_bitmap);
++	for (i = HINIC3_COS_NUM_MAX - 1; i >= 0; i--) {
++		if (cos_mask_bitmap & RTE_BIT32(i)) {
++			default_cos = i;
++			break;
++		}
++	}
++
++	for (i = 0; i < HINIC3_COS_NUM_MAX; i++)
++		nic_dev->cos_map[i] = ((RTE_BIT32(i) & cos_mask_bitmap) == 0) ? default_cos : i;
++}
++
+ static int
+ hinic3_init_default_cos(struct hinic3_nic_dev *nic_dev)
+ {
++	uint8_t cos_mask = 0;
+ 	uint8_t cos_id = 0;
+ 	int err;
  
- 	nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(eth_dev);
- 	memset(nic_dev, 0, sizeof(*nic_dev));
-+	nic_dev->nic_type = hinic3_get_nic_type(pci_dev);
- 	snprintf(nic_dev->dev_name, sizeof(nic_dev->dev_name),
- 		"dbdf-%.4x:%.2x:%.2x.%x", pci_dev->addr.domain,
- 		pci_dev->addr.bus, pci_dev->addr.devid,
++	hinic3_get_cos_mask(nic_dev->hwdev, &cos_mask);
++
+ 	if (!HINIC3_IS_VF(nic_dev->hwdev)) {
+ 		err = hinic3_pf_get_default_cos(nic_dev->hwdev, &cos_id);
+ 		if (err) {
+@@ -497,8 +536,9 @@ hinic3_init_default_cos(struct hinic3_nic_dev *nic_dev)
+ 		}
+ 	}
+ 
++	nic_dev->cos_mask = cos_mask;
+ 	nic_dev->default_cos = cos_id;
+-	PMD_DRV_LOG(DEBUG, "Default cos %d", nic_dev->default_cos);
++	PMD_DRV_LOG(DEBUG, "Default cos %d, cos mask %d", nic_dev->default_cos, nic_dev->cos_mask);
+ 	return 0;
+ }
+ 
+@@ -533,6 +573,7 @@ hinic3_set_default_hw_feature(struct hinic3_nic_dev *nic_dev)
+ {
+ 	int err;
+ 
++	hinic3_get_cos_mask_bitmap(nic_dev);
+ 	err = hinic3_init_default_cos(nic_dev);
+ 	if (err)
+ 		return err;
+@@ -1299,6 +1340,10 @@ hinic3_tx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
+ 	else
+ 		txq->cos = nic_dev->default_cos;
+ 
++	if (HINIC3_IS_SP230_NIC(nic_dev))
++		txq->cos = nic_dev->cos_map[txq->cos &
++			(HINIC3_COS_NUM_MAX - 1) & nic_dev->cos_mask];
++
+ 	txq->tx_deferred_start = tx_conf->tx_deferred_start;
+ 	txq->tx_wqe_compact_task = HINIC3_SUPPORT_TX_WQE_COMPACT_TASK(nic_dev);
+ 
 diff --git a/drivers/net/hinic3/hinic3_ethdev.h b/drivers/net/hinic3/hinic3_ethdev.h
-index 9061e2b217..c46fcfcbec 100644
+index c3384e5fd0..935b7719ca 100644
 --- a/drivers/net/hinic3/hinic3_ethdev.h
 +++ b/drivers/net/hinic3/hinic3_ethdev.h
-@@ -106,6 +106,12 @@ enum nic_feature_cap {
- TAILQ_HEAD(hinic3_ethertype_filter_list, rte_flow);
- TAILQ_HEAD(hinic3_fdir_rule_filter_list, rte_flow);
+@@ -133,6 +133,7 @@ struct hinic3_nic_dev {
+ 	uint8_t rx_queue_list[HINIC3_MAX_QUEUE_NUM];
+ 	rte_spinlock_t queue_list_lock;
  
-+enum nic_type {
-+	NIC_SP620 = 0,
-+	NIC_SP230 = 1,
-+	NIC_UNKNOWN = 2,
-+};
-+
- struct hinic3_nic_dev {
- 	struct hinic3_hwdev *hwdev; /**< Hardware device. */
- 	struct hinic3_txq **txqs;
-@@ -152,9 +158,13 @@ struct hinic3_nic_dev {
++	uint32_t cos_mask;
+ 	uint32_t default_cos;
+ 	uint32_t rx_csum_en;
+ 
+@@ -155,6 +156,7 @@ struct hinic3_nic_dev {
+ 	struct hinic3_tcam_info tcam;
+ 	struct hinic3_ethertype_filter_list filter_ethertype_list;
+ 	struct hinic3_fdir_rule_filter_list filter_fdir_rule_list;
++	uint8_t cos_map[HINIC3_COS_NUM_MAX];
  	struct hinic3_nic_cmdq_ops *cmdq_ops;
  	struct hinic3_nic_rx_ops *rx_ops;
  	struct hinic3_nic_tx_ops *tx_ops;
-+	enum nic_type nic_type; /**< NIC type. */
- 
- };
- 
-+#define HINIC3_IS_SP620_NIC(nic_dev) ((nic_dev)->nic_type == NIC_SP620)
-+#define HINIC3_IS_SP230_NIC(nic_dev) ((nic_dev)->nic_type == NIC_SP230)
-+
- extern const struct rte_flow_ops hinic3_flow_ops;
- 
- /**
 -- 
 2.33.0
 
