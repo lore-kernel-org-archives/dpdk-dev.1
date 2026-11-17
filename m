@@ -2,106 +2,97 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D574B606A32C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 19:36:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70DC0606A31C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 19:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=tewLQyTl
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=HUNCs1/V
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 95C4A402C9;
-	Tue, 17 Nov 2026 20:36:48 +0100 (CET)
-Received: from BN1PR04CU002.outbound.protection.outlook.com
- (mail-eastus2azon11010010.outbound.protection.outlook.com [52.101.56.10])
- by mails.dpdk.org (Postfix) with ESMTPS id 67DC4402A4;
- Tue, 17 Nov 2026 20:36:47 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YFkaOouqyiQk0g3FewHD/lPQJvdTy5W3tkOO0CAd1xsdzGR/r65praUPXA9dGBHtaAeoTIgLIS6Vz+gejYw4kIptpGICpa2IYS8TwTq8LkrMjvIOXzLfMEYWjxqA0jCLr/wgD0rzCqlsBY6kQx7fFoGlaT98y8MJOxLhPAM5nmIpZXDC90jDHLjwz0+Wmo3MTHwHE6lvuDau5+VGa7cB8P1SMOYs1HH2Cxklq591GfcZlYjLB1QcC3uDhGEULxT3O4KEvsu37fkH6gz7PhwuG49jo8EWIkVUa6A000FOneJIvYREm6S6j5S4p+kvKsUdIjXCiFRlnWuMulBgvy+iFw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9kMFOXe5enqe1OsEVJHX9Ow6matfyyydHaLiJqUAB+0=;
- b=m7+1TSf5cdaRBMS7KXgS+lPaCTOAMuUYGOybL6kHXLoqfdIoITjSsmTvU6K/eoMBwcwqDyxb0DTcAfFBUpLWv7DIGgOcWghOzj545WwHJLu0AEuNevk8J3u4AhPotgmrQWZc6UDILH/e+723mlK+JuAws4vPzsGV3qgw/4EM5NDhSTrKIfTdjHYvVZKzYDInoO9neYxdeVh6/zqGKRjKse4w0Njiuy1TfMAf79LbsHXxGf//wdaD65L3cwB/oVdvAwmL0hcv9guoIGzYtNdbZarJg2sHdvnKGagBn7C7bnxbihgInHqGXcFY8VsH5H6UbPUU24j9AVJZgnJYFc2lVQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9kMFOXe5enqe1OsEVJHX9Ow6matfyyydHaLiJqUAB+0=;
- b=tewLQyTlTKFW7vdIhaI6fz+7xz4MSuQixwS/8y690+JXNWz9YDDjdQJZM0nyWS4hMsW0wtyxiRkr0XVwDcGi9eaUI8ZDTrBYGYz8yKRDNiksWo4/+ahV35c7W6RIfwDq6I9Nk7wjwFpNT2305Ecg5Vfwj7EfBmdAfvzoFcoA6R53q27+DRJxO5lIzjmsRXsDQ/MptZ34HQgi2XiIhXTULyfYlHrqqeF/0l5jd/JCEUX+WOqoAv+gdyqLWU82/4LXiTaUWye9sqaI9l2C9cs2z1Z5LpjpJ1M7bopDrcobNMOoSlo4aYd5VWfOMu43WGnIaAITOmwItVDLCoGwoMYpoA==
-Received: from BL1PR13CA0061.namprd13.prod.outlook.com (2603:10b6:208:2b8::6)
- by CH3PR12MB9170.namprd12.prod.outlook.com (2603:10b6:610:199::14)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.615.14; Tue, 17 Nov
- 2026 19:36:42 +0000
-Received: from BN1PEPF00018070.namprd04.prod.outlook.com
- (2603:10b6:208:2b8:cafe::24) by BL1PR13CA0061.outlook.office365.com
- (2603:10b6:208:2b8::6) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.639.0 via Frontend Transport; Tue, 17
- Nov 2026 19:36:40 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN1PEPF00018070.mail.protection.outlook.com (10.167.245.198) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.615.4 via Frontend Transport; Tue, 17 Nov 2026 19:36:40 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.57; Tue, 17 Nov
- 2026 11:36:10 -0800
-Received: from mec01vdimballas01.nvidia.com (10.126.231.37) by
- rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.56; Tue, 17 Nov 2026 11:36:08 -0800
-From: Mujahed Mohammed <mballas@nvidia.com>
-To: <dev@dpdk.org>
-CC: Mujahed Mohammed <mballas@nvidia.com>, <stable@dpdk.org>, Thomas Monjalon
- <thomas@monjalon.net>, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>, Olivier Matz
- <olivier.matz@6wind.com>
-Subject: [PATCH v3] mempool: avoid memzone name collision
-Date: Tue, 17 Nov 2026 21:34:28 +0200
-Message-ID: <20261117193531.706953-1-mballas@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <LV3PR12MB914444BAE4DA3B85B4179A4AD47D2@LV3PR12MB9144.namprd12.prod.outlook.com>
-References: <LV3PR12MB914444BAE4DA3B85B4179A4AD47D2@LV3PR12MB9144.namprd12.prod.outlook.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 92F02402C9;
+	Tue, 17 Nov 2026 20:51:18 +0100 (CET)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com
+ [209.85.218.49])
+ by mails.dpdk.org (Postfix) with ESMTPS id EF7B1402BF
+ for <dev@dpdk.org>; Tue, 17 Nov 2026 20:51:16 +0100 (CET)
+Received: by mail-ej1-f49.google.com with SMTP id
+ a640c23a62f3a-c4d427836e9so10943466b.1
+ for <dev@dpdk.org>; Tue, 17 Nov 2026 11:51:16 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794945076; cv=none;
+ d=google.com; s=arc-20260327;
+ b=Y2QMFby0b08w2/rdzIwAdKKHMFlaanmaJm3JnWliHCVl6TOGMRkQuYd0A7s/JAzEVY
+ jrGv1OsY3sZpEFca7Pj6yHze4FSMN+eJZ/I8Uhu7CbrpHGD6p7qPjMn8d7IlbnQn1AQX
+ tFnEUSvFeD1Aj9IKhFbLMDkL4Rlo+kTthTQDj2m7KwhfqrdYku8ni2FbtOg83a6mG1oS
+ cUdrWMXH5AUf0Td28kUNWIYfLODLAdzwRyAoI/iJMpcyYXiuKyZMbcJgbs1Ah8lBxOqE
+ GJh6TLF8D1GzR3kyGMFVLyIgw9ThEyVIzrX9pPr0ZvP/eh6AA7wr8bpKSl1OipjMn8BS
+ gKJA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=HNGuZmaTEszQEJubdPl/OqcCnA/GN4V9ImR9FIgh+uw=;
+ fh=hXaxD+23DhiDyZAj3l4CilxvwIsKEwORs7DBkLuQLjk=;
+ b=EPOsA9VOG7SJ4f0xMafUcCQ8FxUISjJ0/QikHp7/meY2SEhmRr0JzDDLuygxhAmvAf
+ 9upeudKRPuhNcbcfQLTnU80PslRyuKFWVfqfr82sW7HlibEEzx2VnbWkXQEMMnYQkm5E
+ T7uY/3cut253q0fWTNE5UMx++uArhAu77y72eEBk1FPK9vB9dTP90yqJnwvoxZuSrvSg
+ 6L3hB4oW8d759S0GwF+gnPSKVsjHTfR19mUpe2M/oDf9Xa5Tl5DB2CeRJEOotQzJZ9DE
+ c2+AkWf5XRY1OeSwelIlKpEW6aCAmj0YAa+gCmJwpTevvXQvN60LBjrNBlAz6BjkCjgb
+ WDSA==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20260707; t=1794945076; x=1795549876; darn=dpdk.org;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=HNGuZmaTEszQEJubdPl/OqcCnA/GN4V9ImR9FIgh+uw=;
+ b=HUNCs1/VSuqrwowx1XnUT5oOYZMmLOnXa1IFqun5EHpDQu+duiv/7vkkguoEBzh5h2
+ CjpBtkFtrXoEfh+ulmmZLCWdtF3ezK+WMzG9TvATf+os+21aMvfyIZKr2rOVV5uH878o
+ 8h2vM2qPF7JM7+ziJtfdVS031OoZ3tGYYv6j3Eix3cEOvE1h5zoqAn2z/vHpyb9uXblb
+ ilP87PuQGr9NTJb5jjx431P9cC0ZQvoOLxtx1beMVtktEh/1yhbYin8GRtauaOnKvbEM
+ GHPwN/KxT+xjKrP68bmzxo22BGNrvk5VvFpAG2B3XhECEJotkt+Xnc4f8SVR7C99zb+6
+ i2Ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1794945076; x=1795549876;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=HNGuZmaTEszQEJubdPl/OqcCnA/GN4V9ImR9FIgh+uw=;
+ b=XMNxAK8eu0pXTQtdHrOzbG7BuXCwLlazeOUBoJJ0miJ9ZoyF9+zJIM7Rj4vV1FFImI
+ zlOUh0pE/29tDauLFyBZf2phBTQcdGTQfvBB75/ICb1rJV1Z7LWkbQR76ka8eTAz+ExD
+ gBv2BRXD6MuhxkGtYgWomN9jhKabrD1xPfY+jsd4eVI5Vv4SLBl/X+UXrdhabwjUWvZc
+ CLieioTjfAfjFbKTHh1OlZdYHFcKftWC8ZpVN1f2yLUluTrk3fZXcKfHVhrM3ga08LKE
+ rCIcmQLCbtYqkXw/Bxpiv7WhllSX414UJy9R3Y3a5jM8YJemnsz4aejPYR6AqZ7fW4Nj
+ 75hw==
+X-Forwarded-Encrypted: i=1;
+ AL+hErEtZFzPE2NkZyxzFRaU80UKrmU8m9oz6XehL3v3zzskckjaasrieq444L3ChrzRu73bm5s=@dpdk.org
+X-Gm-Message-State: APuU4Z/HuGBnBj67qqR9nlEBDi28VaX1Xqd6B5l0GxerOaj9eP9j+a1V
+ +RSLgZ44Qx13oFGxeYM/bF85TyDxwjT0qbmFTCv4p+r1HICo/c3IeUr2Ti2YsUvR0sKXPkDbgRD
+ qlNrMFWPWy+BPp3XMWEaFVOAQg4vazNI=
+X-Gm-Gg: AYBFou1WFuXB/SgRqPcCQegsaURFhC43dWnGRmn8QAYGQvnL+vLcW1Sb5ILVKRdwXXg
+ rtrZSSSQoY07U+YvFp4GCc4Zxb+acmzcaSVVjOKQOUH7ZJ/Kk12f5KrUlEzh77OlDlN7hjVApuW
+ Fi1EBff9lr0zgI6xuwXABJLAFW0uP6Iy6OQ0qtstjWCm0uQT9n+h0YsLjWubvdWid0svoZlL4jP
+ uTlkBY2CqpAeay9BFxuk8PShzIJQP6XLeVqwNrDlHPCxZsth06HWUqF5aTTzQVMgEnZArZj6X3e
+ Seud7abnHetNrrrYJqMysPR8U/4vCk45otS8GVPzhusMcyP9LE0b80OuWiclF9wPohkp7T8ORGh
+ 5SINCycVDwxsq46F/e03vODNQ0ax8lDRSHpdA
+X-Received: by 2002:a17:907:c13:b0:c50:8d2b:4391 with SMTP id
+ a640c23a62f3a-c510e3919e5mr26594866b.37.1794945076048; Tue, 17 Nov 2026
+ 11:51:16 -0800 (PST)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
+References: <20261117124303.717447-1-iboukris@gmail.com>
+ <20261117124303.717447-2-iboukris@gmail.com>
+ <CAJFAV8zyPB1uqYmywdqzwBCO9mhXrpyEJLyPf8bELLSvFK-x1Q@mail.gmail.com>
+In-Reply-To: <CAJFAV8zyPB1uqYmywdqzwBCO9mhXrpyEJLyPf8bELLSvFK-x1Q@mail.gmail.com>
+From: Isaac Boukris <iboukris@gmail.com>
+Date: Tue, 17 Nov 2026 21:51:03 +0200
+X-Gm-Features: AclHuK81epQ1WZahWpmHH5JEn8oWgxIZsy4JEuw9_8BfvzHlpsD5WOZVZd9Wx1o
+Message-ID: <CAC-fF8Tzs4q4xR7DsrPuC9gNM6YyOTH+55MH1oXX9q9exx5Aaw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] net/virtio: fix Rx interrupt setup with MSI-X
+To: David Marchand <david.marchand@redhat.com>
+Cc: Maxime Coquelin <maxime.coquelin@redhat.com>,
+ Chenbo Xia <chenbox@nvidia.com>, dev@dpdk.org, 
+ Anatoly Burakov <anatoly.burakov@intel.com>, stable@dpdk.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00018070:EE_|CH3PR12MB9170:EE_
-X-MS-Office365-Filtering-Correlation-Id: 43845643-1976-4965-1d91-08df44e21a4b
-X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|376014|82310400026|36860700016|23010399003|18002099003|22082099003|261009223027099003|11063799006|56012099006|261102123227099003|261028144727099003|261026140227099003|261021121427099003|261022075727099003|261022105027099003|261021123027099003|10067099003;
-X-Microsoft-Antispam-Message-Info: xSrfU3OrGdhg4GBNgKwfodGf/m6cMaxmEg0fz9YxUEu9P/k8RB17KlS6E/nJ06zFM4fn6N6KrFQztYvvzbJbIgu7+2Fysrbu1rbuaNoPsjew5HSqkckkihPsz0xXLzRnp8ATggCvgip4qTAzYFVl4F05saDeYb8diePdkx2QiajyKVm62FoH1any7EbdJNL7w9SzvSHBVWfN6lxYCpgKiYdRPEXCjIpClV68Wk1svYnJIy6l4RUmxHt1hs3xW4VnkAOI+GJ14KvrLk+18LTahMbZAqvay27NXTb8fy6sD8RaFJEr519gMObpjbpnkjY4DFvfsqkTBZTQV0pv7n7GRQZnJBBN0SpcPsTXFLqcGzbYfgKyMXL0GwdY5wkadIueDqg6BlLvP6KAofHOvKVPKtKgm8evYlVfNJE0P0mZ6nKPCJN0ayO5NoS3rEOZmVsoPWhbxz+vbuZZ35WUVIaBVc2RNWgpe05d0dfWCEYL84Yvlf3+DYH2BWg1TtBKEfEk+JIrtACTP2GPDnwlyOkUrUAC6yu0SZBPskMnauVno2qVUG/FmM0XEKDjH2PqlK6sTf7oz0zxWDR0ZMdPpeodMozfRYTrL1b/gCeLoOsLm4BkPN5m5SObq3a+6RlLe69u93c2PkLqKzZzvzRwtk/GkRmJ6q3LTRX416u5xEVrJ34VY/YIkgOxdCX4l0cNdo4LY4EbYeweGDOG/WIJpnlHbQ==
-X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
- SFS:(13230040)(1800799024)(376014)(82310400026)(36860700016)(23010399003)(18002099003)(22082099003)(261009223027099003)(11063799006)(56012099006)(261102123227099003)(261028144727099003)(261026140227099003)(261021121427099003)(261022075727099003)(261022105027099003)(261021123027099003)(10067099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: LNLLzAoLlV4eUgR0J/SOXSx3ptyG/v3RuFasOkXVaq73FbjC+H9N86Z8o0EMkXZMQdIpp13CS/bOvpxl/dyZEEiBSzw0i/lUCnVSsexXunC56NgFIUQYPl//QOtPUk/U7ZqPbgPiUs+jTJN34/h8MdJVqISmWNL6yD49pThhLuJ/H8EzG3UXiS0aH/RXq/gc7CwKFVYFEZ/91ar8lWgFGnj5zakmf1uDnszwi7VuU2tbpUPwYO58NjuDlF+ryOB36wPRNfAnsdfg/j4QlMqQSlsYYP/BZAEPFTO0mvuCcr2uzRWcwYLDzdpcfSWmRcNSb3FOT2qq9ooCrj+/sPdwyxgT9O1Yn+bFZtrxVWressHf1uADkkgTLZ1kYT/wL+EjodXVlLUdSa3t8mvJNGx3vD2laWXWUzkSXhKTytmgYu/uw61i6MzszmsLfH1URMpC
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2026 19:36:40.2569 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 43845643-1976-4965-1d91-08df44e21a4b
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN1PEPF00018070.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9170
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -111,81 +102,115 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Mempool metadata uses MP_<name>, while default-populated backing chunks
-use MP_<name>_<id>. If a pool named "foo" spans more than one chunk,
-chunk 1 is named MP_foo_1. Creating a pool named "foo_1" then fails to
-reserve its MP_foo_1 metadata memzone with EEXIST.
+Hi David,
 
-This can be reproduced on a two-NUMA-node system using 2 MiB hugepages
-with the following memory setup:
+On Tue, Nov 17, 2026 at 4:29=E2=80=AFPM David Marchand
+<david.marchand@redhat.com> wrote:
+>
+> Hello,
+>
+> On Tue, 17 Nov 2026 at 13:43, Isaac Boukris <iboukris@gmail.com> wrote:
+> >
+> > With Rx interrupts enabled, configuring a port initializes the device,
+> > and a second time when an offload or RSS is requested. Each
+> > initialization enables the interrupt eventfds.
+> >
+> > EAL now refuses to enable MSI-X eventfds twice, so such a configuration
+> > fails, and so does configuring a port a second time:
+> >
+> >   EAL: Interrupt eventfds are already enabled
+> >   virtio_configure_intr(): Fail to create eventfd
+> >   ETHDEV: Port0 dev_configure =3D -16
+> >
+> > Before that EAL change, the previous eventfds were leaked.
+> >
+> > Disable the interrupts and release the eventfds before enabling them
+> > again.
+> >
+> > Do it for a VFIO MSI-X handle only, the type whose eventfds EAL
+> > creates. The other type that gets here is virtio-user's: its eventfds
+> > are the backend's call fds, set once when the device is created.
+> > Releasing them would reset their count, which nothing sets again, and
+> > registering an Rx queue's interrupt would then fail.
+> >
+> > To reproduce, with a virtio-net PCI device bound to vfio-pci:
+> >
+> >   dpdk-l3fwd-power -l 0 -a 0000:0c:00.0 -- -p 1 --interrupt-only \
+> >       --parse-ptype --config=3D"(0,0,0)"
+> >
+> > Fixes: 3ba6b689893f ("eal/linux: fix eventfd leaks when enabling interr=
+upts")
+> > Cc: stable@dpdk.org
+> >
+> > Signed-off-by: Isaac Boukris <iboukris@gmail.com>
+>
+> Thank you for the testing and report.
+>
+>
+> > ---
+> >  drivers/net/virtio/virtio_ethdev.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> > diff --git a/drivers/net/virtio/virtio_ethdev.c b/drivers/net/virtio/vi=
+rtio_ethdev.c
+> > index f2302089ee..37fc896fae 100644
+> > --- a/drivers/net/virtio/virtio_ethdev.c
+> > +++ b/drivers/net/virtio/virtio_ethdev.c
+> > @@ -1455,6 +1455,13 @@ virtio_configure_intr(struct rte_eth_dev *dev)
+> >                 return -ENOTSUP;
+> >         }
+> >
+> > +       /* Reinitialization: release the previous eventfds first. */
+> > +       if (rte_intr_type_get(dev->intr_handle) =3D=3D RTE_INTR_HANDLE_=
+VFIO_MSIX &&
+> > +           rte_intr_dp_is_en(dev->intr_handle)) {
+>
+> The rte_intr_cap_multiple() guard right before should enough (for the
+> interrupt type check).
 
-    HugePages_Total: 2048
-    HugePages_Free:  2048
-    Hugepagesize:    2048 kB
+Actually this check was added due to a real issue with virtio-user
+which also returns true for this guard.
 
-Run testpmd in legacy-memory mode so the first pool spans chunks:
+> > +               virtio_intr_disable(dev);
+> > +               rte_intr_efd_disable(dev->intr_handle);
+> > +       }
+> > +
+>
+> Can the number of rxq change at this point?
+> I don't think it is the case.
+>
+> If it can't, why do we need to release/set up new eventfds?
+>
+> The fix could be a simple:
+>
+> + if (rte_intr_dp_is_en(dev->intr_handle)) {
+>
+> >         ret =3D rte_intr_efd_enable(dev->intr_handle, dev->data->nb_rx_=
+queues);
+> >         if (ret < 0) {
+> >                 PMD_INIT_LOG(ERR, "Fail to create eventfd");
+>
+> + }
 
-    dpdk-testpmd -n 4 \
-        -a 0000:08:00.0 -a 0000:08:00.1 \
-        --legacy-mem --socket-mem=0,2048 -- \
-        -i --nb-cores=3 --rxq=8 --txq=8 \
-        --rxd=2048 --txd=2048 --socket-num=1 --no-numa \
-        --mbuf-size=2972,612,512 \
-        --rxpkts=2844,612,512 \
-        --total-num-mbufs=196608 --enable-scatter
+I think it could change if reconfigure is called multiple times, i'll
+try to test it but we could still limit iit to that case, which would
+make it even easier on the caller as it doesn't have to get the new
+efds if he didn't change rxq number (although for non-virtio drivers
+one probably still have to).
 
-The first pool's chunk 1 and the second pool's metadata both request
-MP_mb_pool_1_1.
-
-Use MC_<name>_<id> for chunk memzones, keeping MP_<name> for mempool
-metadata. Chunk memzones are not looked up by name, and the new prefix
-keeps the existing name-length budget.
-
-Fixes: d1d914ebbc25 ("mempool: allocate in several memory chunks by default")
-Cc: stable@dpdk.org
-
-Signed-off-by: Mujahed Mohammed <mballas@nvidia.com>
----
-v3:
-- Move the fix from testpmd to the mempool library.
-- Use the MC_ prefix for backing chunk memzones.
-- Add the reproducer and hugepage setup to the commit message.
- .mailmap                  | 1 +
- lib/mempool/rte_mempool.c | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/.mailmap b/.mailmap
-index a4af517007..fc7750a006 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -1183,6 +1183,7 @@ Morten Brørup <mb@smartsharesystems.com>
- Moti Haimovsky <motih@mellanox.com>
- Muhammad Ahmad <muhammad.ahmad@emumba.com>
- Muhammad Bilal <m.bilal@emumba.com>
-+Mujahed Mohammed <mballas@nvidia.com>
- Mukesh Dua <mukesh.dua81@gmail.com>
- Mukul Katiyar <mukul@versa-networks.com>
- Murphy Yang <murphyx.yang@intel.com>
-diff --git a/lib/mempool/rte_mempool.c b/lib/mempool/rte_mempool.c
-index 069aabaa70..8f3c88aeb4 100644
---- a/lib/mempool/rte_mempool.c
-+++ b/lib/mempool/rte_mempool.c
-@@ -565,7 +565,7 @@ rte_mempool_populate_default(struct rte_mempool *mp)
- 		}
- 
- 		ret = snprintf(mz_name, sizeof(mz_name),
--			RTE_MEMPOOL_MZ_FORMAT "_%d", mp->name, mz_id);
-+			"MC_%s_%u", mp->name, mz_id);
- 		if (ret < 0 || ret >= (int)sizeof(mz_name)) {
- 			ret = -ENAMETOOLONG;
- 			goto fail;
--- 
-2.43.0
-
+> We could probably move the rte_intr_vec_list_alloc call under this
+> check too, but iiuc, this helper does nothing when called multiple
+> times.
+>
+>
+> --
+> David Marchand
+>
