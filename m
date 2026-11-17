@@ -2,80 +2,81 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E02606A31C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 17:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28775606A31C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 17:57:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=uLfZCU8q
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=uhKuAXW7
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 27F2A402BF;
-	Tue, 17 Nov 2026 18:57:25 +0100 (CET)
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com
- [209.85.219.54])
- by mails.dpdk.org (Postfix) with ESMTPS id 7B08D402A4
- for <dev@dpdk.org>; Tue, 17 Nov 2026 18:57:23 +0100 (CET)
-Received: by mail-qv1-f54.google.com with SMTP id
- 6a1803df08f44-91e8a05ec5aso71625916d6.1
- for <dev@dpdk.org>; Tue, 17 Nov 2026 09:57:23 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id EFA32402D6;
+	Tue, 17 Nov 2026 18:57:26 +0100 (CET)
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com
+ [209.85.219.50])
+ by mails.dpdk.org (Postfix) with ESMTPS id 9844D402D2
+ for <dev@dpdk.org>; Tue, 17 Nov 2026 18:57:25 +0100 (CET)
+Received: by mail-qv1-f50.google.com with SMTP id
+ 6a1803df08f44-91f0c4f7a8fso55102286d6.2
+ for <dev@dpdk.org>; Tue, 17 Nov 2026 09:57:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1794938242; x=1795543042; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=KZzndO1H66eXDPRCss/noX76dfH/yeAQxdvdHeNe3Fk=;
- b=uLfZCU8q4NgZa2yan3R0Pep6c/TLp+l2eRvChOKiuATp8AfiJxTQMHBBM65ka8JetI
- 2IWKlCfhLEyz7SOg1IYnfCGJK9THdNsovqedQ/xUwtl2ynFTxXVXG5yqbxgYCpy8I1+u
- JOWIhoKuz15tBXzvUnSJoTiBNhOsp+UuAyMOMEbqoCfdtJrub3tQlCjW/ahIuSUTjy5+
- Md31U8VA20t2vWXbmMdzmEnqVIo6kKaRX7bKaAKGa08m+h5LkCcHOypYSz/68M2/jOhl
- QO1yQhlCNLKRFaedlmzyL8NV+BMR6PI8WmNwCu9Fy4YjNWyQuCkW5hmPuDdAVvkcmCrL
- xxJQ==
+ d=gmail.com; s=20260707; t=1794938244; x=1795543044; darn=dpdk.org;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=QPSeztvH/qRDvz5XlmpHsJoQpNgL+PJO7SFYx/O+Dlc=;
+ b=uhKuAXW7rZA1Uw5mZ2v3+g2RHb7RfxIu8gWT/Rt1/z8mzs+nsE0Ki5ujzSs4yq9Lya
+ Z34OzvkACiPCcVIJQPzEZ3Gdn3lX4rSgWk5JwnRLY2cEBfXLY8ZGuX/NPOu840VyO+ym
+ DLvsJJT5EeTfkOSApLDtGCP18YBnjeiXQICYlwgIFCAp7E8FqUckbzRM++je9Bc8TvkK
+ T/+2rYi/9W/NAPFIbtjsR9iJpJQXId1+ZrQwnrBtofvNTb8IqaWEl82AVpuPVm7Qu+mP
+ ap50TyIbNiJBVgxI938r0DuKjtqk5A1REXaJ1rzVxMvo5UtrH66Js+qFe+WhvrdDdzTL
+ H5Pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794938242; x=1795543042;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=KZzndO1H66eXDPRCss/noX76dfH/yeAQxdvdHeNe3Fk=;
- b=FjH6y0gZ46U5qkshA1Uest/gzJ4B2bFsDvGEkfzPY58zvRubW8sw7xONigdaKKBKyz
- wnSIUPoo1G8/ukF14YZceozFYkTwqn8SDeFxTjZo4IIzYXxOIYkExM1LrDPs8ZRjFKxQ
- jkMqTDShzEd+Ni6J3b29jMVan3UnJsnVaW3KPlMNxt7tv++xn4WsQ+elSu2HGJ2/QSJ3
- FFyn3vtMOxLXZOdNwD4LDRjhJBnFFmUlht4R+hX4xOOOY9Wfz4Oo1eV4UXNPb3Pd5Qe+
- EbFpJjF01O4R6Y3ujxyf6r8O+QC3jW5fy53S8JK2nJy+6cPq+ecndJShGOiSu5uABW8G
- osQw==
-X-Gm-Message-State: APuU4Z86e0resWNoWBye60iFOsIAyrkXHreHnQAQba9WYxJjTYEGDkjO
- ngaoU0f9WDPGVrSVrFf9T9Ao+S7lRCkrK0C/iiMdf1p6Cq3aIOkGM47jJ0vk5GxG
-X-Gm-Gg: AZFdTZc6mXlND6NOgiq+9ziT2JEqyCVKBY05L3q98Dhvm6al5Abts2PZXBetYGzsKsM
- A+TuKd/OoxTc6nyDLUuBbUqLidxTUOm+coeqAMYm7VHUP/gt5cFhdpTlJC6jTapGAy3aUhFC3Eo
- m9zHNBvodG9gzR5iWa50nLU3xCRN4XCwyx0pEkOExfOQIiS7g5dHdijYOevbdAYZuHIAAIIOddG
- h1DF5QJN/ReJ5D5i/WVqI3wxoagrcxT93CehRKXYSA0ozm7AWyPHUvdp6EJyO80uJBqx4OiJWcR
- FyqN/5JvZQe69LnzrnCC9lbGDty+/w4SNOc9JF2quFkfueqZOxcda8MkbNy4aX+LXRKCww5qvSR
- wbuMxv575/5uVMVJiq/qGei+GK9ir8qw2YwVL5vUFaqrzUL9vKiVUKfDDH72rcajc/G6gq9BCz/
- 16+1dgiEsEQRz5RKEunyNNZmot7wCRdLLDWvCgliaGx0I5dxKWbqMEkvMqJZXNLV+F2luGSLuaW
- P+yF2ourstkg0LZt4QWoQjniKZDjPZBzYn9uuQOkt73zzwud00o5fqA6xNbAFvc/CqzFyDc+Sw4
- EleTW2ZFzbGH76JzyDimpPK0j/GXQfREF2/tYGE9tEwsyRHjEdCjkd2tNGN/kSTEhzrO2DgoOHc
- BU9G0vbeg87IHenz6AnCLokkcl0Pak8eBWq8vPZPpieHs6+s3tPeOI+4zQ9x0iRkld3TGgAE6QA
- ==
-X-Received: by 2002:a05:6214:d87:b0:921:19a:e11e with SMTP id
- 6a1803df08f44-921019ae381mr41512876d6.25.1794938242259; 
- Tue, 17 Nov 2026 09:57:22 -0800 (PST)
+ d=1e100.net; s=20260707; t=1794938244; x=1795543044;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=QPSeztvH/qRDvz5XlmpHsJoQpNgL+PJO7SFYx/O+Dlc=;
+ b=u2AYn07DK8rWPVP46ucE9cg40pN6J+jNcm6j3uV78BrAKzJP4t2TeDxHoB41jGWVPS
+ G5MwdVFjvISsFqqtB1r587yosTEZx3p9l3PNYxkVAUwx/fNktQeE6bj7hIsmlM1xFqtc
+ MpkIcsSMTHeN7k3XbGkM3vx/YpdIl/eYpAbAmXRdxotLOyYq87ZdKYq8mWUPhQzO3Z/q
+ GrpfI+lTaVNBMrAwhd37IG849Hdg95U/lg064pvxQY/0wgK4XwbKmi4ROKej+EWjVkdI
+ 7aBbx5XIjVPlA/X1UT7yZ8MWwyq49RWM0Ievueg2HBMWU5oWIH8qcKYKMZNARDuDkRIi
+ aNJA==
+X-Gm-Message-State: APuU4Z/vUd8qScG1Vi8/7DLz3m7ZtcsDLTJkoouigq9gfAiXWuKexoZn
+ c7mzErl1dfPI872clTbTaoUdfGWuSn6Mvb1IQ+yOkoY2Gp9+D+9dgMRtXyiquEla
+X-Gm-Gg: AZFdTZdESNAAfLfAj8P+na7Wf2+3Ea0oOKJyY1YpUN7AX4XyDAksqxzC6R70QsIXmn/
+ QTxpi2RWl0GmUmiKh0shbGH6+AZoe/H+tR8ej3MP4QcgeAv7DMqpshYKEZcMT2mL6qnNrONhplV
+ W/h8eKGlzSGKGlqI6WTzUwHeJualvXQfs4v/d/yqrAr0VITg8Wa8RF/knCCNPWBQHrDvS37qy3d
+ n5/epNmi9HsKF5drfTdvWpnIZpDpOuMX8Id4iol7YD6WCcSQ9gRcvVaUVm5yi7TMuhYb1WlOOEE
+ wu4q0AL4q0sSoY5alFA2iduxs5dxJ1xEjQvAh9p4aJ5nBZMWhhSidlZq74Xg+xu69QC0ExazLbo
+ tYivNfVAQBIJmOgQ/VYikJ1gzybbBJQ2N0N9h4KBzLKj07RMIxJlw6La2cOj4zW+d/aXsBQcUfO
+ 86cG3Es7fSCsbcNasogKQg9Le+70MNc3YFj6JeVfC0ukknynEMHice5xmz32qimL6dNnWo2kZHq
+ GJt3bTJoT20IFOQlDrEc2cOD9+Mu7MmF5/X60rJDx0XBHPVV5YbXx5cz/d8wv6+RgvhNfzvZ/IL
+ rqrcedA5aRhuAyU2a+c0nNAVN2sspcGIklwGYGvWqhP04nPdNCCPjZAfYK/9I+3qUi+TkKrEXEB
+ 2PrN02i9dkURDaQtbHUIQvftjFmLsYaHiPLrGQzBU6JFk5a0xjXT/
+X-Received: by 2002:a05:6214:27ed:b0:91b:d5d7:8c84 with SMTP id
+ 6a1803df08f44-91f24059122mr235014156d6.7.1794938243988; 
+ Tue, 17 Nov 2026 09:57:23 -0800 (PST)
 Received: from pravin-HP-Z840 (ool-944c29f7.dyn.optonline.net. [148.76.41.247])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-921148c261bsm327426d6.0.2026.11.17.09.57.20
+ 6a1803df08f44-921148c261bsm327426d6.0.2026.11.17.09.57.23
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 17 Nov 2026 09:57:21 -0800 (PST)
+ Tue, 17 Nov 2026 09:57:23 -0800 (PST)
 From: Pravin Pathak <pravinpathakdev@gmail.com>
 To: dev@dpdk.org
 Cc: jerinj@marvell.com, bruce.richardson@intel.com, thomas@monjalon.net,
  david.marchand@redhat.com, nipun.gupta@amd.com, chenbox@nvidia.com,
  tirthendu.sarkar@intel.com, mattias.ronnblom@ericsson.com,
  stephen@networkplumber.org, Pravin Pathak <pravin.pathak.dev@gmail.com>
-Subject: [PATCH v2 0/8] event/slb: introducing software load balancer eventdev
- PMD
-Date: Tue, 17 Nov 2026 12:57:00 -0500
-Message-ID: <20261117175709.2346400-1-pravinpathakdev@gmail.com>
+Subject: [PATCH v2 1/8] event/slb: introduce software load balancer PMD
+Date: Tue, 17 Nov 2026 12:57:01 -0500
+Message-ID: <20261117175709.2346400-2-pravinpathakdev@gmail.com>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261107013011.2443138-9-pravinpathakdev@gmail.com>
+In-Reply-To: <20261117175709.2346400-1-pravinpathakdev@gmail.com>
 References: <20261107013011.2443138-9-pravinpathakdev@gmail.com>
+ <20261117175709.2346400-1-pravinpathakdev@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -86,59 +87,1151 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=4.0.1
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
 From: Pravin Pathak <pravin.pathak.dev@gmail.com>
 
-This series introduces the Software Load Balancer (SLB) Eventdev PMD
-(`event_slb`) supporting parallel, atomic and ordered queues. It is 
-a distributed software scheduler that scales well.
+Add basic skeleton and initial features for the Software Load Balancer
+(SLB) eventdev PMD.
 
-v2:
-	- Fixed ARM64 build issue
-	- Fixed reorder queue early credit release
-	- Made all internal functions static
-	- Fixed all AI review feedback
+This initial commit provides:
+- Virtual device driver registration (event_slb) and device probing.
+- Device configuration and capability reporting for parallel queues,
+  burst mode, multi-queue ports, and runtime port linking.
+- Parallel queue support (multi-producer/multi-consumer rings) and
+  single-link queue support (multi-producer/single-consumer rings).
+- Event port configuration, linking/unlinking, and multi-priority
+  queue scheduling.
+- Central in-flight event credit management with batched loans
+  (SLB_MIN_CREDIT_LOAN = 512).
+- High-performance event enqueue and dequeue burst processing.
+- Meson build system integration and MAINTAINERS entry.
 
-Pravin Pathak (8):
-  event/slb: introduce software load balancer PMD
-  event/slb: add support for ordered queues
-  event/slb: add support for atomic queues
-  event/slb: add dynamic flow migration for atomic queues
-  event/slb: add extended statistics and diagnostics
-  event/slb: add self-test and documentation
-  event/slb: fine tuning and fixes
-  event/slb: address ARM64 build and all code reviews
-
- MAINTAINERS                            |    6 +
- app/test/test_eventdev.c               |    7 +
- doc/guides/eventdevs/features/slb.ini  |   25 +
- doc/guides/eventdevs/index.rst         |    1 +
- doc/guides/eventdevs/slb.rst           |   69 ++
- doc/guides/rel_notes/release_26_11.rst |    7 +
- drivers/event/meson.build              |    1 +
- drivers/event/slb/meson.build          |   21 +
- drivers/event/slb/slb_evdev.c          |  931 +++++++++++++++++
- drivers/event/slb/slb_evdev.h          |  252 +++++
- drivers/event/slb/slb_event.c          | 1294 ++++++++++++++++++++++++
- drivers/event/slb/slb_selftest.c       |  522 ++++++++++
- drivers/event/slb/slb_xstats.c         |  348 +++++++
- 13 files changed, 3484 insertions(+)
- create mode 100644 doc/guides/eventdevs/features/slb.ini
- create mode 100644 doc/guides/eventdevs/slb.rst
+Signed-off-by: Pravin Pathak <pravin.pathak.dev@gmail.com>
+---
+ MAINTAINERS                   |   4 +
+ drivers/event/meson.build     |   1 +
+ drivers/event/slb/meson.build |  15 +
+ drivers/event/slb/slb_evdev.c | 585 ++++++++++++++++++++++++++++++++++
+ drivers/event/slb/slb_evdev.h | 176 ++++++++++
+ drivers/event/slb/slb_event.c | 279 ++++++++++++++++
+ 6 files changed, 1060 insertions(+)
  create mode 100644 drivers/event/slb/meson.build
  create mode 100644 drivers/event/slb/slb_evdev.c
  create mode 100644 drivers/event/slb/slb_evdev.h
  create mode 100644 drivers/event/slb/slb_event.c
- create mode 100644 drivers/event/slb/slb_selftest.c
- create mode 100644 drivers/event/slb/slb_xstats.c
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1d865ffd46..1a0dd5505f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1534,6 +1534,10 @@ M: Mattias Rönnblom <mattias.ronnblom@ericsson.com>
+ F: drivers/event/dsw/
+ F: doc/guides/eventdevs/dsw.rst
+ 
++Software Load Balancer (SLB) Eventdev PMD
++M: Pravin Pathak <pravin.pathak.dev@gmail.com>
++F: drivers/event/slb/
++
+ Software OPDL Eventdev PMD
+ M: Liang Ma <liangma@liangbit.com>
+ M: Peter Mccarthy <peter.mccarthy@intel.com>
+diff --git a/drivers/event/meson.build b/drivers/event/meson.build
+index ddaa0300ac..ece490dfb5 100644
+--- a/drivers/event/meson.build
++++ b/drivers/event/meson.build
+@@ -15,5 +15,6 @@ drivers = [
+         'opdl',
+         'skeleton',
+         'sw',
++        'slb',
+ ]
+ std_deps = ['eventdev', 'kvargs']
+diff --git a/drivers/event/slb/meson.build b/drivers/event/slb/meson.build
+new file mode 100644
+index 0000000000..9a1dff524f
+--- /dev/null
++++ b/drivers/event/slb/meson.build
+@@ -0,0 +1,15 @@
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2026 Pravin Pathak <pravin.pathak.dev@gmail.com>
++
++if is_windows
++    build = false
++    reason = 'not supported on Windows'
++    subdir_done()
++endif
++
++sources = files(
++        'slb_evdev.c',
++        'slb_event.c',
++)
++
++deps += ['bus_vdev', 'ring']
+diff --git a/drivers/event/slb/slb_evdev.c b/drivers/event/slb/slb_evdev.c
+new file mode 100644
+index 0000000000..53af113293
+--- /dev/null
++++ b/drivers/event/slb/slb_evdev.c
+@@ -0,0 +1,585 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 Pravin Pathak <pravin.pathak.dev@gmail.com>
++ */
++
++#include <stdbool.h>
++#include <inttypes.h>
++#include <rte_bitops.h>
++#include <rte_cycles.h>
++#include <rte_malloc.h>
++#include <rte_ring_elem.h>
++#include <rte_errno.h>
++#include <rte_stdatomic.h>
++#include <eventdev_pmd.h>
++#include <eventdev_pmd_vdev.h>
++
++#include "slb_evdev.h"
++
++#define EVENTDEV_NAME_SLB_PMD event_slb
++
++/* Setup Eventdev port. Reset all mapped queues */
++static int
++slb_port_setup(struct rte_eventdev *dev, uint8_t port_id,
++	       const struct rte_event_port_conf *conf)
++{
++	struct slb_evdev *slb = slb_pmd_priv(dev);
++	struct slb_port *port;
++	bool implicit_release;
++	uint16_t deq_depth;
++	uint16_t enq_depth;
++
++	port = &slb->ports[port_id];
++
++	implicit_release =
++	    !(conf->event_port_cfg & RTE_EVENT_PORT_CFG_DISABLE_IMPL_REL);
++
++	deq_depth = conf->dequeue_depth;
++	if (deq_depth == 0 || deq_depth > SLB_MAX_PORT_DEQUEUE_DEPTH)
++		deq_depth = SLB_MAX_PORT_DEQUEUE_DEPTH;
++
++	enq_depth = conf->enqueue_depth;
++	if (enq_depth == 0 || enq_depth > SLB_MAX_PORT_ENQUEUE_DEPTH)
++		enq_depth = SLB_MAX_PORT_ENQUEUE_DEPTH;
++
++	*port = (struct slb_port) {
++		.id = port_id,
++		.slb = slb,
++		.dequeue_depth = deq_depth,
++		.enqueue_depth = enq_depth,
++		.new_event_threshold = conf->new_event_threshold,
++		.implicit_release = implicit_release,
++		.is_single_linked = conf->event_port_cfg &
++				   RTE_EVENT_PORT_CFG_SINGLE_LINK,
++		.inflight_credits = 0,
++		.credits_drained = false,
++		.total_dequeues = 0,
++		.empty_dequeues = 0,
++		.single_linked_q = NULL,
++		.single_linked_ring = NULL,
++	};
++
++	port->remap_input_q = false;
++	rte_atomic_store_explicit(&port->active_queues, 0,
++				  rte_memory_order_relaxed);
++
++	dev->data->ports[port_id] = port;
++
++	/* Reset all queues mapped to this port */
++	for (int p = 0; p < SLB_MAX_PRIORITIES; p++) {
++		port->next_q[p] = 0;
++		port->num_q[p] = 0;
++		memset(port->q_entries[p], 0, sizeof(port->q_entries[p]));
++	}
++
++	return 0;
++}
++
++/* Default Eventdev port configuration for SLB */
++static void
++slb_port_def_conf(struct rte_eventdev *dev __rte_unused,
++		  uint8_t port_id __rte_unused,
++		  struct rte_event_port_conf *port_conf)
++{
++	*port_conf = (struct rte_event_port_conf) {
++		.new_event_threshold = 1024,
++		.dequeue_depth = SLB_MAX_PORT_DEQUEUE_DEPTH / 4,
++		.enqueue_depth = SLB_MAX_PORT_ENQUEUE_DEPTH / 4
++	};
++}
++
++static void
++slb_port_release(void *p __rte_unused)
++{
++}
++
++/* Called to free queue resources on device close or reconfiguration */
++static void
++slb_queue_release(struct rte_eventdev *dev, uint8_t queue_id)
++{
++	struct slb_evdev *slb = slb_pmd_priv(dev);
++	struct slb_queue *queue = &slb->queues[queue_id];
++
++	if (queue->q_ring) {
++		rte_event_ring_free(queue->q_ring);
++		queue->q_ring = NULL;
++	}
++}
++
++/* Setup Eventdev queue. Eventdev queues are implemented as DPDK rings */
++static int
++slb_queue_setup(struct rte_eventdev *dev, uint8_t queue_id,
++		const struct rte_event_queue_conf *conf)
++{
++	struct slb_evdev *slb = slb_pmd_priv(dev);
++	struct slb_queue *queue = &slb->queues[queue_id];
++	struct rte_event_ring *ring;
++	char ring_name[RTE_RING_NAMESIZE];
++	uint32_t q_size = (slb->max_inflight > 0) ?
++			  (uint32_t)slb->max_inflight : SLB_IN_RING_SIZE;
++
++	/* Release existing queue resources if reconfiguring */
++	slb_queue_release(dev, queue_id);
++
++	snprintf(ring_name, sizeof(ring_name), "slb%d_q%u", dev->data->dev_id,
++		 queue_id);
++
++	if (conf->event_queue_cfg & RTE_EVENT_QUEUE_CFG_SINGLE_LINK) {
++		/* MP -> SC ring for single-link queues */
++		queue->is_single_link = true;
++		ring = rte_event_ring_create(ring_name, q_size,
++			dev->data->socket_id, RING_F_SC_DEQ | RING_F_EXACT_SZ);
++	} else if (conf->schedule_type == RTE_SCHED_TYPE_PARALLEL) {
++		/* MP -> MC ring for parallel queues */
++		queue->is_single_link = false;
++		ring = rte_event_ring_create(ring_name, q_size,
++			dev->data->socket_id, RING_F_EXACT_SZ);
++	} else {
++		SLB_LOG_DP_LINE(ERR, "Unsupported schedule_type %u",
++				conf->schedule_type);
++		return -ENOTSUP;
++	}
++
++	if (ring == NULL)
++		return -ENOMEM;
++
++	queue->q_ring = ring;
++	queue->schedule_type = conf->schedule_type;
++	queue->serving_ports_mask = 0;
++	queue->num_serving_ports = 0;
++
++	return 0;
++}
++
++/* Settings for default Eventdev queue configuration */
++static void
++slb_queue_def_conf(struct rte_eventdev *dev __rte_unused,
++		   uint8_t queue_id __rte_unused,
++		   struct rte_event_queue_conf *queue_conf)
++{
++	*queue_conf = (struct rte_event_queue_conf) {
++		.nb_atomic_flows = 4096,
++		.schedule_type = RTE_SCHED_TYPE_PARALLEL,
++		.priority = RTE_EVENT_DEV_PRIORITY_NORMAL
++	};
++}
++
++static void
++slb_port_unlink_queue_from_prio(struct slb_port *port, int prio, int slot)
++{
++	for (int k = slot; k < port->num_q[prio] - 1; k++)
++		port->q_entries[prio][k] = port->q_entries[prio][k + 1];
++
++	port->num_q[prio]--;
++	memset(&port->q_entries[prio][port->num_q[prio]], 0,
++	       sizeof(struct slb_port_q_entry));
++	if (port->next_q[prio] >= port->num_q[prio])
++		port->next_q[prio] = 0;
++}
++
++static int
++slb_port_find_queue_slot(struct slb_port *port, int prio, uint8_t qid)
++{
++	for (int s = 0; s < port->num_q[prio]; s++) {
++		if (port->q_entries[prio][s].queue_id == qid)
++			return s;
++	}
++	return -1;
++}
++
++static int
++slb_port_link_one(struct slb_port *port, struct slb_queue *queue,
++		  uint8_t qid, uint8_t app_prio, bool has_prio)
++{
++	int prio;
++	bool found = false;
++
++	if (port->is_single_linked) {
++		if (port->single_linked_q != NULL &&
++		    port->single_linked_q != queue) {
++			rte_errno = EINVAL;
++			return -EINVAL;
++		}
++		port->single_linked_q = queue;
++		port->single_linked_ring = queue->q_ring;
++	} else {
++		if (has_prio)
++			prio = (app_prio < RTE_EVENT_DEV_PRIORITY_NORMAL) ? 0 : 1;
++		else
++			prio = SLB_MAX_PRIORITIES - 1;
++
++		for (int pr = 0; pr < SLB_MAX_PRIORITIES; pr++) {
++			int s = slb_port_find_queue_slot(port, pr, qid);
++
++			if (s >= 0) {
++				if (pr == prio)
++					found = true;
++				else
++					slb_port_unlink_queue_from_prio(port, pr, s);
++				break;
++			}
++		}
++		if (!found) {
++			uint16_t slot = port->num_q[prio];
++
++			if (slot >= SLB_PORT_MAX_Q_MAP_PER_PRIO) {
++				rte_errno = ENOSPC;
++				return -ENOSPC;
++			}
++			port->q_entries[prio][slot].dq_ring = queue->q_ring;
++			port->q_entries[prio][slot].queue = queue;
++			port->q_entries[prio][slot].queue_id = qid;
++			port->q_entries[prio][slot].schedule_type =
++				queue->schedule_type;
++			port->num_q[prio]++;
++		}
++
++		rte_atomic_fetch_or_explicit(&port->active_queues,
++					     (1ULL << qid),
++					     rte_memory_order_release);
++	}
++
++	queue->serving_ports_mask |= (1ULL << port->id);
++	queue->num_serving_ports = rte_popcount64(queue->serving_ports_mask);
++	return 0;
++}
++
++static int
++slb_port_unlink_one(struct slb_port *port, struct slb_queue *queue, uint8_t qid)
++{
++	bool found = false;
++
++	if (port->is_single_linked) {
++		if (port->single_linked_q != queue) {
++			rte_errno = EINVAL;
++			return -EINVAL;
++		}
++		port->single_linked_q = NULL;
++		port->single_linked_ring = NULL;
++	} else {
++		for (int prio = 0; prio < SLB_MAX_PRIORITIES; prio++) {
++			int s = slb_port_find_queue_slot(port, prio, qid);
++
++			if (s >= 0) {
++				slb_port_unlink_queue_from_prio(port, prio, s);
++				found = true;
++				break;
++			}
++		}
++		if (!found) {
++			rte_errno = EINVAL;
++			return -EINVAL;
++		}
++		rte_atomic_fetch_and_explicit(&port->active_queues,
++					      ~(1ULL << qid),
++					      rte_memory_order_release);
++		port->remap_input_q = true;
++	}
++
++	queue->serving_ports_mask &= ~(1ULL << port->id);
++	queue->num_serving_ports = rte_popcount64(queue->serving_ports_mask);
++	return 0;
++}
++
++static int
++slb_port_link(struct rte_eventdev *dev, void *p, const uint8_t queues[],
++	      const uint8_t priorities[], uint16_t num)
++{
++	struct slb_port *port = p;
++	struct slb_evdev *slb = slb_pmd_priv(dev);
++	uint16_t i;
++
++	for (i = 0; i < num; i++) {
++		uint8_t qid = queues[i];
++		struct slb_queue *queue = &slb->queues[qid];
++		uint8_t prio = (priorities != NULL) ? priorities[i] : 0;
++		int ret = slb_port_link_one(port, queue, qid, prio,
++					    priorities != NULL);
++
++		if (ret < 0)
++			return i;
++	}
++	return num;
++}
++
++static int
++slb_port_unlink(struct rte_eventdev *dev, void *p, uint8_t queues[],
++		uint16_t num)
++{
++	struct slb_port *port = p;
++	struct slb_evdev *slb = slb_pmd_priv(dev);
++	uint16_t i;
++
++	for (i = 0; i < num; i++) {
++		uint8_t qid = queues[i];
++		struct slb_queue *queue = &slb->queues[qid];
++		int ret = slb_port_unlink_one(port, queue, qid);
++
++		if (ret < 0)
++			return i;
++	}
++	return num;
++}
++
++static void
++slb_info_get(struct rte_eventdev *dev __rte_unused,
++	     struct rte_event_dev_info *info)
++{
++	*info = (struct rte_event_dev_info) {
++		.driver_name = SLB_PMD_NAME,
++		.max_event_queues = SLB_MAX_QUEUES,
++		.max_event_queue_flows = SLB_MAX_FLOWS,
++		.max_event_queue_priority_levels = SLB_MAX_PRIORITIES,
++		.max_event_priority_levels = SLB_MAX_PRIORITIES,
++		.max_event_ports = SLB_MAX_PORTS,
++		.max_event_port_dequeue_depth = SLB_MAX_PORT_DEQUEUE_DEPTH,
++		.max_event_port_enqueue_depth = SLB_MAX_PORT_ENQUEUE_DEPTH,
++		.max_num_events = SLB_MAX_EVENTS,
++		.max_profiles_per_port = 1,
++		.event_dev_cap = RTE_EVENT_DEV_CAP_BURST_MODE |
++		RTE_EVENT_DEV_CAP_PARALLEL |
++		RTE_EVENT_DEV_CAP_DISTRIBUTED_SCHED |
++		RTE_EVENT_DEV_CAP_IMPLICIT_RELEASE_DISABLE |
++		RTE_EVENT_DEV_CAP_NONSEQ_MODE |
++		RTE_EVENT_DEV_CAP_MULTIPLE_QUEUE_PORT |
++		RTE_EVENT_DEV_CAP_RUNTIME_PORT_LINK |
++		RTE_EVENT_DEV_CAP_CARRY_FLOW_ID |
++		RTE_EVENT_DEV_CAP_MAINTENANCE_FREE |
++		RTE_EVENT_DEV_CAP_INDEPENDENT_ENQ
++	};
++}
++
++static int
++slb_configure(const struct rte_eventdev *dev)
++{
++	struct slb_evdev *slb = slb_pmd_priv(dev);
++	const struct rte_event_dev_config *conf = &dev->data->dev_conf;
++	int32_t min_max_in_flight;
++	uint32_t q_size;
++
++	if (conf->nb_events_limit <= 0 ||
++	    conf->nb_events_limit > SLB_MAX_EVENTS) {
++		SLB_LOG_DP_LINE(INFO,
++			"nb_events_limit (%d) invalid, max is %d",
++			conf->nb_events_limit, SLB_MAX_EVENTS);
++		return -EINVAL;
++	}
++
++	slb->num_ports = conf->nb_event_ports;
++	slb->num_queues = conf->nb_event_queues;
++
++	min_max_in_flight = conf->nb_event_ports * SLB_PORT_MAX_CREDITS;
++	if (min_max_in_flight > SLB_MAX_EVENTS)
++		min_max_in_flight = SLB_MAX_EVENTS;
++
++	q_size = rte_align32pow2((uint32_t)RTE_MAX(conf->nb_events_limit,
++						   min_max_in_flight));
++	if (q_size > SLB_MAX_EVENTS)
++		q_size = SLB_MAX_EVENTS;
++
++	slb->max_inflight = (int32_t)q_size;
++	return 0;
++}
++
++static int
++slb_start(struct rte_eventdev *dev)
++{
++	struct slb_evdev *slb = slb_pmd_priv(dev);
++
++	for (int i = 0; i < slb->num_queues; i++) {
++		if (slb->queues[i].serving_ports_mask == 0)
++			SLB_LOG_DP_LINE(INFO,
++				"Queue %d has no linked ports on start", i);
++	}
++
++	rte_atomic_store_explicit(&slb->credits_on_loan, 0,
++				  rte_memory_order_relaxed);
++
++	for (int i = 0; i < slb->num_ports; i++) {
++		struct slb_port *port = &slb->ports[i];
++		port->inflight_credits = 0;
++		port->credits_drained = false;
++		for (int p = 0; p < SLB_MAX_PRIORITIES; p++)
++			port->next_q[p] = 0;
++	}
++
++	return 0;
++}
++
++static void
++slb_drain_ring(uint8_t dev_id, struct rte_event_ring *ring,
++	       eventdev_stop_flush_t flush, void *flush_arg)
++{
++	struct rte_event ev;
++
++	if (ring == NULL)
++		return;
++
++	while (rte_event_ring_dequeue_burst(ring, &ev, 1, NULL)) {
++		if (flush != NULL)
++			flush(dev_id, ev, flush_arg);
++	}
++	rte_ring_reset(&ring->r);
++}
++
++static void
++slb_stop(struct rte_eventdev *dev)
++{
++	struct slb_evdev *slb = slb_pmd_priv(dev);
++	uint8_t dev_id = dev->data->dev_id;
++	eventdev_stop_flush_t flush = dev->dev_ops->dev_stop_flush;
++	void *flush_arg = dev->data->dev_stop_flush_arg;
++
++	for (uint8_t qid = 0; qid < slb->num_queues; qid++) {
++		struct slb_queue *q = &slb->queues[qid];
++		if (q->q_ring != NULL)
++			slb_drain_ring(dev_id, q->q_ring, flush, flush_arg);
++	}
++
++	for (int i = 0; i < slb->num_ports; i++) {
++		struct slb_port *port = &slb->ports[i];
++		port->inflight_credits = 0;
++		port->credits_drained = false;
++		for (int p = 0; p < SLB_MAX_PRIORITIES; p++)
++			port->next_q[p] = 0;
++	}
++
++	rte_atomic_store_explicit(&slb->credits_on_loan, 0,
++				  rte_memory_order_relaxed);
++}
++
++static int
++slb_close(struct rte_eventdev *dev)
++{
++	struct slb_evdev *slb = slb_pmd_priv(dev);
++
++	for (int i = 0; i < slb->num_queues; i++)
++		slb_queue_release(dev, i);
++
++	return 0;
++}
++
++void
++slb_dump(struct rte_eventdev *dev, FILE *f)
++{
++	struct slb_evdev *slb = slb_pmd_priv(dev);
++	int32_t pool_on_loan, pool_avail;
++
++	if (dev == NULL || f == NULL)
++		return;
++
++	pool_on_loan = rte_atomic_load_explicit(&slb->credits_on_loan,
++						rte_memory_order_relaxed);
++	pool_avail = slb->max_inflight - pool_on_loan;
++
++	fprintf(f, "\n[SLB EVENTDEV DEBUG STATS]\n");
++	fprintf(f, "  Device ID: %u, Driver: %s\n", dev->data->dev_id,
++		SLB_PMD_NAME);
++	fprintf(f, "  Credit Pool: %d on_loan / %d max_inflight (%d avail)\n",
++		pool_on_loan, slb->max_inflight, pool_avail);
++
++	fprintf(f, "\n  PORT STATISTICS & QUEUE LINKAGES:\n");
++	for (int i = 0; i < slb->num_ports; i++) {
++		struct slb_port *p = &slb->ports[i];
++		uint64_t aq = rte_atomic_load_explicit(&p->active_queues,
++						       rte_memory_order_acquire);
++		fprintf(f, "    Port %2u (credits=%3d, active=0x%08" PRIx64 "): ",
++			i, p->inflight_credits, aq);
++		int linked_count = 0;
++		if (p->is_single_linked) {
++			if (p->single_linked_q) {
++				int qid = p->single_linked_q - slb->queues;
++				fprintf(f, "Q%d (single-link)", qid);
++				linked_count++;
++			}
++		} else {
++			for (int pr = 0; pr < SLB_MAX_PRIORITIES; pr++) {
++				for (int s = 0; s < p->num_q[pr]; s++) {
++					int qid = p->q_entries[pr][s].queue_id;
++					if (linked_count > 0)
++						fprintf(f, ", ");
++					fprintf(f, "Q%d(p%d)", qid, pr);
++					linked_count++;
++				}
++			}
++		}
++		if (linked_count == 0)
++			fprintf(f, "(no queues linked)");
++		fprintf(f, "\n");
++	}
++
++	fprintf(f, "\n  ALL QUEUES STATUS:\n");
++	for (int i = 0; i < slb->num_queues; i++) {
++		struct slb_queue *q = &slb->queues[i];
++		uint32_t count = rte_event_ring_count(q->q_ring);
++		uint32_t ring_size = rte_event_ring_get_capacity(q->q_ring);
++		fprintf(f, "    Queue %2u: %6u/%6u events, serving_ports=0x%016" PRIx64 ", sched=%u, single=%d\n",
++			i, count, ring_size, q->serving_ports_mask,
++			q->schedule_type, q->is_single_link);
++	}
++	fprintf(f, "[END DEBUG]\n\n");
++	fflush(f);
++}
++
++static struct eventdev_ops slb_evdev_ops = {
++	.port_setup = slb_port_setup,
++	.port_def_conf = slb_port_def_conf,
++	.port_release = slb_port_release,
++	.queue_setup = slb_queue_setup,
++	.queue_def_conf = slb_queue_def_conf,
++	.queue_release = slb_queue_release,
++	.port_link = slb_port_link,
++	.port_unlink = slb_port_unlink,
++	.dev_infos_get = slb_info_get,
++	.dev_configure = slb_configure,
++	.dev_start = slb_start,
++	.dev_stop = slb_stop,
++	.dev_close = slb_close,
++	.dump = slb_dump,
++};
++
++static int
++slb_probe(struct rte_vdev_device *vdev)
++{
++	const char *name = rte_vdev_device_name(vdev);
++	struct rte_eventdev *dev;
++	struct slb_evdev *slb;
++
++	dev = rte_event_pmd_vdev_init(name, sizeof(struct slb_evdev),
++				      rte_socket_id(), vdev);
++	if (dev == NULL)
++		return -EFAULT;
++
++	dev->dev_ops = &slb_evdev_ops;
++	dev->enqueue_burst = slb_event_enqueue_burst;
++	dev->enqueue_new_burst = slb_event_enqueue_new_burst;
++	dev->enqueue_forward_burst = slb_event_enqueue_forward_burst;
++	dev->dequeue_burst = slb_event_dequeue_burst;
++
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++		return 0;
++
++	slb = dev->data->dev_private;
++	slb->data = dev->data;
++
++	event_dev_probing_finish(dev);
++	return 0;
++}
++
++static int
++slb_remove(struct rte_vdev_device *vdev)
++{
++	const char *name = rte_vdev_device_name(vdev);
++
++	if (name == NULL)
++		return -EINVAL;
++
++	return rte_event_pmd_vdev_uninit(name);
++}
++
++static struct rte_vdev_driver evdev_slb_pmd_drv = {
++	.probe = slb_probe,
++	.remove = slb_remove
++};
++
++RTE_PMD_REGISTER_VDEV(EVENTDEV_NAME_SLB_PMD, evdev_slb_pmd_drv);
++RTE_LOG_REGISTER_DEFAULT(event_slb_logtype, NOTICE);
+diff --git a/drivers/event/slb/slb_evdev.h b/drivers/event/slb/slb_evdev.h
+new file mode 100644
+index 0000000000..d7be6746ef
+--- /dev/null
++++ b/drivers/event/slb/slb_evdev.h
+@@ -0,0 +1,176 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 Pravin Pathak <pravin.pathak.dev@gmail.com>
++ */
++
++#ifndef _SLB_EVDEV_H_
++#define _SLB_EVDEV_H_
++
++#include <rte_bitops.h>
++#include <rte_bitset.h>
++#include <rte_event_ring.h>
++#include <rte_eventdev.h>
++#include <rte_stdatomic.h>
++#include <eventdev_pmd.h>
++
++#define SLB_PMD_NAME RTE_STR(event_slb)
++
++#define SLB_MAX_PORTS (64)
++#define SLB_MAX_PORT_DEQUEUE_DEPTH (128)
++#define SLB_MAX_PORT_ENQUEUE_DEPTH (128)
++
++#define SLB_MAX_QUEUES (64)
++
++#define SLB_MAX_EVENTS (16384)
++
++#define SLB_MAX_FLOWS_BITS (16)
++#define SLB_MAX_FLOWS (1 << (SLB_MAX_FLOWS_BITS))
++#define SLB_MAX_FLOWS_MASK (SLB_MAX_FLOWS - 1)
++
++/* Avoid making small 'loans' from the central in-flight event credit pool */
++#define SLB_MIN_CREDIT_LOAN (512)
++#define SLB_PORT_MAX_CREDITS (2 * SLB_MIN_CREDIT_LOAN)
++#define SLB_PORT_MIN_CREDITS (SLB_MIN_CREDIT_LOAN)
++
++#define SLB_IN_RING_SIZE (SLB_MAX_EVENTS)
++
++/* Maximum number of queues that can be linked to a port per priority */
++#define SLB_PORT_MAX_Q_MAP_PER_PRIO (SLB_MAX_QUEUES)
++/* Number of priority levels supported by SLB. Configure 1..4. */
++#ifndef SLB_MAX_PRIORITIES
++#define SLB_MAX_PRIORITIES 2
++#endif
++
++#if (SLB_MAX_PRIORITIES < 1) || (SLB_MAX_PRIORITIES > 4)
++#error "SLB_MAX_PRIORITIES must be between 1 and 4"
++#endif
++
++/* Total max mapping slots (per-prio * priorities) */
++#define SLB_PORT_MAX_Q_MAP (SLB_PORT_MAX_Q_MAP_PER_PRIO * SLB_MAX_PRIORITIES)
++
++struct slb_queue;
++
++/* Pre-resolved queue dequeue entry for core-local port access */
++struct slb_port_q_entry {
++	struct rte_event_ring *dq_ring;
++	struct slb_queue *queue;
++	uint8_t queue_id;
++	uint8_t schedule_type;
++	uint8_t pad[6];
++};
++
++struct __rte_cache_aligned slb_port {
++	/* --- Cacheline 0: Hot Rx & Tx scheduling control (64 bytes) --- */
++	uint16_t id;
++	int32_t inflight_credits;
++	int32_t new_event_threshold;
++	RTE_ATOMIC(uint64_t) active_queues;
++	uint16_t num_q[SLB_MAX_PRIORITIES];
++	uint16_t next_q[SLB_MAX_PRIORITIES];
++	bool is_single_linked;
++	bool implicit_release;
++	bool credits_drained;
++	bool remap_input_q;
++	uint8_t pad_port[4];
++	struct rte_event_ring *single_linked_ring;
++	struct slb_evdev *slb;
++
++	/* --- Cachelines 1..6: Pre-resolved queue mappings for dequeue --- */
++	alignas(RTE_CACHE_LINE_SIZE)
++	struct slb_port_q_entry q_entries[SLB_MAX_PRIORITIES][SLB_PORT_MAX_Q_MAP_PER_PRIO];
++
++	/* --- Cold Section: Statistics counters and config --- */
++	alignas(RTE_CACHE_LINE_SIZE)
++	uint16_t dequeue_depth;
++	uint16_t enqueue_depth;
++	struct slb_queue *single_linked_q;
++	uint64_t enqueue_calls;
++	uint64_t new_enqueued;
++	uint64_t forward_enqueued;
++	uint64_t release_enqueued;
++	uint64_t dequeue_calls;
++	uint64_t dequeued;
++	uint64_t empty_dequeues;
++	uint64_t total_dequeues;
++	uint64_t queue_enqueued[SLB_MAX_QUEUES];
++	uint64_t queue_dequeued[SLB_MAX_QUEUES];
++};
++
++struct slb_queue {
++	uint8_t schedule_type;
++	bool is_single_link;
++	uint16_t num_serving_ports;
++	uint64_t serving_ports_mask;
++	alignas(RTE_CACHE_LINE_SIZE) struct rte_event_ring *q_ring;
++};
++
++/* Limited by the size of 'serving_ports_mask' and 'active_queues' bitmasks */
++static_assert(SLB_MAX_PORTS <= 64, "Max compile-time port count exceeded");
++static_assert(SLB_MAX_QUEUES <= 64, "Max compile-time queue count exceeded");
++
++struct slb_evdev {
++	struct rte_eventdev_data *data;
++
++	struct slb_port ports[SLB_MAX_PORTS];
++	uint16_t num_ports;
++	struct slb_queue queues[SLB_MAX_QUEUES];
++	uint8_t num_queues;
++	int32_t max_inflight;
++
++	alignas(RTE_CACHE_LINE_SIZE) RTE_ATOMIC(int32_t) credits_on_loan;
++};
++
++uint16_t slb_event_enqueue_burst(void *port,
++				 const struct rte_event events[],
++				 uint16_t events_len);
++uint16_t slb_event_enqueue_new_burst(void *port,
++				     const struct rte_event events[],
++				     uint16_t events_len);
++uint16_t slb_event_enqueue_forward_burst(void *port,
++					 const struct rte_event events[],
++					 uint16_t events_len);
++
++uint16_t slb_event_dequeue_burst(void *port, struct rte_event *events,
++				 uint16_t num, uint64_t wait);
++
++void slb_port_return_credits(struct slb_evdev *slb, struct slb_port *port,
++			     int32_t credits);
++
++void slb_dump(struct rte_eventdev *dev, FILE *f);
++
++static inline struct slb_evdev *
++slb_pmd_priv(const struct rte_eventdev *eventdev)
++{
++	return eventdev->data->dev_private;
++}
++
++extern int event_slb_logtype;
++#define RTE_LOGTYPE_EVENT_SLB event_slb_logtype
++#define SLB_LOG_DP_LINE(level, fmt, ...)				\
++	RTE_LOG_DP_LINE(level, EVENT_SLB, "%s() line %u: " fmt,		\
++		   __func__, __LINE__, ## __VA_ARGS__)
++
++#define SLB_LOG_DP_PORT_LINE(level, port_id, fmt, ...)			\
++	SLB_LOG_DP_LINE(level, "<Port %d> " fmt, port_id, ## __VA_ARGS__)
++
++/* Obtain serving port masks for the specified queue and set corresponding
++ * active queue bits for all served ports.
++ */
++static inline void
++slb_port_wakeup_queues(struct slb_evdev *slb, struct slb_queue *queue)
++{
++	uint8_t queue_id = queue - slb->queues;
++	uint64_t port_mask = queue->serving_ports_mask;
++	struct slb_port *port;
++	uint8_t port_id;
++
++	while (port_mask) {
++		port_id = rte_ctz64(port_mask);
++		port = &slb->ports[port_id];
++		rte_atomic_fetch_or_explicit(&port->active_queues,
++					     (1ULL << queue_id),
++					     rte_memory_order_release);
++		port_mask &= ~(1ULL << port_id);
++	}
++}
++
++#endif /* _SLB_EVDEV_H_ */
+diff --git a/drivers/event/slb/slb_event.c b/drivers/event/slb/slb_event.c
+new file mode 100644
+index 0000000000..f55262154e
+--- /dev/null
++++ b/drivers/event/slb/slb_event.c
+@@ -0,0 +1,279 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 Pravin Pathak <pravin.pathak.dev@gmail.com>
++ */
++
++#include <stdbool.h>
++#include <rte_cycles.h>
++#include <rte_ring_elem.h>
++#include <rte_stdatomic.h>
++
++#include "slb_evdev.h"
++
++/* Acquire credits for new events */
++static bool
++slb_port_acquire_credits(struct slb_evdev *slb, struct slb_port *port,
++			 int32_t credits)
++{
++	int32_t inflight_credits = port->inflight_credits;
++	int32_t remaining_credits = inflight_credits - credits;
++	int32_t total_inflight;
++	int32_t available;
++	int32_t required_credits;
++	int32_t new_total_inflight;
++
++	/* If port has enough credits, update and return true */
++	if (likely(remaining_credits >= 0)) {
++		port->inflight_credits = remaining_credits;
++		return true;
++	}
++
++	total_inflight = rte_atomic_load_explicit(&slb->credits_on_loan,
++						  rte_memory_order_relaxed);
++	available = slb->max_inflight - total_inflight;
++	required_credits = RTE_MAX(abs(remaining_credits), SLB_PORT_MIN_CREDITS);
++
++	if (available < required_credits)
++		return false;
++
++	new_total_inflight =
++		rte_atomic_fetch_add_explicit(&slb->credits_on_loan,
++					      required_credits,
++					      rte_memory_order_relaxed) +
++					      required_credits;
++
++	if (unlikely(new_total_inflight > slb->max_inflight)) {
++		rte_atomic_fetch_sub_explicit(&slb->credits_on_loan,
++					      required_credits,
++					      rte_memory_order_relaxed);
++		return false;
++	}
++
++	port->inflight_credits += required_credits;
++	port->inflight_credits -= credits;
++
++	return true;
++}
++
++/* Return accumulated credits (Terminated events) */
++void
++slb_port_return_credits(struct slb_evdev *slb, struct slb_port *port,
++			int32_t credits)
++{
++	port->inflight_credits += credits;
++
++	if (unlikely(port->inflight_credits >= SLB_PORT_MAX_CREDITS)) {
++		int32_t return_credits = port->inflight_credits -
++					 SLB_PORT_MIN_CREDITS;
++		port->inflight_credits = SLB_PORT_MIN_CREDITS;
++
++		rte_atomic_fetch_sub_explicit(&slb->credits_on_loan,
++					      return_credits,
++					      rte_memory_order_release);
++	}
++}
++
++static void
++slb_port_enqueue_stats(struct slb_port *port, uint16_t num_new,
++		       uint16_t num_forward, uint16_t num_release)
++{
++	port->new_enqueued += num_new;
++	port->forward_enqueued += num_forward;
++	port->release_enqueued += num_release;
++}
++
++static void
++slb_port_queue_enqueue_burst_stats(struct slb_port *source_port,
++				   uint8_t queue_id, uint16_t num)
++{
++	source_port->queue_enqueued[queue_id] += num;
++}
++
++static inline uint16_t
++slb_event_enqueue_burst_generic(struct slb_port *source_port,
++				const struct rte_event events[],
++				uint16_t events_len, bool op_types_known,
++				uint16_t num_new, uint16_t num_forward,
++				uint16_t num_release)
++{
++	struct slb_evdev *slb = source_port->slb;
++	uint16_t enqueued = 0;
++	uint16_t idx = 0;
++
++	if (unlikely(events_len == 0))
++		return 0;
++
++	if (!op_types_known) {
++		for (uint16_t i = 0; i < events_len; i++) {
++			switch (events[i].op) {
++			case RTE_EVENT_OP_NEW:
++				num_new++;
++				break;
++			case RTE_EVENT_OP_FORWARD:
++				num_forward++;
++				break;
++			case RTE_EVENT_OP_RELEASE:
++				num_release++;
++				break;
++			}
++		}
++	}
++
++	/* Check credit threshold for NEW events */
++	if (num_new > 0) {
++		if (unlikely(rte_atomic_load_explicit(&slb->credits_on_loan,
++						      rte_memory_order_relaxed) >
++			     source_port->new_event_threshold))
++			return 0;
++
++		if (unlikely(!slb_port_acquire_credits(slb, source_port,
++						       num_new)))
++			return 0;
++	}
++
++	if (num_release > 0)
++		slb_port_return_credits(slb, source_port, num_release);
++
++	slb_port_enqueue_stats(source_port, num_new, num_forward, num_release);
++
++	/* Enqueue contiguous chunks targeting the same queue */
++	while (idx < events_len) {
++		if (events[idx].op == RTE_EVENT_OP_RELEASE) {
++			idx++;
++			enqueued++;
++			continue;
++		}
++
++		uint8_t qid = events[idx].queue_id;
++		uint16_t chunk_len = 1;
++
++		while (idx + chunk_len < events_len &&
++		       events[idx + chunk_len].queue_id == qid &&
++		       events[idx + chunk_len].op != RTE_EVENT_OP_RELEASE) {
++			chunk_len++;
++		}
++
++		struct slb_queue *queue = &slb->queues[qid];
++		uint16_t actual_enq = rte_event_ring_enqueue_burst(queue->q_ring,
++								  &events[idx],
++								  chunk_len,
++								  NULL);
++		slb_port_queue_enqueue_burst_stats(source_port, qid, actual_enq);
++		enqueued += actual_enq;
++
++		if (actual_enq < chunk_len) {
++			/* If queue ring is full, return unused credits for dropped NEW events */
++			uint16_t dropped_new = 0;
++			for (uint16_t d = actual_enq; d < chunk_len; d++) {
++				if (events[idx + d].op == RTE_EVENT_OP_NEW)
++					dropped_new++;
++			}
++			if (dropped_new > 0)
++				slb_port_return_credits(slb, source_port, dropped_new);
++			break;
++		}
++
++		idx += chunk_len;
++	}
++
++	return enqueued;
++}
++
++uint16_t
++slb_event_enqueue_burst(void *port, const struct rte_event events[],
++			uint16_t events_len)
++{
++	struct slb_port *source_port = port;
++	return slb_event_enqueue_burst_generic(source_port, events, events_len,
++					       false, 0, 0, 0);
++}
++
++uint16_t
++slb_event_enqueue_new_burst(void *port, const struct rte_event events[],
++			    uint16_t events_len)
++{
++	struct slb_port *source_port = port;
++	return slb_event_enqueue_burst_generic(source_port, events, events_len,
++					       true, events_len, 0, 0);
++}
++
++uint16_t
++slb_event_enqueue_forward_burst(void *port, const struct rte_event events[],
++				uint16_t events_len)
++{
++	struct slb_port *source_port = port;
++	return slb_event_enqueue_burst_generic(source_port, events, events_len,
++					       true, 0, events_len, 0);
++}
++
++static inline uint16_t
++slb_port_dequeue(struct slb_port *port, struct rte_event events[],
++		 uint16_t num)
++{
++	uint16_t total_deq = 0;
++
++	/* Single-link direct fast path */
++	if (port->is_single_linked) {
++		if (unlikely(!port->single_linked_ring))
++			return 0;
++
++		total_deq = rte_event_ring_dequeue_burst(port->single_linked_ring,
++							events, num, NULL);
++		if (total_deq > 0) {
++			port->total_dequeues += total_deq;
++			if (port->implicit_release)
++				slb_port_return_credits(port->slb, port,
++							total_deq);
++		}
++		return total_deq;
++	}
++
++	/* Parallel queue dequeue across priority levels */
++	for (int p = 0; p < SLB_MAX_PRIORITIES; p++) {
++		uint16_t num_q = port->num_q[p];
++		if (num_q == 0)
++			continue;
++
++		uint16_t q_idx = port->next_q[p];
++		for (uint16_t i = 0; i < num_q; i++) {
++			struct slb_port_q_entry *entry = &port->q_entries[p][q_idx];
++			uint16_t req = num - total_deq;
++			uint16_t deq = rte_event_ring_dequeue_burst(entry->dq_ring,
++								   &events[total_deq],
++								   req, NULL);
++			if (deq > 0) {
++				port->queue_dequeued[entry->queue_id] += deq;
++				total_deq += deq;
++			}
++
++			q_idx++;
++			if (q_idx >= num_q)
++				q_idx = 0;
++
++			if (total_deq == num)
++				break;
++		}
++		port->next_q[p] = q_idx;
++
++		if (total_deq > 0)
++			break;
++	}
++
++	port->total_dequeues += total_deq;
++	return total_deq;
++}
++
++uint16_t
++slb_event_dequeue_burst(void *p, struct rte_event events[], uint16_t num,
++			uint64_t wait __rte_unused)
++{
++	struct slb_port *port = p;
++
++	port->dequeue_calls++;
++	uint16_t dequeued = slb_port_dequeue(port, events, num);
++	port->dequeued += dequeued;
++
++	if (dequeued == 0)
++		port->empty_dequeues++;
++
++	return dequeued;
++}
 -- 
 2.53.0
 
