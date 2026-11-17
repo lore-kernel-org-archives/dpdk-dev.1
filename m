@@ -2,62 +2,62 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82088606A31C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 22:00:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42240606A32A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 22:00:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=mTJLySrO
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=dk3QNkty
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9210E402DF;
-	Tue, 17 Nov 2026 23:00:32 +0100 (CET)
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com
- [209.85.221.51])
- by mails.dpdk.org (Postfix) with ESMTPS id B2003400D5
- for <dev@dpdk.org>; Tue, 17 Nov 2026 23:00:31 +0100 (CET)
-Received: by mail-wr1-f51.google.com with SMTP id
- ffacd0b85a97d-497614c95f0so137180f8f.1
- for <dev@dpdk.org>; Tue, 17 Nov 2026 14:00:31 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A7FFC402C3;
+	Tue, 17 Nov 2026 23:00:37 +0100 (CET)
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com
+ [209.85.221.53])
+ by mails.dpdk.org (Postfix) with ESMTPS id 4CEEF402D5
+ for <dev@dpdk.org>; Tue, 17 Nov 2026 23:00:36 +0100 (CET)
+Received: by mail-wr1-f53.google.com with SMTP id
+ ffacd0b85a97d-497614c95f0so137211f8f.1
+ for <dev@dpdk.org>; Tue, 17 Nov 2026 14:00:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1794952831; x=1795557631; darn=dpdk.org;
+ d=gmail.com; s=20260707; t=1794952836; x=1795557636; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=yTxQWNateC9VUG1cbIchPq/S6Y0EBlhsW8VVRDT3aOg=;
- b=mTJLySrOxMJWE2KVqZXd+m8+3jpXFRDfNArsPuZZFURt0wO+95iaWbRnZHwrP1dgHb
- GZqJcjeM965lTn5SfZ6L0kGk7pIC24MAKGOvgIr8+ohksfgcCMDHraDRoyUVhtWJVeiS
- aYpWxcPz/u6uebqVBGhDzpBQLHjplIbKxSzG7TEMufXBPiL8lmcRjfVqfyFt+xk3NXim
- 7JmIzEDGwxnC6oOPPntQkZqF09VDmT6mPLasI47x/7GfskfaMiB9srgjGv1IITILn3EQ
- LCY8QDBleTtN3MpC7cYZ3hAFPnAls2pX/+Jpz41t3AewRu/urTneRJMnNIE/QZdyD38Z
- EHDQ==
+ bh=bnLgR4F5s+8it+qYWRfSMF7Gu2s7FGVM+f+lQCN4gzc=;
+ b=dk3QNktyoGmDWhE2aOVl8Au2GMIH8F+7KEKGj8ztzoQ8pdhmP03k0u13bj5Yg6IcZB
+ h/F0GQTfv7d1OcJdH0Ll0Is4UZCU7cYCDnr2BcfCV/UZMhVf3ZJkGH8egEZF9Vbp9x9O
+ N9kLPP7qnka/uy0u20qZF5KwbWni8SLjIk7+HGgeZyhT4e25xgkUSrUAab4BVeA+93zM
+ XcJ8kq7Ztj6Rl0reoejY/M+Zbl/jPB1adkH7jH9UtSHF/+UvSDs0zaN3HrH6Rf5ffs/l
+ 2DLF99bD4eijjUPHl+Ow7pE6b8iqq3RebiOayUyywcMD+d1SQvb2evsr2guqfh+qV/82
+ fmCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794952831; x=1795557631;
+ d=1e100.net; s=20260707; t=1794952836; x=1795557636;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=yTxQWNateC9VUG1cbIchPq/S6Y0EBlhsW8VVRDT3aOg=;
- b=owuHx7YNWuV9jmuqYMSMjfmZKV8zQQOZZWEhDY3gvgFMzdQ5EZkUWrLZej0o4tyVUa
- Xi/WP4wVxRG+qHrJvVUvwnHI4gDdL7mDQ3BlrxffjEYGqVgXBo5y6upEFBdiZFeunKUO
- aV8zOCGXsx3PYp1gpT3cJTESwuBd2PYXwH7fEN3AXm2iQ1e7YS+iZVvBoK3FSybZUabT
- nH13q0qz/ddC1cgXlAT1pniqEAm8moU0OzeOQ9YQ+8tQZjmU1Pj8COI9mLHko3K6fguN
- wiYEWDhOGBgsNEM3ZoHsp/b/3oEKwBydg5Ms/2xHIc11g/zKdwWYrmzKDIvXXXHkC+XR
- 5Ymw==
-X-Gm-Message-State: APuU4Z+jmjobJkowhbT1fJ6BxUwU2FA+qNsjA1xa2QmSmcBv2rvBzsdw
- sDKrlfvzokDPmawPS9BbPAJdA1ma3pPLuReIYm2YTcXJL01rlODCZ9nt
-X-Gm-Gg: AZFdTZdrvw2e7Ps3EQ9YqpqDy4Gts/x1g6KnoyM1R1+/XEpCcwulXqMJIqkuEnRrq+l
- L55mR3ePagrJ1DbpxRl31X0smsxu/gEemxkCVgoRhIbTJ2zFuIpsrdQnwg8fnov12Wedah/wPs3
- CiuaPC9eqxWwcPD26f5+Z1Ql/qka4Db0RYnU5LIvOISjbP5/PBZtjei+mnLC7uKaBSpZGL2zgC3
- fusW4johJdgzXNR4XbhwZse5efq+rddB2tnm6ofW/JwatrIohPdImAszj/esWmWbPKIqTry+Kd/
- 1NGr/o1IMPLwouH2x8juHBCAEQdE/pWLzcb6t4/BDiZ6tC7cZK32785VDq+Iz8gAYFkz4VlgaxV
- Fc5qzO6EuEFMAF5EcHCvXymrGqHLQRcm5J6LzBz+THDxcF1Bp90oucPDYwPJioq/UfqSOy3OPOO
- wjTWCXY3+e7Y1GPHBR5CTZVjfSv4jzA4L837Xop9D8r30cWE8ikvKgi6j+WbANzQfQY2aI7Juy7
- z8d3j9UFERXxKNnycJexVyu1/xhu6mz3c3/kr8miqMZOM6gzpAbwlznlD/wM/lX2MCOqquzG8qd
- 0Uwe6Zqcez1koVo/XeK6
-X-Received: by 2002:a5d:5888:0:b0:498:88f:14c8 with SMTP id
- ffacd0b85a97d-4a6389ec6f0mr1694587f8f.9.1794952830901; 
- Tue, 17 Nov 2026 14:00:30 -0800 (PST)
+ bh=bnLgR4F5s+8it+qYWRfSMF7Gu2s7FGVM+f+lQCN4gzc=;
+ b=HSovAdCJ2Km4hpFBfUEoDeNl5YonmJKE2Bf48jT20yuH/R0+B5U+MLGmpUe6do+jTL
+ PA17YxkpinUcJZGK2AS0wGJ3GachDDSYt9uFqinK5i1QQ8Si4swywP6Pl9ZLjHd0M4gJ
+ APfIrWkagF0g77E0jsHf9AOQcDG1bkexhCXGPOiqAr6Vj1jV0wzNRroP4fyoviRQWaZW
+ GJVSrW1NuyC1n3N+QI85vMQDokqeGrS/Z0Pas0vCF086bVswVJ+f7GqOXP7nAQ5QbV0W
+ 4a9T2nz24SeO/NmD1lvvnOSElqh5ioiFEVy53xLq6regeCKdFaaWqBks9LUCUuUefshx
+ Xy5A==
+X-Gm-Message-State: APuU4Z/gUOnMiu0NpNFOYUSP8t9AikJ4eTLDJ9O+bZXCPDlvQq13jkge
+ FC3GgFqNNlgyLyoZv7ydI/Ym+ysrTKuAcmCC8honoyGRTC33CNcUTpZS
+X-Gm-Gg: AZFdTZeO0eKQ0jcVBPkQA9kanKzdzK1WkPU782FGB0IrR9Pjwrl3vNIIZh5nYDgOoIN
+ zYN7y+D2xWVzEREpsnavKo24m0EJ1dmCOrYVBleo4GOpfUBWAAKqr/ABoUB5w20WEg96wx/W87e
+ psb3vKesLBLhjziWVWzynHb9bJYNal7XnavwvprXP6gCGPkYp0HdBKM8lN1OOVZI9RL9RKwWXZ4
+ /hoGkeeipmC/un8zeLvz91Nl026W5m0kBGojihJMAXysbF5ZVbLOjhURLAT0f7zajZvKo9hfHHo
+ MDglMQ3dt2F/st3EwF8+rO6Qg4209gutTMzYAjR1S2jQAuZzizpgUWD1NSIgT4mB5ARRprs2doU
+ x25R+Qx/jXzJdGtp28zZv9O6LH4cZY8ppR0X3Gx5NH0WBhuB8h6qqVRuLhKMvRarC+hDxTMqHeE
+ oAxjqgZ0AizRXKqgbmV6WxVc7mTzYMiu7lR1iAUs2CWyeGH4rWCaJFGLNECIOK1TuOi+xQyVBd0
+ xEI+/J+KzXwxdEvSdj1Xevz73y4niSI4Wts/t94uJjX3X+pMSqR0rBkyfyko2YhN0sVZKt/ipnS
+ QUOpBRZAdTVFd9zLJIKh
+X-Received: by 2002:a5d:5f85:0:b0:48e:3647:c35d with SMTP id
+ ffacd0b85a97d-4a639476334mr1730220f8f.21.1794952835741; 
+ Tue, 17 Nov 2026 14:00:35 -0800 (PST)
 Received: from fedora ([46.210.208.90]) by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4a654a8c37fsm1011390f8f.18.2026.11.17.14.00.27
+ ffacd0b85a97d-4a654a8c37fsm1011390f8f.18.2026.11.17.14.00.31
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 17 Nov 2026 14:00:29 -0800 (PST)
+ Tue, 17 Nov 2026 14:00:34 -0800 (PST)
 From: Isaac Boukris <iboukris@gmail.com>
 To: Maxime Coquelin <maxime.coquelin@redhat.com>,
  Chenbo Xia <chenbox@nvidia.com>
@@ -66,9 +66,9 @@ Cc: dev@dpdk.org, David Marchand <david.marchand@redhat.com>,
  Luca Vizzarro <luca.vizzarro@arm.com>,
  Patrick Robb <patrickrobb1997@gmail.com>,
  Isaac Boukris <iboukris@gmail.com>
-Subject: [PATCH v2 2/5] test/virtio_user: add unit test of Rx interrupts
-Date: Tue, 17 Nov 2026 23:59:58 +0200
-Message-ID: <20261117220001.965310-3-iboukris@gmail.com>
+Subject: [PATCH v2 3/5] app/testpmd: add Rx queue interrupts option
+Date: Tue, 17 Nov 2026 23:59:59 +0200
+Message-ID: <20261117220001.965310-4-iboukris@gmail.com>
 X-Mailer: git-send-email 2.56.1
 In-Reply-To: <20261117220001.965310-1-iboukris@gmail.com>
 References: <20261117124303.717447-1-iboukris@gmail.com>
@@ -85,365 +85,282 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-19.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FORGED_GMAIL_RCVD,FREEMAIL_FORGED_FROMDOMAIN,
 	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Add a test suite for the virtio PMD on a virtio-user port backed by
-vhost-net and a TAP interface, modeled on the test suite of the TAP
-PMD. It needs no VM and no PCI device. It is skipped where the port
-cannot be created (no root, no /dev/vhost-net).
+testpmd cannot test the Rx queue interrupts of a driver, because it
+never asks for them.
 
-The first case configures the port with Rx interrupts and an Rx
-offload. It enables the interrupt of the Rx queue, sends a frame from
-the kernel and sleeps on the interrupt. The frame must end the sleep.
-Then it does the same after a second configure.
-
-The port has two queue pairs and the test configures one Rx queue, so
-the port has more interrupt eventfds than Rx queues. These eventfds
-are the backend's call fds, and the driver must not release them. If
-it does when it initializes the device again, the test fails.
-
-  DPDK_TEST=virtio_user_pmd_autotest ./build/app/dpdk-test --no-huge
+With --rxq-interrupt, the ports are configured with Rx queue
+interrupts, and a forwarding lcore whose Rx queues are all empty
+sleeps until a packet arrives on one of them, 10 ms at most, as
+l3fwd-power does. The forward statistics show the number of sleeps
+that an interrupt ended.
 
 Signed-off-by: Isaac Boukris <iboukris@gmail.com>
 ---
- MAINTAINERS                     |   1 +
- app/test/meson.build            |   1 +
- app/test/test_pmd_virtio_user.c | 296 ++++++++++++++++++++++++++++++++
- 3 files changed, 298 insertions(+)
- create mode 100644 app/test/test_pmd_virtio_user.c
+ app/test-pmd/parameters.c             |  8 +++
+ app/test-pmd/testpmd.c                | 86 ++++++++++++++++++++++++++-
+ app/test-pmd/testpmd.h                |  2 +
+ doc/guides/testpmd_app_ug/run_app.rst |  7 +++
+ 4 files changed, 101 insertions(+), 2 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8fcb4ef5fa..36dd253f36 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1106,6 +1106,7 @@ T: git://dpdk.org/next/dpdk-next-virtio
- F: drivers/net/virtio/
- F: doc/guides/nics/virtio.rst
- F: doc/guides/nics/features/virtio*.ini
-+F: app/test/test_pmd_virtio_user.c
- 
- Wind River AVP
- M: Steven Webster <steven.webster@windriver.com>
-diff --git a/app/test/meson.build b/app/test/meson.build
-index 2f1cd817cd..e480353885 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -155,6 +155,7 @@ source_file_deps = {
-     'test_pmd_ring.c': ['net_ring', 'ethdev', 'bus_vdev'],
-     'test_pmd_ring_perf.c': ['ethdev', 'net_ring', 'bus_vdev'],
-     'test_pmd_tap.c': ['ethdev', 'net_tap', 'bus_vdev'],
-+    'test_pmd_virtio_user.c': ['ethdev', 'net_virtio', 'bus_vdev'],
-     'test_pmu.c': ['pmu'],
-     'test_power.c': ['power', 'power_acpi', 'power_kvm_vm', 'power_intel_pstate',
-         'power_amd_pstate', 'power_cppc'],
-diff --git a/app/test/test_pmd_virtio_user.c b/app/test/test_pmd_virtio_user.c
-new file mode 100644
-index 0000000000..d62ce000fb
---- /dev/null
-+++ b/app/test/test_pmd_virtio_user.c
-@@ -0,0 +1,296 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 Isaac Boukris
-+ */
-+
-+/*
-+ * Tests of the virtio PMD on a virtio-user port backed by vhost-net and a TAP
-+ * interface. They need no VM and no PCI device. The kernel's end is a packet
-+ * socket on the TAP interface.
-+ */
-+
-+#include "test.h"
-+
-+#include <stdio.h>
-+
-+#ifndef RTE_EXEC_ENV_LINUX
-+
-+static int
-+test_pmd_virtio_user(void)
-+{
-+	printf("virtio-user with vhost-net is only available on Linux, skipping test\n");
-+	return TEST_SKIPPED;
-+}
-+
-+#else /* RTE_EXEC_ENV_LINUX */
-+
-+#include <errno.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <net/if.h>
-+#include <sys/ioctl.h>
-+#include <sys/socket.h>
-+#include <linux/if_packet.h>
-+#include <linux/virtio_net.h>
-+
-+#include <rte_bus_vdev.h>
-+#include <rte_cycles.h>
+diff --git a/app/test-pmd/parameters.c b/app/test-pmd/parameters.c
+index 34a4f74e63..f958104f47 100644
+--- a/app/test-pmd/parameters.c
++++ b/app/test-pmd/parameters.c
+@@ -207,6 +207,8 @@ enum {
+ 	TESTPMD_OPT_NO_LSC_INTERRUPT_NUM,
+ #define TESTPMD_OPT_NO_RMV_INTERRUPT "no-rmv-interrupt"
+ 	TESTPMD_OPT_NO_RMV_INTERRUPT_NUM,
++#define TESTPMD_OPT_RXQ_INTERRUPT "rxq-interrupt"
++	TESTPMD_OPT_RXQ_INTERRUPT_NUM,
+ #define TESTPMD_OPT_PRINT_EVENT "print-event"
+ 	TESTPMD_OPT_PRINT_EVENT_NUM,
+ #define TESTPMD_OPT_MASK_EVENT "mask-event"
+@@ -357,6 +359,7 @@ static const struct option long_options[] = {
+ 	NO_ARG(TESTPMD_OPT_DISABLE_DEVICE_START),
+ 	NO_ARG(TESTPMD_OPT_NO_LSC_INTERRUPT),
+ 	NO_ARG(TESTPMD_OPT_NO_RMV_INTERRUPT),
++	NO_ARG(TESTPMD_OPT_RXQ_INTERRUPT),
+ 	REQUIRED_ARG(TESTPMD_OPT_PRINT_EVENT),
+ 	REQUIRED_ARG(TESTPMD_OPT_MASK_EVENT),
+ 	REQUIRED_ARG(TESTPMD_OPT_TX_OFFLOADS),
+@@ -515,6 +518,8 @@ usage(char* progname)
+ 	printf("  --disable-device-start: do not automatically start port\n");
+ 	printf("  --no-lsc-interrupt: disable link status change interrupt.\n");
+ 	printf("  --no-rmv-interrupt: disable device removal interrupt.\n");
++	printf("  --rxq-interrupt: enable Rx queue interrupts, "
++	       "idle forwarding lcores sleep.\n");
+ #ifdef RTE_LIB_BITRATESTATS
+ 	printf("  --bitrate-stats=N: set the logical core N to perform "
+ 		"bit-rate calculation.\n");
+@@ -1638,6 +1643,9 @@ launch_args_parse(int argc, char** argv)
+ 		case TESTPMD_OPT_NO_RMV_INTERRUPT_NUM:
+ 			rmv_interrupt = 0;
+ 			break;
++		case TESTPMD_OPT_RXQ_INTERRUPT_NUM:
++			rxq_interrupt = 1;
++			break;
+ 		case TESTPMD_OPT_FLOW_ISOLATE_ALL_NUM:
+ 			flow_isolate_all = 1;
+ 			break;
+diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
+index d6211a9a8a..0de7cdbeb6 100644
+--- a/app/test-pmd/testpmd.c
++++ b/app/test-pmd/testpmd.c
+@@ -43,6 +43,8 @@
+ #include <rte_mbuf.h>
+ #include <rte_mbuf_pool_ops.h>
+ #include <rte_interrupts.h>
 +#include <rte_epoll.h>
-+#include <rte_ethdev.h>
-+#include <rte_ether.h>
-+#include <rte_mbuf.h>
-+
-+#define VDEV_NAME "net_virtio_user_test"
-+#define TAP_NAME "dtap_vu_test"
-+#define RING_SIZE 256
-+#define NB_MBUF 1024
-+#define BURST 32
-+#define WAIT_MS 1000
-+/* The test frames' EtherType (IEEE 802 local experimental) */
-+#define TEST_ETHER_TYPE 0x88b5
-+
-+static struct rte_mempool *mp;
-+static uint16_t port_id = RTE_MAX_ETHPORTS;
-+static int ksock = -1; /* the kernel's end, each frame follows a virtio_net_hdr */
-+static bool started;
-+
-+static int
-+port_stop(void)
-+{
-+	int ret;
-+
-+	if (!started)
-+		return TEST_SUCCESS;
-+	started = false;
-+	ret = rte_eth_dev_stop(port_id);
-+	TEST_ASSERT_SUCCESS(ret, "stop failed: %s", rte_strerror(-ret));
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/* Configure the port and start it. A failed case may have left it started. */
-+static int
-+port_start(const struct rte_eth_conf *conf)
-+{
-+	int ret;
-+
-+	TEST_ASSERT_SUCCESS(port_stop(), "port stop failed");
-+	ret = rte_eth_dev_configure(port_id, 1, 1, conf);
-+	TEST_ASSERT_SUCCESS(ret, "configure failed: %s", rte_strerror(-ret));
-+	ret = rte_eth_rx_queue_setup(port_id, 0, RING_SIZE, SOCKET_ID_ANY, NULL, mp);
-+	TEST_ASSERT_SUCCESS(ret, "Rx queue setup failed: %s", rte_strerror(-ret));
-+	ret = rte_eth_tx_queue_setup(port_id, 0, RING_SIZE, SOCKET_ID_ANY, NULL);
-+	TEST_ASSERT_SUCCESS(ret, "Tx queue setup failed: %s", rte_strerror(-ret));
-+	ret = rte_eth_dev_start(port_id);
-+	TEST_ASSERT_SUCCESS(ret, "start failed: %s", rte_strerror(-ret));
-+	started = true;
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/* A frame from the kernel's end to the port, recognized by its EtherType. */
-+static int
-+kernel_send(void)
-+{
-+	struct {
-+		struct virtio_net_hdr vnet; /* no offload */
-+		struct rte_ether_hdr eth;
-+		uint8_t payload[RTE_ETHER_MIN_LEN];
-+	} frame;
-+	ssize_t n;
-+
-+	memset(&frame, 0, sizeof(frame));
-+	memset(&frame.eth.dst_addr, 0xff, RTE_ETHER_ADDR_LEN);
-+	frame.eth.src_addr.addr_bytes[0] = RTE_ETHER_LOCAL_ADMIN_ADDR;
-+	frame.eth.ether_type = rte_cpu_to_be_16(TEST_ETHER_TYPE);
-+	n = send(ksock, &frame, sizeof(frame), 0);
-+	TEST_ASSERT(n == (ssize_t)sizeof(frame), "send on %s failed: %s", TAP_NAME,
-+		    strerror(errno));
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/* Receive what the queue holds. Return true if it holds the frame of kernel_send(). */
-+static bool
-+port_receive(void)
-+{
-+	struct rte_mbuf *pkts[BURST];
-+	bool found = false;
-+	uint16_t i, n;
-+
-+	while ((n = rte_eth_rx_burst(port_id, 0, pkts, BURST)) != 0) {
-+		for (i = 0; i < n; i++) {
-+			const struct rte_ether_hdr *eth =
-+				rte_pktmbuf_mtod(pkts[i], const struct rte_ether_hdr *);
-+
-+			if (eth->ether_type == rte_cpu_to_be_16(TEST_ETHER_TYPE))
-+				found = true;
-+		}
-+		rte_pktmbuf_free_bulk(pkts, n);
-+	}
-+
-+	return found;
-+}
-+
-+/* Sleep on the Rx queue's interrupt. A frame from the kernel must end the sleep. */
-+static int
-+rx_intr_wakes(void)
-+{
-+	uint64_t deadline = rte_get_timer_cycles() + rte_get_timer_hz() * WAIT_MS / 1000;
-+	struct rte_epoll_event event;
-+	bool found;
-+	int ret;
-+
-+	ret = rte_eth_dev_rx_intr_ctl_q(port_id, 0, RTE_EPOLL_PER_THREAD, RTE_INTR_EVENT_ADD,
-+					NULL);
-+	TEST_ASSERT_SUCCESS(ret, "no interrupt for the Rx queue: %s", rte_strerror(-ret));
-+
-+	do {
-+		/*
-+		 * Enable the interrupt before the kernel sends. A frame that
-+		 * arrives from now on raises it, also before the sleep below.
-+		 */
-+		ret = rte_eth_dev_rx_intr_enable(port_id, 0);
-+		TEST_ASSERT_SUCCESS(ret, "Rx interrupt enable failed: %s", rte_strerror(-ret));
-+		/* Drop the frames that the kernel sent earlier, and their event. */
-+		port_receive();
-+		rte_epoll_wait(RTE_EPOLL_PER_THREAD, &event, 1, 0);
-+
-+		TEST_ASSERT_SUCCESS(kernel_send(), "kernel send failed");
-+		ret = rte_epoll_wait(RTE_EPOLL_PER_THREAD, &event, 1, WAIT_MS);
-+		TEST_ASSERT(ret == 1, "no Rx interrupt within %d ms", WAIT_MS);
-+		ret = rte_eth_dev_rx_intr_disable(port_id, 0);
-+		TEST_ASSERT_SUCCESS(ret, "Rx interrupt disable failed: %s", rte_strerror(-ret));
-+		/* If another frame of the kernel raised the interrupt, send again. */
-+		found = port_receive();
-+	} while (!found && rte_get_timer_cycles() < deadline);
-+	TEST_ASSERT(found, "frame from the kernel not received");
-+
-+	ret = rte_eth_dev_rx_intr_ctl_q(port_id, 0, RTE_EPOLL_PER_THREAD, RTE_INTR_EVENT_DEL,
-+					NULL);
-+	TEST_ASSERT_SUCCESS(ret, "Rx interrupt removal failed: %s", rte_strerror(-ret));
-+
-+	return TEST_SUCCESS;
-+}
-+
++#include <rte_spinlock.h>
+ #include <rte_ether.h>
+ #include <rte_ethdev.h>
+ #include <rte_dev.h>
+@@ -446,6 +448,11 @@ uint8_t lsc_interrupt = 1; /* enabled by default */
+  */
+ uint8_t rmv_interrupt = 1; /* enabled by default */
+ 
 +/*
-+ * Rx interrupts with an offload, which makes configure initialize the device
-+ * twice. Then a second configure. The interrupt eventfds belong to the
-+ * backend, so the driver must not release them when it initializes the
-+ * device again.
++ * Enable Rx queue interrupts. A forwarding lcore then sleeps when it is idle.
 + */
-+static int
-+test_virtio_user_rx_intr(void)
-+{
-+	struct rte_eth_conf conf = {
-+		.intr_conf.rxq = 1,
-+		.rxmode.offloads = RTE_ETH_RX_OFFLOAD_UDP_CKSUM | RTE_ETH_RX_OFFLOAD_TCP_CKSUM,
-+	};
-+	struct rte_eth_dev_info info;
-+	int round, ret;
++uint8_t rxq_interrupt;
 +
-+	ret = rte_eth_dev_info_get(port_id, &info);
-+	TEST_ASSERT_SUCCESS(ret, "dev_info failed: %s", rte_strerror(-ret));
-+	conf.rxmode.offloads &= info.rx_offload_capa;
-+	TEST_ASSERT(conf.rxmode.offloads != 0, "no Rx checksum offload to request");
+ uint8_t hot_plug = 0; /**< hotplug disabled by default. */
+ 
+ /* After attach, port setup is called on event or by iterator */
+@@ -2213,6 +2220,14 @@ fwd_stats_display(void)
+ 	       total_xmit, total_tx_dropped, total_xmit + total_tx_dropped);
+ 	if (total_rx_nombuf > 0)
+ 		printf("  RX-nombufs: %-14"PRIu64"\n", total_rx_nombuf);
++	if (rxq_interrupt) {
++		uint64_t rx_wakeups = 0;
++		lcoreid_t lc_id;
 +
-+	for (round = 0; round < 2; round++) {
-+		TEST_ASSERT_SUCCESS(port_start(&conf), "round %d: port start failed", round);
-+		TEST_ASSERT_SUCCESS(rx_intr_wakes(), "round %d: Rx interrupt failed", round);
-+		TEST_ASSERT_SUCCESS(port_stop(), "round %d: port stop failed", round);
++		for (lc_id = 0; lc_id < cur_fwd_config.nb_fwd_lcores; lc_id++)
++			rx_wakeups += fwd_lcores[lc_id]->rx_wakeups;
++		printf("  RX-wakeups: %-14"PRIu64"\n", rx_wakeups);
 +	}
+ 	printf("  %s++++++++++++++++++++++++++++++++++++++++++++++"
+ 	       "%s\n",
+ 	       acc_stats_border, acc_stats_border);
+@@ -2240,6 +2255,7 @@ void
+ fwd_stats_reset(void)
+ {
+ 	streamid_t sm_id;
++	lcoreid_t lc_id;
+ 	portid_t pt_id;
+ 	int ret;
+ 	int i;
+@@ -2267,6 +2283,8 @@ fwd_stats_reset(void)
+ 		memset(&fs->tx_burst_stats, 0, sizeof(fs->tx_burst_stats));
+ 		fs->busy_cycles = 0;
+ 	}
++	for (lc_id = 0; lc_id < cur_fwd_config.nb_fwd_lcores; lc_id++)
++		fwd_lcores[lc_id]->rx_wakeups = 0;
+ }
+ 
+ static void
+@@ -2323,6 +2341,42 @@ flush_fwd_rx_queues(void)
+ 	}
+ }
+ 
++/*
++ * Rx queue interrupts work as in the l3fwd-power example. An lcore whose Rx
++ * queues are all empty enables their interrupts, sleeps until one of them
++ * is raised, 10 ms at most, and disables them.
++ */
++static rte_spinlock_t rxq_interrupt_locks[RTE_MAX_ETHPORTS];
 +
-+	return TEST_SUCCESS;
++static void
++rxq_interrupt_turn(struct fwd_lcore *fc, bool on)
++{
++	struct fwd_stream **fsm = &fwd_streams[fc->stream_idx];
++	streamid_t sm_id;
++
++	for (sm_id = 0; sm_id < fc->stream_nb; sm_id++) {
++		struct fwd_stream *fs = fsm[sm_id];
++
++		rte_spinlock_lock(&rxq_interrupt_locks[fs->rx_port]);
++		if (on)
++			rte_eth_dev_rx_intr_enable(fs->rx_port, fs->rx_queue);
++		else
++			rte_eth_dev_rx_intr_disable(fs->rx_port, fs->rx_queue);
++		rte_spinlock_unlock(&rxq_interrupt_locks[fs->rx_port]);
++	}
 +}
 +
 +static void
-+test_virtio_user_cleanup(void)
++rxq_interrupt_sleep(struct fwd_lcore *fc)
 +{
-+	if (ksock >= 0)
-+		close(ksock);
-+	ksock = -1;
-+	if (port_id != RTE_MAX_ETHPORTS) {
-+		port_stop();
-+		rte_eth_dev_close(port_id);
-+		rte_vdev_uninit(VDEV_NAME);
-+	}
-+	port_id = RTE_MAX_ETHPORTS;
-+	rte_mempool_free(mp);
-+	mp = NULL;
++	struct rte_epoll_event event;
++
++	rxq_interrupt_turn(fc, true);
++	if (rte_epoll_wait(RTE_EPOLL_PER_THREAD, &event, 1, 10) > 0)
++		fc->rx_wakeups++;
++	rxq_interrupt_turn(fc, false);
 +}
 +
-+/* Open the kernel's end. Set the TAP interface up and bind a packet socket to it. */
-+static int
-+kernel_open(void)
+ static void
+ run_pkt_fwd_on_lcore(struct fwd_lcore *fc, packet_fwd_t pkt_fwd)
+ {
+@@ -2330,6 +2384,7 @@ run_pkt_fwd_on_lcore(struct fwd_lcore *fc, packet_fwd_t pkt_fwd)
+ 	uint64_t prev_tsc;
+ 	streamid_t nb_fs;
+ 	streamid_t sm_id;
++	bool idle;
+ #ifdef RTE_LIB_BITRATESTATS
+ 	uint64_t tics_per_1sec;
+ 	uint64_t tics_datum;
+@@ -2344,6 +2399,7 @@ run_pkt_fwd_on_lcore(struct fwd_lcore *fc, packet_fwd_t pkt_fwd)
+ 	nb_fs = fc->stream_nb;
+ 	prev_tsc = rte_rdtsc();
+ 	do {
++		idle = true;
+ 		for (sm_id = 0; sm_id < nb_fs; sm_id++) {
+ 			struct fwd_stream *fs = fsm[sm_id];
+ 			uint64_t start_fs_tsc = 0;
+@@ -2354,9 +2410,13 @@ run_pkt_fwd_on_lcore(struct fwd_lcore *fc, packet_fwd_t pkt_fwd)
+ 			if (record_core_cycles)
+ 				start_fs_tsc = rte_rdtsc();
+ 			busy = (*pkt_fwd)(fs);
++			if (busy)
++				idle = false;
+ 			if (record_core_cycles && busy)
+ 				fs->busy_cycles += rte_rdtsc() - start_fs_tsc;
+ 		}
++		if (rxq_interrupt && idle && !fc->stopped)
++			rxq_interrupt_sleep(fc);
+ #ifdef RTE_LIB_BITRATESTATS
+ 		if (bitrate_enabled != 0 &&
+ 				bitrate_lcore_id == rte_lcore_id()) {
+@@ -2409,11 +2469,31 @@ lcore_usage_callback(unsigned int lcore_id, struct rte_lcore_usage *usage)
+ 	return 0;
+ }
+ 
++/*
++ * Add the Rx interrupts of the queues of an lcore to the epoll instance of
++ * its thread, or delete them from it.
++ */
++static void
++rxq_interrupt_register(struct fwd_lcore *fc, int op)
 +{
-+	struct sockaddr_ll addr = {
-+		.sll_family = AF_PACKET,
-+		.sll_protocol = htons(ETH_P_ALL),
-+	};
-+	struct ifreq ifr;
-+	int one = 1;
++	struct fwd_stream **fsm = &fwd_streams[fc->stream_idx];
++	streamid_t sm_id;
 +
-+	ksock = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
-+	if (ksock < 0)
-+		return -1;
-+	memset(&ifr, 0, sizeof(ifr));
-+	strlcpy(ifr.ifr_name, TAP_NAME, sizeof(ifr.ifr_name));
-+	if (ioctl(ksock, SIOCGIFFLAGS, &ifr) < 0)
-+		return -1;
-+	ifr.ifr_flags |= IFF_UP;
-+	if (ioctl(ksock, SIOCSIFFLAGS, &ifr) < 0)
-+		return -1;
-+	addr.sll_ifindex = if_nametoindex(TAP_NAME);
-+	if (addr.sll_ifindex == 0 ||
-+	    bind(ksock, (const struct sockaddr *)&addr, sizeof(addr)) < 0 ||
-+	    setsockopt(ksock, SOL_PACKET, PACKET_VNET_HDR, &one, sizeof(one)) < 0)
-+		return -1;
-+
-+	return 0;
++	for (sm_id = 0; sm_id < fc->stream_nb; sm_id++)
++		rte_eth_dev_rx_intr_ctl_q(fsm[sm_id]->rx_port, fsm[sm_id]->rx_queue,
++					  RTE_EPOLL_PER_THREAD, op, NULL);
 +}
 +
-+static int
-+test_virtio_user_setup(void)
-+{
-+	mp = rte_pktmbuf_pool_create("virtio_user_test", NB_MBUF, 32, 0,
-+				     RTE_MBUF_DEFAULT_BUF_SIZE, rte_socket_id());
-+	TEST_ASSERT_NOT_NULL(mp, "mempool creation failed: %s", rte_strerror(rte_errno));
+ static int
+ start_pkt_forward_on_core(void *fwd_arg)
+ {
+-	run_pkt_fwd_on_lcore((struct fwd_lcore *) fwd_arg,
+-			     cur_fwd_config.fwd_eng->packet_fwd);
++	struct fwd_lcore *fc = fwd_arg;
 +
-+	/*
-+	 * The port has two queue pairs and the tests configure one Rx queue,
-+	 * so the port has more interrupt eventfds than Rx queues.
-+	 * vhost-net creates the TAP interface, which takes root or CAP_NET_ADMIN.
-+	 */
-+	if (rte_vdev_init(VDEV_NAME, "path=/dev/vhost-net,iface=" TAP_NAME ",queues=2") < 0 ||
-+	    rte_eth_dev_get_port_by_name(VDEV_NAME, &port_id) != 0) {
-+		printf("No virtio-user port on /dev/vhost-net, skipping test\n");
-+		test_virtio_user_cleanup();
-+		return TEST_SKIPPED;
-+	}
-+	if (kernel_open() < 0) {
-+		printf("No packet socket on %s (%s), skipping test\n", TAP_NAME, strerror(errno));
-+		test_virtio_user_cleanup();
-+		return TEST_SKIPPED;
-+	}
++	if (rxq_interrupt)
++		rxq_interrupt_register(fc, RTE_INTR_EVENT_ADD);
++	run_pkt_fwd_on_lcore(fc, cur_fwd_config.fwd_eng->packet_fwd);
++	if (rxq_interrupt)
++		rxq_interrupt_register(fc, RTE_INTR_EVENT_DEL);
+ 	return 0;
+ }
+ 
+@@ -4203,6 +4283,8 @@ init_port_config(void)
+ 			port->dev_conf.intr_conf.lsc = 1;
+ 		if (rmv_interrupt && (*port->dev_info.dev_flags & RTE_ETH_DEV_INTR_RMV))
+ 			port->dev_conf.intr_conf.rmv = 1;
++		if (rxq_interrupt)
++			port->dev_conf.intr_conf.rxq = 1;
+ 	}
+ }
+ 
+diff --git a/app/test-pmd/testpmd.h b/app/test-pmd/testpmd.h
+index 2ca4aaf086..6d3f258263 100644
+--- a/app/test-pmd/testpmd.h
++++ b/app/test-pmd/testpmd.h
+@@ -405,6 +405,7 @@ struct fwd_lcore {
+ 	lcoreid_t  cpuid_idx;    /**< index of logical core in CPU id table */
+ 	volatile char stopped;   /**< stop forwarding when set */
+ 	uint64_t total_cycles;   /**< used with --record-core-cycles */
++	uint64_t rx_wakeups;     /**< used with --rxq-interrupt */
+ };
+ 
+ /*
+@@ -541,6 +542,7 @@ extern uint8_t no_device_start; /**<set by "--disable-device-start" parameter */
+ extern volatile int test_done; /* stop packet forwarding when set to 1. */
+ extern uint8_t lsc_interrupt; /**< disabled by "--no-lsc-interrupt" parameter */
+ extern uint8_t rmv_interrupt; /**< disabled by "--no-rmv-interrupt" parameter */
++extern uint8_t rxq_interrupt; /**< enabled by "--rxq-interrupt" parameter */
+ extern uint32_t event_print_mask;
+ /**< set by "--print-event xxxx" and "--mask-event xxxx parameters */
+ extern bool setup_on_probe_event; /**< disabled by port setup-on iterator */
+diff --git a/doc/guides/testpmd_app_ug/run_app.rst b/doc/guides/testpmd_app_ug/run_app.rst
+index e34e414ce2..7956672e9d 100644
+--- a/doc/guides/testpmd_app_ug/run_app.rst
++++ b/doc/guides/testpmd_app_ug/run_app.rst
+@@ -462,6 +462,13 @@ The command line options are:
+ 
+     Disable RMV interrupts for all ports, even those supporting it.
+ 
++*   ``--rxq-interrupt``
 +
-+	return TEST_SUCCESS;
-+}
++    Enable Rx queue interrupts for all ports.
++    A forwarding lcore whose Rx queues are all empty sleeps
++    until a packet arrives on one of them, 10 ms at most.
++    The forward statistics show the number of sleeps that an interrupt ended (``RX-wakeups``).
 +
-+static struct unit_test_suite test_pmd_virtio_user_suite = {
-+	.setup = test_virtio_user_setup,
-+	.teardown = test_virtio_user_cleanup,
-+	.suite_name = "virtio-user PMD Unit Test Suite",
-+	.unit_test_cases = {
-+		TEST_CASE(test_virtio_user_rx_intr),
-+		TEST_CASES_END()
-+	}
-+};
-+
-+static int
-+test_pmd_virtio_user(void)
-+{
-+	return unit_test_suite_runner(&test_pmd_virtio_user_suite);
-+}
-+
-+#endif /* RTE_EXEC_ENV_LINUX */
-+
-+REGISTER_FAST_TEST(virtio_user_pmd_autotest, NOHUGE_OK, ASAN_OK, test_pmd_virtio_user);
+ *   ``--bitrate-stats=N``
+ 
+     Set the logical core N to perform bitrate calculation.
 -- 
 2.56.1
 
