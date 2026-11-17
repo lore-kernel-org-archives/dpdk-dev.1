@@ -2,30 +2,31 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6242606A32A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 16:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254E4606A31C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 16:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=nheh4I28
+	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=qd9LIHVK
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 21B3A40E03;
-	Tue, 17 Nov 2026 16:58:00 +0100 (CET)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.221])
- by mails.dpdk.org (Postfix) with ESMTPS id 94A1040664
- for <dev@dpdk.org>; Tue, 17 Nov 2026 16:57:44 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 0472440DC9;
+	Tue, 17 Nov 2026 16:58:01 +0100 (CET)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.4])
+ by mails.dpdk.org (Postfix) with ESMTPS id 5595940611
+ for <dev@dpdk.org>; Tue, 17 Nov 2026 16:57:43 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=+TUJ6vh5uWFwfmKEMCpYpRdaZaV3goD7tTBpLcDey2I=;
- b=nheh4I280jOIPPg/Vl6n8IL4n4Xn+mdrsn8VvBV5SuKwPtZw8+89tttRE7WUBR
- mS9QQM9EOuo1HKBi6FNyv+okRQ7tbHtI6HTg0uRsiBgaRNs0LeXY6vjNThuydoYk
- z2q5jVUhqdT7olTnCsaEKaQBXNnTXEWed5q4CJcyJtVhM=
+ MIME-Version; bh=I4qNwYFOFreWhl+ubYQfQ03vMh+T3anhaZ1xkj1LvL0=;
+ b=qd9LIHVKmR+SXKdYo7EjZr+j6Lg52993rCA9GxAATTzwUKhVZHDGoRhlJ2y0a/
+ vtgDIeZMtENc7FYOSz17J7aLk3Whnw4kLl+V3CG5DqzKOuEYdDAZNVFBuWnaeBrI
+ iTDLDMv/+fFm+0GojsiWp24Ha1yWVKpUQVl+9LzX6mK8E=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
  Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v7 25/29] net/hinic3: expand TSO from 127 to 255 segments
-Date: Tue, 17 Nov 2026 23:57:06 +0800
-Message-ID: <20261117155711.1048-26-yejiacheng4@h-partners.com>
+Subject: [PATCH v7 21/29] net/hinic3: add SP560 NIC type identification and
+ handling
+Date: Tue, 17 Nov 2026 23:57:02 +0800
+Message-ID: <20261117155711.1048-22-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.53.0.windows.2
 In-Reply-To: <20261117155711.1048-1-yejiacheng4@h-partners.com>
 References: <20261109162033.1144-1-yejiacheng4@h-partners.com>
@@ -33,13 +34,13 @@ References: <20261109162033.1144-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Ac8vCgC3S5drefxqC7WJBQ--.4821S27
-X-Coremail-Antispam: 1Uf129KBjvAXoWfCrW7Kr17uryUCF15XFy3twb_yoW8uFyxAo
- WfJrn3tr1avry8Gr409w4kuFs7twsxZFs8A3y0krsFyFWUWr1UC3sxJw1xJa4rXwnYv3Zr
- AasxJF1Sk3s7X343n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUwb10UUUUU
+X-CM-TRANSID: Ac8vCgC3S5drefxqC7WJBQ--.4821S23
+X-Coremail-Antispam: 1Uf129KBjvAXoWfArykAFW8trWkWw1UuFykXwb_yoW5tFWxCo
+ WftF1Svw1xJr1xCF90gw4DtayDA34kXan5Ja9xWF9IgFy7GF1UGas8Aw4F93Wagw4rC3W3
+ AFn7KF90y3yDZ3y5n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+ AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUrUUUDUUUU
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiMxZVX2r8eXY2iAAA3I
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNBRVX2r8eXQy9wAA30
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,630 +57,887 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Raise the TSO segment limit to 255 so the largest jumbo frames can be
-sent, reworking the SGE copy path to build multiple copy mbufs instead of
-a single one. 255 is the number of buffer descriptors a WQE can carry,
-which also caps the input segments the copy path has to compact.
+Identify the new SP560 NIC through its PCI device ID and select NIC-type
+specific operations. Extend the link speed reporting to 400G/800G and
+enable the software compact CQE feature for the SP560.
 
-Raise the non-TSO SGE limit from 32 to 38 to match the non-TSO WQE. The
-per-port copy pool is sized from the Tx queue depth, up to 256 mbufs per
-queue, and the per-segment copy source offset is advanced across copy
-mbufs so a segment spanning several of them is not copied from the start
-each time.
+Split prefetch, packet-drop and CEQ context setup into per-tile cmdq ops,
+so the SP560 stn tile configures its own prefetch and coalescing
+parameters, distinct from the htn tile used by the SP230. The htn ops set
+the SP230 queue context to the values recommended for that tile.
 
-Reject a WQE that would need the whole ring, advertise the segment limits
-through the Tx descriptor limits, and keep nb_segs and pkt_len consistent
-while building the copy chain. Reject a packet without a valid tso_segsz
-instead of dividing by it, and reject a tso_segsz that does not fit the
-14-bit MSS field instead of computing the fragment count from a truncated
-value.
+The SW compact CQE path keeps Rx interrupts usable: when it is active, the
+RQ CEQ EN bit enables the compact CEQ context instead of masking
+interrupts, and interrupt delivery is controlled by the vector number in
+the INTR field. The NIC therefore keeps advertising Rx interrupt support.
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- doc/guides/rel_notes/release_26_11.rst |   1 +
- drivers/net/hinic3/hinic3_ethdev.c     |  46 +++-
- drivers/net/hinic3/hinic3_ethdev.h     |   1 -
- drivers/net/hinic3/hinic3_tx.c         | 328 ++++++++++++++-----------
- drivers/net/hinic3/hinic3_tx.h         |  15 +-
- 5 files changed, 230 insertions(+), 161 deletions(-)
+ doc/guides/nics/hinic3.rst                    |   2 +-
+ doc/guides/rel_notes/release_26_11.rst        |   1 +
+ drivers/net/hinic3/base/hinic3_csr.h          |   4 +
+ drivers/net/hinic3/base/hinic3_hwif.c         |   4 +-
+ drivers/net/hinic3/base/hinic3_nic_cfg.c      |   3 +-
+ drivers/net/hinic3/base/hinic3_nic_cfg.h      |   6 +
+ drivers/net/hinic3/base/hinic3_nic_event.c    |  62 +++++++-
+ drivers/net/hinic3/hinic3_ethdev.c            |  20 ++-
+ drivers/net/hinic3/hinic3_ethdev.h            |   6 +-
+ drivers/net/hinic3/hinic3_nic_io.c            | 132 ++++--------------
+ drivers/net/hinic3/hinic3_nic_io.h            |  87 ++++++++++++
+ drivers/net/hinic3/hinic3_rx.c                |  19 +++
+ .../net/hinic3/htn_adapt/hinic3_htn_cmdq.c    |  48 +++++++
+ .../net/hinic3/stn_adapt/hinic3_stn_cmdq.c    |  57 ++++++++
+ 14 files changed, 332 insertions(+), 119 deletions(-)
 
+diff --git a/doc/guides/nics/hinic3.rst b/doc/guides/nics/hinic3.rst
+index d07e8605c0..bc518ce7fc 100644
+--- a/doc/guides/nics/hinic3.rst
++++ b/doc/guides/nics/hinic3.rst
+@@ -5,7 +5,7 @@ HINIC3 Poll Mode Driver
+ =======================
+ 
+ The hinic3 PMD (**librte_net_hinic3**) provides poll mode driver support
+-for 25Gbps/100Gbps/200Gbps Huawei SPx series Network Adapters.
++for 25Gbps/100Gbps/200Gbps/400Gbps Huawei SP230, SP560 and SP620 series Network Adapters.
+ 
+ 
+ Features
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 247f6501f5..841f2c4f9d 100644
+index e13a54d7b3..059fd29035 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -173,6 +173,7 @@ New Features
-   * Added support for the SP560 NIC.
-   * Added device parameters for runtime configuration.
-   * Added a compact CQE receive data path.
-+  * Extended TCP segmentation offload (TSO) to 255 segments.
+@@ -170,6 +170,7 @@ New Features
+   * Added Class of Service (COS) mask and map support.
+   * Updated RSS hash type configuration.
+   * Added mailbox message counter reporting through the device private dump API.
++  * Added support for the SP560 NIC.
  
  * **Updated Intel iavf driver.**
  
-diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index 41a21c4c63..c39bd9128c 100644
---- a/drivers/net/hinic3/hinic3_ethdev.c
-+++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -331,6 +331,8 @@ static const struct rte_eth_desc_lim hinic3_tx_desc_lim = {
- 	.nb_max = HINIC3_MAX_QUEUE_DEPTH,
- 	.nb_min = HINIC3_MIN_QUEUE_DEPTH,
- 	.nb_align = HINIC3_TXD_ALIGN,
-+	.nb_seg_max = HINIC3_TSO_PKT_MAX_SGE,
-+	.nb_mtu_seg_max = HINIC3_TSO_PKT_MAX_SGE,
+diff --git a/drivers/net/hinic3/base/hinic3_csr.h b/drivers/net/hinic3/base/hinic3_csr.h
+index 7cae2419c0..82f20e2ea7 100644
+--- a/drivers/net/hinic3/base/hinic3_csr.h
++++ b/drivers/net/hinic3/base/hinic3_csr.h
+@@ -15,6 +15,10 @@
+ 
+ #define HINIC3_DEV_ID_SP920	0x0224
+ 
++#define HINIC3_DEV_ID_SP560		0x0230
++#define HINIC3_DEV_ID_VF_SP560		0x0231
++#define HINIC3_DEV_ID_HYPER_VF_SP560	0x0232
++
+ /*
+  * Bit30/bit31 for bar index flag.
+  * 00: bar0
+diff --git a/drivers/net/hinic3/base/hinic3_hwif.c b/drivers/net/hinic3/base/hinic3_hwif.c
+index c82b223fa0..af1dddabf4 100644
+--- a/drivers/net/hinic3/base/hinic3_hwif.c
++++ b/drivers/net/hinic3/base/hinic3_hwif.c
+@@ -141,7 +141,9 @@
+ static inline bool hinic3_is_vf_dev(const struct rte_pci_device *pdev)
+ {
+ 	return pdev->id.device_id == HINIC3_DEV_ID_VF_SP620 ||
+-	       pdev->id.device_id == HINIC3_DEV_ID_VF_SP230;
++	       pdev->id.device_id == HINIC3_DEV_ID_VF_SP230 ||
++	       pdev->id.device_id == HINIC3_DEV_ID_VF_SP560 ||
++	       pdev->id.device_id == HINIC3_DEV_ID_HYPER_VF_SP560;
+ }
+ 
+ uint32_t
+diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.c b/drivers/net/hinic3/base/hinic3_nic_cfg.c
+index 3ba8b9bd41..7766acfb87 100644
+--- a/drivers/net/hinic3/base/hinic3_nic_cfg.c
++++ b/drivers/net/hinic3/base/hinic3_nic_cfg.c
+@@ -455,7 +455,8 @@ hinic3_set_vport_enable(struct hinic3_hwdev *hwdev, bool enable)
+ 	en_state.func_id = hinic3_global_func_id(hwdev);
+ 	en_state.state = enable ? 1 : 0;
+ 	en_state.num_qps = nic_dev->num_rqs;
+-	en_state.rx_compact_wqe_en = HINIC3_SUPPORT_RX_HW_COMPACT_CQE(nic_dev);
++	en_state.rx_compact_wqe_en = HINIC3_SUPPORT_RX_HW_COMPACT_CQE(nic_dev) ||
++				     HINIC3_SUPPORT_RX_SW_COMPACT_CQE(nic_dev);
+ 
+ 	err = hinic3_msg_to_mgmt_sync(hwdev, HINIC3_MOD_L2NIC,
+ 				      HINIC3_NIC_CMD_SET_VPORT_ENABLE,
+diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.h b/drivers/net/hinic3/base/hinic3_nic_cfg.h
+index 8c48f6d8a9..d7e7adf7be 100644
+--- a/drivers/net/hinic3/base/hinic3_nic_cfg.h
++++ b/drivers/net/hinic3/base/hinic3_nic_cfg.h
+@@ -62,6 +62,8 @@
+ 	((hinic3_get_driver_feature(dev) & NIC_F_##feature) != 0)
+ #define HINIC3_SUPPORT_RX_HW_COMPACT_CQE(dev) \
+ 	HINIC3_SUPPORT_FEATURE(dev, RX_HW_COMPACT_CQE)
++#define HINIC3_SUPPORT_RX_SW_COMPACT_CQE(dev) \
++	HINIC3_SUPPORT_FEATURE(dev, RX_SW_COMPACT_CQE)
+ #define HINIC3_SUPPORT_TX_WQE_COMPACT_TASK(dev) \
+ 	HINIC3_SUPPORT_FEATURE(dev, TX_WQE_COMPACT_TASK)
+ #define HINIC3_SUPPORT_VXLAN_OFFLOAD(dev) \
+@@ -126,6 +128,8 @@ enum nic_speed_level {
+ 	LINK_SPEED_50GB,
+ 	LINK_SPEED_100GB,
+ 	LINK_SPEED_200GB,
++	LINK_SPEED_400GB,
++	LINK_SPEED_800GB,
+ 	LINK_SPEED_LEVELS,
  };
  
- /*
-@@ -670,24 +672,41 @@ hinic3_deinit_sw_rxtxqs(struct hinic3_nic_dev *nic_dev)
- static int
- hinic3_copy_mempool_init(struct hinic3_nic_dev *nic_dev)
- {
--	nic_dev->cpy_mpool = rte_mempool_lookup(HINCI3_CPY_MEMPOOL_NAME);
-+	char name[RTE_MEMPOOL_NAMESIZE];
-+	struct hinic3_txq *txq = nic_dev->txqs[0];
-+	unsigned int q_depth = 0;
-+	unsigned int depth;
-+
-+	/*
-+	 * Give each port its own copy pool sized from its Tx queue depth so
-+	 * that in-flight copy mbufs from one port cannot starve another. A
-+	 * copied packet pins its copy mbufs until Tx completion, so the pool
-+	 * must be able to cover a full ring of in-flight packets. Cap the
-+	 * per-queue depth at 256 to bound the hugepage memory a port can pin.
-+	 */
-+	if (txq != NULL)
-+		q_depth = txq->q_depth;
-+	depth = nic_dev->num_sqs * RTE_MIN(q_depth, 256u);
-+	if (depth < HINIC3_COPY_MEMPOOL_DEPTH)
-+		depth = HINIC3_COPY_MEMPOOL_DEPTH;
-+
-+	snprintf(name, sizeof(name), "hinic3_cpy_%u",
-+		 (unsigned int)nic_dev->hwdev->eth_dev->data->port_id);
-+	nic_dev->cpy_mpool = rte_pktmbuf_pool_create(name, depth,
-+			HINIC3_COPY_MEMPOOL_CACHE, 0, HINIC3_COPY_MBUF_SIZE,
-+			nic_dev->hwdev->pci_dev->device.numa_node);
- 	if (nic_dev->cpy_mpool == NULL) {
--		nic_dev->cpy_mpool = rte_pktmbuf_pool_create(HINCI3_CPY_MEMPOOL_NAME,
--			HINIC3_COPY_MEMPOOL_DEPTH, HINIC3_COPY_MEMPOOL_CACHE,
--			0, HINIC3_COPY_MBUF_SIZE, rte_socket_id());
--		if (nic_dev->cpy_mpool == NULL) {
--			PMD_DRV_LOG(ERR,
--				    "Create copy mempool failed, errno: %d, dev_name: %s",
--				    rte_errno, HINCI3_CPY_MEMPOOL_NAME);
--			return -ENOMEM;
--		}
-+		PMD_DRV_LOG(ERR,
-+			    "Create copy mempool %s failed, errno: %d, dev_name: %s",
-+			    name, rte_errno, nic_dev->dev_name);
-+		return -ENOMEM;
- 	}
+@@ -180,6 +184,8 @@ enum mag_cmd_port_speed {
+ 	PORT_SPEED_50GB    = 7,
+ 	PORT_SPEED_100GB   = 8,
+ 	PORT_SPEED_200GB   = 9,
++	PORT_SPEED_400GB   = 10,
++	PORT_SPEED_800GB   = 11,
+ 	PORT_SPEED_UNKNOWN
+ };
  
+diff --git a/drivers/net/hinic3/base/hinic3_nic_event.c b/drivers/net/hinic3/base/hinic3_nic_event.c
+index 0fe7b54981..c00b5185f4 100644
+--- a/drivers/net/hinic3/base/hinic3_nic_event.c
++++ b/drivers/net/hinic3/base/hinic3_nic_event.c
+@@ -15,6 +15,7 @@ static const char *g_hw_to_char_fec[HILINK_FEC_MAX_TYPE] = {
+ static const char *g_hw_to_speed_info[PORT_SPEED_UNKNOWN] = {
+ 	"not set", "10MB", "100MB", "1GB",   "10GB",
+ 	"25GB",	   "40GB", "50GB",  "100GB", "200GB",
++	"400GB",   "800GB",
+ };
+ static const char *g_hw_to_an_state_info[PORT_CFG_AN_OFF + 1] = {
+ 	"not set", "on", "off",
+@@ -25,6 +26,37 @@ struct port_type_table {
+ 	const char *port_type_name;
+ };
+ 
++/*
++ * Hardware cable speed modes.
++ *
++ * The firmware reports the cable speed mode as a uint8_t value. Speeds whose raw
++ * Gbps value cannot be represented in 8 bits (notably 400G and 800G) are
++ * therefore encoded with indirection codes instead, and must be translated
++ * back to their real speeds through speed_mode_map[] below.
++ */
++enum {
++	HW_CABLE_SPEED_MODE_200G = 200,
++	HW_CABLE_SPEED_MODE_400G = 201,
++	HW_CABLE_SPEED_MODE_800G = 202,
++};
++
++/* Real cable speeds in Gbps, as exposed to the upper layer. */
++enum {
++	REAL_CABLE_SPEED_400G    = 400,
++	REAL_CABLE_SPEED_800G    = 800,
++};
++
++/* Mapping between a cable speed mode (uint8_t) and its real speed in Gbps. */
++struct speed_mode_map_entry {
++	uint8_t speed_mode;
++	uint32_t real_speed;
++};
++
++static const struct speed_mode_map_entry speed_mode_map[] = {
++	{HW_CABLE_SPEED_MODE_400G, REAL_CABLE_SPEED_400G},
++	{HW_CABLE_SPEED_MODE_800G, REAL_CABLE_SPEED_800G},
++};
++
+ void
+ hinic3_get_link_port_info(struct hinic3_hwdev *hwdev, uint8_t link_state,
+ 	      struct rte_eth_link *link)
+@@ -35,6 +67,7 @@ hinic3_get_link_port_info(struct hinic3_hwdev *hwdev, uint8_t link_state,
+ 		RTE_ETH_SPEED_NUM_10G,	RTE_ETH_SPEED_NUM_25G,
+ 		RTE_ETH_SPEED_NUM_40G,	RTE_ETH_SPEED_NUM_50G,
+ 		RTE_ETH_SPEED_NUM_100G, RTE_ETH_SPEED_NUM_200G,
++		RTE_ETH_SPEED_NUM_400G, RTE_ETH_SPEED_NUM_800G
+ 	};
+ 	struct nic_port_info port_info = {0};
+ 	int err;
+@@ -53,6 +86,13 @@ hinic3_get_link_port_info(struct hinic3_hwdev *hwdev, uint8_t link_state,
+ 			link->link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
+ 			link->link_autoneg = RTE_ETH_LINK_FIXED;
+ 		} else {
++			if (port_info.speed >= LINK_SPEED_LEVELS) {
++				PMD_DRV_LOG(WARNING,
++					"Invalid port speed %u reported by firmware, reset to %u",
++					port_info.speed,
++					port_info.speed % LINK_SPEED_LEVELS);
++			}
++
+ 			link->link_speed =
+ 				port_speed[port_info.speed % LINK_SPEED_LEVELS];
+ 			link->link_duplex = port_info.duplex;
+@@ -176,6 +216,22 @@ get_port_temperature_power(struct mag_cmd_event_port_info *info, char *str)
  	return 0;
  }
  
- /**
-- * Clear the reference to the copy memory pool without freeing it.
-+ * Free the copy memory pool.
-  *
-  * @param[in] nic_dev
-  * Pointer to NIC device structure.
-@@ -695,6 +714,9 @@ hinic3_copy_mempool_init(struct hinic3_nic_dev *nic_dev)
- static void
- hinic3_copy_mempool_uninit(struct hinic3_nic_dev *nic_dev)
- {
-+	if (nic_dev->cpy_mpool != NULL)
-+		rte_mempool_free(nic_dev->cpy_mpool);
++static uint32_t
++get_real_cable_speed(uint8_t speed)
++{
++	uint32_t i;
 +
- 	nic_dev->cpy_mpool = NULL;
- }
++	if (speed <= HW_CABLE_SPEED_MODE_200G)
++		return speed;
++	for (i = 0; i < RTE_DIM(speed_mode_map); i++) {
++		if (speed_mode_map[i].speed_mode == speed)
++			return speed_mode_map[i].real_speed;
++	}
++
++	PMD_DRV_LOG(ERR, "unsupported cable speed mode: 0x%x", speed);
++	return speed;
++}
++
+ static void
+ print_cable_info(struct mag_cmd_event_port_info *port_info)
+ {
+@@ -201,9 +257,9 @@ print_cable_info(struct mag_cmd_event_port_info *port_info)
+ 	memcpy(vendor, port_info->vendor_name,
+ 	       sizeof(port_info->vendor_name));
+ 	snprintf(str, CAP_INFO_MAX_LEN - 1,
+-		     "Vendor: %s, %s, length: %um, max_speed: %uGbps",
+-		     vendor, port_type, port_info->cable_length,
+-		     port_info->max_speed);
++	     "Vendor: %s, %s, length: %um, max_speed: %uGbps",
++	     vendor, port_type, port_info->cable_length,
++	     get_real_cable_speed(port_info->max_speed));
  
-@@ -1424,6 +1446,8 @@ hinic3_tx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
- 	txq->wqebb_size = (uint16_t)RTE_BIT32(txq->wqebb_shift);
- 	txq->tx_free_thresh = tx_free_thresh;
- 	txq->owner = 1;
-+	txq->non_tso_max_pkt_len =
-+		HINIC3_IS_SP230_NIC(nic_dev) ? HINIC3_MAX_JUMBO_FRAME_SIZE : MAX_SINGLE_SGE_SIZE;
+ 	if (port_info->port_type == LINK_PORT_OPTICAL_MM ||
+ 	    port_info->port_type == LINK_PORT_AOC) {
+diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
+index 97f491cce3..aa4e733452 100644
+--- a/drivers/net/hinic3/hinic3_ethdev.c
++++ b/drivers/net/hinic3/hinic3_ethdev.c
+@@ -553,6 +553,10 @@ hinic3_get_nic_type(struct rte_pci_device *pci_dev)
+ 	case HINIC3_DEV_ID_SP230:
+ 	case HINIC3_DEV_ID_VF_SP230:
+ 		return NIC_SP230;
++	case HINIC3_DEV_ID_SP560:
++	case HINIC3_DEV_ID_VF_SP560:
++	case HINIC3_DEV_ID_HYPER_VF_SP560:
++		return NIC_SP560;
+ 	default:
+ 		return NIC_UNKNOWN;
+ 	}
+@@ -573,6 +577,7 @@ hinic3_cmdq_get_ops(struct hinic3_nic_dev *nic_dev)
+ 	static const struct hinic3_nic_cmdq_ops *cmdq_ops[] = {
+ 		[NIC_SP620]   = &hinic3_stn_cmdq_ops,
+ 		[NIC_SP230]   = &hinic3_htn_cmdq_ops,
++		[NIC_SP560]   = &hinic3_stn_cmdq_ops,
+ 		[NIC_UNKNOWN] = &hinic3_stn_cmdq_ops,
+ 	};
  
- 	if (!ODD_NUMBER_QUEUE_ID(qid) &&
- 		hinic3_cmd_vf_lag(nic_dev->hwdev, hinic3_global_func_id(nic_dev->hwdev),
+@@ -1190,7 +1195,8 @@ hinic3_rx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
+ 	}
+ 
+ 	/* If NIC support compact CQE, use compact wqe as default. */
+-	if (HINIC3_SUPPORT_RX_HW_COMPACT_CQE(nic_dev)) {
++	if (HINIC3_SUPPORT_RX_HW_COMPACT_CQE(nic_dev) ||
++	    HINIC3_SUPPORT_RX_SW_COMPACT_CQE(nic_dev)) {
+ 		rxq->wqe_type = HINIC3_COMPACT_RQ_WQE;
+ 	} else {
+ 		if (buf_size >= HINIC3_RX_BUF_SIZE_4K &&
+@@ -1250,7 +1256,8 @@ hinic3_rx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
+ 		goto alloc_rx_info_fail;
+ 	}
+ 
+-	if (HINIC3_SUPPORT_RX_HW_COMPACT_CQE(nic_dev)) {
++	if (HINIC3_SUPPORT_RX_HW_COMPACT_CQE(nic_dev) ||
++	    HINIC3_SUPPORT_RX_SW_COMPACT_CQE(nic_dev)) {
+ 		ci_mz = hinic3_dma_zone_reserve(dev, "hinic3_ci_mz", qid,
+ 						sizeof(*rxq->rq_ci),
+ 						RTE_CACHE_LINE_SIZE, (int)socket_id);
+@@ -1489,7 +1496,8 @@ hinic3_rx_queue_release(struct rte_eth_dev *dev, uint16_t queue_id)
+ 
+ 	hinic3_free_rxq_mbufs(rxq);
+ 
+-	if (HINIC3_SUPPORT_RX_HW_COMPACT_CQE(nic_dev))
++	if (HINIC3_SUPPORT_RX_HW_COMPACT_CQE(nic_dev) ||
++	    HINIC3_SUPPORT_RX_SW_COMPACT_CQE(nic_dev))
+ 		hinic3_memzone_free(rxq->ci_mz);
+ 	else
+ 		hinic3_memzone_free(rxq->cqe_mz);
+@@ -3765,7 +3773,8 @@ static void hinic3_nic_tx_rx_ops_init(struct hinic3_nic_dev *nic_dev)
+ 	else
+ 		nic_dev->tx_ops->nic_tx_set_wqe_offload = hinic3_tx_set_normal_task_offload;
+ 
+-	if (HINIC3_SUPPORT_RX_HW_COMPACT_CQE(nic_dev)) {
++	if (HINIC3_SUPPORT_RX_HW_COMPACT_CQE(nic_dev) ||
++	    HINIC3_SUPPORT_RX_SW_COMPACT_CQE(nic_dev)) {
+ 		nic_dev->rx_ops->nic_rx_get_cqe_info = hinic3_rx_get_compact_cqe_info;
+ 		nic_dev->rx_ops->nic_rx_cqe_done = hinic3_rx_integrated_cqe_done;
+ 		nic_dev->rx_ops->nic_rx_poll_rq_empty = hinic3_poll_integrated_cqe_rq_empty;
+@@ -4055,6 +4064,9 @@ static const struct rte_pci_id pci_id_hinic3_map[] = {
+ 	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_VF_SP230)},
+ 
+ 	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_SP920)},
++	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_SP560)},
++	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_VF_SP560)},
++	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_HYPER_VF_SP560)},
+ 
+ 	{.vendor_id = 0},
+ };
 diff --git a/drivers/net/hinic3/hinic3_ethdev.h b/drivers/net/hinic3/hinic3_ethdev.h
-index eff0bca29e..dfa5bf8b8f 100644
+index 13c9c69e7f..e4f1a5b51c 100644
 --- a/drivers/net/hinic3/hinic3_ethdev.h
 +++ b/drivers/net/hinic3/hinic3_ethdev.h
-@@ -50,7 +50,6 @@
- #define HINIC3_PKT_RX_LRO		RTE_MBUF_F_RX_LRO
- #define HINIC3_PKT_TX_L4_NO_CKSUM	RTE_MBUF_F_TX_L4_NO_CKSUM
+@@ -102,7 +102,7 @@ enum nic_feature_cap {
  
--#define HINCI3_CPY_MEMPOOL_NAME "cpy_mempool"
- /* Mbuf pool for copy invalid mbuf segs. */
- #define HINIC3_COPY_MEMPOOL_DEPTH	1024
- #define HINIC3_COPY_MEMPOOL_CACHE	128
-diff --git a/drivers/net/hinic3/hinic3_tx.c b/drivers/net/hinic3/hinic3_tx.c
-index ca84118b27..eedada96f6 100644
---- a/drivers/net/hinic3/hinic3_tx.c
-+++ b/drivers/net/hinic3/hinic3_tx.c
-@@ -658,122 +658,111 @@ hinic3_set_tx_offload(struct hinic3_nic_dev *nic_dev,
-  * true as valid, false as invalid.
-  */
- static bool
--hinic3_is_tso_sge_valid(struct rte_mbuf *mbuf, struct hinic3_wqe_info *wqe_info)
-+hinic3_is_tso_sge_valid(struct rte_mbuf *mbuf,
-+			struct hinic3_wqe_info *wqe_info)
- {
--	uint32_t total_len, limit_len, checked_len, left_len, adjust_mss;
--	uint32_t max_sges, left_sges, first_len;
--	uint32_t payload_len, frag_num;
--	uint32_t i;
--	struct rte_mbuf *mbuf_head, *mbuf_first;
--	struct rte_mbuf *mbuf_pre = mbuf;
-+	uint32_t payload_len, frag_num, adjust_mss, limit_len;
-+	uint32_t i = 0, window_len = 0, no_copy_total_len = 0;
-+	uint8_t copy_mbuf_num;
-+	struct rte_mbuf *mbuf_pkt;
+ };
  
--	left_sges = mbuf->nb_segs;
--	mbuf_head = mbuf;
--	mbuf_first = mbuf;
-+	if (unlikely(mbuf->data_len < wqe_info->payload_offset &&
-+		     mbuf->nb_segs > HINIC3_NONTSO_PKT_MAX_SGE))
-+		return false;
+-#define DEFAULT_DRV_FEATURE		0x3FC3FFF
++#define DEFAULT_DRV_FEATURE		0x0BFC3FFF
  
- 	/* Calculate the number of message payload frag,
- 	 * if it exceeds the hardware limit of 10 bits,
- 	 * packet will be discarded.
- 	 */
--	payload_len = mbuf_head->pkt_len - wqe_info->payload_offset;
--	frag_num = (payload_len + mbuf_head->tso_segsz - 1) / mbuf_head->tso_segsz;
--	if (frag_num > MAX_TSO_NUM_FRAG) {
--		PMD_DRV_LOG(WARNING, "tso frag num over hw limit, frag_num:0x%x.", frag_num);
-+	payload_len = mbuf->pkt_len - wqe_info->payload_offset;
-+
-+	frag_num = (payload_len + mbuf->tso_segsz - 1) / mbuf->tso_segsz;
-+	if (frag_num > MAX_TSO_NUM_FRAG)
- 		return false;
--	}
+ TAILQ_HEAD(hinic3_ethertype_filter_list, rte_flow);
+ TAILQ_HEAD(hinic3_fdir_rule_filter_list, rte_flow);
+@@ -110,7 +110,8 @@ TAILQ_HEAD(hinic3_fdir_rule_filter_list, rte_flow);
+ enum nic_type {
+ 	NIC_SP620 = 0,
+ 	NIC_SP230 = 1,
+-	NIC_UNKNOWN = 2,
++	NIC_SP560 = 2,
++	NIC_UNKNOWN = 3,
+ };
  
--	/* Tso sge number validation. */
--	if (unlikely(left_sges >= HINIC3_NONTSO_PKT_MAX_SGE)) {
--		checked_len = 0;
--		total_len = 0;
--		first_len = 0;
--		adjust_mss = mbuf->tso_segsz >= TX_MSS_MIN ? mbuf->tso_segsz
--							   : TX_MSS_MIN;
--		max_sges = HINIC3_NONTSO_PKT_MAX_SGE - 1;
--		limit_len = adjust_mss + wqe_info->payload_offset;
+ struct hinic3_nic_dev {
+@@ -172,6 +173,7 @@ struct hinic3_nic_dev {
+ 
+ #define HINIC3_IS_SP620_NIC(nic_dev) ((nic_dev)->nic_type == NIC_SP620)
+ #define HINIC3_IS_SP230_NIC(nic_dev) ((nic_dev)->nic_type == NIC_SP230)
++#define HINIC3_IS_SP560_NIC(nic_dev) ((nic_dev)->nic_type == NIC_SP560)
+ 
+ extern const struct rte_flow_ops hinic3_flow_ops;
+ 
+diff --git a/drivers/net/hinic3/hinic3_nic_io.c b/drivers/net/hinic3/hinic3_nic_io.c
+index 361586868e..d4c53645c4 100644
+--- a/drivers/net/hinic3/hinic3_nic_io.c
++++ b/drivers/net/hinic3/hinic3_nic_io.c
+@@ -13,12 +13,6 @@
+ 
+ #define HINIC3_DEAULT_TX_CI_PENDING_LIMIT	3
+ #define HINIC3_DEAULT_TX_CI_COALESCING_TIME	16
+-#define HINIC3_DEAULT_DROP_THD_ON		0xFFFF
+-#define HINIC3_DEAULT_DROP_THD_OFF		0
 -
--		for (i = 0; (i < max_sges) && (total_len < limit_len); i++) {
--			total_len += mbuf->data_len;
--			mbuf_pre = mbuf;
--			mbuf = mbuf->next;
--		}
-+	/* TSO SGE <= HINIC3_NONTSO_PKT_MAX_SGE: no processing */
-+	if (likely(mbuf->nb_segs <= HINIC3_NONTSO_PKT_MAX_SGE))
-+		return true;
+-#define WQ_PREFETCH_MAX				6
+-#define WQ_PREFETCH_MIN				1
+-#define WQ_PREFETCH_THRESHOLD			256
  
--		/* Each continues 38 mbufs segmust do one check. */
--		while (left_sges >= HINIC3_NONTSO_PKT_MAX_SGE) {
--			if (total_len >= limit_len) {
--				/* Update the limit len. */
--				limit_len = adjust_mss;
--				/* Update checked len. */
--				checked_len += first_len;
--				/* Record the first len. */
--				first_len = mbuf_first->data_len;
--				/* First mbuf move to the next. */
--				mbuf_first = mbuf_first->next;
--				/* Update total len. */
--				total_len -= first_len;
--				left_sges--;
--				i--;
--				for (;
--				     (i < max_sges) && (total_len < limit_len);
--				     i++) {
--					total_len += mbuf->data_len;
--					mbuf_pre = mbuf;
--					mbuf = mbuf->next;
--				}
--			} else {
--				/* Try to copy if not valid. */
--				checked_len += (total_len - mbuf_pre->data_len);
-+	adjust_mss = mbuf->tso_segsz >= TX_MSS_MIN ? mbuf->tso_segsz : TX_MSS_MIN;
+ #define CI_IDX_HIGH_SHIFH			12
  
--				left_len = mbuf_head->pkt_len - checked_len;
--				if (left_len > HINIC3_COPY_MBUF_SIZE)
--					return false;
--				wqe_info->sge_cnt = (uint16_t)(mbuf_head->nb_segs +
--							  i - left_sges);
--				wqe_info->cpy_mbuf_cnt = 1;
-+	/* TSO SGE > HINIC3_TSO_PKT_MAX_SGE: skip MSS check, directly trigger copy */
-+	if (unlikely(mbuf->nb_segs > HINIC3_TSO_PKT_MAX_SGE))
-+		goto copy;
+@@ -53,16 +47,6 @@
+ 	(((val) & SQ_CTXT_WQ_PAGE_##member##_MASK)	\
+ 	 << SQ_CTXT_WQ_PAGE_##member##_SHIFT)
  
--				return true;
-+	/* Check sum of 38 SGEs < MSS (First segment < header + MSS) */
-+	limit_len = adjust_mss + wqe_info->payload_offset;
-+	mbuf_pkt = mbuf;
-+	while (mbuf_pkt) {
-+		window_len += mbuf_pkt->data_len;
-+		i++;
-+		mbuf_pkt = mbuf_pkt->next;
+-#define SQ_CTXT_PKT_DROP_THD_ON_SHIFT		0
+-#define SQ_CTXT_PKT_DROP_THD_OFF_SHIFT		16
+-
+-#define SQ_CTXT_PKT_DROP_THD_ON_MASK		0xFFFFU
+-#define SQ_CTXT_PKT_DROP_THD_OFF_MASK		0xFFFFU
+-
+-#define SQ_CTXT_PKT_DROP_THD_SET(val, member)		\
+-	(((val) & SQ_CTXT_PKT_DROP_##member##_MASK)	\
+-	 << SQ_CTXT_PKT_DROP_##member##_SHIFT)
+-
+ #define SQ_CTXT_GLOBAL_SQ_ID_SHIFT		0
+ 
+ #define SQ_CTXT_GLOBAL_SQ_ID_MASK		0x1FFFU
+@@ -84,30 +68,6 @@
+ 	(((val) & SQ_CTXT_VLAN_##member##_MASK)		\
+ 	 << SQ_CTXT_VLAN_##member##_SHIFT)
+ 
+-#define SQ_CTXT_PREF_CACHE_THRESHOLD_SHIFT	0
+-#define SQ_CTXT_PREF_CACHE_MAX_SHIFT		14
+-#define SQ_CTXT_PREF_CACHE_MIN_SHIFT		25
+-
+-#define SQ_CTXT_PREF_CACHE_THRESHOLD_MASK	0x3FFFU
+-#define SQ_CTXT_PREF_CACHE_MAX_MASK		0x7FFU
+-#define SQ_CTXT_PREF_CACHE_MIN_MASK		0x7FU
+-
+-#define SQ_CTXT_PREF_CI_HI_SHIFT		0
+-#define SQ_CTXT_PREF_OWNER_SHIFT		4
+-
+-#define SQ_CTXT_PREF_CI_HI_MASK			0xFU
+-#define SQ_CTXT_PREF_OWNER_MASK			0x1U
+-
+-#define SQ_CTXT_PREF_WQ_PFN_HI_SHIFT		0
+-#define SQ_CTXT_PREF_CI_LOW_SHIFT		20
+-
+-#define SQ_CTXT_PREF_WQ_PFN_HI_MASK		0xFFFFFU
+-#define SQ_CTXT_PREF_CI_LOW_MASK		0xFFFU
+-
+-#define SQ_CTXT_PREF_SET(val, member)			\
+-	(((val) & SQ_CTXT_PREF_##member##_MASK)		\
+-	 << SQ_CTXT_PREF_##member##_SHIFT)
+-
+ #define SQ_CTXT_WQ_BLOCK_PFN_HI_SHIFT		0
+ 
+ #define SQ_CTXT_WQ_BLOCK_PFN_HI_MASK		0x7FFFFFU
+@@ -125,18 +85,6 @@
+ #define RQ_CTXT_CI_PI_SET(val, member)			\
+ 	(((val) & RQ_CTXT_##member##_MASK) << RQ_CTXT_##member##_SHIFT)
+ 
+-#define RQ_CTXT_CEQ_ATTR_INTR_SHIFT		21
+-#define RQ_CTXT_CEQ_ATTR_INTR_ARM_SHIFT		30
+-#define RQ_CTXT_CEQ_ATTR_EN_SHIFT		31
+-
+-#define RQ_CTXT_CEQ_ATTR_INTR_MASK		0x3FFU
+-#define RQ_CTXT_CEQ_ATTR_INTR_ARM_MASK		0x1U
+-#define RQ_CTXT_CEQ_ATTR_EN_MASK		0x1U
+-
+-#define RQ_CTXT_CEQ_ATTR_SET(val, member)		\
+-	(((val) & RQ_CTXT_CEQ_ATTR_##member##_MASK)	\
+-	 << RQ_CTXT_CEQ_ATTR_##member##_SHIFT)
+-
+ #define RQ_CTXT_WQ_PAGE_HI_PFN_SHIFT		0
+ #define RQ_CTXT_WQ_PAGE_WQE_TYPE_SHIFT		28
+ #define RQ_CTXT_WQ_PAGE_OWNER_SHIFT		31
+@@ -149,37 +97,6 @@
+ 	(((val) & RQ_CTXT_WQ_PAGE_##member##_MASK)	\
+ 	 << RQ_CTXT_WQ_PAGE_##member##_SHIFT)
+ 
+-#define RQ_CTXT_CQE_LEN_SHIFT			28
+-
+-#define RQ_CTXT_CQE_LEN_MASK			0x3U
+-
+-#define RQ_CTXT_CQE_LEN_SET(val, member)		\
+-	(((val) & RQ_CTXT_##member##_MASK) << RQ_CTXT_##member##_SHIFT)
+-
+-#define RQ_CTXT_PREF_CACHE_THRESHOLD_SHIFT	0
+-#define RQ_CTXT_PREF_CACHE_MAX_SHIFT		14
+-#define RQ_CTXT_PREF_CACHE_MIN_SHIFT		25
+-
+-#define RQ_CTXT_PREF_CACHE_THRESHOLD_MASK	0x3FFFU
+-#define RQ_CTXT_PREF_CACHE_MAX_MASK		0x7FFU
+-#define RQ_CTXT_PREF_CACHE_MIN_MASK		0x7FU
+-
+-#define RQ_CTXT_PREF_CI_HI_SHIFT		0
+-#define RQ_CTXT_PREF_OWNER_SHIFT		4
+-
+-#define RQ_CTXT_PREF_CI_HI_MASK			0xFU
+-#define RQ_CTXT_PREF_OWNER_MASK			0x1U
+-
+-#define RQ_CTXT_PREF_WQ_PFN_HI_SHIFT		0
+-#define RQ_CTXT_PREF_CI_LOW_SHIFT		20
+-
+-#define RQ_CTXT_PREF_WQ_PFN_HI_MASK		0xFFFFFU
+-#define RQ_CTXT_PREF_CI_LOW_MASK		0xFFFU
+-
+-#define RQ_CTXT_PREF_SET(val, member)			\
+-	(((val) & RQ_CTXT_PREF_##member##_MASK)		\
+-	 << RQ_CTXT_PREF_##member##_SHIFT)
+-
+ #define RQ_CTXT_WQ_BLOCK_PFN_HI_SHIFT		0
+ 
+ #define RQ_CTXT_WQ_BLOCK_PFN_HI_MASK		0x7FFFFFU
+@@ -206,6 +123,10 @@ hinic3_sq_prepare_ctxt(struct hinic3_txq *sq, uint16_t sq_id,
+ 	uint32_t wq_page_pfn_hi, wq_page_pfn_lo, wq_block_pfn_hi, wq_block_pfn_lo;
+ 	uint16_t pi_start, ci_start;
+ 
++	memset(sq_ctxt, 0, sizeof(*sq_ctxt));
 +
-+		if (i > HINIC3_NONTSO_PKT_MAX_SGE)
-+			goto copy;
++	hinic3_cmdq_get_ops(sq->nic_dev)->prepare_sq_ctxt_drop_and_prefetch(sq_ctxt);
 +
-+		if (window_len >= limit_len) {
-+			if (limit_len == adjust_mss + wqe_info->payload_offset) {
-+				window_len -= limit_len;
-+				limit_len = adjust_mss;
- 			}
--		} /**< End of while. */
-+			window_len %= adjust_mss;
-+			i = (window_len == 0) ? 0 : 1;
+ 	ci_start = sq->cons_idx & sq->q_mask;
+ 	pi_start = sq->prod_idx & sq->q_mask;
+ 
+@@ -232,10 +153,6 @@ hinic3_sq_prepare_ctxt(struct hinic3_txq *sq, uint16_t sq_id,
+ 
+ 	sq_ctxt->wq_pfn_lo = wq_page_pfn_lo;
+ 
+-	sq_ctxt->pkt_drop_thd =
+-		SQ_CTXT_PKT_DROP_THD_SET(HINIC3_DEAULT_DROP_THD_ON, THD_ON) |
+-		SQ_CTXT_PKT_DROP_THD_SET(HINIC3_DEAULT_DROP_THD_OFF, THD_OFF);
+-
+ 	sq_ctxt->global_sq_id =
+ 		SQ_CTXT_GLOBAL_QUEUE_ID_SET(sq_id, GLOBAL_SQ_ID);
+ 
+@@ -245,11 +162,6 @@ hinic3_sq_prepare_ctxt(struct hinic3_txq *sq, uint16_t sq_id,
+ 
+ 	sq_ctxt->rsvd0 = 0;
+ 
+-	sq_ctxt->pref_cache =
+-		SQ_CTXT_PREF_SET(WQ_PREFETCH_MIN, CACHE_MIN) |
+-		SQ_CTXT_PREF_SET(WQ_PREFETCH_MAX, CACHE_MAX) |
+-		SQ_CTXT_PREF_SET(WQ_PREFETCH_THRESHOLD, CACHE_THRESHOLD);
+-
+ 	sq_ctxt->pref_ci_owner =
+ 		SQ_CTXT_PREF_SET(CI_HIGN_IDX(ci_start), CI_HI) |
+ 		SQ_CTXT_PREF_SET(1, OWNER);
+@@ -278,6 +190,9 @@ hinic3_rq_prepare_ctxt(struct hinic3_rxq *rq, struct hinic3_rq_ctxt *rq_ctxt)
+ 	uint16_t pi_start, ci_start;
+ 	uint16_t wqe_type = rq->wqe_type;
+ 	uint8_t intr_disable;
++	bool support_rq_sw_compact_cqe = false;
++
++	memset(rq_ctxt, 0, sizeof(*rq_ctxt));
+ 
+ 	/* RQ depth is in unit of 8 Bytes. */
+ 	ci_start = (uint16_t)((rq->cons_idx & rq->q_mask) << wqe_type);
+@@ -292,38 +207,47 @@ hinic3_rq_prepare_ctxt(struct hinic3_rxq *rq, struct hinic3_rq_ctxt *rq_ctxt)
+ 
+ 	/* Use 0-level CLA. */
+ 	wq_block_pfn = WQ_BLOCK_PFN(wq_page_addr);
++
+ 	wq_block_pfn_hi = upper_32_bits(wq_block_pfn);
+ 	wq_block_pfn_lo = lower_32_bits(wq_block_pfn);
+ 
+ 	rq_ctxt->ci_pi = RQ_CTXT_CI_PI_SET(ci_start, CI_IDX) |
+ 			 RQ_CTXT_CI_PI_SET(pi_start, PI_IDX);
+ 
+-	/* RQ doesn't need ceq, msix_entry_idx set 1, but mask not enable. */
++	/* RQ doesn't need ceq, msix_entry_idx set 1, but mask not enable */
+ 	intr_disable = rq->dp_intr_en ? 0 : 1;
+-	rq_ctxt->ceq_attr = RQ_CTXT_CEQ_ATTR_SET(intr_disable, EN) |
+-			    RQ_CTXT_CEQ_ATTR_SET(0, INTR_ARM) |
+-			    RQ_CTXT_CEQ_ATTR_SET(rq->msix_entry_idx, INTR);
++	support_rq_sw_compact_cqe = HINIC3_SUPPORT_RX_SW_COMPACT_CQE(rq->nic_dev);
++	hinic3_cmdq_get_ops(rq->nic_dev)->prepare_rq_ctxt_ceq_and_prefetch(rq_ctxt,
++		wqe_type, rq->msix_entry_idx, support_rq_sw_compact_cqe, intr_disable);
+ 
+-	/* Use 32Byte WQE with SGE for CQE in default. */
++	/* Use 32Byte WQE with SGE for CQE in default */
+ 	rq_ctxt->wq_pfn_hi_type_owner =
+ 		RQ_CTXT_WQ_PAGE_SET(wq_page_pfn_hi, HI_PFN) |
+ 		RQ_CTXT_WQ_PAGE_SET(1, OWNER);
++	rq_ctxt->pi_paddr_hi = upper_32_bits(rq->pi_dma_addr);
++	rq_ctxt->pi_paddr_lo = lower_32_bits(rq->pi_dma_addr);
+ 
+ 	switch (wqe_type) {
+ 	case HINIC3_EXTEND_RQ_WQE:
+-		/* Use 32Byte WQE with SGE for CQE. */
++		/* Use 32Byte WQE with SGE for CQE */
+ 		rq_ctxt->wq_pfn_hi_type_owner |=
+ 			RQ_CTXT_WQ_PAGE_SET(0, WQE_TYPE);
+ 		break;
+ 	case HINIC3_NORMAL_RQ_WQE:
+-		/* Use 16Byte WQE with 32Bytes SGE for CQE. */
++		/* Use 16Byte WQE with 32Bytes SGE for CQE */
+ 		rq_ctxt->wq_pfn_hi_type_owner |=
+ 			RQ_CTXT_WQ_PAGE_SET(2, WQE_TYPE);
+ 		rq_ctxt->cqe_sge_len = RQ_CTXT_CQE_LEN_SET(1, CQE_LEN);
+ 		break;
+ 	case HINIC3_COMPACT_RQ_WQE:
+-		/* Use 8Byte WQE without SGE for CQE. */
++		/* Use 8Byte WQE without SGE for CQE */
+ 		rq_ctxt->wq_pfn_hi_type_owner |= RQ_CTXT_WQ_PAGE_SET(3, WQE_TYPE);
++		if (HINIC3_SUPPORT_RX_SW_COMPACT_CQE(rq->nic_dev)) {
++			rq_ctxt->cqe_sge_len |=
++				RQ_CTXT_CQE_LEN_SET(RQ_CQE_AGGREGATE_NUM, MAX_COUNT);
++			rq_ctxt->pi_paddr_hi = upper_32_bits(rq->rq_ci_paddr >> RQ_CI_ADDR_SHIFT);
++			rq_ctxt->pi_paddr_lo = lower_32_bits(rq->rq_ci_paddr >> RQ_CI_ADDR_SHIFT);
 +		}
-+	}
-+	return true;
-+
-+copy:
-+	mbuf_pkt = mbuf;
-+	for (i = 0; i < HINIC3_NON_COPY_SGE_NUM; i++) {
-+		no_copy_total_len += mbuf_pkt->data_len;
-+		mbuf_pkt = mbuf_pkt->next;
- 	}
+ 		break;
+ 	default:
+ 		PMD_DRV_LOG(INFO, "Invalid rq wqe type: %u", wqe_type);
+@@ -331,11 +255,6 @@ hinic3_rq_prepare_ctxt(struct hinic3_rxq *rq, struct hinic3_rq_ctxt *rq_ctxt)
  
--	wqe_info->sge_cnt = mbuf_head->nb_segs;
-+	/* TSO payload must fit in HINIC3_TSO_MBUF_NUM_MAX copy mbufs. */
-+	if (unlikely(mbuf->pkt_len - no_copy_total_len >
-+		     HINIC3_TSO_MBUF_NUM_MAX * HINIC3_COPY_MBUF_SIZE))
-+		return false;
-+
-+	copy_mbuf_num = (mbuf->pkt_len - no_copy_total_len +
-+			 HINIC3_COPY_MBUF_SIZE - 1) / HINIC3_COPY_MBUF_SIZE;
-+
-+	/* Total SGE = 28 normal SGEs + copy mbufs */
-+	wqe_info->sge_cnt = HINIC3_NON_COPY_SGE_NUM + copy_mbuf_num;
-+	wqe_info->cpy_mbuf_cnt = copy_mbuf_num;
+ 	rq_ctxt->wq_pfn_lo = wq_page_pfn_lo;
  
- 	return true;
- }
- 
- static int
--hinic3_non_tso_pkt_pre_process(struct rte_mbuf *mbuf, struct hinic3_wqe_info *wqe_info)
-+hinic3_non_tso_pkt_pre_process(struct rte_mbuf *mbuf, struct hinic3_wqe_info *wqe_info,
-+			       uint32_t non_tso_max_pkt_len)
- {
- 	struct rte_mbuf *mbuf_pkt = mbuf;
- 	uint32_t total_len = 0;
--	uint16_t i;
-+	uint16_t i, copy_mbuf_num = 0;
-+
-+	/* Non-tso packet length must less than HINIC3_MAX_JUMBO_FRAME_SIZE */
-+	if (unlikely(mbuf->pkt_len > non_tso_max_pkt_len))
-+		return -EINVAL;
- 
- 	if (likely(HINIC3_NONTSO_SEG_NUM_VALID(mbuf->nb_segs)))
- 		return 0;
- 
--	/* Non-tso packet length must less than 64KB. */
--	if (unlikely(mbuf->pkt_len > MAX_SINGLE_SGE_SIZE))
--		return -EINVAL;
+-	rq_ctxt->pref_cache =
+-		RQ_CTXT_PREF_SET(WQ_PREFETCH_MIN, CACHE_MIN) |
+-		RQ_CTXT_PREF_SET(WQ_PREFETCH_MAX, CACHE_MAX) |
+-		RQ_CTXT_PREF_SET(WQ_PREFETCH_THRESHOLD, CACHE_THRESHOLD);
 -
--	/*
--	 * Mbuf number of non-tso packet must less than the sge number
--	 * that nic can support. The excess part will be copied to another
--	 * mbuf.
--	 */
--	for (i = 0; i < (HINIC3_NONTSO_PKT_MAX_SGE - 1); i++) {
-+	for (i = 0; i < HINIC3_NON_COPY_SGE_NUM; i++) {
- 		total_len += mbuf_pkt->data_len;
- 		mbuf_pkt = mbuf_pkt->next;
- 	}
+ 	rq_ctxt->pref_ci_owner =
+ 		RQ_CTXT_PREF_SET(CI_HIGN_IDX(ci_start), CI_HI) |
+ 		RQ_CTXT_PREF_SET(1, OWNER);
+@@ -346,8 +265,7 @@ hinic3_rq_prepare_ctxt(struct hinic3_rxq *rq, struct hinic3_rq_ctxt *rq_ctxt)
  
--	/*
--	 * Max copy mbuf size is 4KB, packet will be dropped directly,
--	 * if total copy length is more than it.
--	 */
--	if ((total_len + HINIC3_COPY_MBUF_SIZE) < mbuf->pkt_len)
-+	/* Calculate required mbuf number */
-+	copy_mbuf_num = (mbuf->pkt_len - total_len +
-+			 HINIC3_COPY_MBUF_SIZE - 1) / HINIC3_COPY_MBUF_SIZE;
-+	if (copy_mbuf_num > HINIC3_NONTSO_MBUF_NUM_MAX)
- 		return -EINVAL;
+ 	rq_ctxt->pref_wq_pfn_lo = wq_page_pfn_lo;
  
--	wqe_info->sge_cnt = HINIC3_NONTSO_PKT_MAX_SGE;
--	wqe_info->cpy_mbuf_cnt = 1;
-+	/* Total SGE = 28 normal SGEs + copy mbufs */
-+	wqe_info->sge_cnt = HINIC3_NON_COPY_SGE_NUM + copy_mbuf_num;
-+	wqe_info->cpy_mbuf_cnt = copy_mbuf_num;
- 
- 	return 0;
- }
-@@ -787,12 +776,15 @@ hinic3_non_tso_pkt_pre_process(struct rte_mbuf *mbuf, struct hinic3_wqe_info *wq
-  * Point to the mbuf to send.
-  * @param[in] wqe_info
-  * Point to wqe_info of send queue(SQ).
-+ * @param[in] q_depth
-+ *  Depth of the send queue, used to reject a WQE that can never fit.
-  * @return
-  * 0 as success, -EINVAL as failure.
-  */
- static int
- hinic3_get_tx_offload(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *mbuf,
--		      struct hinic3_wqe_info *wqe_info)
-+		      struct hinic3_wqe_info *wqe_info, uint32_t non_tso_max_pkt_len,
-+		      uint16_t q_depth)
- {
- 	uint64_t ol_flags = mbuf->ol_flags;
- 	uint16_t inner_l3_offset = 0;
-@@ -803,28 +795,43 @@ hinic3_get_tx_offload(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *mbuf,
- 	/* Check if the packet set available offload flags. */
- 	if (!(ol_flags & HINIC3_TX_OFFLOAD_MASK)) {
- 		wqe_info->offload = 0;
--		return hinic3_non_tso_pkt_pre_process(mbuf, wqe_info);
--	}
--
--	wqe_info->offload = 1;
--	err = hinic3_get_inner_l3_offset(nic_dev, mbuf, &inner_l3_offset);
--	if (err)
--		return err;
--
--	/* Non-tso mbuf only check sge num. */
--	if (likely(!(mbuf->ol_flags & HINIC3_PKT_TX_TCP_SEG)))
--		return hinic3_non_tso_pkt_pre_process(mbuf, wqe_info);
-+		err = hinic3_non_tso_pkt_pre_process(mbuf, wqe_info,
-+						     non_tso_max_pkt_len);
-+		if (unlikely(err))
-+			return err;
-+	} else {
-+		wqe_info->offload = 1;
-+		err = hinic3_get_inner_l3_offset(nic_dev, mbuf, &inner_l3_offset);
-+		if (err)
-+			return err;
+-	rq_ctxt->pi_paddr_hi = upper_32_bits(rq->pi_dma_addr);
+-	rq_ctxt->pi_paddr_lo = lower_32_bits(rq->pi_dma_addr);
 +
-+		/* Non-tso mbuf only check sge num. */
-+		if (likely(!(mbuf->ol_flags & HINIC3_PKT_TX_TCP_SEG))) {
-+			err = hinic3_non_tso_pkt_pre_process(mbuf, wqe_info,
-+							     non_tso_max_pkt_len);
-+			if (unlikely(err))
-+				return err;
-+		} else {
-+			/* Tso mbuf. */
-+			if (unlikely(mbuf->tso_segsz == 0 ||
-+				     mbuf->tso_segsz > SQ_CTRL_QUEUE_INFO_MSS_MASK))
-+				return -EINVAL;
  
--	/* Tso mbuf. */
--	wqe_info->payload_offset =
--		inner_l3_offset + mbuf->l3_len + mbuf->l4_len;
-+			wqe_info->payload_offset =
-+				inner_l3_offset + mbuf->l3_len + mbuf->l4_len;
+ 	rq_ctxt->wq_block_pfn_hi =
+ 		RQ_CTXT_WQ_BLOCK_SET(wq_block_pfn_hi, PFN_HI);
+diff --git a/drivers/net/hinic3/hinic3_nic_io.h b/drivers/net/hinic3/hinic3_nic_io.h
+index d7ec81f2e6..3b99c9ba68 100644
+--- a/drivers/net/hinic3/hinic3_nic_io.h
++++ b/drivers/net/hinic3/hinic3_nic_io.h
+@@ -28,6 +28,81 @@
  
--	/* Too many mbuf segs. */
--	if (unlikely(HINIC3_TSO_SEG_NUM_INVALID(mbuf->nb_segs)))
--		return -EINVAL;
-+			/* Check whether can cover all tso mbuf segs or not. */
-+			if (unlikely(!hinic3_is_tso_sge_valid(mbuf, wqe_info)))
-+				return -EINVAL;
-+		}
-+	}
+ #define HINIC3_Q_CTXT_MAX ((uint16_t)(((HINIC3_CMDQ_BUF_SIZE - 8) - RTE_PKTMBUF_HEADROOM) / 64))
  
--	/* Check whether can cover all tso mbuf segs or not. */
--	if (unlikely(!hinic3_is_tso_sge_valid(mbuf, wqe_info)))
-+	/*
-+	 * The WQE needs one WQEBB per SGE plus one for the task section, while
-+	 * the ring never reports more than q_depth - 1 free WQEBBs. A packet
-+	 * that needs the whole ring would never fit and would stall the queue.
-+	 */
-+	if (unlikely(wqe_info->sge_cnt >= q_depth - 1))
- 		return -EINVAL;
- 
- 	return 0;
-@@ -858,33 +865,70 @@ hinic3_alloc_cpy_mbuf(struct hinic3_nic_dev *nic_dev)
-  * The address of the copied mbuf.
-  */
- static void *
--hinic3_copy_tx_mbuf(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *mbuf,
--		    uint16_t sge_cnt)
-+hinic3_copy_tx_mbuf_multi(struct hinic3_nic_dev *nic_dev,
-+			  struct rte_mbuf *mbuf, struct hinic3_wqe_info *wqe_info)
- {
--	struct rte_mbuf *dst_mbuf;
--	uint32_t offset = 0;
--	uint16_t i;
-+	uint8_t i;
-+	uint32_t remaining_len, dst_mbuf_space, copy_size, copy_offset = 0;
-+	uint32_t src_off;
-+	struct rte_mbuf *prev_mbuf = NULL;
-+	struct rte_mbuf *head_mbuf = NULL;
-+	struct rte_mbuf *cur_mbuf;
- 
- 	if (unlikely(!nic_dev->cpy_mpool))
- 		return NULL;
- 
--	dst_mbuf = hinic3_alloc_cpy_mbuf(nic_dev);
--	if (unlikely(!dst_mbuf))
--		return NULL;
-+	/* Allocate all copy mbufs and build linked list */
-+	for (i = 0; i < wqe_info->cpy_mbuf_cnt; i++) {
-+		cur_mbuf = hinic3_alloc_cpy_mbuf(nic_dev);
-+		if (unlikely(!cur_mbuf))
-+			goto err_free;
++#define RQ_CTXT_PREF_CACHE_THRESHOLD_SHIFT	0
++#define RQ_CTXT_PREF_CACHE_MAX_SHIFT		14
++#define RQ_CTXT_PREF_CACHE_MIN_SHIFT		25
 +
-+		cur_mbuf->data_off = 0;
-+		cur_mbuf->data_len = 0;
-+		cur_mbuf->pkt_len = 0;
-+		cur_mbuf->next = NULL;
++#define RQ_CTXT_PREF_CACHE_THRESHOLD_MASK	0x3FFFU
++#define RQ_CTXT_PREF_CACHE_MAX_MASK		0x7FFU
++#define RQ_CTXT_PREF_CACHE_MIN_MASK		0x7FU
 +
-+		if (prev_mbuf == NULL)
-+			head_mbuf = cur_mbuf;
-+		else
-+			prev_mbuf->next = cur_mbuf;
-+		prev_mbuf = cur_mbuf;
-+		head_mbuf->nb_segs = i + 1;
-+	}
++#define RQ_CTXT_PREF_CI_HI_SHIFT		0
++#define RQ_CTXT_PREF_OWNER_SHIFT		4
++
++#define RQ_CTXT_PREF_CI_HI_MASK			0xFU
++#define RQ_CTXT_PREF_OWNER_MASK			0x1U
++
++#define RQ_CTXT_PREF_WQ_PFN_HI_SHIFT		0
++#define RQ_CTXT_PREF_CI_LOW_SHIFT		20
++
++#define RQ_CTXT_PREF_WQ_PFN_HI_MASK		0xFFFFFU
++#define RQ_CTXT_PREF_CI_LOW_MASK		0xFFFU
++
++#define RQ_CTXT_PREF_SET(val, member)		(((val) & \
++						RQ_CTXT_PREF_##member##_MASK) << \
++						RQ_CTXT_PREF_##member##_SHIFT)
++
++#define RQ_CTXT_CEQ_ATTR_SET(val, member)	(((val) & \
++						RQ_CTXT_CEQ_ATTR_##member##_MASK) \
++						<< RQ_CTXT_CEQ_ATTR_##member##_SHIFT)
++
++#define RQ_CTXT_CQE_LEN_SHIFT			28
++#define RQ_CTXT_MAX_COUNT_SHIFT			18
++
++#define RQ_CTXT_CQE_LEN_MASK			0x3U
++#define RQ_CTXT_MAX_COUNT_MASK			0x3FFU
++#define RQ_CTXT_CQE_LEN_SET(val, member)	(((val) & \
++						RQ_CTXT_##member##_MASK) << \
++						RQ_CTXT_##member##_SHIFT)
++
++#define SQ_CI_ADDR_SHIFT	2
++#define RQ_CI_ADDR_SHIFT	4
++#define RQ_CQE_AGGREGATE_NUM		768
++
++#define SQ_CTXT_PREF_CACHE_THRESHOLD_SHIFT	0
++#define SQ_CTXT_PREF_CACHE_MAX_SHIFT		14
++#define SQ_CTXT_PREF_CACHE_MIN_SHIFT		25
++
++#define SQ_CTXT_PREF_CACHE_THRESHOLD_MASK	0x3FFFU
++#define SQ_CTXT_PREF_CACHE_MAX_MASK		0x7FFU
++#define SQ_CTXT_PREF_CACHE_MIN_MASK		0x7FU
++
++#define SQ_CTXT_PREF_CI_HI_SHIFT		0
++#define SQ_CTXT_PREF_OWNER_SHIFT		4
++
++#define SQ_CTXT_PREF_CI_HI_MASK			0xFU
++#define SQ_CTXT_PREF_OWNER_MASK			0x1U
++
++#define SQ_CTXT_PREF_WQ_PFN_HI_SHIFT		0
++#define SQ_CTXT_PREF_CI_LOW_SHIFT		20
++
++#define SQ_CTXT_PREF_WQ_PFN_HI_MASK		0xFFFFFU
++#define SQ_CTXT_PREF_CI_LOW_MASK		0xFFFU
++
++#define SQ_CTXT_PREF_SET(val, member)		(((val) & \
++						SQ_CTXT_PREF_##member##_MASK) \
++						<< SQ_CTXT_PREF_##member##_SHIFT)
++
++#define SQ_CTXT_PKT_DROP_THD_ON_SHIFT		0
++#define SQ_CTXT_PKT_DROP_THD_OFF_SHIFT		16
++
++#define SQ_CTXT_PKT_DROP_THD_ON_MASK		0xFFFFU
++#define SQ_CTXT_PKT_DROP_THD_OFF_MASK		0xFFFFU
++
++#define SQ_CTXT_PKT_DROP_THD_SET(val, member)	(((val) & \
++						SQ_CTXT_PKT_DROP_##member##_MASK) \
++						<< SQ_CTXT_PKT_DROP_##member##_SHIFT)
++
+ enum hinic3_rq_wqe_type {
+ 	HINIC3_COMPACT_RQ_WQE,
+ 	HINIC3_NORMAL_RQ_WQE,
+@@ -69,6 +144,16 @@ typedef uint8_t  (*prepare_cmd_buf_get_rss_indir_table_t)(struct hinic3_nic_dev
+ /* Configure RSS indir table */
+ typedef void     (*cmd_buf_to_rss_indir_table_t)(const struct hinic3_cmd_buf *cmd_buf,
+ 						 uint32_t *indir_table);
++struct hinic3_rq_ctxt;
++struct hinic3_sq_ctxt;
++
++typedef void	 (*prepare_rq_ctxt_ceq_and_prefetch_t)(struct hinic3_rq_ctxt *rq_ctxt,
++						       uint16_t wqe_type,
++						       uint16_t msix_entry_idx,
++						       bool support_rq_sw_compact_cqe,
++						       uint8_t intr_disable);
++
++typedef void	 (*prepare_sq_ctxt_drop_and_prefetch_t)(struct hinic3_sq_ctxt *sq_ctxt);
  
--	dst_mbuf->data_off = 0;
--	dst_mbuf->data_len = 0;
--	for (i = 0; i < sge_cnt; i++) {
--		memcpy((uint8_t *)dst_mbuf->buf_addr + offset,
--			   (uint8_t *)mbuf->buf_addr + mbuf->data_off,
--			   mbuf->data_len);
--		dst_mbuf->data_len += mbuf->data_len;
--		offset += mbuf->data_len;
-+	/* Copy data to mbufs - mbuf already points to first SGE to copy */
-+	cur_mbuf = head_mbuf;
-+	while (mbuf != NULL) {
-+		remaining_len = mbuf->data_len;
-+		while (remaining_len > 0 && cur_mbuf != NULL) {
-+			dst_mbuf_space = HINIC3_COPY_MBUF_SIZE - copy_offset;
-+			copy_size = RTE_MIN(remaining_len, dst_mbuf_space);
-+			src_off = mbuf->data_len - remaining_len;
-+
-+			rte_memcpy((uint8_t *)cur_mbuf->buf_addr + copy_offset,
-+				   rte_pktmbuf_mtod_offset(mbuf, uint8_t *, src_off),
-+				   copy_size);
-+
-+			cur_mbuf->data_len += copy_size;
-+			head_mbuf->pkt_len += copy_size;
-+			copy_offset += copy_size;
-+			remaining_len -= copy_size;
-+
-+			if (copy_offset >= HINIC3_COPY_MBUF_SIZE) {
-+				copy_offset = 0;
-+				cur_mbuf = cur_mbuf->next;
-+			}
-+		}
- 		mbuf = mbuf->next;
- 	}
--	dst_mbuf->pkt_len = dst_mbuf->data_len;
- 
--	return dst_mbuf;
-+	return head_mbuf;
-+
-+err_free:
-+	/* Free all allocated mbufs on error */
-+	hinic3_free_cpy_mbuf(nic_dev, head_mbuf);
-+	return NULL;
- }
+ struct hinic3_nic_cmdq_ops {
+ 	prepare_cmd_buf_clean_tso_lro_space_t		prepare_cmd_buf_clean_tso_lro_space;
+@@ -77,6 +162,8 @@ struct hinic3_nic_cmdq_ops {
+ 	prepare_cmd_buf_set_rss_indir_table_t		prepare_cmd_buf_set_rss_indir_table;
+ 	prepare_cmd_buf_get_rss_indir_table_t		prepare_cmd_buf_get_rss_indir_table;
+ 	cmd_buf_to_rss_indir_table_t			cmd_buf_to_rss_indir_table;
++	prepare_rq_ctxt_ceq_and_prefetch_t		prepare_rq_ctxt_ceq_and_prefetch;
++	prepare_sq_ctxt_drop_and_prefetch_t		prepare_sq_ctxt_drop_and_prefetch;
+ };
  
  /**
-@@ -910,9 +954,9 @@ hinic3_mbuf_dma_map_sge(struct hinic3_txq *txq, struct rte_mbuf *mbuf,
- 	struct hinic3_sq_wqe_desc *wqe_desc = wqe_combo->hdr;
- 	struct hinic3_sq_bufdesc *buf_desc = wqe_combo->bds_head;
- 	uint16_t nb_segs = wqe_info->sge_cnt - wqe_info->cpy_mbuf_cnt;
--	uint16_t real_segs = mbuf->nb_segs;
- 	rte_iova_t dma_addr;
- 	uint32_t i;
-+	uint8_t mbuf_idx;
+diff --git a/drivers/net/hinic3/hinic3_rx.c b/drivers/net/hinic3/hinic3_rx.c
+index 74dfddac9d..eef4ab5a30 100644
+--- a/drivers/net/hinic3/hinic3_rx.c
++++ b/drivers/net/hinic3/hinic3_rx.c
+@@ -639,6 +639,25 @@ hinic3_poll_integrated_cqe_rq_empty(struct hinic3_rxq *rxq)
+ 	rq_ci.dw1.value = hinic3_hw_cpu32(val);
+ 	hw_ci = rq_ci.dw1.bs.hw_ci;
  
- 	for (i = 0; i < nb_segs; i++) {
- 		if (unlikely(mbuf == NULL)) {
-@@ -951,40 +995,34 @@ hinic3_mbuf_dma_map_sge(struct hinic3_txq *txq, struct rte_mbuf *mbuf,
- 		mbuf = mbuf->next;
- 	}
- 
--	/* For now: support over 38 sge, copy the last 2 mbuf. */
- 	if (unlikely(wqe_info->cpy_mbuf_cnt != 0)) {
- 		/*
- 		 * Copy invalid mbuf segs to a valid buffer, lost performance.
- 		 */
- 		txq->txq_stats.cpy_pkts += 1;
--		mbuf = hinic3_copy_tx_mbuf(txq->nic_dev, mbuf,
--					   real_segs - nb_segs);
-+		mbuf = hinic3_copy_tx_mbuf_multi(txq->nic_dev, mbuf, wqe_info);
- 		if (unlikely(!mbuf))
- 			return -EINVAL;
- 
- 		txq->tx_info[wqe_info->pi].cpy_mbuf = mbuf;
- 
--		/* Deal with the last mbuf. */
--		dma_addr = rte_mbuf_data_iova(mbuf);
--		if (unlikely(mbuf->data_len == 0)) {
--			txq->txq_stats.sge_len0++;
--			return -EINVAL;
--		}
--		/*
--		 * Parts of wqe is in sq bottom while parts
--		 * of wqe is in sq head.
--		 */
--		if (i == 0) {
--			wqe_desc->hi_addr =
--				hinic3_hw_be32(upper_32_bits(dma_addr));
--			wqe_desc->lo_addr =
--				hinic3_hw_be32(lower_32_bits(dma_addr));
--			wqe_desc->ctrl_len = mbuf->data_len;
--		} else {
--			if (unlikely(((uint64_t)buf_desc == txq->sq_bot_sge_addr)))
-+		/* Set DMA descriptors for all copy mbufs */
-+		for (mbuf_idx = 0; mbuf_idx < wqe_info->cpy_mbuf_cnt; mbuf_idx++) {
-+			dma_addr = rte_mbuf_data_iova(mbuf);
-+			if (unlikely(mbuf->data_len == 0)) {
-+				txq->txq_stats.sge_len0++;
-+				hinic3_free_cpy_mbuf(txq->nic_dev,
-+						     txq->tx_info[wqe_info->pi].cpy_mbuf);
-+				txq->tx_info[wqe_info->pi].cpy_mbuf = NULL;
-+				return -EINVAL;
-+			}
++	if (HINIC3_IS_SP560_NIC(rxq->nic_dev)) {
++		uint16_t sw_pi = hinic3_get_rq_local_pi(rxq);
++		uint64_t end;
 +
-+			if (unlikely((uint64_t)buf_desc == txq->sq_bot_sge_addr))
- 				buf_desc = (struct hinic3_sq_bufdesc *)txq->sq_head_addr;
- 
- 			hinic3_set_buf_desc(buf_desc, dma_addr, mbuf->data_len);
-+			buf_desc++;
-+			mbuf = mbuf->next;
- 		}
- 	}
- 
-@@ -1085,7 +1123,9 @@ hinic3_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 	/* Tx loop routine. */
- 	for (nb_tx = 0; nb_tx < nb_pkts; nb_tx++) {
- 		mbuf_pkt = *tx_pkts++;
--		if (unlikely(hinic3_get_tx_offload(txq->nic_dev, mbuf_pkt, &wqe_info))) {
-+		if (unlikely(hinic3_get_tx_offload(txq->nic_dev, mbuf_pkt, &wqe_info,
-+						   txq->non_tso_max_pkt_len,
-+						   txq->q_depth))) {
- 			txq->txq_stats.offload_errors++;
- 			break;
- 		}
-diff --git a/drivers/net/hinic3/hinic3_tx.h b/drivers/net/hinic3/hinic3_tx.h
-index 3b1580dd3a..e5aa0a6f8e 100644
---- a/drivers/net/hinic3/hinic3_tx.h
-+++ b/drivers/net/hinic3/hinic3_tx.h
-@@ -6,11 +6,17 @@
- #define _HINIC3_TX_H_
- 
- #define MAX_SINGLE_SGE_SIZE		 65536
--#define HINIC3_NONTSO_PKT_MAX_SGE	 32 /**< non-tso max sge 32. */
-+#define HINIC3_NONTSO_PKT_MAX_SGE	 38 /**< non-tso max sge 38. */
- #define HINIC3_NONTSO_SEG_NUM_VALID(num) ((num) <= HINIC3_NONTSO_PKT_MAX_SGE)
- 
--#define HINIC3_TSO_PKT_MAX_SGE		127 /**< tso max sge 127. */
--#define HINIC3_TSO_SEG_NUM_INVALID(num) ((num) > HINIC3_TSO_PKT_MAX_SGE)
-+#define HINIC3_TSO_PKT_MAX_SGE		255 /**< tso max sge 255. */
++		end = cycles + msecs_to_cycles(HINIC3_FLUSH_QUEUE_TIMEOUT);
++		do {
++			val = rte_read32(&rxq->rq_ci->dw1.value);
++			rq_ci.dw1.value = hinic3_hw_cpu32(val);
++			hw_ci = rq_ci.dw1.bs.hw_ci;
++			if (sw_pi == hw_ci)
++				break;
 +
-+/* Non-copy SGE configuration: 28 SGEs are not copied */
-+#define HINIC3_NON_COPY_SGE_NUM	28
-+#define HINIC3_NONTSO_MBUF_NUM_MAX \
-+	(HINIC3_NONTSO_PKT_MAX_SGE - HINIC3_NON_COPY_SGE_NUM)
-+#define HINIC3_TSO_MBUF_NUM_MAX \
-+	(HINIC3_TSO_PKT_MAX_SGE - HINIC3_NON_COPY_SGE_NUM)
++			rte_delay_us(1);
++		} while (time_before(cycles, end));
++
++		if (sw_pi != hw_ci)
++			return -EFAULT;
++	}
++
+ 	while (sw_ci != hw_ci) {
+ 		rx_info = &rxq->rx_info[sw_ci];
+ 		rte_pktmbuf_free(rx_info->mbuf);
+diff --git a/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.c b/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.c
+index 607fe2d0fe..abf6644f35 100644
+--- a/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.c
++++ b/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.c
+@@ -8,6 +8,27 @@
+ #include "hinic3_hwif.h"
+ #include "hinic3_htn_cmdq.h"
  
- /* Tx wqe queue info */
- struct hinic3_queue_info {
-@@ -57,7 +63,6 @@ struct hinic3_wqe_info {
- 	uint16_t pi;
++#define HINIC3_DEFAULT_DROP_THD_OFF	0xFFFF
++#define HINIC3_DEFAULT_DROP_THD_ON	0xFFFF
++
++#define SQ_PREFETCH_MAX			5
++#define SQ_PREFETCH_MIN			4
++#define SQ_PREFETCH_THRESHOLD		48
++
++#define RQ_PREFETCH_MAX			4
++#define RQ_PREFETCH_MIN			2
++#define RQ_PREFETCH_THRESHOLD		32
++
++#define RQ_PFH_TH			7
++
++#define RQ_CTXT_CEQ_ATTR_PFH_TH_SHIFT	0
++#define RQ_CTXT_CEQ_ATTR_INTR_SHIFT	21
++#define RQ_CTXT_CEQ_ATTR_EN_SHIFT	31
++
++#define RQ_CTXT_CEQ_ATTR_PFH_TH_MASK	0x1FU
++#define RQ_CTXT_CEQ_ATTR_EN_MASK	0x1U
++#define RQ_CTXT_CEQ_ATTR_INTR_MASK	0x3FFU
++
+ #define HTN_SQ_CTXT_SIZE(num_sqs)	((uint16_t)(sizeof(struct hinic3_htn_qp_ctxt_header) \
+ 						    + (num_sqs) * sizeof(struct hinic3_sq_ctxt)))
+ #define HTN_RQ_CTXT_SIZE(num_rqs)	((uint16_t)(sizeof(struct hinic3_htn_qp_ctxt_header) \
+@@ -152,6 +173,31 @@ static void cmd_buf_to_rss_indir_table(const struct hinic3_cmd_buf *cmd_buf, uin
+ 		indir_table[i] = *(indir_tbl + i);
+ }
  
- 	uint16_t wqebb_cnt;
--	uint16_t rsvd2; /**< Reserved field 2. */
++static void
++prepare_sq_ctxt_drop_and_prefetch(struct hinic3_sq_ctxt *sq_ctxt)
++{
++	sq_ctxt->pkt_drop_thd = SQ_CTXT_PKT_DROP_THD_SET(HINIC3_DEFAULT_DROP_THD_ON, THD_ON) |
++				SQ_CTXT_PKT_DROP_THD_SET(HINIC3_DEFAULT_DROP_THD_OFF, THD_OFF);
++
++	sq_ctxt->pref_cache = SQ_CTXT_PREF_SET(SQ_PREFETCH_MIN, CACHE_MIN) |
++			      SQ_CTXT_PREF_SET(SQ_PREFETCH_MAX, CACHE_MAX) |
++			      SQ_CTXT_PREF_SET(SQ_PREFETCH_THRESHOLD, CACHE_THRESHOLD);
++}
++
++static void
++prepare_rq_ctxt_ceq_and_prefetch(struct hinic3_rq_ctxt *rq_ctxt, uint16_t wqe_type __rte_unused,
++	uint16_t msix_entry_idx, bool support_rq_sw_compact_cqe __rte_unused,
++	uint8_t intr_disable)
++{
++	rq_ctxt->ceq_attr = RQ_CTXT_CEQ_ATTR_SET(intr_disable, EN) |
++			    RQ_CTXT_CEQ_ATTR_SET(RQ_PFH_TH, PFH_TH) |
++			    RQ_CTXT_CEQ_ATTR_SET(msix_entry_idx, INTR);
++
++	rq_ctxt->pref_cache = RQ_CTXT_PREF_SET(RQ_PREFETCH_MIN, CACHE_MIN) |
++			      RQ_CTXT_PREF_SET(RQ_PREFETCH_MAX, CACHE_MAX) |
++			      RQ_CTXT_PREF_SET(RQ_PREFETCH_THRESHOLD, CACHE_THRESHOLD);
++}
++
+ const struct hinic3_nic_cmdq_ops hinic3_htn_cmdq_ops = {
+ 	.prepare_cmd_buf_clean_tso_lro_space =    prepare_cmd_buf_clean_tso_lro_space,
+ 	.prepare_cmd_buf_qp_context_multi_store = prepare_cmd_buf_qp_context_multi_store,
+@@ -159,4 +205,6 @@ const struct hinic3_nic_cmdq_ops hinic3_htn_cmdq_ops = {
+ 	.prepare_cmd_buf_set_rss_indir_table =    prepare_cmd_buf_set_rss_indir_table,
+ 	.prepare_cmd_buf_get_rss_indir_table =    prepare_cmd_buf_get_rss_indir_table,
+ 	.cmd_buf_to_rss_indir_table =             cmd_buf_to_rss_indir_table,
++	.prepare_sq_ctxt_drop_and_prefetch =      prepare_sq_ctxt_drop_and_prefetch,
++	.prepare_rq_ctxt_ceq_and_prefetch =       prepare_rq_ctxt_ceq_and_prefetch,
+ };
+diff --git a/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.c b/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.c
+index 23adbc79f4..be23f991f1 100644
+--- a/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.c
++++ b/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.c
+@@ -8,6 +8,24 @@
+ #include "hinic3_hwif.h"
+ #include "hinic3_stn_cmdq.h"
  
- 	struct hinic3_queue_info queue_info;
- 	struct hinic3_offload_info offload_info;
-@@ -375,7 +380,7 @@ struct __rte_cache_aligned hinic3_txq {
- 	uint64_t sq_bot_sge_addr;
- 	uint32_t cos;
- 	uint8_t tx_wqe_compact_task;
--	uint8_t rsvd[3];
-+	uint32_t non_tso_max_pkt_len;
- 	struct hinic3_txq_stats txq_stats;
- #ifdef HINIC3_XSTAT_PROF_TX
- 	uint64_t prof_tx_end_tsc;
++#define HINIC3_DEFAULT_DROP_THD_ON			0xFFFF
++#define HINIC3_DEFAULT_DROP_THD_OFF			0
++#define WQ_PREFETCH_MAX					6
++#define WQ_PREFETCH_MIN					1
++#define WQ_PREFETCH_THRESHOLD				256
++
++#define RQ_CTXT_CEQ_ATTR_CI_WR_SHIFT			0
++#define RQ_CTXT_CEQ_ATTR_INTR_SHIFT			21
++#define RQ_CTXT_CEQ_ATTR_INTR_ARM_SHIFT			30
++#define RQ_CTXT_CEQ_ATTR_EN_SHIFT			31
++
++#define RQ_CTXT_CEQ_ATTR_CI_WR_MASK			0x1U
++#define RQ_CTXT_CEQ_ATTR_INTR_MASK			0x3FFU
++#define RQ_CTXT_CEQ_ATTR_INTR_ARM_MASK			0x1U
++#define RQ_CTXT_CEQ_ATTR_EN_MASK			0x1U
++/* Indicate ucode that this is an interrupt in the DPDK scenario. */
++#define RQ_CTXT_INVALID_INTR_NUM			0x1FFU
++
+ #define STN_SQ_CTXT_SIZE(num_sqs)	((uint16_t)(sizeof(struct hinic3_stn_qp_ctxt_header) \
+ 						    + (num_sqs) * sizeof(struct hinic3_sq_ctxt)))
+ #define STN_RQ_CTXT_SIZE(num_rqs)	((uint16_t)(sizeof(struct hinic3_stn_qp_ctxt_header) \
+@@ -136,6 +154,43 @@ static void cmd_buf_to_rss_indir_table(const struct hinic3_cmd_buf *cmd_buf, uin
+ 		indir_table[i] = *(indir_tbl + i);
+ }
+ 
++static void
++prepare_sq_ctxt_drop_and_prefetch(struct hinic3_sq_ctxt *sq_ctxt)
++{
++	sq_ctxt->pkt_drop_thd = SQ_CTXT_PKT_DROP_THD_SET(HINIC3_DEFAULT_DROP_THD_ON, THD_ON) |
++				SQ_CTXT_PKT_DROP_THD_SET(HINIC3_DEFAULT_DROP_THD_OFF, THD_OFF);
++
++	sq_ctxt->pref_cache = SQ_CTXT_PREF_SET(WQ_PREFETCH_MIN, CACHE_MIN) |
++			      SQ_CTXT_PREF_SET(WQ_PREFETCH_MAX, CACHE_MAX) |
++			      SQ_CTXT_PREF_SET(WQ_PREFETCH_THRESHOLD, CACHE_THRESHOLD);
++}
++
++static void
++prepare_rq_ctxt_ceq_and_prefetch(struct hinic3_rq_ctxt *rq_ctxt, uint16_t wqe_type,
++	uint16_t msix_entry_idx, bool support_rq_sw_compact_cqe, uint8_t intr_disable)
++{
++	uint16_t ceq_intr = intr_disable ? RQ_CTXT_INVALID_INTR_NUM : msix_entry_idx;
++
++	rq_ctxt->ceq_attr = RQ_CTXT_CEQ_ATTR_SET(intr_disable, EN) |
++			    RQ_CTXT_CEQ_ATTR_SET(0, INTR_ARM) |
++			    RQ_CTXT_CEQ_ATTR_SET(ceq_intr, INTR);
++	if (wqe_type == HINIC3_COMPACT_RQ_WQE && support_rq_sw_compact_cqe) {
++		/*
++		 * With the SW compact CQE, EN enables the CEQ context and must
++		 * be set for the attributes below to take effect; it does not
++		 * mask Rx interrupts. Interrupt delivery is controlled by the
++		 * INTR field above, where RQ_CTXT_INVALID_INTR_NUM keeps the
++		 * queue silent while a valid vector enables the interrupt.
++		 */
++		rq_ctxt->ceq_attr |= RQ_CTXT_CEQ_ATTR_SET(1, EN);
++		rq_ctxt->ceq_attr |= RQ_CTXT_CEQ_ATTR_SET(1, CI_WR);
++		rq_ctxt->ceq_attr |= RQ_CTXT_CEQ_ATTR_SET(1, INTR_ARM);
++	}
++	rq_ctxt->pref_cache = RQ_CTXT_PREF_SET(WQ_PREFETCH_MIN, CACHE_MIN) |
++			      RQ_CTXT_PREF_SET(WQ_PREFETCH_MAX, CACHE_MAX) |
++			      RQ_CTXT_PREF_SET(WQ_PREFETCH_THRESHOLD, CACHE_THRESHOLD);
++}
++
+ const struct hinic3_nic_cmdq_ops hinic3_stn_cmdq_ops = {
+ 	.prepare_cmd_buf_clean_tso_lro_space =    prepare_cmd_buf_clean_tso_lro_space,
+ 	.prepare_cmd_buf_qp_context_multi_store = prepare_cmd_buf_qp_context_multi_store,
+@@ -143,4 +198,6 @@ const struct hinic3_nic_cmdq_ops hinic3_stn_cmdq_ops = {
+ 	.prepare_cmd_buf_set_rss_indir_table =    prepare_cmd_buf_set_rss_indir_table,
+ 	.prepare_cmd_buf_get_rss_indir_table =    prepare_cmd_buf_get_rss_indir_table,
+ 	.cmd_buf_to_rss_indir_table =             cmd_buf_to_rss_indir_table,
++	.prepare_sq_ctxt_drop_and_prefetch =      prepare_sq_ctxt_drop_and_prefetch,
++	.prepare_rq_ctxt_ceq_and_prefetch =       prepare_rq_ctxt_ceq_and_prefetch,
+ };
 -- 
 2.33.0
 
