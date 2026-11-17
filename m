@@ -2,80 +2,177 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DAC606A32F
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 17:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21198606A338
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 17:39:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=S+1R+3Ra
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=UCWHSh3A;
+	dkim=pass (1024-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=selector1 header.b=FYLnRXku
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E922C402BF;
-	Tue, 17 Nov 2026 18:34:28 +0100 (CET)
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com
- [209.85.215.178])
- by mails.dpdk.org (Postfix) with ESMTPS id EC62D402A4
- for <dev@dpdk.org>; Tue, 17 Nov 2026 18:34:26 +0100 (CET)
-Received: by mail-pg1-f178.google.com with SMTP id
- 41be03b00d2f7-cdb9f760337so736836a12.0
- for <dev@dpdk.org>; Tue, 17 Nov 2026 09:34:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1794936865;
- x=1795541665; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=d/0A2DMb22xY69b4JR6C7jEtkGQvpG8trXy7spFAY5k=;
- b=S+1R+3RaA8hUyEWjnzwqXGlXplXcW4xsRgrNGZSFGNqviReKL7AEHFmm3juahmki8F
- b7htlx0iGM48vyMA+lCaS66oYnNfKAcOqsqJcsHHR6ZV6fnyjlJSeYn/f2HfWyUnf2AU
- hxHLYFwXdNpJ9aJKKvEDzHFzwRPmvUMPSlimLsMx4NroXZ2zKXn1pakZPVa+Jgcg8Stz
- m9c1zv8HwkXxxTClPNeLdg3VCQH7/4j8i5WI5/gzoMOl+mpLh6tQQ3f8isnFAJoJkCb9
- exo6MzeOqsrPhvyokpdcIDQBkq5ZxuMGJv+1G2txlRUNUWkjveJQNeZF3I28Ux4dH1WA
- BhGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794936865; x=1795541665;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=d/0A2DMb22xY69b4JR6C7jEtkGQvpG8trXy7spFAY5k=;
- b=0nawfxYEUQReEETuOu6JNBWGWt7qAc9cc2IVnjKKj+vWi+V1W3voDmhG3J8WoWNXN7
- jjeAlk3YsBdJmVOtTmR1kniDEcpIZ2NCAeZz1bSm/5FKVji2tR1vlGiwr0daRfGJ8rjv
- 6u8lwFJw26INK5sA8bK5Osi7w6zqewwH5uR9gdFRrT6jQrkS+Kp5eAA0gBZtG2pl65gB
- Z8F5soSEszPPl+dt5t0fufx+vyG867BDcLkPuH+kn8afZk2vHA5DylZEOhtZdY+GzNtx
- czcoQiIAdFm8zzjePcN+Xgjx9nvv/UlpYyTluWWfm10/AtD6zKfGPJDtoxwo1zGVutUd
- hODw==
-X-Gm-Message-State: APuU4Z+eO6FXEW7dTxzL8XL27oRvtVY3v0uEhaK55pB9p3AeAMaG0EIN
- gmDPPtr2gipU9bWCmYgsvUaDZjSZ4IkZA+rQdidVTkZNcOGb1tgLbJDygM6rEhxQi7Q=
-X-Gm-Gg: AZFdTZdqEy36oNL2BvZeggssL5rsFqDp9xmrXPvW8KMWPftdUZzjNEr3XlnB/MM0eww
- pf+ViCxinkWsdtvPyiiNFxUCTZDERuAqwtVGFI+4A2czk5Ul1LcI2fIjlYbvR2GfC7VgSfgIr7a
- e0EjSjUs11O8VmK+ZbVm41l3byNcpc1dlg3Oqajp75lU4+lUkVA48u3hfLVhEAIQxYdGk/goG/M
- U57H8+kPAH/VdU49MtqFM9FWBECiRlf4BpF/LqCJ9EZryAK6iGy5R3/kNGzuconEQM7Gh89qaCl
- pAG7QhAabz3E7GVLO7GIroMoEEUP/lpgF8l3BuCe65+Dm3FsOX7XdWJyy5t105caefC34A+i7vk
- eQf0dukYrVzucJgsd5ugRbwgv90TPhiDitCPp7rYZoWImo0oaVguLFQc8nKcMjY3QRGGJHG2W/+
- P4EYH1WXpWFt7ItQXqojWcvYppdHqLvDL2KVdINRvnnvgQEIxJJqRvzIXmXn7F3AxMlLn8xM7Wv
- iYStl2UU3ALKYIBUFJB2VRo7/y3Eh0vE05iRywPmq421pZscUSF94qfecU8pxo7FasrPtQ4BYVl
- SGjddNR4qXWa9jmIbS55kL2qmWeWblzRMGeAC8G/aXxNoYoaTvsq09gRMcsfddXjG54CLyXCdA=
- =
-X-Received: by 2002:a17:90a:c2cc:b0:3b1:6689:a016 with SMTP id
- 98e67ed59e1d1-3b3d07d4794mr67858a91.16.1794936865097; 
- Tue, 17 Nov 2026 09:34:25 -0800 (PST)
-Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3b1b3b110c0sm11682764a91.3.2026.11.17.09.34.24
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 17 Nov 2026 09:34:24 -0800 (PST)
-Date: Tue, 17 Nov 2026 09:34:22 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Ryan Wolfe <rnwolfe@google.com>
-Cc: dev@dpdk.org, Junfeng Guo <junfeng.guo@intel.com>, Joshua Washington
- <joshwash@google.com>, stable@dpdk.org, Harshitha Ramamurthy
- <hramamurthy@google.com>, Rushil Gupta <rushilg@google.com>
-Subject: Re: [PATCH] net/gve: fix GQI QPL jumbo Tx FIFO reclaim and doorbell
-Message-ID: <20261117093422.752cc7ad@phoenix.local>
-In-Reply-To: <20261115140016.3830109-1-rnwolfe@google.com>
-References: <20261115140016.3830109-1-rnwolfe@google.com>
+	by mails.dpdk.org (Postfix) with ESMTP id BCFA9402C3;
+	Tue, 17 Nov 2026 18:39:28 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+ by mails.dpdk.org (Postfix) with ESMTPS id 04BCF402CE
+ for <dev@dpdk.org>; Tue, 17 Nov 2026 18:39:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1794937167; x=1826473167;
+ h=date:from:to:cc:subject:message-id:references:
+ content-transfer-encoding:in-reply-to:mime-version;
+ bh=ddlbzdlW4BMi4cEuqpaf9ge54mQ4nfP2tAX3rIhXf3g=;
+ b=UCWHSh3AYZSnkjMO++TCb4ajYmtI3daM/Z/eS1Q+0zeWzjBo1vfEDkAJ
+ K3YHVR3z1zfVe2SLM/WXC3sQn4GFl/DsMGzZyApE7MDE5oWef7rTTwQp9
+ BuZTaqUMOdZ5UarG0UsFzHZEZwMeiT0DZtJxnbzhHeOFD6F6FekJMr07Z
+ EatNP7w8M23GJGXXzw2/Wml5AbPf9gtR5MDbcKKf88Lic3DsKWtPFZtqn
+ Ir5mpC57QIn0ldw2uGbP8FdvuBKXG8KtDvltTsIMQmSFS3/Rfds3BEZuL
+ cvaH1wdD0hVuDZdAVIW7iT3v2l2tx6rDrUqnukKoanVGhf4odAr+Sg+U4 Q==;
+X-CSE-ConnectionGUID: 1bXdRe1yS+6Z0Fxg9nnXOQ==
+X-CSE-MsgGUID: 8SQrvF2NSjCoMNK/tQS/Ug==
+X-IronPort-AV: E=McAfee;i="6800,10657,11969"; a="3620026"
+X-IronPort-AV: E=Sophos;i="6.27,218,1787036400"; 
+   d="scan'208";a="3620026"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+ by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 17 Nov 2026 09:39:15 -0800
+X-CSE-ConnectionGUID: TAbqT1/oQfSnyZGU5tUDIg==
+X-CSE-MsgGUID: Lb3IaPnNQ0yelauNwQ3e7Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,218,1787036400"; 
+   d="scan'208";a="9795752"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 17 Nov 2026 09:39:15 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56; Tue, 17 Nov 2026 09:39:14 -0800
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56 via Frontend Transport; Tue, 17 Nov 2026 09:39:14 -0800
+Received: from CO1PR03CU002.outbound.protection.outlook.com (52.101.46.46) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56; Tue, 17 Nov 2026 09:39:14 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cdPuyPFB0J1rRfDlFroydZWleMuZa1QUgF6FN1bMWcE9HHeBxt+i2gQWWMv31fcLPh4pTgAi45pas5AvMaTZSNU7XkL7gd9DE2Tesj31cHNBr7NhXmSWkABlZ8EhNrlNkrdYbHYY/a9wKjUUnD1tuoj0K7QBZALWozt52PiVndD1DBz6CHtXTSKTwbVUKVncISBT4Cj3xpQW9eBRWSB8RjDom3hZjPV2Vb98aFZbomJGyz8KWOM6/axCGj4z46WqTWaCi4BoeiGOzoCoPlWJhm1a0p0AW2SZZnlDZ1wQunKFuwQtFQTKKGaBP9DgIJAFlafVOwoAAUlzgKSqeeaO6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mmIT0uXC535Tqzsv9pFnzE9GYgFyS5gelhAIWWAJuQI=;
+ b=SXGyOeEOcl3F0/ic4RKspAA2wxs5fA7QwjC34C1KN+sG4hoTmXwRXVXgHwDKn5Z2kFeZBwAjNqAtoCj5rqYShoHvdcuaq9OIWjjMU/aHE4kOMgdLW42ha4Vl5p7VSROyvdf+3tNJHKrvK886p1p/I8iILZrStE0sFBx5sb8CVFwlTRFOSYntHaIak6EwNoeTEoKZVG0ZuvvPeD03OzzLy+Ny/tm/4rNN+FwBkFOKaZJ/KnW0I2YVyD7t1T+8aNe2A5iJh00VQMcqoJzDjmDANklAfPVkcL9K2TqivLgKu+q2/RYp9cgsxYP06p1BqiDwO7kOswAKPuVJ30dtW4I5kg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=intel.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mmIT0uXC535Tqzsv9pFnzE9GYgFyS5gelhAIWWAJuQI=;
+ b=FYLnRXkua40Tj9IAZEzZZa8izqIpiIqkOKLtgkJgzPaNjfM44khGEY7q7mJi71NqGDV4uJYijv5Xf2PSdkPZgeYdazd85kQJbMC7ewuhB7RWMMpSYNVOw4fw/nOqFGihqE0fw7jE1nJ/0WcXtOZNfQthpt/Y//8vP2FRH8we1Jo=
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
+ by SA3PR11MB7485.namprd11.prod.outlook.com (2603:10b6:806:31c::9)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.615.10; Tue, 17 Nov
+ 2026 17:39:10 +0000
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0615.013; Tue, 17 Nov 2026
+ 17:39:10 +0000
+Date: Tue, 17 Nov 2026 17:39:04 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Jerin Jacob <jerinjacobk@gmail.com>
+CC: Pravin Pathak <pravinpathakdev@gmail.com>,
+ <mattias.ronnblom@ericcson.com>, "pravin.pathak.dev@gmail.com"
+ <pravin.pathak.dev@gmail.com>, "Sarkar, Tirthendu"
+ <tirthendu.sarkar@intel.com>, "dev@dpdk.org" <dev@dpdk.org>,
+ "jerinj@marvell.com" <jerinj@marvell.com>, "mike.ximing.chen@intel.com"
+ <mike.ximing.chen@intel.com>, "thomas@monjalon.net" <thomas@monjalon.net>,
+ "david.marchand@redhat.com" <david.marchand@redhat.com>,
+ "nipun.gupta@amd.com" <nipun.gupta@amd.com>, "chenbox@nvidia.com"
+ <chenbox@nvidia.com>, <mattias.ronnblom@ericsson.com>
+Subject: Re: [PATCH v1 0/8] event/slb: introducing software load balancer
+ eventdev PMD
+Message-ID: <avyROPrxuK4BPY56@bricha3-mobl1.ger.corp.intel.com>
+References: <20261107013011.2443138-1-pravinpathakdev@gmail.com>
+ <CALBAE1NduwOw_4wfYt088jhwmR_nxuApepuyYYus+P-=3L=cOw@mail.gmail.com>
+ <CAPbG5O_hYnLaSARh3jnw3LFToaF_S9dnjpNPFVfmJHGN2Lr9qQ@mail.gmail.com>
+ <CALBAE1N77y7PkK9o09JwJ=e1GDin9jxyN7VfjvDgY2oFEr9prw@mail.gmail.com>
+ <SA1PR11MB680680CA639972DE92DB11B390712@SA1PR11MB6806.namprd11.prod.outlook.com>
+ <CAPbG5O8uWmOcsWrY1DJ5MzNgeFZkAXBdMPvRcN7QBs4byoU2Ng@mail.gmail.com>
+ <CALBAE1M22ZcTG0ofhE1-_G6_SoukoHRGc03vP3Fm55AA122axg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALBAE1M22ZcTG0ofhE1-_G6_SoukoHRGc03vP3Fm55AA122axg@mail.gmail.com>
+X-ClientProxiedBy: DUZPR01CA0099.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4bb::24) To SN7PR11MB8066.namprd11.prod.outlook.com
+ (2603:10b6:806:2df::18)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|SA3PR11MB7485:EE_
+X-MS-Office365-Filtering-Correlation-Id: 87e338b8-acca-4041-86e1-08df44d1afe7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|366016|23010399003|376014|7416014|1800799024|22082099003|18002099003|11063799006|4143699003|56012099006|261026140227099003|261028144727099003|261022075727099003|261009223027099003|10067099003|261021121427099003|261102123227099003|261026121527099003|261022105027099003;
+X-Microsoft-Antispam-Message-Info: 35IYUi72jxCPVpYCofebconzXjBhx9SWKRCb89BEK3S+Ag6xHF0Xg2+tSCRMZkqbL2AL2sHGxt2uT0PlGuyBmveMwmbxV9/EL0fISknIdSBTx2c/ElUHY3zOvp3yCUxCgooUV85vlYAerMhi6EN1/fI4TNy1ALW1fKcpprH1dnyaoW36m/7a8ol+8ogp+bzj57nVmf4/7857YY2xO0mh77UnDb2Sg/QRQVZH84YUgOnReoA3liOOAqD1BmXIyeY0Sifw7mNyqgmjdnGQhPcVWptaYnZSM4yA50vPUCQmfZA/mwIvYHJE126POaex+OZuPX0j313MP6cKZ90LXDv6Dc8i1DraEfamJTlQcC/9wSEJkSlDbaVI2atvWYwEOAHMk3XLgBuPeQldDExCEWRJ6B+owqXbdWJE/j7Zm6LFKjcO1j0hI5K94yx8HM0+pI57Kgg0y7/Nk9w3Xne2cL9r2da7Zfa0GCm7d8+eWy38uTpq/fvEG3mN3m44/ofwpcfbSWAhx6ASmVDdeXmwaL+unYqCtaYObey3sLJqwaHglu/7vY0i06P9W6eQfS4tpYrJZalP3zwUlULW3XbHpFXhnQPYntsPIRguo6uYt/NPbEvPvItPLIMjXAoWcpoUlKQW7i1Rs1BsNRiMEZ4RPcfEmS/7Wu7MZ1q6B99/x6+Cs04=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(23010399003)(376014)(7416014)(1800799024)(22082099003)(18002099003)(11063799006)(4143699003)(56012099006)(261026140227099003)(261028144727099003)(261022075727099003)(261009223027099003)(10067099003)(261021121427099003)(261102123227099003)(261026121527099003)(261022105027099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RTNTS1BpRmpLWjE3T3hjWVM3TXQ1QzJEQ1JZOEt0cmVVVGgzNVZCN1c1SHJ2?=
+ =?utf-8?B?THhhNUFYeGlLU0ZrRnBsVDZ0Mzl3YldhSXFvMzRuQ3piaExiNmk5M2gyb2ZS?=
+ =?utf-8?B?QjBWdWNiZExoMnk5Y0Y3NURTWkh3dGxuYzFaSkhVUzFxbW8xRUhraGZCYnRY?=
+ =?utf-8?B?Z0hmUVZlZzAxWFZMaSs1WWZlSFZrY2lWTDlQRXhYdjJ0NjhFNXNVM0xzcHVO?=
+ =?utf-8?B?V2ZCNkFHSHVFMmlBa0V3eHZiUnJBMlVCRjdVWTFFak1DWU1leGlwT0IramYy?=
+ =?utf-8?B?K0h5dHJLVml6N1JhaHdBZjRSdllrU3BXRVNCbVMvVGlWYktYS3MzeXpYclQr?=
+ =?utf-8?B?OGV0SXI2N0JsSVI0LzMrVjNEVERodXJVbXhZMTR2enpKODFpd0xPZlVncEVh?=
+ =?utf-8?B?TXZSa0ZZM1BiY2tyOVE4WW1qbXA1WVZpMVdVU2UxYXcxdlpGWGVmbXVpbFpJ?=
+ =?utf-8?B?SjFrU3pSYm5zMkdVZ0E3SXpJZy95UmdCaElrN1MwWHNGQkszdlhTWkl0clpk?=
+ =?utf-8?B?TEVqQ1ZSWDRqYVhUZ3JlWnhxM1hGVnhXQklZS1J4SWJRbEJwL3l0NHZ3K2hY?=
+ =?utf-8?B?YXFrZzlYdW1rRENRa3BjQkxsOFNYYzlPNGxLd216NG5WektiYWZ5RmIzR2Ns?=
+ =?utf-8?B?dW5iOUxwUGhDVEJSRkMyd2JKYnVCQ1Zuc1Q2Qlp2TTRQSklacDIwdFkxcjYr?=
+ =?utf-8?B?TVFqdUpNSVpyK09KRHYyVFBQUHRtMGJRVUZidmZqTGpwUkRWVDdPL2E5MkND?=
+ =?utf-8?B?RFV1bWl2blRvS0tHK3Qxb0pGaEVod0RzbjZQU0hLd05peHNpck44R2JZT2lD?=
+ =?utf-8?B?MGtMM1pFbFRkQ0M0TWE1RzhpbGZqL2s3N2h3SnlvbkNEc05KK2hWSnhLK1pC?=
+ =?utf-8?B?L3ZUZDRHVkVTSmVhUGk3RmwvSHYwSlo2aUNscVlKTEtmU3ZDM1lIM0RjeGQ4?=
+ =?utf-8?B?NjIxRWZvNi9LZytkTitEMUMxaFFEY3d6U3F1YkI5Sm00a2hMRWpyOG8rZEJt?=
+ =?utf-8?B?Umo2Z2lkK3VHd3BUOE1BMlIxUnZoT1dOd2NvN09YNUVjbEs2ZXluWnphUzVT?=
+ =?utf-8?B?UmtKS2w1T2dmMlR6ZGU5eGQyNnlzSTZnVG1OcjBTRDJiZ0tkSDhyZ0pORHFG?=
+ =?utf-8?B?Vkxpc25yTVdhaHUyWnI4S2R3V215cVlPaUdYc1pZeEsvdk90dXFoeDhmaTBF?=
+ =?utf-8?B?amZrRDRzY1RKMDRsYnNkQmYrZ0cwbmtmOU1YL0xmbnArdFJJajYwaE9JN0ti?=
+ =?utf-8?B?ZnpSSTBuQXUwKzFITGZTeHhLMVRBVC96YUNvaWdRS2Q1M2FiaTY4bjVDcDBL?=
+ =?utf-8?B?RGtGRVVucnQ5ZVIxWWwxS2dFSUY0eVp1Y3JVMEplNFdrRVZDMmh6a3RDTjJZ?=
+ =?utf-8?B?aEpjT0VvbWc2ZFIvcEpCZVF6U29kVG90TktTWGwwamJTMWNNRUN1Yyt1VUZL?=
+ =?utf-8?B?dVVCTHV5OWdxVkFHRDQ0VVlwMGpDaG1ka0NqNVJ2eEhkOE9NOUJDL2wySXNG?=
+ =?utf-8?B?S01odzFwMUw5VEhoYndYc1lkTWFXTStwS3ZLbHRvaXRPSkFIRllDU25HeWpD?=
+ =?utf-8?B?c3J4MW1vV2Z5QWlRMC9pVE16Nk5weWloSU9FNE9LYVU4Qmdnc09jNVNkOWx0?=
+ =?utf-8?B?UXE0djdqRllLRnlqSFJ4elpPOTRHRGx1ajFvZ1FVVm4xajJJOG1SVGtrbDRE?=
+ =?utf-8?B?Mk1sQnNQcTRDR3d4dkdhL0U5YUlLRWJLd3BtNndIdGtGRDZodmdKVDRldWhV?=
+ =?utf-8?B?b2ZOdHFOb0MrTDBmZHFhTThUdUJkSm9OZmJVUXJKN255NjlFV2FYcUYzcUoy?=
+ =?utf-8?B?b0h5d3IzMCtIRW0vVGtMalNRY2J2cTBwRFI2RVEycEdvTExDU3EvQUxIejNV?=
+ =?utf-8?B?czVaUkJJQWl5dVovUll6SVhuMWFkQW1odjd3TVd4V042c2QwYWdJRUhCOFdC?=
+ =?utf-8?B?UGJLRnh1Q2c3eHRSUjNPbHl6ckUwVm9pWWZJR3NVMkVzV25BamRucnpHWTN0?=
+ =?utf-8?B?d0toOFZLeDNJRmJuRmVxNXRGWnUyMWI5a2NOSDNFVEVhUTRTRkR6cmZGbjBp?=
+ =?utf-8?B?Ti9oOEo5V1NTQnNXek9wOTRkbzlYb1l5aDM4ZFBjS0xFOW9OTzlaT1lvYlhC?=
+ =?utf-8?B?dVhvdHRaQkFYamhybUtodXZsaFpoRHlLcVpZYXJiVkVCUmFqWmNURCtpYmRx?=
+ =?utf-8?B?Vy8rY2dHL0VpTnQveU1JYkEvWDVqUjlQb1FnQklWUENKV01ESFZ1cWJJZzFI?=
+ =?utf-8?B?S1NQNGNXOEJuYTJUSFN3TFZmeFhOb3AxdEJucGJBQTFLMWpkbmNWTC92SmtP?=
+ =?utf-8?B?V1MrQ0c4SVZqSjVYOTlNSCsxVFZhdkVZd2JXWDI1cm1BK0E5YmxuYTRWUEVq?=
+ =?utf-8?Q?HHFmcsFsYYTavlwY=3D?=
+X-Exchange-RoutingPolicyChecked: l8xr4JJ+3PTAyv7kKV9FIHmYrbK3ZnLsWNZfSUNmJlcxrXB2yRZPt0WYTjLF5P/9Z27gN5/CZabhJSUZExqWxhf2unUmHL78QFODhhZru5yJUrBvZfoxSmnqrKQE4OE3UVJSOYWjYAVwkY5oUW2X4Zh6GaqzkC4qPSA2T/OBG9KVDZi9qGGovHapv0iFJ2A7YS/NVxHj/9b61ycgxzN3R9z32f23EjoJKHTAayPkYV7Wu18m1ZrjqoA7XG+qDOQaZIbHOdyCM/N2zGS9d7SArAMD64chFzMblMbwzrpAIhVWYhFfi6/QwAz0p81QgNrpJ7uJZ0aEOYfaK5Ubyg3ZWA==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 87e338b8-acca-4041-86e1-08df44d1afe7
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2026 17:39:10.2042 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LSof5C3npKCP0WME4FuYJe0LbAMkf0r/iS/PSejE/ou13F0wAQTRSpVmnkdpszUjO5c9mVQ04FoiaRp4L7n0Idbpdnrj9cKtjy+7KIF9198=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB7485
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,117 +182,138 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
 	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Sun, 15 Nov 2026 09:00:16 -0500
-Ryan Wolfe <rnwolfe@google.com> wrote:
-
-> In GQI Queue Page List (GQI_QPL) mode each Tx queue copies outgoing
-> frames into a fixed QPL bounce FIFO (512 pages = 2 MiB on GCE, ~236
-> 8,832-byte cacheline-aligned jumbo frames) even when nb_tx_desc is
-> configured to 2048. Under sustained jumbo bursts three bugs cause
-> unnecessary packet drops and mbuf tracking hazards:
+On Tue, Nov 17, 2026 at 10:55:12PM +0530, Jerin Jacob wrote:
+> On Tue, Nov 17, 2026 at 10:39 PM Pravin Pathak
+> <pravinpathakdev@gmail.com> wrote:
+> >
+> > On Wed, Nov 11, 2026 at 9:22 AM Sarkar, Tirthendu
+> > <tirthendu.sarkar@intel.com> wrote:
+> > >
+> > > On Mon, Nov 9, 2026 at 6:25 PM Jerin Jacob <jerinjacobk@gmail.com> wrote:
+> > > > Lets get the performance  numbers for SLB vs DSW based on same test
+> > > > case so  that we can decide.
+> > > > Performance and scalability will be the aspect to decide the usage of
+> > > > YET ANOTHER SW driver.
+> > >
+> > > Hi Pravin,
+> > >
+> > > A few points on top of Stephen's review, plus some early numbers since
+> > > Jerin asked for SLB vs DSW data.
+> > >
+> > > +1 to Stephen's two Errors in patch 2 (reorder slot reuse when RELEASE
+> > > returns credits before the slot drains, and the lost wakeup in
+> > > slb_reorder_drain()) and to the credit-threshold issue in patch 1.
+> > > Those look like the ones that can lose or strand events.
+> > >
+> > > Additional comments:
+> > >
+> > > 1. slb_event.c, slb_event_enqueue_burst_generic(): the return value of
+> > >    rte_event_ring_enqueue_burst() is ignored on every path and the
+> > >    function always returns events_len. Correctness then depends
+> > >    entirely on credits guaranteeing ring space. If that ever fails
+> > >    (e.g. the credit-threshold or reorder issues above, or application
+> > >    misuse), events are silently dropped and their credits leak. At
+> > >    minimum, check the return value and report a short enqueue.
+> > >    Because the burst is sorted by destination queue before enqueue,
+> > >    a clean prefix count isn't possible after a partial failure, so
+> > >    this probably needs a space check up front or an explicit design
+> > >    statement that rings can never fill.
+> > >
+> > > 2. RTE_VERIFY(num_forward + num_release <= cur_pending) in the
+> > >    enqueue fast path aborts the whole process on application misuse
+> > >    (forwarding more events than were dequeued on that port). Please
+> > >    fail the enqueue and set rte_errno instead.
+> > >
+> > > 3. slb_configure(): max_inflight = RTE_MAX(nb_events_limit,
+> > >    nb_ports * SLB_PORT_MAX_CREDITS), so the device can hold more
+> > >    events than the application configured via nb_events_limit. If
+> > >    that is intended (to avoid credit-cache deadlock), please document
+> > >    it in slb.rst.
+> > >
+> > > 4. slb_queue_setup() ignores queue_conf->priority; priority comes only
+> > >    from the link priority, yet dev_info reports
+> > >    max_event_queue_priority_levels = 2. Either honour queue priority or
+> > >    report 1 and document that priority is per link.
+> > >
+> > > Performance
+> > > -----------
+> > > Preliminary data from dpdk-test-eventdev perf_queue, series applied on
+> > > v26.11-rc2, release build, Xeon 6505P (2x12C), physical cores only,
+> > > turbo on, default device settings, worker_deq_depth 16, 1024 flows.
+> > > Mpps, 1 synthetic producer, workers on socket 0:
+> > >
+> > >   stlist   driver   1w     2w     4w     8w
+> > >   p          slb       79.7   71.5   44.5   34.0
+> > >   p          dsw     50.1   46.3   45.1   41.9
+> > >   a          slb       54.3   65.3   57.0   43.9
+> > >   a          dsw     50.3   47.3   46.7   40.5
+> > >   a,a,a    slb      20.8    16.9   22.9   26.7
+> > >   a,a,a    dsw    20.8    18.4   20.1   18.2
+> > >   o          slb      61.7    29.5   36.6   27.4
+> > >   o          sw        7.7    10.0   11.7   13.7
+> > >   o,a       slb      36.0    19.5   28.3   28.9
+> > >   o,a       sw       3.8       5.7     7.5      7.2
+> > >
+> > > (event_dsw does not support ordered queues, so ordered rows are
+> > > against event_sw.)
+> > >
+> > > Observations:
+> > > - SLB is ahead at low worker counts but loses throughput faster as
+> > >   workers are added on single-stage parallel/atomic queues, which is
+> > >   consistent with all workers contending on one MP/MC ring per queue.
+> > > - Ordered queues are well ahead of event_sw (the only other SW PMD with
+> > >   ordered support), but SLB ordered throughput halves going from 1 to
+> > >   2 workers (61.7 -> 29.5 Mpps, reproduced), so the "close to
+> > >   parallel" claim only holds for a single worker (parallel: 79.7 ->
+> > >   71.5). This looks like the serialized reorder drain.
+> > > - With workers spanning both sockets (16/20 workers) all drivers drop
+> > >   sharply; SLB falls to 5-10 Mpps vs DSW 3-14 depending on stlist.
+> > > - Note that with multiple producers perf_queue creates a separate
+> > >   queue set per producer, which splits SLB's per-queue contention; SLB
+> > >   scales very well in that mode (4 producers, 8 workers, atomic:
+> > >   ~235 Mpps vs ~158 for DSW at worker_deq_depth 16), but that does not
+> > >   reflect a pipeline where all traffic shares one atomic queue.
+> > > - order_queue passes with up to 16 workers. In that test SLB slows down
+> > >   as workers are added: with 8 workers it sustained ~1.0 M events/s vs
+> > >   ~2.5 M events/s for event_sw (steady-state rate from the progress
+> > >   counter, 20M events); with 1-2 workers SLB was faster than event_sw
+> > >   (rough end-to-end timings, ~3.2 vs ~1.6-2.1 M events/s).
+> > >
+> > > These are untuned runs. In the 1-producer table the SLB/DSW atomic and
+> > > a,a,a rows, DSW parallel and SLB ordered were run twice and agreed
+> > > within ~5%; the other rows are single runs. Treat them as indicative.
+> > > It would help if v2 included your own perf_queue/pipeline numbers with
+> > > the exact command lines, ideally including a shared-queue case and
+> > > workers on more than one socket.
+> > >
+> > > Thanks,
+> > > Tirthendu
+> >
+> > Thanks Tirtha for the readings and comments. The main intention of introducing
+> > SLB is to bridge the current gap where there is no distributed
+> > software eventdev
+> > supporting ordered queues and priorities. Current event_sw has a limitation of
+> > single core scheduling limit. You can see it clearly from below
+> > performance tests
+> > where event_sw saturates early.
 > 
-> 1. Entry cleanup in gve_tx_burst_qpl() only ran when nb_free < free_thresh
->    (32) or fifo_avail == 0. With 2048 descriptors, 236 jumbo frames leave
->    nb_free = 1811 and non-zero remainder bytes in fifo_avail, so entry
->    cleanup never ran and every QPL wrap stalled mid-burst. Reclaim when
->    fifo_avail drops below half of fifo_size, and do not count normal
->    FIFO/ring-full backpressure as hardware stats.errors.
-> 2. When is_fifo_avail() failed mid-burst after queuing packets, the driver
->    polled gve_tx_clean() once before writing qtx_tail, so the device had
->    not yet started draining the newly queued frames, and a single
->    GVE_TX_MAX_FREE_SZ batch after many small frames could stop short of
->    freeing a jumbo slot. Flush qtx_tail first and loop gve_tx_clean()
->    while next_to_clean advances.
-> 3. sw_ring[sw_id] and the first TSO header slice were allocated/written
->    before verifying total FIFO space, gve_free_bulk_mbuf() did not clear
->    the first freed slot, and gve_tx_burst_ra() skipped mid-burst ring
->    cleanup and wrote pkt_len instead of data_len into the first segment
->    descriptor of multi-segment non-TSO packets.
 > 
-> Fixes: a46583cf43c8 ("net/gve: support Rx/Tx")
-> Cc: stable@dpdk.org
+> In that case (And looking at the performance numbers), I am OK to have
+> this new driver.  @mattias.ronnblom@ericcson.com  @Richardson, Bruce
+> any objections.
 > 
-> Signed-off-by: Ryan Wolfe <rnwolfe@google.com>
-> ---
+> @pravin.pathak.dev@gmail.com  If there is any common code between
+> Event SW PMDs THEN please think about have some place for common code
+> at driver/common/.../
+> 
+No objections from me. Is this something that could completely replace the
+event/sw driver in future, once it has stabilized?
 
-The AI review spotted some changes needed.
-
-[PATCH] net/gve: fix GQI QPL jumbo Tx FIFO reclaim and doorbell
-
-The FIFO fixes look right. Checking the TSO header and payload
-together before allocating also fixes a real leak: the old code
-allocated the header slice, then hit goto end_of_tx when the payload
-check failed. iov_ring[tx_id] was overwritten on the next burst, so
-that FIFO space was never returned to fifo_avail. The reclaim helper
-rings the doorbell before polling, which is the right order.
-
-Error
-
-TSO packets with pkt_len <= hlen now goto end_of_tx. That is a
-per-packet validation failure handled as backpressure. The app
-retries the same mbuf forever and the queue stalls. Drop the packet
-and move on:
-
-	if (ol_flags & RTE_MBUF_F_TX_TCP_SEG) {
-		uint32_t data_len, need;
-
-		if (unlikely(tx_pkt->pkt_len <= hlen)) {
-			txq->stats.errors++;
-			rte_pktmbuf_free(tx_pkt);
-			nb_drop++;
-			continue;
-		}
-
-Leave nb_drop out of stats.packets. A better long-term fix is a
-tx_pkt_prepare callback that rejects these before tx_burst, since
-gve has none today.
-
-Warning
-
-The commit message does not match the code. Item 3 says
-sw_ring[sw_id] is written before the FIFO check, but commit
-1299806a ("net/gve: delay adding mbuf head to software ring")
-already moved it. This patch does not touch that ordering. Drop the
-claim.
-
-This patch makes six separate changes to two Tx paths, under one
-Fixes tag, and is marked for stable:
-  - gve_free_bulk_mbuf() clears slot s
-  - QPL FIFO reclaim, doorbell flush and wider is_fifo_avail()
-  - QPL TSO check before allocating
-  - RA: clean the ring mid-burst
-  - RA: use data_len for the first descriptor
-  - stats.errors removal in both paths
-Split it into at least three patches: the free_bulk fix, the QPL
-FIFO changes, and the RA fixes. Give each one a Fixes: tag pointing
-at the commit that added that bug. Not all of them date back to
-a46583cf43c8. Splitting lets stable maintainers backport each fix
-on its own.
-
-Say in the commit message why the free_bulk fix matters. In RA
-mode a TSO packet uses two descriptors, but sw_ring[] is set only
-for the first one. The second slot can still hold a stale pointer
-from a previous wrap. The old code did not clear slot s, or earlier
-slots whose refcount was still held, so gve_tx_clean() could free
-that stale mbuf a second time. That is a double free, not a vague
-"mbuf tracking hazard". The RA data_len fix is the same kind of
-bug: the device was told to read pkt_len bytes from the first
-segment, past the end of that segment. Both deserve their own
-patch and a clear description.
-
-The commit message is long and reads like generated text. Make it
-short and factual, and say how this was tested: which instance
-type, which queue mode, and the traffic used to reproduce.
-
-Info
-
-Use for (;;) rather than do { } while (true) in
-gve_tx_reclaim_fifo_qpl(). Add a blank line between it and
-gve_tx_alloc_from_fifo().
+/Bruce
