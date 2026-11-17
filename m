@@ -2,43 +2,54 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4305A606A33D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 11:14:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59648606A31C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Nov 2026 11:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yunsilicon.com header.i=@yunsilicon.com header.a=rsa-sha256 header.s=feishu2403070942 header.b=QvaR93pL
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=NqgHUGgu
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 00816402F0;
-	Tue, 17 Nov 2026 12:14:40 +0100 (CET)
-Received: from lf-2-53.ptr.blmpb.com (lf-2-53.ptr.blmpb.com [101.36.218.53])
- by mails.dpdk.org (Postfix) with ESMTPS id 60E80402E4
- for <dev@dpdk.org>; Tue, 17 Nov 2026 12:14:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=feishu2403070942; d=yunsilicon.com; t=1794914073; h=from:subject:
- mime-version:from:date:message-id:subject:to:cc:reply-to:content-type:
- mime-version:in-reply-to:message-id;
- bh=Mcq9Gy2ydg79hsRN51vNuIg5izltwADX4d+67XH0m2k=;
- b=QvaR93pLhoGdz0XhD0UyhF1/L2acehjR+oRQnooKefLAqN6YXca8uSWm9vSiGvZ93lmNfL
- DSc5d1F9Fx1S22WIpsH8NLjBjqtfv8Dkvt/GFCzNjRl4zA0egYEVyLbVowVCCo+jb/LksA
- KVEzxflIx/jEbp2OqDTMOk/YBAhNmGZR5a3EVEqxTPsql+Zv8SReMKmI+HudwBBxJiXXjb
- xKMoZ4jPXKqQQd26Pj6iCneACpqzqT/atKYginJ6jq6K51HsxI0ZnhFsPQYHJ1fOU6MS6j
- u+Gn90SX/7hcJnkBz+GwxHLDfp/tsQD6ES0OWa3wY5Fts8dYxqkHf3MqISKHzg==
-Subject: [PATCH v4 3/3] net/xsc: rename jumbo buffer fields
+	by mails.dpdk.org (Postfix) with ESMTP id E7642402C3;
+	Tue, 17 Nov 2026 12:30:31 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+ by mails.dpdk.org (Postfix) with ESMTPS id BB2B24026F;
+ Tue, 17 Nov 2026 12:30:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1794915030; x=1826451030;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=wr0zdnmhjVlpqs1iBWvzgHUgEBWw2rJb9N+I8HewSrg=;
+ b=NqgHUGgun5vOrgrWG3Wr/K1LKQ6s344mDtSZUnPcJgbP4p5614I1NDkv
+ T+P6HOzx49UeFLNv33Ka3SR+OcU4roELOfLhY9qig3hIE4oD+Owfl5K9N
+ o4dUVy7p/YBKtCi3t50CCq1JRn+VaAxk/vDqnKCrA9oMlKQLwwjrbm3I4
+ rMyqEFx6SoKA0p92A60fPv33oNJAzWBH9nFLh212Oiocl8RSSiNDMmEIR
+ 6rNtAdvFD9HuLmpNtjQOqKZSIJ++XaQ+x/mknmX1KA12pCn6SJKE75E/h
+ 0CF9OnRV606GI95+EZsRcH+Rj5NEsOhlrCher5JIGUKBH3037PPslZSAg g==;
+X-CSE-ConnectionGUID: 1QFUy9wHTzGEvyD7YxFJVg==
+X-CSE-MsgGUID: /HKvnvOBT6OX4r6Feyka3Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11968"; a="3576480"
+X-IronPort-AV: E=Sophos;i="6.27,218,1787036400"; 
+   d="scan'208";a="3576480"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+ by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 17 Nov 2026 03:30:27 -0800
+X-CSE-ConnectionGUID: Tr2y7dwlRTSjXHGoCk+6SQ==
+X-CSE-MsgGUID: kKYClCbPS2qQSwvErnh/4g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,218,1787036400"; 
+   d="scan'208";a="9898122"
+Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
+ by orviesa001.jf.intel.com with ESMTP; 17 Nov 2026 03:30:26 -0800
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
+ Tony U <tony@compilex.com>
+Subject: [PATCH] raw/ntb: fix Tx of incomplete packets
+Date: Tue, 17 Nov 2026 11:30:17 +0000
+Message-ID: <20261117113017.2225641-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.55.0
 X-Archived-By: <archiver.kernel.org>
-Mime-Version: 1.0
-In-Reply-To: <1794914060.606144@yunsilicon.com>
-X-Original-From: Renyong Wan <wanry@yunsilicon.com>
-To: <dev@dpdk.org>
-Cc: "Stephen Hemminger" <stephen@networkplumber.org>, <nana@yunsilicon.com>, 
- <qianr@yunsilicon.com>, <zhangxx@yunsilicon.com>, <xudw@yunsilicon.com>
-From: "Renyong Wan" <wanry@yunsilicon.com>
-Received: from [10.211.5.164] ([180.152.18.210]) by smtp.feishu.cn with ESMTPS;
- Tue, 17 Nov 2026 19:14:30 +0800
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 17 Nov 2026 19:14:20 +0800
-Message-Id: <1794914060.178097@yunsilicon.com>
-Content-Transfer-Encoding: 7bit
-References: <1794914060.606144@yunsilicon.com>
-X-Lms-Return-Path: <lba+26afc3717+d9c46c+dpdk.org+wanry@yunsilicon.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,106 +59,113 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=4.0.1
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The names are the other way round: jumbo_buffer_pa holds the virtual
-address and jumbo_buffer_va holds the IOVA, which is why the bug went
-unnoticed.
+When a Tx descriptor had no room, a zero length or an unmappable
+address, the Tx burst stopped after its software ring entry had already
+been set to the mbuf, which is still owned by the application. On
+device stop, that mbuf was freed a second time.
 
-Rename them to jumbo_buf and jumbo_iova with matching types, which also
-removes the casts.
+For multi-segment mbufs, a failure on a later segment also left the
+earlier segments enqueued and published to the peer without EOP, with
+their ring entries referencing application-owned mbufs.
 
-Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
-Signed-off-by: Renyong Wan <wanry@yunsilicon.com>
+Check all descriptors of a packet before consuming any of them,
+so that the ring is only updated for complete packets.
+
+Bugzilla ID: 2134
+Fixes: 11b5c7daf019 ("raw/ntb: add enqueue and dequeue functions")
+Cc: stable@dpdk.org
+
+Reported-by: Tony U <tony@compilex.com>
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/xsc/xsc_dev.c |  4 ++--
- drivers/net/xsc/xsc_dev.h |  4 ++--
- drivers/net/xsc/xsc_rx.c  | 22 +++++++++++-----------
- 3 files changed, 15 insertions(+), 15 deletions(-)
+ drivers/raw/ntb/ntb.c | 41 +++++++++++++++++++++++++----------------
+ 1 file changed, 25 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/net/xsc/xsc_dev.c b/drivers/net/xsc/xsc_dev.c
-index f048efd7..f1abe560 100644
---- a/drivers/net/xsc/xsc_dev.c
-+++ b/drivers/net/xsc/xsc_dev.c
-@@ -151,8 +151,8 @@ xsc_dev_close(struct xsc_dev *xdev, int repr_id)
- 		 * The buffer is shared by all the ports, the other Rx
- 		 * queues hold its IOVA until the device is stopped.
- 		 */
--		rte_free(xdev->jumbo_buffer_pa);
--		xdev->jumbo_buffer_pa = NULL;
-+		rte_free(xdev->jumbo_buf);
-+		xdev->jumbo_buf = NULL;
- 	}
+diff --git a/drivers/raw/ntb/ntb.c b/drivers/raw/ntb/ntb.c
+index 85354b54ed..94802d5f20 100644
+--- a/drivers/raw/ntb/ntb.c
++++ b/drivers/raw/ntb/ntb.c
+@@ -576,12 +576,13 @@ ntb_enqueue_bufs(struct rte_rawdev *dev,
+ 	struct ntb_tx_entry *sw_ring = txq->sw_ring;
+ 	struct rte_mbuf *txm;
+ 	struct ntb_used tx_used[NTB_MAX_DESC_SIZE];
++	void *seg_addr[NTB_MAX_DESC_SIZE];
++	uint16_t seg_len[NTB_MAX_DESC_SIZE];
+ 	volatile struct ntb_desc *tx_item;
+ 	uint16_t tx_last, nb_segs, off, last_used, avail_cnt;
+ 	uint16_t nb_mbufs = 0;
+ 	uint16_t nb_tx = 0;
+ 	uint64_t bytes = 0;
+-	void *buf_addr;
+ 	int i;
  
- 	return ret;
-diff --git a/drivers/net/xsc/xsc_dev.h b/drivers/net/xsc/xsc_dev.h
-index d4a7d90b..3473333c 100644
---- a/drivers/net/xsc/xsc_dev.h
-+++ b/drivers/net/xsc/xsc_dev.h
-@@ -189,8 +189,8 @@ struct xsc_dev {
- 	void *dev_priv;
- 	char name[PCI_PRI_STR_SIZE];
- 	void *bar_addr;
--	void *jumbo_buffer_pa;
--	void *jumbo_buffer_va;
-+	void *jumbo_buf;
-+	rte_iova_t jumbo_iova;
- 	uint64_t bar_len;
- 	int ctrl_fd;
- 	rte_intr_callback_fn intr_cb;
-diff --git a/drivers/net/xsc/xsc_rx.c b/drivers/net/xsc/xsc_rx.c
-index 30b40df3..f7529371 100644
---- a/drivers/net/xsc/xsc_rx.c
-+++ b/drivers/net/xsc/xsc_rx.c
-@@ -206,27 +206,27 @@ xsc_rxq_initialize(struct xsc_dev *xdev, struct xsc_rxq_data *rxq_data)
- 	uint32_t log2ds = rte_log2_u32(rx_ds_num);
- 	uintptr_t addr;
- 	struct rte_mbuf *mbuf;
--	void *jumbo_buffer_pa = xdev->jumbo_buffer_pa;
--	void *jumbo_buffer_va = xdev->jumbo_buffer_va;
-+	void *jumbo_buf = xdev->jumbo_buf;
-+	rte_iova_t jumbo_iova = xdev->jumbo_iova;
- 	volatile struct xsc_wqe_data_seg *seg;
- 	volatile struct xsc_wqe_data_seg *seg_next;
+ 	if (unlikely(dev->started == 0 || !ntb_peer_dev_is_up(hw))) {
+@@ -600,35 +601,43 @@ ntb_enqueue_bufs(struct rte_rawdev *dev,
+ 		if (txm == NULL || txq->nb_tx_free < txm->nb_segs)
+ 			break;
  
--	if (rx_ds_num != 1 && jumbo_buffer_pa == NULL) {
--		jumbo_buffer_pa = rte_malloc(NULL, XSC_MAX_RECV_LEN, 0);
--		if (jumbo_buffer_pa == NULL) {
-+	if (rx_ds_num != 1 && jumbo_buf == NULL) {
-+		jumbo_buf = rte_malloc(NULL, XSC_MAX_RECV_LEN, 0);
-+		if (jumbo_buf == NULL) {
- 			PMD_DRV_LOG(ERR, "Failed to malloc jumbo_buffer");
- 			return -ENOMEM;
- 		}
+-		tx_last = (txq->last_used + txm->nb_segs - 1) &
+-			  (txq->nb_tx_desc - 1);
+ 		nb_segs = txm->nb_segs;
++		/* Check all descriptors first so a packet is never partially enqueued. */
+ 		for (i = 0; i < nb_segs; i++) {
++			const uint16_t idx = (txq->last_used + i) & (txq->nb_tx_desc - 1);
++
+ 			/* Not enough ring space for tx. */
+-			if (txq->last_used == avail_cnt)
++			if (idx == avail_cnt)
+ 				goto end_of_tx;
+-			sw_ring[txq->last_used].mbuf = txm;
+-			tx_item = txq->tx_desc_ring + txq->last_used;
++			tx_item = txq->tx_desc_ring + idx;
  
--		jumbo_buffer_va = (void *)rte_malloc_virt2iova(jumbo_buffer_pa);
--		if ((rte_iova_t)jumbo_buffer_va == RTE_BAD_IOVA) {
-+		jumbo_iova = rte_malloc_virt2iova(jumbo_buf);
-+		if (jumbo_iova == RTE_BAD_IOVA) {
- 			PMD_DRV_LOG(ERR, "Failed to get IOVA of jumbo_buffer");
--			rte_free(jumbo_buffer_pa);
-+			rte_free(jumbo_buf);
- 			return -EFAULT;
- 		}
+-			if (!tx_item->len) {
++			seg_len[i] = tx_item->len;
++			if (seg_len[i] == 0) {
+ 				(hw->ntb_xstats[NTB_TX_ERRS_ID + off])++;
+ 				goto end_of_tx;
+ 			}
+-			if (txm->data_len > tx_item->len) {
+-				NTB_LOG(ERR, "Data length exceeds buf length."
+-					" Only %u data would be transmitted.",
+-					tx_item->len);
+-				txm->data_len = tx_item->len;
+-			}
  
--		xdev->jumbo_buffer_pa = jumbo_buffer_pa;
--		xdev->jumbo_buffer_va = jumbo_buffer_va;
-+		xdev->jumbo_buf = jumbo_buf;
-+		xdev->jumbo_iova = jumbo_iova;
- 	}
+ 			/* translate remote virtual addr to bar virtual addr */
+-			buf_addr = (*hw->ntb_ops->ioremap)(dev, tx_item->addr);
+-			if (buf_addr == NULL) {
++			seg_addr[i] = (*hw->ntb_ops->ioremap)(dev, tx_item->addr);
++			if (seg_addr[i] == NULL) {
+ 				(hw->ntb_xstats[NTB_TX_ERRS_ID + off])++;
+ 				NTB_LOG(ERR, "Null remap addr.");
+ 				goto end_of_tx;
+ 			}
+-			rte_memcpy(buf_addr, rte_pktmbuf_mtod(txm, void *),
++		}
++
++		tx_last = (txq->last_used + nb_segs - 1) & (txq->nb_tx_desc - 1);
++		for (i = 0; i < nb_segs; i++) {
++			sw_ring[txq->last_used].mbuf = txm;
++
++			if (txm->data_len > seg_len[i]) {
++				NTB_LOG(ERR, "Data length exceeds buf length."
++					" Only %u data would be transmitted.",
++					seg_len[i]);
++				txm->data_len = seg_len[i];
++			}
++
++			rte_memcpy(seg_addr[i], rte_pktmbuf_mtod(txm, void *),
+ 				   txm->data_len);
  
- 	for (i = 0; (i != wqe_n); ++i) {
-@@ -246,7 +246,7 @@ xsc_rxq_initialize(struct xsc_dev *xdev, struct xsc_rxq_data *rxq_data)
- 		if (rx_ds_num != 1) {
- 			seg_next = seg + 1;
- 			*seg_next = (struct xsc_wqe_data_seg){
--				.va = rte_cpu_to_le_64((uint64_t)jumbo_buffer_va),
-+				.va = rte_cpu_to_le_64(jumbo_iova),
- 				.seg_len = rte_cpu_to_le_32(XSC_MAX_RECV_LEN - seg_len),
- 				.lkey = 0,
- 			};
+ 			tx_used[nb_mbufs].len = txm->data_len;
+-- 
+2.55.0
+
