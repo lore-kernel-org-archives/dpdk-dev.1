@@ -2,62 +2,62 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F63606A331
-	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Nov 2026 00:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49FA606A31C
+	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Nov 2026 00:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=aHb4GUqY
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=H7ayVi6I
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6110F40262;
-	Wed, 18 Nov 2026 01:19:40 +0100 (CET)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com
- [209.85.128.51])
- by mails.dpdk.org (Postfix) with ESMTPS id 7578B402E5
- for <dev@dpdk.org>; Wed, 18 Nov 2026 01:19:38 +0100 (CET)
-Received: by mail-wm1-f51.google.com with SMTP id
- 5b1f17b1804b1-4bb5b8ef642so3047865e9.1
- for <dev@dpdk.org>; Tue, 17 Nov 2026 16:19:38 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 630F44042C;
+	Wed, 18 Nov 2026 01:19:42 +0100 (CET)
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com
+ [209.85.128.46])
+ by mails.dpdk.org (Postfix) with ESMTPS id A265F402F0
+ for <dev@dpdk.org>; Wed, 18 Nov 2026 01:19:40 +0100 (CET)
+Received: by mail-wm1-f46.google.com with SMTP id
+ 5b1f17b1804b1-4a35d5d4a20so4211985e9.2
+ for <dev@dpdk.org>; Tue, 17 Nov 2026 16:19:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1794961178; x=1795565978; darn=dpdk.org;
+ d=gmail.com; s=20260707; t=1794961180; x=1795565980; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=mI4m6zJbGJSYBHbU/6vEqhHzNWYlV2MyGGi7LSRHXgc=;
- b=aHb4GUqYAuIoQqNuEfLl+KFCERsPp8HR4Jlom2rClS9rUqbgdlif9Exhxa0Bzf6W0/
- 8jNbMlbFP44py1SaATyJrirTs4YbdPE+SDhoF0+FIMknY115Db3dxCYky3yF3voyWYH9
- 7CYFyxZtiE/fGY5x+M1/RLSIucgTZztSJUVZBx/iaBD1K9ugCF2BJlYTLBHi6/BToGOF
- YrreEjIE5SHI8ZYbyC3JHXTykT/dx3sqa3oXYmItmSJWfxW1ibmwD1nzruyUfHJGeIU9
- qvJdngn+ZQOCrYrsLdwyHIaABq0XwQBtUXjw/utG/gOmqo/jRKkZh4oa4T9DbVqaid7G
- nwPA==
+ bh=PErsaTz8OK6TptbXTRjcl8IaLU4IXyiycl6NLv0g14Q=;
+ b=H7ayVi6I+BmzebdXNSAYZyb0dGEyfGLgQlC5Vrjp5DbSayB119JGsA6R3qsaPkm32/
+ nWoMPbWYC2XACf0wFN922I4o18IYNIspmPAJl3kQ1Hx8TnNdZ9oHdFwM2jC4G/iB8mfd
+ bsdo7S6guNTrm+2LB+WZyq2Z2ln6G+M39whKzjQK8vEsA2kSw0HVW2X4OnizRl8G3vY/
+ U052flUSuWZmWIsyMW6BiCFsK9yJk1pH39vZVCHrLmJBSYPGRffgbqVYWRVGHCXPCGI7
+ fObPSSuEEsGu8W6SuuCX/BlqosTU7DTzCoT7klAcVym7OouGzmENwQ5yGZ1IJTqVlQ6i
+ qcOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794961178; x=1795565978;
+ d=1e100.net; s=20260707; t=1794961180; x=1795565980;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=mI4m6zJbGJSYBHbU/6vEqhHzNWYlV2MyGGi7LSRHXgc=;
- b=MXeIiDuG3Sm6aQtdXjKbjI4L2qtKRyd6V1KYYTTp4ze/4rPCAoMqfRxSC9Fa/hG+4R
- H3x5gN7s7WjkNGza9OcsP3yB7I29Xg2mZXRq0/hv37rl6ASmPC/Vq9Xsqn31MtWbd/Fs
- g28Gm0SxcumhT7LD4GAqC+TKYnv6U0VQpV/JFEqcPOTr4o+MVwuCDNN+c6hhpi3LDrvP
- jQw7F8Aq3/ISQtHMqY/WYP4Bo0Ii/hoxL7SGBmLi4XsyyAxbCFZJd7YKAutFnDwfQOxb
- LKAjKHzMpanWdfuX7xF0/s1B0P0VZWsDAf47bDp6WcWnXkpPUQ4QB9y3unKMMb0n1nqd
- 0N2g==
-X-Gm-Message-State: APuU4Z9H4GrIU4GPdfQ0zVy1QjxvPln3OBpdIo3JNZcdcvwMIFirPzZd
- 0oTWNknTOoVOrAFozvE9ZREkIdXWQn4mi8uYuEqwm8t4c0Kbof+s9sYZ
-X-Gm-Gg: AYBFou1m/DSsLzd+BE4XbQdKFyJsSiNHQXVUA17Mn83ZH5FHyXj8O7vK1fjVwinPPUJ
- X2Qtf23L7jicjeqEUOWdjs3q5mWCM296Rz4uEv5HXhP7Q36NQ4dwiQ29GsLFScP7u8GqglefT8E
- G01znYiiEhFG9fDWdDju15rHnfOVhcUfDhe8PV/OYYbbxUMaseP8mWDfnLSrBC40y8WYom3YdV3
- h8vwUFFNRZozuWybsGhHNwtskYDXIGj9gWSeK4zJRNz1+PxaCeEhlvqGmNfKvxObZ0B37YvebtO
- NRg8ZXfC01c+GTDEy6sc1tzyNw0vzT8UbFJCdv6D8LhZfxpB8qbFgMz6MtL39qxlxV/VxpG3hdW
- s0QwQx7heHmR5hFlr0zCh0xBI4JLFLuEiJ2Jus0zdESWZqr7lR7yaKFpNVmkaGqWjrjjJJLLWDr
- 7Y9idEOgL3CiCkh/NIVDEtWc5T2AVcz0/9qq1RiFoKWRIJ2vg0kRJzYkRP87wSDDbcKI4O09E2H
- ww0hkEf8tnpMQos7kc0VIBrFxi6YFf5R1c/agTSbvOcUSAfaaT8hgkYsiBReqfoZ8W8M+HR893M
- sb4ECMYZW/YMwZwEcN16
-X-Received: by 2002:a05:600c:4e45:b0:4ba:38a9:85e3 with SMTP id
- 5b1f17b1804b1-4bb7da127ccmr14789675e9.12.1794961177951; 
- Tue, 17 Nov 2026 16:19:37 -0800 (PST)
+ bh=PErsaTz8OK6TptbXTRjcl8IaLU4IXyiycl6NLv0g14Q=;
+ b=ZABRh6a2aXoGDptHUKyVQETa4rXQ22Tk7p62OdD9CL6X7cnLY44KyU0NWRQlrG+plQ
+ kge0G7d7qPXdo0wRWOUoxt3vPxALfY+4qywixc06ljmq0A2BGHta6FshFGixoy6AEvFd
+ 9P28disyRduAv7Qo8ExDa6822mehrTWPvFL0vkbc5li0NFdRWuw9TpQQnTeM5Y2amz9w
+ 4jHBXdEdjhb/aNHivQhMZXQnMZV+SAp+KmcL+dDdxVTQZQzZJYPd1gH5smG/shDgWL5v
+ OsRyMM4YLV/S0YsoNCuNaYOsWFxNFyNlfd1JL21A/bSwctXsst8fiV08DBHT/GJkMRVG
+ 9hfQ==
+X-Gm-Message-State: APuU4Z+h7HK02iZsjvFrlFvnWzVPeThGfnXagmQ2xh2DeOFUnrblULJY
+ RZoocIRPinAnIG1Xmd4O89V5Y6YGKqFT4WrkOp1jHXkMrvVUtBQNr6yf
+X-Gm-Gg: AYBFou1TjGY9Huq5vgtsf0ekySBmWvB8hgJjLKH/jVitS/opCkS6IbTayBN05lcusmu
+ VZqyI/1XrE3LNdWnO6MVQSs8PYtyXZ0ADrTfw7i4xesTVEECrKSZHUCcw6WEnFTS8hTZepdAr2k
+ 7meClA7JRu0oC7IsBj5ECNGqnrLyU6LQ2j5sUi4c0NcWXdshEdVo/EPTp6tARBhhDhUvj6KuOd8
+ BK0szYPj8iq+IDr3W+u5mO/2OZ5CwMHqljvwDfbZ/PHzkQWbPG6BXW95fuKPyFncmDGyIHCnXrO
+ sukaVma2Y93F0mjsae33H3e1RI7sfofmJRU7YwC6NONrvkesb2ba0eKGcOEyM7fsJ4fRB/KBBrn
+ tenYGvxA7RVN/5s5D/Nx7VU1bMQlIC7x+5fpnhS7p2Zo0pXEM49BoUzkfriPhkDvKzzOVme3aOX
+ +EM88tjohu1nlLiW6LNVon/PDPV6aWe5d8tMzGvLZH8gPcox0I/cKaf3iUuzBy8rY+R+etz3wSY
+ 1p0UtfYia8lWJiJEIpL0bvZHzYPSIoiqwaA358jr6yuoyJd0jKX/GTvehQFe0mz4B9uisiTr8Y1
+ r5961g7v/nSiBCrTFrGb
+X-Received: by 2002:a05:600c:c176:b0:4bb:7571:5743 with SMTP id
+ 5b1f17b1804b1-4bb7da39687mr16741665e9.27.1794961179932; 
+ Tue, 17 Nov 2026 16:19:39 -0800 (PST)
 Received: from fedora ([46.210.208.90]) by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4bb7e50e992sm4655025e9.0.2026.11.17.16.19.36
+ 5b1f17b1804b1-4bb7e50e992sm4655025e9.0.2026.11.17.16.19.38
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 17 Nov 2026 16:19:37 -0800 (PST)
+ Tue, 17 Nov 2026 16:19:39 -0800 (PST)
 From: Isaac Boukris <iboukris@gmail.com>
 To: Maxime Coquelin <maxime.coquelin@redhat.com>,
  Chenbo Xia <chenbox@nvidia.com>
@@ -65,11 +65,10 @@ Cc: dev@dpdk.org, David Marchand <david.marchand@redhat.com>,
  Aman Singh <aman.deep.singh@intel.com>,
  Luca Vizzarro <luca.vizzarro@arm.com>,
  Patrick Robb <patrickrobb1997@gmail.com>,
- Isaac Boukris <iboukris@gmail.com>, stable@dpdk.org
-Subject: [PATCH v3 2/7] net/virtio-user: fix packet loss with unused queue
- pairs
-Date: Wed, 18 Nov 2026 02:19:13 +0200
-Message-ID: <20261118001918.990884-3-iboukris@gmail.com>
+ Isaac Boukris <iboukris@gmail.com>
+Subject: [PATCH v3 3/7] test/virtio_user: add unit test of unused queue pairs
+Date: Wed, 18 Nov 2026 02:19:14 +0200
+Message-ID: <20261118001918.990884-4-iboukris@gmail.com>
 X-Mailer: git-send-email 2.56.1
 In-Reply-To: <20261118001918.990884-1-iboukris@gmail.com>
 References: <20261117124303.717447-1-iboukris@gmail.com>
@@ -86,140 +85,334 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=4.0.1
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-A virtio-user port on vhost-net loses received packets when the
-application configures fewer Rx queues than the port has queue pairs
-(the queues devarg). For example, with queues=2 and one Rx queue,
-testpmd receives 22 of 64 flows that the kernel sends on the TAP
-interface.
+Add a test suite for the virtio PMD on a virtio-user port backed by
+vhost-net and a TAP interface, modeled on the test suite of the TAP
+PMD. It needs no VM and no PCI device. It is skipped where the port
+cannot be created (no root, no /dev/vhost-net).
 
-The TAP interface has one queue per queue pair, and the kernel picks
-the queue of a packet by a hash of its flow. The driver unsets the
-vhost backend of a disabled queue pair, but the TAP queue stays
-attached. So the kernel still sends flows to it, and nothing reads
-them.
+The port has two queue pairs and the test configures one Rx queue.
+The first case sends frames of 16 flows from the kernel, through a
+packet socket on the TAP interface. All of them must arrive on the Rx
+queue. Without the fix of the unused queue pairs, the kernel sends
+about half of the flows to the TAP queue of the second queue pair,
+and they are lost.
 
-The driver used to detach such a queue with TUNSETQUEUE. The commit
-below removed that when it moved the opening of the TAP queues to
-the initialization.
-
-Detach the TAP queue of a queue pair when it is disabled, and attach
-it when it is enabled. The queues after the first one are detached
-when they are opened, because a queue pair is disabled until the
-driver enables it. The first queue is never detached, because the
-interface needs a queue.
-
-A queue pair is also disabled for a moment when the memory table
-changes. Its TAP queue is then detached and attached again.
-
-Fixes: b72099be7f27 ("net/virtio-user: fix init when using existing tap")
-Cc: stable@dpdk.org
+  DPDK_TEST=virtio_user_pmd_autotest ./build/app/dpdk-test --no-huge
 
 Signed-off-by: Isaac Boukris <iboukris@gmail.com>
 ---
-v3: new patch.
+v3: new patch. It has the test suite and the kernel socket that patch 2 of v2 added.
 
- drivers/net/virtio/virtio_user/vhost_kernel.c     | 12 ++++++++++++
- drivers/net/virtio/virtio_user/vhost_kernel_tap.c | 14 ++++++++++++++
- drivers/net/virtio/virtio_user/vhost_kernel_tap.h |  4 ++++
- 3 files changed, 30 insertions(+)
+ MAINTAINERS                     |   1 +
+ app/test/meson.build            |   1 +
+ app/test/test_pmd_virtio_user.c | 266 ++++++++++++++++++++++++++++++++
+ 3 files changed, 268 insertions(+)
+ create mode 100644 app/test/test_pmd_virtio_user.c
 
-diff --git a/drivers/net/virtio/virtio_user/vhost_kernel.c b/drivers/net/virtio/virtio_user/vhost_kernel.c
-index 7914b517cd..5b70999393 100644
---- a/drivers/net/virtio/virtio_user/vhost_kernel.c
-+++ b/drivers/net/virtio/virtio_user/vhost_kernel.c
-@@ -455,6 +455,9 @@ vhost_kernel_setup(struct virtio_user_dev *dev)
- 		data->tapfds[i] = vhost_tap_open(dev->ifname, r_flags, true);
- 		if (data->tapfds[i] < 0)
- 			goto err_tapfds;
-+		/* The queue stays detached until its queue pair is enabled. */
-+		if (vhost_tap_set_queue(data->tapfds[i], false) < 0)
-+			goto err_tapfds;
- 	}
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8fcb4ef5fa..36dd253f36 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1106,6 +1106,7 @@ T: git://dpdk.org/next/dpdk-next-virtio
+ F: drivers/net/virtio/
+ F: doc/guides/nics/virtio.rst
+ F: doc/guides/nics/features/virtio*.ini
++F: app/test/test_pmd_virtio_user.c
  
- 	dev->backend_data = data;
-@@ -546,6 +549,12 @@ vhost_kernel_enable_queue_pair(struct virtio_user_dev *dev,
- 			PMD_DRV_LOG(ERR, "fail to set backend for vhost kernel");
- 			return -1;
- 		}
-+		/*
-+		 * Detach the queue, so that the kernel sends its packets to the
-+		 * other queues. The interface keeps its first queue.
-+		 */
-+		if (pair_idx > 0 && vhost_tap_set_queue(tapfd, false) < 0)
-+			return -1;
- 		dev->qp_enabled[pair_idx] = false;
- 		return 0;
- 	}
-@@ -561,6 +570,9 @@ vhost_kernel_enable_queue_pair(struct virtio_user_dev *dev,
- 	    vhost_tap_set_mac(data->tapfds[pair_idx], dev->mac_addr) < 0)
- 		return -1;
- 
-+	if (pair_idx > 0 && vhost_tap_set_queue(tapfd, true) < 0)
-+		return -1;
+ Wind River AVP
+ M: Steven Webster <steven.webster@windriver.com>
+diff --git a/app/test/meson.build b/app/test/meson.build
+index 2f1cd817cd..e480353885 100644
+--- a/app/test/meson.build
++++ b/app/test/meson.build
+@@ -155,6 +155,7 @@ source_file_deps = {
+     'test_pmd_ring.c': ['net_ring', 'ethdev', 'bus_vdev'],
+     'test_pmd_ring_perf.c': ['ethdev', 'net_ring', 'bus_vdev'],
+     'test_pmd_tap.c': ['ethdev', 'net_tap', 'bus_vdev'],
++    'test_pmd_virtio_user.c': ['ethdev', 'net_virtio', 'bus_vdev'],
+     'test_pmu.c': ['pmu'],
+     'test_power.c': ['power', 'power_acpi', 'power_kvm_vm', 'power_intel_pstate',
+         'power_amd_pstate', 'power_cppc'],
+diff --git a/app/test/test_pmd_virtio_user.c b/app/test/test_pmd_virtio_user.c
+new file mode 100644
+index 0000000000..d8cf4f6a5d
+--- /dev/null
++++ b/app/test/test_pmd_virtio_user.c
+@@ -0,0 +1,266 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 Isaac Boukris
++ */
 +
- 	if (vhost_kernel_tap_setup(tapfd, hdr_size, dev->features) < 0) {
- 		PMD_DRV_LOG(ERR, "fail to setup tap for vhost kernel");
- 		return -1;
-diff --git a/drivers/net/virtio/virtio_user/vhost_kernel_tap.c b/drivers/net/virtio/virtio_user/vhost_kernel_tap.c
-index da55aba505..bfdc6f46c0 100644
---- a/drivers/net/virtio/virtio_user/vhost_kernel_tap.c
-+++ b/drivers/net/virtio/virtio_user/vhost_kernel_tap.c
-@@ -126,6 +126,20 @@ vhost_tap_set_mac(int tapfd, uint8_t *mac)
- 	return 0;
- }
- 
-+int
-+vhost_tap_set_queue(int tapfd, bool attach)
++/*
++ * Tests of the virtio PMD on a virtio-user port backed by vhost-net and a TAP
++ * interface. They need no VM and no PCI device. The kernel's end is a packet
++ * socket on the TAP interface.
++ */
++
++#include "test.h"
++
++#include <stdio.h>
++
++#ifndef RTE_EXEC_ENV_LINUX
++
++static int
++test_pmd_virtio_user(void)
 +{
-+	struct ifreq ifr;
++	printf("virtio-user with vhost-net is only available on Linux, skipping test\n");
++	return TEST_SKIPPED;
++}
 +
-+	memset(&ifr, 0, sizeof(ifr));
-+	ifr.ifr_flags = attach ? IFF_ATTACH_QUEUE : IFF_DETACH_QUEUE;
-+	if (ioctl(tapfd, TUNSETQUEUE, (void *)&ifr) == -1) {
-+		PMD_DRV_LOG(ERR, "TUNSETQUEUE failed: %s", strerror(errno));
-+		return -1;
++#else /* RTE_EXEC_ENV_LINUX */
++
++#include <errno.h>
++#include <string.h>
++#include <unistd.h>
++#include <net/if.h>
++#include <sys/ioctl.h>
++#include <sys/socket.h>
++#include <linux/if_packet.h>
++#include <linux/virtio_net.h>
++
++#include <rte_bus_vdev.h>
++#include <rte_cycles.h>
++#include <rte_ethdev.h>
++#include <rte_ether.h>
++#include <rte_ip.h>
++#include <rte_mbuf.h>
++
++#define VDEV_NAME "net_virtio_user_test"
++#define TAP_NAME "dtap_vu_test"
++#define RING_SIZE 256
++#define NB_MBUF 1024
++#define BURST 32
++#define WAIT_MS 1000
++/* The test frames' IP protocol (experimental, RFC 3692) */
++#define TEST_IP_PROTO 253
++#define NB_FLOWS 16
++
++static struct rte_mempool *mp;
++static uint16_t port_id = RTE_MAX_ETHPORTS;
++static int ksock = -1; /* the kernel's end, each frame follows a virtio_net_hdr */
++static bool started;
++
++static int
++port_stop(void)
++{
++	int ret;
++
++	if (!started)
++		return TEST_SUCCESS;
++	started = false;
++	ret = rte_eth_dev_stop(port_id);
++	TEST_ASSERT_SUCCESS(ret, "stop failed: %s", rte_strerror(-ret));
++
++	return TEST_SUCCESS;
++}
++
++/* Configure the port and start it. A failed case may have left it started. */
++static int
++port_start(const struct rte_eth_conf *conf)
++{
++	int ret;
++
++	TEST_ASSERT_SUCCESS(port_stop(), "port stop failed");
++	ret = rte_eth_dev_configure(port_id, 1, 1, conf);
++	TEST_ASSERT_SUCCESS(ret, "configure failed: %s", rte_strerror(-ret));
++	ret = rte_eth_rx_queue_setup(port_id, 0, RING_SIZE, SOCKET_ID_ANY, NULL, mp);
++	TEST_ASSERT_SUCCESS(ret, "Rx queue setup failed: %s", rte_strerror(-ret));
++	ret = rte_eth_tx_queue_setup(port_id, 0, RING_SIZE, SOCKET_ID_ANY, NULL);
++	TEST_ASSERT_SUCCESS(ret, "Tx queue setup failed: %s", rte_strerror(-ret));
++	ret = rte_eth_dev_start(port_id);
++	TEST_ASSERT_SUCCESS(ret, "start failed: %s", rte_strerror(-ret));
++	started = true;
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * A frame from the kernel's end to the port. The kernel picks a queue of the
++ * TAP interface by a hash of the frame's addresses, so the source address
++ * makes the flow.
++ */
++static int
++kernel_send(uint8_t flow)
++{
++	struct {
++		struct virtio_net_hdr vnet; /* no offload */
++		struct rte_ether_hdr eth;
++		struct rte_ipv4_hdr ip;
++		uint8_t payload[RTE_ETHER_MIN_LEN];
++	} frame;
++	ssize_t n;
++
++	memset(&frame, 0, sizeof(frame));
++	memset(&frame.eth.dst_addr, 0xff, RTE_ETHER_ADDR_LEN);
++	frame.eth.src_addr.addr_bytes[0] = RTE_ETHER_LOCAL_ADMIN_ADDR;
++	frame.eth.ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
++	frame.ip.version_ihl = RTE_IPV4_VHL_DEF;
++	frame.ip.total_length = rte_cpu_to_be_16(sizeof(frame.ip) + sizeof(frame.payload));
++	frame.ip.time_to_live = 64;
++	frame.ip.next_proto_id = TEST_IP_PROTO;
++	frame.ip.src_addr = rte_cpu_to_be_32(RTE_IPV4(192, 0, 2, flow));
++	frame.ip.dst_addr = rte_cpu_to_be_32(RTE_IPV4(198, 51, 100, 1));
++	frame.ip.hdr_checksum = rte_ipv4_cksum(&frame.ip);
++	n = send(ksock, &frame, sizeof(frame), 0);
++	TEST_ASSERT(n == (ssize_t)sizeof(frame), "send on %s failed: %s", TAP_NAME,
++		    strerror(errno));
++
++	return TEST_SUCCESS;
++}
++
++/* Receive what the queue holds. Return the flows of the frames of kernel_send(), a bit each. */
++static uint32_t
++port_receive(void)
++{
++	struct rte_mbuf *pkts[BURST];
++	uint32_t flows = 0;
++	uint16_t i, n;
++
++	while ((n = rte_eth_rx_burst(port_id, 0, pkts, BURST)) != 0) {
++		for (i = 0; i < n; i++) {
++			const struct rte_ether_hdr *eth =
++				rte_pktmbuf_mtod(pkts[i], const struct rte_ether_hdr *);
++			const struct rte_ipv4_hdr *ip = (const struct rte_ipv4_hdr *)(eth + 1);
++
++			if (rte_pktmbuf_data_len(pkts[i]) >= sizeof(*eth) + sizeof(*ip) &&
++			    eth->ether_type == rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4) &&
++			    ip->next_proto_id == TEST_IP_PROTO)
++				flows |= UINT32_C(1) << (rte_be_to_cpu_32(ip->src_addr) & 0xff);
++		}
++		rte_pktmbuf_free_bulk(pkts, n);
 +	}
++
++	return flows;
++}
++
++/*
++ * The port has two queue pairs and the test configures one Rx queue. The
++ * kernel picks a queue for each flow, so send frames of several flows. All of
++ * them must arrive on the one Rx queue.
++ */
++static int
++test_virtio_user_rx_flows(void)
++{
++	const uint32_t all = RTE_LEN2MASK(NB_FLOWS, uint32_t);
++	struct rte_eth_conf conf = { 0 };
++	uint32_t flows = 0;
++	uint64_t deadline;
++	uint8_t flow;
++
++	TEST_ASSERT_SUCCESS(port_start(&conf), "port start failed");
++	for (flow = 0; flow < NB_FLOWS; flow++)
++		TEST_ASSERT_SUCCESS(kernel_send(flow), "kernel send failed");
++	deadline = rte_get_timer_cycles() + rte_get_timer_hz() * WAIT_MS / 1000;
++	while (flows != all && rte_get_timer_cycles() < deadline)
++		flows |= port_receive();
++	TEST_ASSERT(flows == all, "received the flows 0x%x of 0x%x", flows, all);
++	TEST_ASSERT_SUCCESS(port_stop(), "port stop failed");
++
++	return TEST_SUCCESS;
++}
++
++static void
++test_virtio_user_cleanup(void)
++{
++	if (ksock >= 0)
++		close(ksock);
++	ksock = -1;
++	if (port_id != RTE_MAX_ETHPORTS) {
++		port_stop();
++		rte_eth_dev_close(port_id);
++		rte_vdev_uninit(VDEV_NAME);
++	}
++	port_id = RTE_MAX_ETHPORTS;
++	rte_mempool_free(mp);
++	mp = NULL;
++}
++
++/* Open the kernel's end. Set the TAP interface up and bind a packet socket to it. */
++static int
++kernel_open(void)
++{
++	struct sockaddr_ll addr = {
++		.sll_family = AF_PACKET,
++		.sll_protocol = htons(ETH_P_ALL),
++	};
++	struct ifreq ifr;
++	int one = 1;
++
++	ksock = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
++	if (ksock < 0)
++		return -1;
++	memset(&ifr, 0, sizeof(ifr));
++	strlcpy(ifr.ifr_name, TAP_NAME, sizeof(ifr.ifr_name));
++	if (ioctl(ksock, SIOCGIFFLAGS, &ifr) < 0)
++		return -1;
++	ifr.ifr_flags |= IFF_UP;
++	if (ioctl(ksock, SIOCSIFFLAGS, &ifr) < 0)
++		return -1;
++	addr.sll_ifindex = if_nametoindex(TAP_NAME);
++	if (addr.sll_ifindex == 0 ||
++	    bind(ksock, (const struct sockaddr *)&addr, sizeof(addr)) < 0 ||
++	    setsockopt(ksock, SOL_PACKET, PACKET_VNET_HDR, &one, sizeof(one)) < 0)
++		return -1;
++
 +	return 0;
 +}
 +
- static int
- vhost_kernel_tap_set_offload(int fd, uint64_t features)
- {
-diff --git a/drivers/net/virtio/virtio_user/vhost_kernel_tap.h b/drivers/net/virtio/virtio_user/vhost_kernel_tap.h
-index 1e026d7488..05fa8a9244 100644
---- a/drivers/net/virtio/virtio_user/vhost_kernel_tap.h
-+++ b/drivers/net/virtio/virtio_user/vhost_kernel_tap.h
-@@ -16,12 +16,15 @@
- #define TUNSETSNDBUF   _IOW('T', 212, int)
- #define TUNGETVNETHDRSZ _IOR('T', 215, int)
- #define TUNSETVNETHDRSZ _IOW('T', 216, int)
-+#define TUNSETQUEUE    _IOW('T', 217, int)
- 
- /* TUNSETIFF ifr flags */
- #define IFF_TAP          0x0002
- #define IFF_NO_PI        0x1000
- #define IFF_VNET_HDR     0x4000
- #define IFF_MULTI_QUEUE  0x0100
-+#define IFF_ATTACH_QUEUE 0x0200
-+#define IFF_DETACH_QUEUE 0x0400
- #define IFF_NAPI         0x0010
- 
- /* Features for GSO (TUNSETOFFLOAD). */
-@@ -41,5 +44,6 @@ int vhost_tap_open(const char *ifname, unsigned int r_flags, bool multi_queue);
- int vhost_tap_get_name(int tapfd, char **ifname);
- int vhost_tap_get_flags(int tapfd, unsigned int *tap_flags);
- int vhost_tap_set_mac(int tapfd, uint8_t *mac);
-+int vhost_tap_set_queue(int tapfd, bool attach);
- 
- #endif
++static int
++test_virtio_user_setup(void)
++{
++	mp = rte_pktmbuf_pool_create("virtio_user_test", NB_MBUF, 32, 0,
++				     RTE_MBUF_DEFAULT_BUF_SIZE, rte_socket_id());
++	TEST_ASSERT_NOT_NULL(mp, "mempool creation failed: %s", rte_strerror(rte_errno));
++
++	/*
++	 * The port has two queue pairs and the tests configure one Rx queue.
++	 * vhost-net creates the TAP interface, which takes root or CAP_NET_ADMIN.
++	 */
++	if (rte_vdev_init(VDEV_NAME, "path=/dev/vhost-net,iface=" TAP_NAME ",queues=2") < 0 ||
++	    rte_eth_dev_get_port_by_name(VDEV_NAME, &port_id) != 0) {
++		printf("No virtio-user port on /dev/vhost-net, skipping test\n");
++		test_virtio_user_cleanup();
++		return TEST_SKIPPED;
++	}
++	if (kernel_open() < 0) {
++		printf("No packet socket on %s (%s), skipping test\n", TAP_NAME, strerror(errno));
++		test_virtio_user_cleanup();
++		return TEST_SKIPPED;
++	}
++
++	return TEST_SUCCESS;
++}
++
++static struct unit_test_suite test_pmd_virtio_user_suite = {
++	.setup = test_virtio_user_setup,
++	.teardown = test_virtio_user_cleanup,
++	.suite_name = "virtio-user PMD Unit Test Suite",
++	.unit_test_cases = {
++		TEST_CASE(test_virtio_user_rx_flows),
++		TEST_CASES_END()
++	}
++};
++
++static int
++test_pmd_virtio_user(void)
++{
++	return unit_test_suite_runner(&test_pmd_virtio_user_suite);
++}
++
++#endif /* RTE_EXEC_ENV_LINUX */
++
++REGISTER_FAST_TEST(virtio_user_pmd_autotest, NOHUGE_OK, ASAN_OK, test_pmd_virtio_user);
 -- 
 2.56.1
 
