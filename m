@@ -2,56 +2,94 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA68606A31C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Nov 2026 09:20:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 166D2606A320
+	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Nov 2026 09:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=KKjuJL1V
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 73CF14064C;
-	Wed, 18 Nov 2026 10:20:07 +0100 (CET)
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
- by mails.dpdk.org (Postfix) with ESMTPS id 082F440298;
- Wed, 18 Nov 2026 08:38:48 +0100 (CET)
-X-QQ-mid: esmtpgz11t1794987519t8f71d237
-X-QQ-Originating-IP: WfRXEGnJD2Jja+nUeu+S+L5gDNdxDxL5/58NHwSDqI4=
-Received: from localhost.localdomain ( [111.198.29.174])
- by bizesmtp.qq.com (ESMTP) with 
- id ; Wed, 18 Nov 2026 15:38:34 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 18306010817556226926
-EX-QQ-RecipientCnt: 7
-From: Wenfeng Liu <liuwf@ysxt.com.cn>
-To: Maxime Coquelin <maxime.coquelin@redhat.com>,
- Chenbo Xia <chenbox@nvidia.com>
-Cc: Wenfeng Liu <liuwf@ysxt.com.cn>, dev@dpdk.org, stable@dpdk.org,
- skoteshwar@marvell.com, thomas@monjalon.net
-Subject: [PATCH] net/virtio: fix MAC table update with empty slots
-Date: Wed, 18 Nov 2026 02:37:24 -0500
-Message-ID: <1781A9C027C64C23+20261118073746.3490800-1-liuwf@ysxt.com.cn>
-X-Mailer: git-send-email 2.52.0
+	by mails.dpdk.org (Postfix) with ESMTP id 42C13402BD;
+	Wed, 18 Nov 2026 10:26:29 +0100 (CET)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com
+ [209.85.218.46])
+ by mails.dpdk.org (Postfix) with ESMTPS id 777F9402BD
+ for <dev@dpdk.org>; Wed, 18 Nov 2026 10:26:27 +0100 (CET)
+Received: by mail-ej1-f46.google.com with SMTP id
+ a640c23a62f3a-c50e9408873so88053866b.0
+ for <dev@dpdk.org>; Wed, 18 Nov 2026 01:26:27 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794993987; cv=none;
+ d=google.com; s=arc-20260327;
+ b=HwjBCPF7ZXsqhgK9TCRVTbjrbkzIbWI/oR7n48tFtuP5cSUgHNB4cwXTm3KG6NcPcu
+ aLxpOKxAjt3VXeJRMECpsVbB66cE+bJBkRxV0IZkCM3516Rdn0aX0zqQIAs/p9+Bb0hP
+ JkyhF19Zl5OvV2he7QoLrnFsMblQeWvzHGCm5tf7Tcrjswa2Z5kCiDBZgRzoxtoe92Rz
+ 53lqGuFp47fBKUQLDwKGkFZuLRfI/IkFyjx+oM6LTxoko7AgDKn5cn6DTBb1ntyv8tcj
+ mX4/9bvMNEe2SBCac0vzgiXZsRJ4nnuhTBPkcIk970Jfdo70+wNnbOsTffnlsbS7KNgg
+ b5Xg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=LYwq+0xIbkIhm9SA1iEdwbhdnTlfA95TvNi7ysDP+Mg=;
+ fh=k98fVe7/L02o+4gxMJSaMkuNaCQ9oRMJmFViXrZZot8=;
+ b=stsLUCh7i9oUhxeetVixp0zg+BsB8djPa75DTTofA9p5QUolNV1Wl0GTS2DmyoaOS4
+ ApfG+oP3uP7kyLyVFRO4opKT5u9wvdiwyodvoO7NTndpHyn2rlhOE0fm1FWXyFHOsPyg
+ xStju7uvbDjkLK0Jmp9R9kmTBYxvUn1Ovk9ddYIT9f2mXaY4wp656WciB53ox6DL7DzB
+ zBMEMkf0py4HUwdWeKE24m4Q5dgyIqd0uFzlzdBC8hXwKdvOYGwvGyvpKwvivG1LOtPs
+ uCLsJcbIUaNgkZkpBzKei1JC1RKlVQcq96kOdpkbSaBoSVS9o+JNhuuHkDUkT9Ofai3R
+ AC6g==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20260707; t=1794993987; x=1795598787; darn=dpdk.org;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=LYwq+0xIbkIhm9SA1iEdwbhdnTlfA95TvNi7ysDP+Mg=;
+ b=KKjuJL1VriVRsSFcEjZFpIeLhukPJB6LmkEG1pWWJClxhe/QOdOhdGK5yIigVcOB/G
+ KMbQ2SW/A70eE5K3OOoHpx0g4qy9yNhf7Jxahb0w0jiZg9IjjvU4Wp5Eschz+ee8094a
+ JDRMwHk0o1/2oyOBar4RQSpkN8EMUHWoc3MmSnpDRj4epoxp8QLETo4G+AXFmvd5Ruzu
+ JlPo6iCW5Fowgly1rUnMEKB206EGiw3bViv7DgxKxMKvD+n1JKZeebO+kEattpymS8tw
+ wlKTYVCIEIy0xAhcAndjpdONVZgSLS/diE8qjH7wBZpcf+TCe1xAOHGsy2YBc5fKQEiB
+ sTCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1794993987; x=1795598787;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=LYwq+0xIbkIhm9SA1iEdwbhdnTlfA95TvNi7ysDP+Mg=;
+ b=RVJz0a9RkVf2Vu2FGrMxcWgQWLmQaH+L8RLpdPSXVy7/qRLUslVwNTU+z34dKl4kUI
+ dKJf1rg77ZVGzKGdVKteyqwXYkT+Usii5cRi8USxuRBQp8a7Yb3C37E1PFEeKXt9i3o7
+ Ht+J6uAv+sZ521myzdgcH8Z+5DTrCDmfeho5naPL0EZCeZmbHKT/gul3KPLCtpytGh08
+ M1kWLVGpudl3sZQtTSruijWiSez/hxwkKSalqyBHo8KeknJHHDNxGT5/Yh6eXbLQn+9R
+ mv4EuzBa6zRG5n+McoUoIF9bWqseOLcgMJAi4hCrLHIvePJtizfNYJ4ERd/dJZGaSj9u
+ LkdA==
+X-Forwarded-Encrypted: i=1;
+ AL+hErHoNOleTERH4p2VF9ECZxSHgLmXxWjer0y834UNUG/Ijjskjq82QPRTQpyVDAJhBN2wQtg=@dpdk.org
+X-Gm-Message-State: APuU4Z9+JpOBVa910v1M2Gg2iwxE59eTMzkq8F++E6d+ZL2zVptz6IXI
+ U5N/lrTfUWwB2y9qip5nhZNv2MsHuR/TyTxsDlLLGHZIeIJXswq7jVa2w2bfQXI84cECx0ppB9X
+ Hc9G4ERhegrmSmwT1IEUSbdZl1v5ITds=
+X-Gm-Gg: AYBFou29kQ3u1feBxAGE9dXnu6qe6qzncGeGB5ZYkk0ExtC/hfg/zsiRFpM2t7wR/1A
+ iISZqHl2dkMn5iHBv9Fplr4ySh3xwUKLkQuzDm7GvmX7PC9Wf3KrxLULMYqwKuBFVRdJf3FVtUu
+ Pwr/Z15/EqsmZS1sLm/VaaMxgmjeqRMVBEWrvhlXONzCDprMvRXDcAYyrFd6hOaPv7w2D6nWhCD
+ 0mZ/QSOg7hersFkbu48y1xQ3fvrEi1DUYUupUloUrw5gxk6uhGIcpCqwd27XO12Y138vgZBFFsy
+ VJZbqO4pdtdOf29ngY9Sm7ZNjdEkm74eVSl4TsTArZXsOsoPkhLS/HXosadIzjhhUBUZdNvzVH7
+ nI03BV88M2CeyG6GCCUmv1vXwiDExl6Y8SoejP5m24EMEfjH9BGO8rmoT1g==
+X-Received: by 2002:a17:907:d307:b0:c3e:f39b:2298 with SMTP id
+ a640c23a62f3a-c510e19965bmr140172966b.16.1794993986779; Wed, 18 Nov 2026
+ 01:26:26 -0800 (PST)
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:ysxt.com.cn:qybglogicsvrgz:qybglogicsvrgz6b-0
-X-QQ-XMAILINFO: MQ7i6Ib+DYfjqCWEQ1X9r69Y3ihZm9i4Qs5Bzxfs81Cdzq3PGcwNskw5
- Xy2vnX8d58T5tECvwAu414oH+h0ed/HNjtTN+l5meyJVu3B2DMdDhkGpWdUUP4C4gn6AqZ7
- JAYtH79Zr6AY0VgdIVps+SihO0KVFSU0VpTwGDo3QxdaHIkZincNqiaarw+OSsHpulhhufP
- vu5ehxQrUq5QperGppbArqL73CL1CdZhPmh31KmxgC2E556NE+rmIS9BO07kkFUnYReUlvL
- cFERLn5XBmRZh7ajFi+siXpgvzsTwOPVvGgVKE0eCRY9OM9WCdH93lJ82ybXgcUvxzcnmma
- W2OwfgpW/wdJFjKGyJcRae3vjZeSt9SZH6/DW6sXM9RlboTSboeUbp2ZPysdZz5o5daCvaN
- 9z0eyPLgWB2wxKQ3T4UyEzXBsrDP7u96TE7dmz9LMj4mVDAGpBp5F+eaKDuCZKJrMdBKoVU
- G/sfcZpH4IvY+Zot00dx1oM2W2N95+jOiHTfC1LjyyWwLg8PwGNT+3Vq2+9/cPwq+X3u25M
- DOPaAUGIOJu5Ds6FODxc7LbyCNIoivHxBZCjCdALkPjN3SSA60rvrWcsizZwqdQzM8fV9xt
- 3n6iuSz21vZj2H+lXjpe1JR3sV+ZssVGs0ljSkG+Z28IndsY5eSsXOwSNrjLFoiLHryXEn7
- GrE//2tdosR3pOGdIfp6gWH3fqu5mf2C8QwhCVpNCVZv4SEvLqJgLKE3x7F/m1DmwSeeP/x
- LgjUIN+RjCR0+qwB1oMaT62ZvZV3TZbcaUME2aG1KHTQACEjmwH8dzV3zFprTe6owwwMeMe
- 2gSu1gzhLUFBTP714YusU2FR3Hg7yj5lBDzPiZ1tDVlOc3JdjUInssMDA+NAfjsCnJxjnPW
- tp2dST1nZMGCkU5l9A83vK8lmQAURBPvcCrrMGpjaezJP2QW3xHD44UnSrLjTh3f/vWu2vM
- 9Dr17wE9ChScjkriS+yHCAeC/NdLIEmU/VT+6luqpXuLp08wnIMx2dWAllxPrdAkBjaxxBf
- vpue8GyYGwCIJnljJkLJzHLPcW85PmoHRhaIHnxg==
-X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
-X-QQ-RECHKSPAM: 0
-X-Mailman-Approved-At: Wed, 18 Nov 2026 10:20:02 +0100
+References: <20261117124303.717447-1-iboukris@gmail.com>
+ <20261117124303.717447-2-iboukris@gmail.com>
+ <CAJFAV8zyPB1uqYmywdqzwBCO9mhXrpyEJLyPf8bELLSvFK-x1Q@mail.gmail.com>
+In-Reply-To: <CAJFAV8zyPB1uqYmywdqzwBCO9mhXrpyEJLyPf8bELLSvFK-x1Q@mail.gmail.com>
+From: Isaac Boukris <iboukris@gmail.com>
+Date: Wed, 18 Nov 2026 11:26:15 +0200
+X-Gm-Features: AclHuK89HoXG_wOwa6k6hqqRYNLLHrbBpafJPKmqZIlp2OcXJwlxPEgYjNdmOAw
+Message-ID: <CAC-fF8T1iOTVi7+g7n7g=ojtVpM87nsmWEcHyEF5Cz4WPoFhVw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] net/virtio: fix Rx interrupt setup with MSI-X
+To: David Marchand <david.marchand@redhat.com>
+Cc: Maxime Coquelin <maxime.coquelin@redhat.com>,
+ Chenbo Xia <chenbox@nvidia.com>, dev@dpdk.org, 
+ Anatoly Burakov <anatoly.burakov@intel.com>, stable@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,85 +99,18 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Removing a MAC address clears its slot without compacting the address
-array. When adding another address, stopping at the first empty slot
-omits any valid addresses after it from the control MAC table.
+Hey David,
 
-For example, add addresses A, B and C, remove A and B, then add D. D fills
-the first empty slot, but C is still beyond the remaining empty slot and
-is omitted from the table sent to the device. With MAC filtering enabled,
-traffic to C can then be dropped even though C remains in the ethdev
-address array.
+Between the feedback from the upstream bot and my own, the series has
+reached V4 and grown to 8 patches but they all centered around
+virtio-user and are relatively simple, and the dust seems to have
+settled down.
 
-Scan the complete array and only copy nonzero MAC addresses into the
-control table, preserving entries after empty slots without sending
-zero addresses.
-
-Fixes: 7698e655516c ("net/virtio: fix MAC table update")
-Cc: stable@dpdk.org
-
-Signed-off-by: Wenfeng Liu <liuwf@ysxt.com.cn>
----
-Validation:
-- Replayed the upstream ethdev MAC add/remove and virtio table-building
-  functions with AddressSanitizer and a mock control-command receiver.
-  Three sparse-table cases fail before the fix and all four cases pass
-  after it (dense, sparse unicast, sparse multicast, and last-slot).
-- Built the virtio PMD static/shared libraries on x86_64 with GCC 14 in
-  both debug and release configurations.
-- The driver fix applies to 22.11.11 and passes the same replay there.
-- No real virtio guest packet-forwarding test has been performed.
-
- .mailmap                           |  2 +-
- drivers/net/virtio/virtio_ethdev.c | 12 +++++++-----
- 2 files changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/.mailmap b/.mailmap
-index a7f57978..b645a2b1 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -1863,7 +1863,7 @@ Weiyuan Li <weiyuanx.li@intel.com>
- Wen Chiu <wchiu@brocade.com>
- Wen-Chi Yang <wolkayang@gmail.com>
- Wenbo Cao <caowenbo@mucse.com>
--Wenfeng Liu <liuwf@arraynetworks.com.cn>
-+Wenfeng Liu <liuwf@ysxt.com.cn> <liuwf@arraynetworks.com.cn>
- Wenjie Li <wenjiex.a.li@intel.com>
- Wenjie Sun <findtheonlyway@gmail.com>
- Wenjing Qiao <wenjing.qiao@intel.com>
-diff --git a/drivers/net/virtio/virtio_ethdev.c b/drivers/net/virtio/virtio_ethdev.c
-index f2302089..1e04427b 100644
---- a/drivers/net/virtio/virtio_ethdev.c
-+++ b/drivers/net/virtio/virtio_ethdev.c
-@@ -934,12 +934,14 @@ virtio_mac_addr_add(struct rte_eth_dev *dev, struct rte_ether_addr *mac_addr,
- 	for (i = 0; i < VIRTIO_MAX_MAC_ADDRS; i++) {
- 		const struct rte_ether_addr *addr
- 			= (i == index) ? mac_addr : addrs + i;
--		struct virtio_net_ctrl_mac *tbl
--			= rte_is_multicast_ether_addr(addr) ? mc : uc;
- 
--		if (rte_is_zero_ether_addr(addr))
--			break;
--		memcpy(&tbl->macs[tbl->entries++], addr, RTE_ETHER_ADDR_LEN);
-+		if (!rte_is_zero_ether_addr(addr)) {
-+			struct virtio_net_ctrl_mac *tbl =
-+				rte_is_multicast_ether_addr(addr) ? mc : uc;
-+
-+			memcpy(&tbl->macs[tbl->entries++], addr,
-+				RTE_ETHER_ADDR_LEN);
-+		}
- 	}
- 
- 	return virtio_mac_table_set(hw, uc, mc);
-
-base-commit: c6d273ce156cc48ef90e64e93a2bba80c9d36345
--- 
-2.52.0
-
+Cheers
