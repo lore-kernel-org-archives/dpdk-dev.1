@@ -2,62 +2,62 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236D2606A31C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Nov 2026 08:28:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0086F606A32A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Nov 2026 08:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=V0jeqkS4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=D++I1Hzz
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C14E1402F1;
-	Wed, 18 Nov 2026 09:28:17 +0100 (CET)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com
- [209.85.128.43])
- by mails.dpdk.org (Postfix) with ESMTPS id D0727402ED
- for <dev@dpdk.org>; Wed, 18 Nov 2026 09:28:15 +0100 (CET)
-Received: by mail-wm1-f43.google.com with SMTP id
- 5b1f17b1804b1-4a35ac4475dso4824875e9.2
- for <dev@dpdk.org>; Wed, 18 Nov 2026 00:28:15 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1E5BE40615;
+	Wed, 18 Nov 2026 09:28:20 +0100 (CET)
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com
+ [209.85.128.41])
+ by mails.dpdk.org (Postfix) with ESMTPS id 1A78A40395
+ for <dev@dpdk.org>; Wed, 18 Nov 2026 09:28:18 +0100 (CET)
+Received: by mail-wm1-f41.google.com with SMTP id
+ 5b1f17b1804b1-4bb61185057so5665815e9.1
+ for <dev@dpdk.org>; Wed, 18 Nov 2026 00:28:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1794990495; x=1795595295; darn=dpdk.org;
+ d=gmail.com; s=20260707; t=1794990498; x=1795595298; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=0+WN+FXDmK3U/JF44njyzot2ib0Es9+PBzKEH6gE4G8=;
- b=V0jeqkS4tkAlVQSnKMUO/U17KuPLJyAlJAOJpEZBt89BoNSMxdhSviMhyh+y4yaSoe
- MiVeEO/7vvHov2U9v2tC7/33W7HeCgh/tQMAS9gN2mOjjPhcs55x4WV15/0A+yIZmyVk
- XuzKieU9qG9a428XqmwAm2azp0j9ibrBmKOK3KRL0jdpop84zo4xW7VevepOQMjdOVtK
- v8BLO3pcuQZ+nYE+aE9gNoAelhGf44cc4C1iMdTmhMD7JM/ePcJVrs2hDND+EGTRUIha
- yyKEeoCQjU/ipB+5CgR3e4Q0ybcmbHJn/JG1L5cxmB1jyQ5lHVig67sIeSTqQfKXnRgX
- MTAg==
+ bh=kLuuwmuXKMpyiRnoc0ucRCSDX8V1826WICbpKuZrphE=;
+ b=D++I1HzzX3TirN9VTh5afXgAKkwFZ66x79yw1Cac3FuZ0FXo6JYTqAp956QIGtQs0o
+ 8yhzCg67IjjrV7uCE/fPyAvKccJYVveM5HLGqzkxCc/28e6tjNcMn6j+GugRIwKodQTe
+ f6UQFAaJXqjWYEeWY3ks+h0NwfUGpVa8DjbiuVyxQ+I+U5hRlX349js4iZmT1NeyowU+
+ Zv+/BoVZ7Fz9gaMp2+daPo1TMD/YuDTrc3G37YlQs1uxZPnmyU0Zh/xBw1CO0XjJIVjS
+ 5ayXjV56SZkYEKeO5gpPCBVSlYFPsSeIwpMYy6saNr091GIsec52kc0R2kIJJgnADotq
+ IudA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794990495; x=1795595295;
+ d=1e100.net; s=20260707; t=1794990498; x=1795595298;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=0+WN+FXDmK3U/JF44njyzot2ib0Es9+PBzKEH6gE4G8=;
- b=JCthrD9/Ib1Y+oJv28MFYYBfxqvxbB0NSXwMn70lg7b6/Qvnb3yN5yK+vd+5vM44wy
- u6na9Wu/A2rOcXn6ESWsw2PVwFRASd8PcGzMA2O6A1S543x5ruWiI0NcRAltLh+UU8mZ
- pvP34Mo2QNFiYnhL/wrEH/eFtPPE7dpkVxyTlU9J0Ki71rmhBrcldvEoq3GT9aOhOAIb
- m0hyGiPQqaf9KRSWJBnRJ+i8IIF5Z+WKEWF1Oajj18uDBC+Laqwv5XmLqQS51zouNOQl
- Fl/6H99MsEJFXT5txxxGB5CiLcV3UIOGG//7+YFZ+GAPxfGQYe2aPpNvvzYlsm1ksfHL
- Tn5g==
-X-Gm-Message-State: APuU4Z+nz6btbFujxbD/tZPYj4/Ks3BHCw1B2EnqAnH/QnO3WpNWGMU3
- rj+QhCDIkXLa/8FgtLd+t478jAwT4VtqyrYJY54RzSOr9saEsF9m6as8
-X-Gm-Gg: AYBFou1MGX3ioB32YKNIhIe3ESgRBTGSpgDqMMAaSxpKo8hm3Iav262/ytuyecvbjBK
- /M4YKaXQ4VpVjxPbFrBowjSG/rEz5jffdKAPIe7UW8QWOD97ZPF4m9GzWgh89j4rrUichBPwUGU
- S00qt6hyK2Og0NyuyYYnuee0jz4g+jg2nWc1mqYMyQrwghswQCwpYRzS42OQSyWJtT7O6qMFxD5
- 1eZGLskAvsDxn2SVYyW1BcbPy+840rXV7foQc3uXYy0BouZH3Wzz4ESWfsxSM7V+re1L1IpkHGO
- kNocNdlIG79sLJtrH2hbjPlX5MYg7XP5uwxQLN+uKFvo1OE+VbrLXNsiJwMZxCxCkCVtKLjIDbR
- uFPJZKs6oYxmH/mzNdjfgggE4jyuj6wGWwXqSgN3btgAA7sSuMP6+vW5Hi72UNvb0GKxyntVSFg
- WuIFnuxI36vOCFyU4kbQKieRBWdC1IJqVezwUi1lkNeRoTOGPN/EnVJLPpMX7UiHmbeLVoUM6eT
- p+33ws8vlN/rZvB2Y/XzTXheCyMdMrQ9btRgM5HIzqaeH2OciuUv27Dt/wxKVjSn6vdkbpLkh6d
- zHdsK6ENpkxs/NhuWvIR
-X-Received: by 2002:a05:600c:1c25:b0:4a0:1b14:e283 with SMTP id
- 5b1f17b1804b1-4bb7d6d1e20mr35753665e9.1.1794990495186; 
- Wed, 18 Nov 2026 00:28:15 -0800 (PST)
+ bh=kLuuwmuXKMpyiRnoc0ucRCSDX8V1826WICbpKuZrphE=;
+ b=Mi57aSLK1nvwIKxibePrJNqHnoZhpFWatLGGnxUEBmte7Zj/jwAsXC8RYuNJEkVyvz
+ L3JyXqi4c01OPyH7FieACQQC2X2wUY91bnUUeneUYK7Nna8hMxKQs3mcfQ50B39cegkJ
+ kLt6xcSLh0o26bjvcSoxhBrixum4EyMowpQ7olINVxll8gq5VAUW/b33/mqB+oo0nAGi
+ nYT84XrLTZOJ3qI5WSYWobtoZ/RXjAUvWvo+LI1EjJupahL4wtprY1XwNCTzEl0P7zMD
+ fl0jFG0nku6Ec+GGSOXNnn7wLPFac8/thwjxhmDt/F3K+3BaTYz3CxzkGKJjn2bsjgQ0
+ FTDg==
+X-Gm-Message-State: APuU4Z+MePDWzUYrTJhPlDdY300DQy7mvrQHMqV1n1uUWb4danX4ynhQ
+ iCGgSv8Uba1RsAdatvWJpaMYVX7+GnuzCNH6P7Wn3SH5UXH6yhkiUcsB
+X-Gm-Gg: AYBFou1rg7jE7GZ/iqlTYC//2UsZ4Zrus++Pab5fxPgjWX/Ht2SA9snJwoHQYE4If49
+ 2y3oxw2T3NusNcaZv9OVISr/Du/I8Sb/EiAjtkumy9MtUlx7qma5ogJGGIR28Cnkadlc0w+DUDe
+ teL/LnCt6snOu/hAIEnp5q8P/mbY3MoH6WIlZC9hSowPHxlWvgWCBf2S3+pFi90PJUQysl8kDa3
+ 59/I3/evd/A4MzO30wBUJpniLKBfb9LakyNBoXzbpCRPyrT0FcbYCP2MtrUpTPl4jQO1KdRGxP1
+ A/TH5b+OulAgUOawZy+VvcnKwnxks1nPuCzw3pOEm2QcVgc2fvnjmmf3WJohkH7EbqYsigl4CxD
+ RppUwk8ZWeYJq9UQq8wW66IhEsggOFJ+N7Yle9G2sp/nU7AELA7sBJLrz70n2RKR5hcuGpwPSsU
+ A2llp++ok0fvrIIO12q3j9NBfdcphDEaBlbY+UdlEQ7/HqT5knMTjm2M46ckqf2whOgDbtMjRTU
+ K71nRedvnTUFvDs1RCm7xhFGjthRISTjWKTGo8IeG1KpXkRxhnNyJZnvvjv0ra0ZI5CLZFAWeE/
+ EYKCeLQhX3Qxr7mBY05E6m7WYE4E/X4yccLwresxAQ==
+X-Received: by 2002:a05:600c:8b8a:b0:4bb:52bd:a3c7 with SMTP id
+ 5b1f17b1804b1-4bb7da2240amr34586215e9.6.1794990497426; 
+ Wed, 18 Nov 2026 00:28:17 -0800 (PST)
 Received: from fedora ([46.210.233.16]) by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4bb7d2cfb3esm55097605e9.15.2026.11.18.00.28.12
+ 5b1f17b1804b1-4bb7d2cfb3esm55097605e9.15.2026.11.18.00.28.15
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 18 Nov 2026 00:28:14 -0800 (PST)
+ Wed, 18 Nov 2026 00:28:16 -0800 (PST)
 From: Isaac Boukris <iboukris@gmail.com>
 To: Maxime Coquelin <maxime.coquelin@redhat.com>,
  Chenbo Xia <chenbox@nvidia.com>
@@ -66,10 +66,10 @@ Cc: dev@dpdk.org, David Marchand <david.marchand@redhat.com>,
  Luca Vizzarro <luca.vizzarro@arm.com>,
  Patrick Robb <patrickrobb1997@gmail.com>,
  Isaac Boukris <iboukris@gmail.com>, stable@dpdk.org
-Subject: [PATCH v4 2/8] net/virtio-user: fix packet loss with unused queue
- pairs
-Date: Wed, 18 Nov 2026 10:27:46 +0200
-Message-ID: <20261118082752.1043794-3-iboukris@gmail.com>
+Subject: [PATCH v4 3/8] net/virtio-user: fix unaligned reads of control
+ commands
+Date: Wed, 18 Nov 2026 10:27:47 +0200
+Message-ID: <20261118082752.1043794-4-iboukris@gmail.com>
 X-Mailer: git-send-email 2.56.1
 In-Reply-To: <20261118082752.1043794-1-iboukris@gmail.com>
 References: <20261117124303.717447-1-iboukris@gmail.com>
@@ -94,160 +94,82 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-A virtio-user port on vhost-net loses received packets when the
-application configures fewer Rx queues than the port has queue pairs
-(the queues devarg). With queues=2 and one Rx queue, testpmd receives
-22 of the 64 flows that the kernel sends on the TAP interface.
+The data of a control command follows the 2-byte header and the
+1-byte status in the driver's buffer, so it starts at an odd address.
+The device emulation reads the number of queue pairs from it through
+a pointer to uint16_t, and through a pointer to the RSS configuration
+structure. Both reads are unaligned. The undefined behaviour
+sanitizer reports the first one for any port with more than one
+queue pair:
 
-The TAP interface has one queue per queue pair, and the kernel picks
-a packet's queue by a hash of its flow. The driver unsets the vhost
-backend of a disabled queue pair but leaves its TAP queue attached,
-so the kernel still sends flows to it and nothing reads them.
+  virtio_user_dev.c:1001:10: runtime error: load of misaligned
+  address 0x7b4802f53f43 for type 'uint16_t', which requires 2 byte
+  alignment
 
-The driver detached such a queue with TUNSETQUEUE until the commit
-below, which opens all the TAP queues at initialization.
+Read the number of queue pairs through an unaligned type, and copy
+the RSS configuration before reading it.
 
-Attach the TAP queue of a queue pair when the pair is enabled, and
-detach it when the pair is disabled or when a later step of the
-enable fails. Detach the queues after the first when they are opened.
-The first one stays attached, because the interface needs a queue.
-
-TUNSETQUEUE fails on a queue that is already in the requested state.
-The existing check of qp_enabled prevents that, because the state of
-the TAP queue now follows it.
-
-A memory table change disables the active queue pairs for a moment,
-so their TAP queues are detached and attached again.
-
-Fixes: b72099be7f27 ("net/virtio-user: fix init when using existing tap")
+Fixes: f9b9d1a55775 ("net/virtio-user: add multiple queues in device emulation")
+Fixes: dbce501ed7c4 ("net/virtio-user: support RSS")
 Cc: stable@dpdk.org
 
 Signed-off-by: Isaac Boukris <iboukris@gmail.com>
 ---
-v4: detach the queue again when a later step of the enable fails. One comment says the rule.
-v3: new patch.
+v4: new patch.
 
- drivers/net/virtio/virtio_user/vhost_kernel.c | 24 +++++++++++++++++--
- .../net/virtio/virtio_user/vhost_kernel_tap.c | 14 +++++++++++
- .../net/virtio/virtio_user/vhost_kernel_tap.h |  4 ++++
- 3 files changed, 40 insertions(+), 2 deletions(-)
+ .../net/virtio/virtio_user/virtio_user_dev.c  | 26 +++++++++----------
+ 1 file changed, 12 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/net/virtio/virtio_user/vhost_kernel.c b/drivers/net/virtio/virtio_user/vhost_kernel.c
-index 7914b517cd..e3b0583232 100644
---- a/drivers/net/virtio/virtio_user/vhost_kernel.c
-+++ b/drivers/net/virtio/virtio_user/vhost_kernel.c
-@@ -455,6 +455,9 @@ vhost_kernel_setup(struct virtio_user_dev *dev)
- 		data->tapfds[i] = vhost_tap_open(dev->ifname, r_flags, true);
- 		if (data->tapfds[i] < 0)
- 			goto err_tapfds;
-+		/* The queue stays detached until its queue pair is enabled. */
-+		if (vhost_tap_set_queue(data->tapfds[i], false) < 0)
-+			goto err_tapfds;
- 	}
+diff --git a/drivers/net/virtio/virtio_user/virtio_user_dev.c b/drivers/net/virtio/virtio_user/virtio_user_dev.c
+index c38ac059df..8617c558ea 100644
+--- a/drivers/net/virtio/virtio_user/virtio_user_dev.c
++++ b/drivers/net/virtio/virtio_user/virtio_user_dev.c
+@@ -995,16 +995,15 @@ virtio_user_handle_ctrl_msg_split(struct virtio_user_dev *dev, struct vring *vri
+ 	hdr = virtio_user_iova2virt(dev, vring->desc[idx_hdr].addr);
+ 	if (hdr->class == VIRTIO_NET_CTRL_MQ &&
+ 	    hdr->cmd == VIRTIO_NET_CTRL_MQ_VQ_PAIRS_SET) {
+-		uint16_t queues, *addr;
++		unaligned_uint16_t *queues;
  
- 	dev->backend_data = data;
-@@ -541,11 +544,20 @@ vhost_kernel_enable_queue_pair(struct virtio_user_dev *dev,
- 	vhostfd = data->vhostfds[pair_idx];
- 	tapfd = data->tapfds[pair_idx];
+-		addr = virtio_user_iova2virt(dev, vring->desc[idx_data].addr);
+-		queues = *addr;
+-		status = virtio_user_handle_mq(dev, queues);
++		queues = virtio_user_iova2virt(dev, vring->desc[idx_data].addr);
++		status = virtio_user_handle_mq(dev, *queues);
+ 	} else if (hdr->class == VIRTIO_NET_CTRL_MQ && hdr->cmd == VIRTIO_NET_CTRL_MQ_RSS_CONFIG) {
+-		struct virtio_net_ctrl_rss *rss;
++		struct virtio_net_ctrl_rss rss;
  
-+	/*
-+	 * A queue pair's TAP queue is attached only while the pair is enabled,
-+	 * so the kernel sends packets only to queues in use. The first queue
-+	 * stays attached, because the interface needs one. TUNSETQUEUE fails
-+	 * on a queue already in the requested state, which the check above
-+	 * prevents.
-+	 */
- 	if (!enable) {
- 		if (vhost_kernel_set_backend(vhostfd, -1) < 0) {
- 			PMD_DRV_LOG(ERR, "fail to set backend for vhost kernel");
- 			return -1;
- 		}
-+		if (pair_idx > 0 && vhost_tap_set_queue(tapfd, false) < 0)
-+			return -1;
- 		dev->qp_enabled[pair_idx] = false;
- 		return 0;
- 	}
-@@ -561,18 +573,26 @@ vhost_kernel_enable_queue_pair(struct virtio_user_dev *dev,
- 	    vhost_tap_set_mac(data->tapfds[pair_idx], dev->mac_addr) < 0)
- 		return -1;
+-		rss = virtio_user_iova2virt(dev, vring->desc[idx_data].addr);
+-		status = virtio_user_handle_mq(dev, rss->max_tx_vq);
++		memcpy(&rss, virtio_user_iova2virt(dev, vring->desc[idx_data].addr), sizeof(rss));
++		status = virtio_user_handle_mq(dev, rss.max_tx_vq);
+ 	} else if (hdr->class == VIRTIO_NET_CTRL_RX  ||
+ 		   hdr->class == VIRTIO_NET_CTRL_MAC ||
+ 		   hdr->class == VIRTIO_NET_CTRL_VLAN) {
+@@ -1061,16 +1060,15 @@ virtio_user_handle_ctrl_msg_packed(struct virtio_user_dev *dev,
+ 	hdr = virtio_user_iova2virt(dev, vring->desc[idx_hdr].addr);
+ 	if (hdr->class == VIRTIO_NET_CTRL_MQ &&
+ 	    hdr->cmd == VIRTIO_NET_CTRL_MQ_VQ_PAIRS_SET) {
+-		uint16_t queues, *addr;
++		unaligned_uint16_t *queues;
  
-+	if (pair_idx > 0 && vhost_tap_set_queue(tapfd, true) < 0)
-+		return -1;
-+
- 	if (vhost_kernel_tap_setup(tapfd, hdr_size, dev->features) < 0) {
- 		PMD_DRV_LOG(ERR, "fail to setup tap for vhost kernel");
--		return -1;
-+		goto err_detach;
- 	}
+-		addr = virtio_user_iova2virt(dev, vring->desc[idx_data].addr);
+-		queues = *addr;
+-		status = virtio_user_handle_mq(dev, queues);
++		queues = virtio_user_iova2virt(dev, vring->desc[idx_data].addr);
++		status = virtio_user_handle_mq(dev, *queues);
+ 	} else if (hdr->class == VIRTIO_NET_CTRL_MQ && hdr->cmd == VIRTIO_NET_CTRL_MQ_RSS_CONFIG) {
+-		struct virtio_net_ctrl_rss *rss;
++		struct virtio_net_ctrl_rss rss;
  
- 	if (vhost_kernel_set_backend(vhostfd, tapfd) < 0) {
- 		PMD_DRV_LOG(ERR, "fail to set backend for vhost kernel");
--		return -1;
-+		goto err_detach;
- 	}
- 
- 	dev->qp_enabled[pair_idx] = true;
- 	return 0;
-+
-+err_detach:
-+	if (pair_idx > 0)
-+		vhost_tap_set_queue(tapfd, false);
-+	return -1;
- }
- 
- static int
-diff --git a/drivers/net/virtio/virtio_user/vhost_kernel_tap.c b/drivers/net/virtio/virtio_user/vhost_kernel_tap.c
-index da55aba505..bfdc6f46c0 100644
---- a/drivers/net/virtio/virtio_user/vhost_kernel_tap.c
-+++ b/drivers/net/virtio/virtio_user/vhost_kernel_tap.c
-@@ -126,6 +126,20 @@ vhost_tap_set_mac(int tapfd, uint8_t *mac)
- 	return 0;
- }
- 
-+int
-+vhost_tap_set_queue(int tapfd, bool attach)
-+{
-+	struct ifreq ifr;
-+
-+	memset(&ifr, 0, sizeof(ifr));
-+	ifr.ifr_flags = attach ? IFF_ATTACH_QUEUE : IFF_DETACH_QUEUE;
-+	if (ioctl(tapfd, TUNSETQUEUE, (void *)&ifr) == -1) {
-+		PMD_DRV_LOG(ERR, "TUNSETQUEUE failed: %s", strerror(errno));
-+		return -1;
-+	}
-+	return 0;
-+}
-+
- static int
- vhost_kernel_tap_set_offload(int fd, uint64_t features)
- {
-diff --git a/drivers/net/virtio/virtio_user/vhost_kernel_tap.h b/drivers/net/virtio/virtio_user/vhost_kernel_tap.h
-index 1e026d7488..05fa8a9244 100644
---- a/drivers/net/virtio/virtio_user/vhost_kernel_tap.h
-+++ b/drivers/net/virtio/virtio_user/vhost_kernel_tap.h
-@@ -16,12 +16,15 @@
- #define TUNSETSNDBUF   _IOW('T', 212, int)
- #define TUNGETVNETHDRSZ _IOR('T', 215, int)
- #define TUNSETVNETHDRSZ _IOW('T', 216, int)
-+#define TUNSETQUEUE    _IOW('T', 217, int)
- 
- /* TUNSETIFF ifr flags */
- #define IFF_TAP          0x0002
- #define IFF_NO_PI        0x1000
- #define IFF_VNET_HDR     0x4000
- #define IFF_MULTI_QUEUE  0x0100
-+#define IFF_ATTACH_QUEUE 0x0200
-+#define IFF_DETACH_QUEUE 0x0400
- #define IFF_NAPI         0x0010
- 
- /* Features for GSO (TUNSETOFFLOAD). */
-@@ -41,5 +44,6 @@ int vhost_tap_open(const char *ifname, unsigned int r_flags, bool multi_queue);
- int vhost_tap_get_name(int tapfd, char **ifname);
- int vhost_tap_get_flags(int tapfd, unsigned int *tap_flags);
- int vhost_tap_set_mac(int tapfd, uint8_t *mac);
-+int vhost_tap_set_queue(int tapfd, bool attach);
- 
- #endif
+-		rss = virtio_user_iova2virt(dev, vring->desc[idx_data].addr);
+-		status = virtio_user_handle_mq(dev, rss->max_tx_vq);
++		memcpy(&rss, virtio_user_iova2virt(dev, vring->desc[idx_data].addr), sizeof(rss));
++		status = virtio_user_handle_mq(dev, rss.max_tx_vq);
+ 	} else if (hdr->class == VIRTIO_NET_CTRL_RX  ||
+ 		   hdr->class == VIRTIO_NET_CTRL_MAC ||
+ 		   hdr->class == VIRTIO_NET_CTRL_VLAN) {
 -- 
 2.56.1
 
