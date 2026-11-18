@@ -2,62 +2,62 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA88606A31C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Nov 2026 00:19:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F63606A331
+	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Nov 2026 00:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=XT3mQVWa
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=aHb4GUqY
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6ACB3402DF;
-	Wed, 18 Nov 2026 01:19:38 +0100 (CET)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com
- [209.85.128.44])
- by mails.dpdk.org (Postfix) with ESMTPS id 79185402BD
- for <dev@dpdk.org>; Wed, 18 Nov 2026 01:19:36 +0100 (CET)
-Received: by mail-wm1-f44.google.com with SMTP id
- 5b1f17b1804b1-4ba013938d7so3916545e9.2
- for <dev@dpdk.org>; Tue, 17 Nov 2026 16:19:36 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6110F40262;
+	Wed, 18 Nov 2026 01:19:40 +0100 (CET)
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com
+ [209.85.128.51])
+ by mails.dpdk.org (Postfix) with ESMTPS id 7578B402E5
+ for <dev@dpdk.org>; Wed, 18 Nov 2026 01:19:38 +0100 (CET)
+Received: by mail-wm1-f51.google.com with SMTP id
+ 5b1f17b1804b1-4bb5b8ef642so3047865e9.1
+ for <dev@dpdk.org>; Tue, 17 Nov 2026 16:19:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1794961176; x=1795565976; darn=dpdk.org;
+ d=gmail.com; s=20260707; t=1794961178; x=1795565978; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=sSVRGR2+lzkfoCT91SxZBO4HQjXmALXr0dCeZz99iN4=;
- b=XT3mQVWawBvArzbRaeU1qWF8TypPY8GybNDw5oTTPxgIz92IZiWH0sBnazq5cszZO5
- N3kr+KaCJpGZVNKZZZ2MkBtSo5lKWdRu+vW1zKM8CRlQbx4j3fferVEJYUNd6TVtnhus
- NfU6yXszncfWQ7ygneiWcqhe6KssgIJiSq4we3BOorG1JwWurlzDkbuDA48vaSAxE/q8
- HZlRc1CziNp7OabUiDsQDW+5eXYx7A3PI6G978XYCjiTHIo2gBGvILyQCQr2cZbA0lkO
- BGPJuZ1Q9iJ36aACsMYkZcWBuwZsn9v7jnupOWYv0dPrvleJi0hXqN2Gt2W2YlqTrn3r
- FWBw==
+ bh=mI4m6zJbGJSYBHbU/6vEqhHzNWYlV2MyGGi7LSRHXgc=;
+ b=aHb4GUqYAuIoQqNuEfLl+KFCERsPp8HR4Jlom2rClS9rUqbgdlif9Exhxa0Bzf6W0/
+ 8jNbMlbFP44py1SaATyJrirTs4YbdPE+SDhoF0+FIMknY115Db3dxCYky3yF3voyWYH9
+ 7CYFyxZtiE/fGY5x+M1/RLSIucgTZztSJUVZBx/iaBD1K9ugCF2BJlYTLBHi6/BToGOF
+ YrreEjIE5SHI8ZYbyC3JHXTykT/dx3sqa3oXYmItmSJWfxW1ibmwD1nzruyUfHJGeIU9
+ qvJdngn+ZQOCrYrsLdwyHIaABq0XwQBtUXjw/utG/gOmqo/jRKkZh4oa4T9DbVqaid7G
+ nwPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1794961176; x=1795565976;
+ d=1e100.net; s=20260707; t=1794961178; x=1795565978;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=sSVRGR2+lzkfoCT91SxZBO4HQjXmALXr0dCeZz99iN4=;
- b=vA3PaKp8SvWffscPu2KiQMEKvEO4y24Q+kf1GEl7wtaO9Ec9F7ZuR6mFkMhkUUmrzQ
- hOOULr0k50Dd6Xy+F28FSpUkNwetyZfkHrGl68b29jNEhI0jcQDD+zs1aegmdc2pVhUv
- nBeE1gXK91jDEzrDPNl64GDyZnFu/e8nludxO9poz4NFcKhwsAL/HUoFxS1AaL6yHGkK
- 5Nffl6G3YbNUFeD2LfHGe+CHwjQg7Ae/r7zH/cijCZxvcBgGR9m6Sx7/Bum1yOQDXZni
- lFs6maVsvt+rOSt3C7HKJPbev3F3K0x2mpGRKupBi9u/4MDN6ntS2iVt8NH0i7AKfL4R
- 9tiQ==
-X-Gm-Message-State: APuU4Z8jLK9ukABjqptSR/G3rlUUnmf5lfKuKj8+oXKPk9IGEcf2ec4Z
- vAiK3h5GNrr0yXRTG5QfQVbsSv8KP+f0HO5ss85XxEY1cZV5RTk/4b75
-X-Gm-Gg: AYBFou2Nrq0UiLXy3OH3oDFEoLX7NnWzqIkUgzI7cPNaER6JCUiXMU4sWzM0PRcDadm
- HIPSThJymB1HsNKccRne7nhH2IfY5MUX8UZ3PbXpRhk7lFTSt4k9Pe5KirYvgZUvb7bVN/qY/2D
- 3P4WduLbkylpiqgp9Boni7OWXnLG0XUj9T0obWBHJIfGuqgQ0t2U/MNgh1NMp6kMkBdQeu0HQF6
- ZAzLN+m2KFkXKBrrlijR1Fnaawla8GtuxRVc+wvwUuWJR/T0x+jnoCiOL1vWDQY0eCV2oN8pNYs
- 9RWiT8TqtjF5Dahca9CcNZPiHF20/s5MDx+jdvrHVV8YBYjY4wHpZHwXxvCdyr6Bh0k2N/ZhZiR
- oTDgUJaSI7Oywv3rzXaN1Bq1ZICASa1Dw+bktYNy1RovB4Y1Z3/JPm+LaGeF1LEwxfoyfAaR4x0
- a1pqxVjVYJ13PVmME9wanmBMWjT3nMOi8xqYYMzSSK3iJOt4cDqXzVj79C1ysc00HfcXC/7G+xV
- pGverdmQaXF9X1gNX1msSbq/vkG9yH1RvJqwmbbuEkCU6nUokqjfJLWDrSX3TcH4Q5aVep54skT
- hMphMOsX1CF5bZBHJ6N4
-X-Received: by 2002:a05:600c:1d1f:b0:4bb:6a5a:7839 with SMTP id
- 5b1f17b1804b1-4bb7da4d216mr16769515e9.34.1794961175939; 
- Tue, 17 Nov 2026 16:19:35 -0800 (PST)
+ bh=mI4m6zJbGJSYBHbU/6vEqhHzNWYlV2MyGGi7LSRHXgc=;
+ b=MXeIiDuG3Sm6aQtdXjKbjI4L2qtKRyd6V1KYYTTp4ze/4rPCAoMqfRxSC9Fa/hG+4R
+ H3x5gN7s7WjkNGza9OcsP3yB7I29Xg2mZXRq0/hv37rl6ASmPC/Vq9Xsqn31MtWbd/Fs
+ g28Gm0SxcumhT7LD4GAqC+TKYnv6U0VQpV/JFEqcPOTr4o+MVwuCDNN+c6hhpi3LDrvP
+ jQw7F8Aq3/ISQtHMqY/WYP4Bo0Ii/hoxL7SGBmLi4XsyyAxbCFZJd7YKAutFnDwfQOxb
+ LKAjKHzMpanWdfuX7xF0/s1B0P0VZWsDAf47bDp6WcWnXkpPUQ4QB9y3unKMMb0n1nqd
+ 0N2g==
+X-Gm-Message-State: APuU4Z9H4GrIU4GPdfQ0zVy1QjxvPln3OBpdIo3JNZcdcvwMIFirPzZd
+ 0oTWNknTOoVOrAFozvE9ZREkIdXWQn4mi8uYuEqwm8t4c0Kbof+s9sYZ
+X-Gm-Gg: AYBFou1m/DSsLzd+BE4XbQdKFyJsSiNHQXVUA17Mn83ZH5FHyXj8O7vK1fjVwinPPUJ
+ X2Qtf23L7jicjeqEUOWdjs3q5mWCM296Rz4uEv5HXhP7Q36NQ4dwiQ29GsLFScP7u8GqglefT8E
+ G01znYiiEhFG9fDWdDju15rHnfOVhcUfDhe8PV/OYYbbxUMaseP8mWDfnLSrBC40y8WYom3YdV3
+ h8vwUFFNRZozuWybsGhHNwtskYDXIGj9gWSeK4zJRNz1+PxaCeEhlvqGmNfKvxObZ0B37YvebtO
+ NRg8ZXfC01c+GTDEy6sc1tzyNw0vzT8UbFJCdv6D8LhZfxpB8qbFgMz6MtL39qxlxV/VxpG3hdW
+ s0QwQx7heHmR5hFlr0zCh0xBI4JLFLuEiJ2Jus0zdESWZqr7lR7yaKFpNVmkaGqWjrjjJJLLWDr
+ 7Y9idEOgL3CiCkh/NIVDEtWc5T2AVcz0/9qq1RiFoKWRIJ2vg0kRJzYkRP87wSDDbcKI4O09E2H
+ ww0hkEf8tnpMQos7kc0VIBrFxi6YFf5R1c/agTSbvOcUSAfaaT8hgkYsiBReqfoZ8W8M+HR893M
+ sb4ECMYZW/YMwZwEcN16
+X-Received: by 2002:a05:600c:4e45:b0:4ba:38a9:85e3 with SMTP id
+ 5b1f17b1804b1-4bb7da127ccmr14789675e9.12.1794961177951; 
+ Tue, 17 Nov 2026 16:19:37 -0800 (PST)
 Received: from fedora ([46.210.208.90]) by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4bb7e50e992sm4655025e9.0.2026.11.17.16.19.33
+ 5b1f17b1804b1-4bb7e50e992sm4655025e9.0.2026.11.17.16.19.36
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 17 Nov 2026 16:19:35 -0800 (PST)
+ Tue, 17 Nov 2026 16:19:37 -0800 (PST)
 From: Isaac Boukris <iboukris@gmail.com>
 To: Maxime Coquelin <maxime.coquelin@redhat.com>,
  Chenbo Xia <chenbox@nvidia.com>
@@ -66,9 +66,10 @@ Cc: dev@dpdk.org, David Marchand <david.marchand@redhat.com>,
  Luca Vizzarro <luca.vizzarro@arm.com>,
  Patrick Robb <patrickrobb1997@gmail.com>,
  Isaac Boukris <iboukris@gmail.com>, stable@dpdk.org
-Subject: [PATCH v3 1/7] net/virtio: fix Rx interrupt setup with MSI-X
-Date: Wed, 18 Nov 2026 02:19:12 +0200
-Message-ID: <20261118001918.990884-2-iboukris@gmail.com>
+Subject: [PATCH v3 2/7] net/virtio-user: fix packet loss with unused queue
+ pairs
+Date: Wed, 18 Nov 2026 02:19:13 +0200
+Message-ID: <20261118001918.990884-3-iboukris@gmail.com>
 X-Mailer: git-send-email 2.56.1
 In-Reply-To: <20261118001918.990884-1-iboukris@gmail.com>
 References: <20261117124303.717447-1-iboukris@gmail.com>
@@ -93,75 +94,132 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-With Rx interrupts enabled, configuring a port initializes the device,
-and a second time when an offload or RSS is requested. Each
-initialization enables the interrupt eventfds.
+A virtio-user port on vhost-net loses received packets when the
+application configures fewer Rx queues than the port has queue pairs
+(the queues devarg). For example, with queues=2 and one Rx queue,
+testpmd receives 22 of 64 flows that the kernel sends on the TAP
+interface.
 
-EAL now refuses to enable MSI-X eventfds twice, so such a configuration
-fails, and so does configuring a port a second time:
+The TAP interface has one queue per queue pair, and the kernel picks
+the queue of a packet by a hash of its flow. The driver unsets the
+vhost backend of a disabled queue pair, but the TAP queue stays
+attached. So the kernel still sends flows to it, and nothing reads
+them.
 
-  EAL: Interrupt eventfds are already enabled
-  virtio_configure_intr(): Fail to create eventfd
-  ETHDEV: Port0 dev_configure = -16
+The driver used to detach such a queue with TUNSETQUEUE. The commit
+below removed that when it moved the opening of the TAP queues to
+the initialization.
 
-Before that EAL change, the previous eventfds were leaked.
+Detach the TAP queue of a queue pair when it is disabled, and attach
+it when it is enabled. The queues after the first one are detached
+when they are opened, because a queue pair is disabled until the
+driver enables it. The first queue is never detached, because the
+interface needs a queue.
 
-Enable the eventfds only when they are not enabled yet. There is one
-eventfd per Rx queue. So if the number of Rx queues changed, release
-the eventfds first, and new ones are created. The application must
-then register the Rx queue interrupts again.
+A queue pair is also disabled for a moment when the memory table
+changes. Its TAP queue is then detached and attached again.
 
-Release them for a VFIO MSI-X handle only, the type whose eventfds EAL
-creates. The other type that gets here is the virtio-user one. Its
-eventfds are the backend's call fds, one per queue pair, set once when
-the device is created. Releasing them would reset their count, which
-nothing sets again, and registering an Rx queue's interrupt would then
-fail.
-
-To reproduce, with a virtio-net PCI device bound to vfio-pci:
-
-  dpdk-l3fwd-power -l 0 -a 0000:0c:00.0 -- -p 1 --interrupt-only \
-      --parse-ptype --config="(0,0,0)"
-
-Fixes: 3ba6b689893f ("eal/linux: fix eventfd leaks when enabling interrupts")
+Fixes: b72099be7f27 ("net/virtio-user: fix init when using existing tap")
 Cc: stable@dpdk.org
 
 Signed-off-by: Isaac Boukris <iboukris@gmail.com>
 ---
-v2: keep the eventfds unless the number of Rx queues changed (David Marchand).
+v3: new patch.
 
- drivers/net/virtio/virtio_ethdev.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ drivers/net/virtio/virtio_user/vhost_kernel.c     | 12 ++++++++++++
+ drivers/net/virtio/virtio_user/vhost_kernel_tap.c | 14 ++++++++++++++
+ drivers/net/virtio/virtio_user/vhost_kernel_tap.h |  4 ++++
+ 3 files changed, 30 insertions(+)
 
-diff --git a/drivers/net/virtio/virtio_ethdev.c b/drivers/net/virtio/virtio_ethdev.c
-index f2302089ee..8600f3899a 100644
---- a/drivers/net/virtio/virtio_ethdev.c
-+++ b/drivers/net/virtio/virtio_ethdev.c
-@@ -1455,10 +1455,20 @@ virtio_configure_intr(struct rte_eth_dev *dev)
- 		return -ENOTSUP;
+diff --git a/drivers/net/virtio/virtio_user/vhost_kernel.c b/drivers/net/virtio/virtio_user/vhost_kernel.c
+index 7914b517cd..5b70999393 100644
+--- a/drivers/net/virtio/virtio_user/vhost_kernel.c
++++ b/drivers/net/virtio/virtio_user/vhost_kernel.c
+@@ -455,6 +455,9 @@ vhost_kernel_setup(struct virtio_user_dev *dev)
+ 		data->tapfds[i] = vhost_tap_open(dev->ifname, r_flags, true);
+ 		if (data->tapfds[i] < 0)
+ 			goto err_tapfds;
++		/* The queue stays detached until its queue pair is enabled. */
++		if (vhost_tap_set_queue(data->tapfds[i], false) < 0)
++			goto err_tapfds;
  	}
  
--	ret = rte_intr_efd_enable(dev->intr_handle, dev->data->nb_rx_queues);
--	if (ret < 0) {
--		PMD_INIT_LOG(ERR, "Fail to create eventfd");
--		return ret;
-+	/* On reinitialization, release the eventfds if the number of Rx queues changed. */
-+	if (rte_intr_type_get(dev->intr_handle) == RTE_INTR_HANDLE_VFIO_MSIX &&
-+	    rte_intr_dp_is_en(dev->intr_handle) &&
-+	    rte_intr_nb_efd_get(dev->intr_handle) != dev->data->nb_rx_queues) {
-+		virtio_intr_disable(dev);
-+		rte_intr_efd_disable(dev->intr_handle);
-+	}
+ 	dev->backend_data = data;
+@@ -546,6 +549,12 @@ vhost_kernel_enable_queue_pair(struct virtio_user_dev *dev,
+ 			PMD_DRV_LOG(ERR, "fail to set backend for vhost kernel");
+ 			return -1;
+ 		}
++		/*
++		 * Detach the queue, so that the kernel sends its packets to the
++		 * other queues. The interface keeps its first queue.
++		 */
++		if (pair_idx > 0 && vhost_tap_set_queue(tapfd, false) < 0)
++			return -1;
+ 		dev->qp_enabled[pair_idx] = false;
+ 		return 0;
+ 	}
+@@ -561,6 +570,9 @@ vhost_kernel_enable_queue_pair(struct virtio_user_dev *dev,
+ 	    vhost_tap_set_mac(data->tapfds[pair_idx], dev->mac_addr) < 0)
+ 		return -1;
+ 
++	if (pair_idx > 0 && vhost_tap_set_queue(tapfd, true) < 0)
++		return -1;
 +
-+	if (!rte_intr_dp_is_en(dev->intr_handle)) {
-+		ret = rte_intr_efd_enable(dev->intr_handle, dev->data->nb_rx_queues);
-+		if (ret < 0) {
-+			PMD_INIT_LOG(ERR, "Fail to create eventfd");
-+			return ret;
-+		}
- 	}
+ 	if (vhost_kernel_tap_setup(tapfd, hdr_size, dev->features) < 0) {
+ 		PMD_DRV_LOG(ERR, "fail to setup tap for vhost kernel");
+ 		return -1;
+diff --git a/drivers/net/virtio/virtio_user/vhost_kernel_tap.c b/drivers/net/virtio/virtio_user/vhost_kernel_tap.c
+index da55aba505..bfdc6f46c0 100644
+--- a/drivers/net/virtio/virtio_user/vhost_kernel_tap.c
++++ b/drivers/net/virtio/virtio_user/vhost_kernel_tap.c
+@@ -126,6 +126,20 @@ vhost_tap_set_mac(int tapfd, uint8_t *mac)
+ 	return 0;
+ }
  
- 	ret = rte_intr_vec_list_alloc(dev->intr_handle, "intr_vec",
++int
++vhost_tap_set_queue(int tapfd, bool attach)
++{
++	struct ifreq ifr;
++
++	memset(&ifr, 0, sizeof(ifr));
++	ifr.ifr_flags = attach ? IFF_ATTACH_QUEUE : IFF_DETACH_QUEUE;
++	if (ioctl(tapfd, TUNSETQUEUE, (void *)&ifr) == -1) {
++		PMD_DRV_LOG(ERR, "TUNSETQUEUE failed: %s", strerror(errno));
++		return -1;
++	}
++	return 0;
++}
++
+ static int
+ vhost_kernel_tap_set_offload(int fd, uint64_t features)
+ {
+diff --git a/drivers/net/virtio/virtio_user/vhost_kernel_tap.h b/drivers/net/virtio/virtio_user/vhost_kernel_tap.h
+index 1e026d7488..05fa8a9244 100644
+--- a/drivers/net/virtio/virtio_user/vhost_kernel_tap.h
++++ b/drivers/net/virtio/virtio_user/vhost_kernel_tap.h
+@@ -16,12 +16,15 @@
+ #define TUNSETSNDBUF   _IOW('T', 212, int)
+ #define TUNGETVNETHDRSZ _IOR('T', 215, int)
+ #define TUNSETVNETHDRSZ _IOW('T', 216, int)
++#define TUNSETQUEUE    _IOW('T', 217, int)
+ 
+ /* TUNSETIFF ifr flags */
+ #define IFF_TAP          0x0002
+ #define IFF_NO_PI        0x1000
+ #define IFF_VNET_HDR     0x4000
+ #define IFF_MULTI_QUEUE  0x0100
++#define IFF_ATTACH_QUEUE 0x0200
++#define IFF_DETACH_QUEUE 0x0400
+ #define IFF_NAPI         0x0010
+ 
+ /* Features for GSO (TUNSETOFFLOAD). */
+@@ -41,5 +44,6 @@ int vhost_tap_open(const char *ifname, unsigned int r_flags, bool multi_queue);
+ int vhost_tap_get_name(int tapfd, char **ifname);
+ int vhost_tap_get_flags(int tapfd, unsigned int *tap_flags);
+ int vhost_tap_set_mac(int tapfd, uint8_t *mac);
++int vhost_tap_set_queue(int tapfd, bool attach);
+ 
+ #endif
 -- 
 2.56.1
 
