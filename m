@@ -2,78 +2,103 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824FE606A324
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Nov 2026 13:35:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE978606A33C
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Nov 2026 14:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=UaD7fRYm
+	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=Ee7nONRi;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=MbR/TkxR
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 06087402D6;
-	Thu, 19 Nov 2026 14:35:14 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTPS id 853E8400D7
- for <dev@dpdk.org>; Thu, 19 Nov 2026 14:35:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1795095311;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=XJDCzAgPM8yhffdhOQqiP/RGZNk2RqE8rPZWcPkBIsk=;
- b=UaD7fRYmyYyrfwvLLZbfl8iwgdlLHbfGZZ9wTgj+qhYkMtp4W4wyzuaujNgeASbsffNrId
- 9rk1l+IsrxX3QCW8VK55oFPsDmg+KLSPCaqCPq8SPCKoh4+42UhUdfdz2LeF7VzWC3SHGT
- R/RASavUulVhqN6lVMGvqLM72spjCkQ=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-673-_0l5ama2NSmHvxmSXA7EXg-1; Thu, 19 Nov 2026 08:35:09 -0500
-X-MC-Unique: _0l5ama2NSmHvxmSXA7EXg-1
-X-Mimecast-MFC-AGG-ID: _0l5ama2NSmHvxmSXA7EXg_1795095308
-Received: by mail-lf1-f69.google.com with SMTP id
- 2adb3069b0e04-5bfd9b4260eso1184727e87.1
- for <dev@dpdk.org>; Thu, 19 Nov 2026 05:35:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1795095307; x=1795700107;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=XJDCzAgPM8yhffdhOQqiP/RGZNk2RqE8rPZWcPkBIsk=;
- b=d8A2KfCLl4sRCUeiX4tgPxRC7frWpb/Vt6CJQdcX3cZY1zHqzk6qOUYFPbP7rthlJr
- iWeUwPkqThRjiLyHtlrzV9GehJlIdLw8hWnev2joQeCqzcJnUN89rSverU/twlW78wqA
- qGTytspPkgbQZ+KK8fJQZhH7xCJruMjjC1hsucPVd6sjAcUPvBTUlC79N2q3wVwpFmTF
- bxPee0zK2+cTwsvAMkR8K8+7EIuffwRzI424xXu6D8PLGwy7Bwx+Dt5FfJBBe6O9W9bR
- oT2qgSpWnZ8WIB6MoPgCt0yteIIk2p8dOJ1YCjVqVs22Wq+JePQF83r7U3gxH1qKPMHF
- s3MQ==
-X-Gm-Message-State: APuU4Z9ghCvGnYmp15Q3J1Ojpb8L2r7Kt/3dSsDD8Q5xYzNhJun3vu8F
- udCGqPGKCIt4klmppJu/Wwx5D4PCqxMiDWgbTKlpzOmRdAMwS0umCBiplTT1JHyWGljSOUSWiaV
- Qu+kfe5NpcpP7Vd5BZalZrXyg00EQRy7bzuwovv31bzD9imfunYmfbHUGIIgCCqvW1whP0/uWVB
- jWv1rb00Fd4COdfdfJSHcUWBO2aXE=
-X-Gm-Gg: AYBFou3VeVt38uKexiLnjJ7mwAju74IXhy34eL0pPRN6QHQTjdjcoUWGVs3JSKvWN5v
- uoSZzi3HP2Xw1uGOjbbVsQ21mSz6hoyF9zPovAWpo4T331zSaYv67ggE6cOPf2gVXmmfCSnUcnF
- ZqYMwL5wQuvQ4V5VtQBtHGlz3X+Wrh5HrKBXyuAkRH0NSHJcu7xh/2OaCgu50LlDjfLFvsXhqvr
- wD3K/vKYYov4mnYIBRaDvMTx1AzDvITEFfhwUjbXxWeRDG1
-X-Received: by 2002:a05:6512:3353:b0:5bf:c17e:a63a with SMTP id
- 2adb3069b0e04-5c1a9c1b843mr1952667e87.28.1795095307643; 
- Thu, 19 Nov 2026 05:35:07 -0800 (PST)
-X-Received: by 2002:a05:6512:3353:b0:5bf:c17e:a63a with SMTP id
- 2adb3069b0e04-5c1a9c1b843mr1952654e87.28.1795095307172; Thu, 19 Nov 2026
- 05:35:07 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0993F402D6;
+	Thu, 19 Nov 2026 15:08:21 +0100 (CET)
+Received: from fout-b2-smtp.messagingengine.com
+ (fout-b2-smtp.messagingengine.com [202.12.124.145])
+ by mails.dpdk.org (Postfix) with ESMTPS id CECA8400D7
+ for <dev@dpdk.org>; Thu, 19 Nov 2026 15:08:19 +0100 (CET)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfout.stl.internal (Postfix) with ESMTP id AE0871D00234
+ for <dev@dpdk.org>; Thu, 19 Nov 2026 09:08:18 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-03.internal (MEProxy); Thu, 19 Nov 2026 09:08:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1795097298;
+ x=1795183698; bh=5AVS9NQIkcvYH1tCoAkEwGRxYKB7V5z4JieApBctgGU=; b=
+ Ee7nONRi1hjIMvTXV/bCL0HzVgGIaRk3zHUzCmjy9kH9rWaJnkQr4rQoTvx2zx3Q
+ NRLIKkupPmNrILFHKIm/NNwxeCQRbe1DwZ30g4HhqnHynIiavHRwzuECnU/RYsDP
+ 8sJCBfCGvQByJAs0JCJF1laEklQRkvJ0si8LoCE8GNFt/DxmV6+o9t7xnxTNydHp
+ 2OqJB55DGEIZ2sH5Eonhh6GOl2FdbcIv3VcwH9mf1xLYBMfJV1dPmCNTLLGu/Yi7
+ p+UU/CdwSxQhjOWtQ47TXydUfVmgdvxrjtfFEPeTN3EuSe6lYPVosGSHDIjVbUGB
+ +0S3+myZhbC6oCa3Ij3eSA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795097298; x=
+ 1795183698; bh=5AVS9NQIkcvYH1tCoAkEwGRxYKB7V5z4JieApBctgGU=; b=M
+ bR/TkxR9rslUmCXQZCn17Gszr/441AL6x6YMdVCgjzfrSqU1Bq9x5JogMc31RvkA
+ dge57L3I0zz25SM4nnahhuVdZX5x2TBCgQnxQAawI3jBFzWsTBI/nrlkrKqP5ZqV
+ tpwqRjA/9cHKzzCQHhMfZXbSjOGUbVgmhx17UVqLiV1RyLlTTCiuTBm9HZeXroXN
+ eYCWHWGhEb+/Kc/jB/ruDzjB7NNDRQQ0ZmV5BkcioloLDpdOr7v11M7PEBpPA+7T
+ vqg7GU4OEP7Lnffxd35k1GqviJejulsR0CiXhW1vuSsXPseeFbIimcJ8D3GKtpQh
+ lNGet2O0dVGe33JbGFaQw==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+ repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+ action=sign d=monjalon.net a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1795097298; d=monjalon.net;
+ mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
+ s=fm3:rsa-sha256:i5ohnA3YorDoscgIPyvsW9evcM+iF2PD0DuvinctiJZUxYl
+ T8ip3A9Ifv0I7zPbwrABf8NXRb/Lq6hHgIqugkJYpSPOeoMlOrcYTzFQ1O6tKYlj
+ LFANmBcKvzrKstq7FYq+lW8vJkx68FOnMuliWEtH1GZgtCXoXVMgX62XMj+xssxN
+ ROLUiCocqwBcABQtWymJ5hTubhcGGJEB8ofw/88Fxa34F7FVv+1xWtW5gaYcQwSF
+ 7EP1pI6AF3bCAtCFA1xIzEc8BRqisl7ib+moudWAB2eCWgoL9PHMwO4ZU6/MCofx
+ J27++DfZegoZhXed/B4mNmKFvSv48KGEBxOuI6g==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+ repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+ action=mi-m=1; hc=12;
+ hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+ from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1;
+ h=sha256:loZzlenVkyMoCyhZ6eIe2j3hyaqy0yvQvCMosIkUVD0=:jxzWmH+DVvqBNEQtLA1n3CHy0pZbD6oNydzY7FiCbRI=;
+X-ME-Sender: <xms:0QL_at3wxlzHIoHAYu1MG8pUCRD73rGQftKMvyL8AipFVU-wy0jBxg>
+ <xme:0QL_auJ7JEElWeqce3HdPcXEXvfK2pOdkX6TxTLZBTxyRVT252D7D7oC4PxebyeQX
+ xwkltWZNX3EOA6CfZ8DfgvKvUw2LxZHr7NGyp33IUFlw2ARlyflN0A>
+X-ME-Received: <xmr:0QL_atwmCCgSpYefiXGLZYzR4FjRkX1sJXcjbPFL1jsodKa7HOOInjqDuHDzebnrY017dvegHG98KFszzDsrMQE>
+X-ME-Proxy-Cause: dmFkZTGzDWqRH4Epeaz73niC4mTs18ixMWvD7u5k9xldoKT3Pw1q7BHtM3+34bdg555s+U
+ o54RL39DshoSppfNP5uCvy52MKCKUhMuRbW233qs2a0gwLxocwVVMbZNl1uBJ12PwDDPlq
+ ki/buGCnNDKrCSQz2Nl8ZdTHu38WlQBs+BNwMpR/CaxcCwFgeyWnEHO7T5Lrbp9xXp44MB
+ KBwldZ5Ywb7T9VtcZ5SXe9SSe0Omp1PpqXG4Z3DC/8YyDDKuLDBCau/wCidi5K6Nf8H/fe
+ Z60IqKhqa6LwtrdWXGwdx064TRudOorOA5pIkxvEWM0+IYb5KBvaXj2y9x7y7PZuRoeTl9
+ 3qajlMFkTE04UWWmTTrXdnBRy1WfR8PltPrXbjBzNHiebVL4eoISexUAP87xeHjS/2tOnT
+ Cijsd1AikIBXOX0wBNFsaHldJWi1WIcikmHN7p0UAaI7B1xWf3F//jXLKwKxO/UWceCyvp
+ M4oXvmwrj5Ilzy/MDz6SDih4mRkjC7tbFZxmNXKdqM30Bvidb5/gRGT9T3a3Xb1EtSxI88
+ 0vsoGdNrtDQwJ3ZebJcywAsP0QcZnfSy7XQfHWv1I5XyQr2tRgEA58O89UL3LUDLNt5HFM
+ 4yyC+kbSQV8nRF2rO8rFB7D9iRN76LghClahQeuo9W6iMernuiir8NyUS1XQ
+X-ME-Proxy: <xmx:0QL_asUum4es5kpxb71uCjAOqGtwCRjA6LxhZRQL4Pkhk3JeAk6MXg>
+ <xmx:0QL_atilQLC5297LdduZOiuyNirzwyNKTwGoHg1Sx8iN3twdKeyzqA>
+ <xmx:0QL_asDKj8hrMVii9B0VjIFEAgsSQSOZrXSOdkgd4u2ChbgHOYD7Fw>
+ <xmx:0QL_ajtioCaXXLhzoXVOP9n-jdvYBm16qCP2kfbJC5cLZqqKqH1avQ>
+ <xmx:0gL_akmmllh1oiLFdB5Q3c5t4PGzoP8c4GMwZfFcxqJjgaxeSyRZFhLa>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 19 Nov 2026 09:08:15 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Robert Sanford <rsanford@akamai.com>, Robert Sanford <rsanford2@gmail.com>
+Cc: dev@dpdk.org, andrew.rybchenko@oktetlabs.ru, mb@smartsharesystems.com,
+ olivier.matz@6wind.com, stable@dpdk.org,
+ David Marchand <david.marchand@redhat.com>
+Subject: Re: [PATCH v4 2/3] mempool: fix dump of unpopulated pool
+Date: Thu, 19 Nov 2026 15:08:13 +0100
+Message-ID: <eexnNMGcSbWMwzjgikVLXw@monjalon.net>
+In-Reply-To: <20261112154342.1484709-3-rsanford2@gmail.com>
+References: <20261109144054.3784583-1-rsanford2@gmail.com>
+ <20261112154342.1484709-1-rsanford2@gmail.com>
+ <20261112154342.1484709-3-rsanford2@gmail.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-References: <20261118152945.1404317-1-david.marchand@redhat.com>
- <CAJFAV8wT6YidJyv41qK9Lup5z28MdALvC1_GzCEX_8Pzmo9S9A@mail.gmail.com>
-In-Reply-To: <CAJFAV8wT6YidJyv41qK9Lup5z28MdALvC1_GzCEX_8Pzmo9S9A@mail.gmail.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 19 Nov 2026 14:34:53 +0100
-X-Gm-Features: AclHuK-j7BjlNYjwreZ3TsSDrbbdhCDJVKDY4qo0TyA70u0IberhlbSkOMvyHZY
-Message-ID: <CAJFAV8xTsC6rUzvGXmTQB89mJtZ4Mq368d1uaCOTaEtPN1OSAQ@mail.gmail.com>
-Subject: Re: [PATCH] eal/linux: revert eventfd leak fix for MSI-X
-To: dev@dpdk.org
-Cc: iboukris@gmail.com, maxime.coquelin@redhat.com, thomas@monjalon.net, 
- Harman Kalra <hkalra@marvell.com>, Anatoly Burakov <anatoly.burakov@intel.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Pw8mjx1RGvV4TAK1Fc28GJH11XrWlkM0ZdlGKkOA984_1795095308
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,35 +108,28 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Thu, 19 Nov 2026 at 11:55, David Marchand <david.marchand@redhat.com> wrote:
->
-> On Wed, 18 Nov 2026 at 16:30, David Marchand <david.marchand@redhat.com> wrote:
-> >
-> > The event FDs leak fix looks correct on the principle but it seems it
-> > was too soon to take it, as it broke net/virtio and may have broken
-> > other drivers.
-> >
-> > Revert this fix until we get a proper fix and acknowledgement that
-> > other drivers are fine with the change.
-> >
-> > Fixes: 3ba6b689893f ("eal/linux: fix eventfd leaks when enabling interrupts")
-> >
-> > Signed-off-by: David Marchand <david.marchand@redhat.com>
->
-> Recheck-request: github-robot: build
+12/11/2026 16:43, Robert Sanford:
+> +* **Added function to check if a mempool is created.**
+> +
+> +  Added the ``rte_mempool_is_created()`` function
+> +  to check whether the store of a mempool has been created.
+> +  ``rte_mempool_walk()`` callbacks can use it to skip mempools
+> +  that are not populated yet before querying the mempool driver.
 
-Looks like I did not use the right label.
-The error on MSVC build does not make sense wrt to this patch, but trying again:
-Recheck-request: github-robot
+If usage is internal, why exposing this function publicly?
+
+[...]
+> +bool rte_mempool_is_created(const struct rte_mempool *mp);
+
+Any new API must enter in an experimental first.
+But here we may not need to expose it as an API?
 
 
--- 
-David Marchand
 
