@@ -2,79 +2,105 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54054606A332
-	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Nov 2026 23:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7BF606A32F
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Nov 2026 00:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=G0j5IWJg
+	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=0rW0EL9B;
+	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=EmkC05E0
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C78F1402DA;
-	Thu, 19 Nov 2026 00:54:19 +0100 (CET)
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com
- [209.85.216.41])
- by mails.dpdk.org (Postfix) with ESMTPS id 7981E4029D
- for <dev@dpdk.org>; Thu, 19 Nov 2026 00:54:18 +0100 (CET)
-Received: by mail-pj1-f41.google.com with SMTP id
- 98e67ed59e1d1-3ad41b47541so1245330a91.1
- for <dev@dpdk.org>; Wed, 18 Nov 2026 15:54:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1795046057;
- x=1795650857; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=7HyxK5PK44K0v/LsTNFRXCEiZ6ftKGmhKAKJBgcIpuo=;
- b=G0j5IWJg98pcXZe1vaRmvA7agWZ0NRajBIiz27Risp2QqH+J3ShAGMNO7FBsV5jo9S
- wNdUGVWTJNU9WSQpXYg3rMOUyAyB1ork9YGQbGbQI9F2JRaEDYrVy7pm9m1WEkbcGrYM
- rfVhwYD/I3/wXyjbzQ8prC40hhlTP9EtqNfQAj4aoGPe0w/WapStxjXtvzYVZyujXdHv
- flSBfdap3mmYsY5YiaLn52SBc7ti2bMUKW3sZejqH7+IJJLsnP9+noZPmOu2x1qSC5t5
- C13HorQxrxqbC4PZ25ljmI3xgTX44840ry+4250938Jwwtc2DnH1G8RNuqPo+5yRvOeT
- +Nlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1795046057; x=1795650857;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=7HyxK5PK44K0v/LsTNFRXCEiZ6ftKGmhKAKJBgcIpuo=;
- b=afWVJ59R4YuhfKCgqqfLKtcqv0dSvUTX9DlaFs1FzfU7XefftedjdU5yiSb7Yeb7hQ
- A/qTr6pub5C5HsJVyQiRdOTDIZ0edVrJkMjFDvfG7i8bqqsR4MOKxLkENOlu2UdOJBLM
- ooUmtPgZ+4HwMfzvA2gkYOKaGJgGc0QLhwCYgRVagUmvYSpvOESw5Do/KO9cgJug4HQf
- CYvZDiZVZEpU+1rBdt1DbTo30jiEeyHI6wdugLp64ufHuKGbedw7LwGojlNSCYZlbd6H
- YZ/FXCe/7NRkK0aoSgIQas6bl1O1ECHtW3uRz+AGn+7MXnts3eReMNU4cQahIJqnZtKy
- fihQ==
-X-Gm-Message-State: APuU4Z+kAgTm5NbxijI3ULYfDqx1/2ALexpvv2mlzpIBW8/9wSprdhZy
- kb6A82ztrmSOzsY0F6uppZd232mbFWCnNVXDhgWctw30ZomFttgQfngBKg7G3MmyWgs=
-X-Gm-Gg: AZFdTZflaXJw40WUIe4hpozGKua9jYA2lYONS8ADfCoKDdJYrN0O9hJ/fzMWqMqZEQF
- 4vZj6gIgPYNUcqON2jhDcnyc8fU2ju/PmQ9a2Ox1nHLlkIkxNqGTbBQMfdiFdl3jbc41DFPDzlb
- kE6Qo5CCcGIaWNRHk6OJ+myQci7UfnF0SB886Up9vF90Nk9jE9PmO2zPLVTtXPjs45j6PmIAzJr
- 4MPhkYSUZ7nGWivDqi6id8HdXpsdOK0Zi4uaTkmO/PXcNgGaG2tCDgjclAjjyp1CVYhhCP3b099
- opHYoBIM0fdkM6l4ozyjb7NmlFQHSN6gnNFjX2d38zKEnEqgNpsQgGBW8lwXaJucv0tiiLp0Znk
- 8YaV30FmRxMRX0WFXhl1OzZeq+MK2AkHVt8cxYkmzQleDfvYG3nmDlqpuGZl83gDBzQyWs42TA2
- EJWUFM5+fdInk+QUWAd9N9iwEcmpLz4l8+m69J+ANSA3CM27HK7sMn4zVB8roLfscyLy2P9KJkq
- PFqSwyuhRE3AGHpvv3Z/ffuYcVijRmrJ5CkCVYOvwewBImQMVEVsRZbW6p1jDZp5dEHtBEjfWQw
- IjYN9oTRVW1DDNrPDCYzJupNFuhXRCumcbAKICZkDuXNuvj+lUhRSEVJE1XxJbQHLDeq6J4=
-X-Received: by 2002:a17:90a:dfc8:b0:3b3:b704:118c with SMTP id
- 98e67ed59e1d1-3b3d07d905bmr3880004a91.65.1795046056566; 
- Wed, 18 Nov 2026 15:54:16 -0800 (PST)
-Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2eff611630asm20492415ad.17.2026.11.18.15.54.16
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 18 Nov 2026 15:54:16 -0800 (PST)
-Date: Wed, 18 Nov 2026 15:54:08 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Jiacheng Ye <yejiacheng4@h-partners.com>
-Cc: dev@dpdk.org, Feifei Wang <wangfeifei40@huawei.com>, Thomas Monjalon
- <thomas@monjalon.net>, Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: Re: [PATCH v7 00/29] net/hinic3: add PMD features and fixes
-Message-ID: <20261118155408.02146b5f@phoenix.local>
-In-Reply-To: <20261117155711.1048-1-yejiacheng4@h-partners.com>
-References: <20261109162033.1144-1-yejiacheng4@h-partners.com>
- <20261117155711.1048-1-yejiacheng4@h-partners.com>
+	by mails.dpdk.org (Postfix) with ESMTP id C1CE7402EA;
+	Thu, 19 Nov 2026 01:00:08 +0100 (CET)
+Received: from fout-a4-smtp.messagingengine.com
+ (fout-a4-smtp.messagingengine.com [103.168.172.147])
+ by mails.dpdk.org (Postfix) with ESMTPS id E1A46402DA
+ for <dev@dpdk.org>; Thu, 19 Nov 2026 01:00:07 +0100 (CET)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfout.phl.internal (Postfix) with ESMTP id E77F4EC05CD
+ for <dev@dpdk.org>; Wed, 18 Nov 2026 19:00:06 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-03.internal (MEProxy); Wed, 18 Nov 2026 19:00:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1795046406;
+ x=1795132806; bh=UPQidNgdnFv8C8vtzbKfCEcuOBXNnuRldz1S2LhbAH8=; b=
+ 0rW0EL9BQs05VCEqdJM6keLGPu7wW6PWH4bmHVglP1DAJge2B/QGaF7oQyaQDd1e
+ Dt365xTpds74fURubkx9n5vogpR9sPhqFM+nFAygR61RluTd35jRjB3MBW66SLU8
+ w7PPeab4f7gwmmFTsNW83KsJzm/k/XOaBhCCvj8AEXCztCF7U+X8Dc1qaWxGTRMP
+ 4SMwjUMK7PwLzwR12dRL015yYHJLkeDMzgaS24q4ho1dKbGbfNtgLlm9+0dvRU9F
+ Q/UR493DtEtuStcEqj1IxPb4SoWJdLb6FQxtQYDFP65nrnhxsIc5xWooH/NrBUJz
+ U0UxkU/rm078TaYDR8zhnQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795046406; x=
+ 1795132806; bh=UPQidNgdnFv8C8vtzbKfCEcuOBXNnuRldz1S2LhbAH8=; b=E
+ mkC05E0ppUCLimniH8CUplpPLCMPOD6iLDnD/XnuJrm88MhDizHPDDY8aQEE9JaN
+ Oz1m6agtCJkGeuBW+gqGQDGwwUBbq2kyw2gd1+u43IHorXFNKgMHuGssQhJjqmV3
+ G9k6JNLxtLiio4grFSTJyKAgaaFKB0VluOA05laWnHrKdyJox6hXrS3MMKVx1jJk
+ uYwWoeAtihxmHwOa2l275YefccFHZF54BaM/9nAyq/zipc50d98L8gPrpWKDv1gp
+ oE3ZiA2iQEvdVlv+HL6eKK+rRu9Bl4WH892oRM8An4ryomNS+ikN65tydeQUIi4l
+ AjLsGIfa/xIvXqUENSunw==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+ repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+ action=sign d=monjalon.net a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1795046406; d=monjalon.net;
+ mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
+ s=fm3:rsa-sha256:KTYtEFwz8GiJK8ur/mpDBFGpUzwlgNYbOdi2V9iAPpGzpFr
+ EMIe7iOplJLa53N+FFcJvn3J8viAtpjTgtaurUO9TjU3ppD+XZ0sfaDxdxXz0UBr
+ 8OECPnm+WH9PbUL4ljNIco4+DH0nyLiK+RmuIpggzt5rTpXCZyMHkLxSHl2MO6d+
+ kMnC3Ti/XeEy+VlZdxV3yUJygPtouk8BTln0naaAu33QLBhnbutiKOIADt7OEAVs
+ OdR9/oa/MsJXK8A68ZY24xoOMz9uQCpx30CBeZEcOhNrx6+NoHAZUZGHuq8NWWjI
+ uECqTfHYmviZa/u0M3BWqhi+6a6yDRQWhIhwwyw==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+ repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+ action=mi-m=1; hc=12;
+ hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+ from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1;
+ h=sha256:vCHs48DXznZCsKIbw90qpLXe4SVj+W+8Jc0i0ozqh7I=:UPQidNgdnFv8C8vtzbKfCEcuOBXNnuRldz1S2LhbAH8=;
+X-ME-Sender: <xms:BTz-avDE-1Zy1crbeBJbYia1QGhVxlF0I1oLdhpSOJEzf_CPuDlSKQ>
+ <xme:BTz-aviXS14TRh0GaCBAofr_Xy7l12KuAAIjYrD-ZWjMakjF9mHETcmtHM77EDHNI
+ zxGu891kCswNSy8zE2dEdrtPt42tKciTJ09E5M3miH6Pzf8H5r1wA>
+X-ME-Received: <xmr:BTz-ahMTl2EWvM9DUw4zGYkeI-uDLzhkIRt4LWaYXJpHhKM8e-_O3U9Dqd9LHKrzvGxIcI39qfRFkg37cDKv9VA>
+X-ME-Proxy-Cause: dmFkZTElbQnHJ/utrr5xrVwu5PESXUIqREIsKiyXV8gL4ZtO30B2D5+i8vPNDtI8F6/Nkt
+ ff9uaAV+6VX8sVCVJjhanhmaoKuEgH2Bt0MfpvLBVTfoWMAbixTq+V43MwO5hCNZZ1UysI
+ 18q2P8UnYcZauz8gk4q52CwmdRZNvIRcjfLRENXYMQfbegRYNa8FlsndxV6+TPm7YxM95j
+ OEFlbCNtq+arSdPZjWqKlMRMq8RfVN5opVQQL6qy2GHYgnXBADpXZKdRVoUJuXGTD+jQyo
+ Z80OcualEZnU5KRd2CuQAtgeQAbp26lQMMQaDxjMexzNLb/pDHuLrQdn4vErbf+PfJikAu
+ lHDmQq7ubVvJOR4i7N8Hy3aJJHCh4tBGJImrUvlswl/ecPbBgTvyJwUhH5187xAS4AjAH7
+ GK1ePEpiw0K/8fCZlKRtC7VNRc+3mU7LvLkozwGHHWkoBrj/bDd6EWTf8mV2bbl4A/1Xwk
+ Njn1C0b4ZcFKBCtgd+Veqi8eC8af/BJgyMlmtjU7aA0oxD74tJjfrPtYaKdMBu5oZceOG9
+ eu/gY96qjyv5DuqeipnnanOuMJ1u3ASJQwnbFu+hO1SVTKcc4DVL05D91HS23iLFfTDw5I
+ zoz2SJQqGFzNB1MhjFEoixIFgiKfPy07KSfQhM3Db1HnnjoUKOkZo+qUL+yw
+X-ME-Proxy: <xmx:BTz-av8usjjejd6ehLpsOu5W2QQ9-AcU4WqT-kEYl5ucMrJPlWfxOQ>
+ <xmx:BTz-aidt7jFtFCNzHWCjkYdYMPJPgR0EOWuHWiHkdv7ADaKxGPJX5w>
+ <xmx:BTz-auxjPR1YjVQ90Hu6pWgcoiAcvjyzD9CJrmndL7k0OEDKQ8_k_g>
+ <xmx:BTz-anJol-dQEkwC73TwDmIPhoC1RjTYRoDUJpwU2RcLw0G-MxgEYg>
+ <xmx:Bjz-ar7D9Gh0ThcZpFLxdRZMpURR0BNdCLOBCIfzGUkkvg0Kj6r9lWlv>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 18 Nov 2026 19:00:04 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>,
+ Jack Bond-Preston <jack.bond-preston@foss.arm.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>,
+ Ferruh Yigit <ferruh.yigit@amd.com>, dev@dpdk.org, stable@dpdk.org,
+ Mark Bulatov <ms.bulatov7@gmail.com>
+Subject: Re: [PATCH v3] bitops: document max input value for rte_align[32,
+ 64]pow2
+Date: Thu, 19 Nov 2026 01:00:01 +0100
+Message-ID: <ppCZkCpFSy2hiYv6SI2Now@monjalon.net>
+In-Reply-To: <20261116143759.51525-1-jack.bond-preston@foss.arm.com>
+References: <20261113141307.4727-1-ms.bulatov7@gmail.com>
+ <20261116143759.51525-1-jack.bond-preston@foss.arm.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,153 +110,33 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Tue, 17 Nov 2026 23:56:41 +0800
-Jiacheng Ye <yejiacheng4@h-partners.com> wrote:
+16/11/2026 15:37, Jack Bond-Preston:
+> rte_align32pow2 and rte_align62pow2 will overflow and return incorrect
+> values for input values exceeding 1<<31 and 1<<63, respectively. There
+> is no way to return a valid result here: the next power of two above
+> these values is unrepresentable with 32/64 bit unsigned integers.
+>=20
+> Adjust the documentation for these functions to clarify that input
+> values above these limits will return invalid results, and thus should
+> not be provided to these functions. Additionally, document an existing
+> edge case of the implementation: when the input is 0, it returns 0 (not
+> a power of 2).
+>=20
+> Fixes: 7253e3d2a5b6 ("bitops: move bit count functions")
+> Cc: stable@dpdk.org
+>=20
+> Reported-by: Mark Bulatov <ms.bulatov7@gmail.com>
+> Signed-off-by: Jack Bond-Preston <jack.bond-preston@foss.arm.com>
+> Acked-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
 
-> net/hinic3: add PMD features and fixes
-> 
-> This series fixes offload capability advertisement, cmdq/compact CQE
-> configuration, and a handful of driver defects, and adds NIC
-> type identification, FEC, CIR drop statistics, VF LAG/link state, COS
-> mask/map, mbox recording, RSS hash configuration, compact CQE Rx/Tx
-> paths, TSO segment expansion, Tx burst mode reporting, queue statistics,
-> pseudo-header checksum, per-tile cmdq ops, SP560 NIC support, and device
-> kvargs tunables.
-> 
-> Changes in v7:
-
-Need to resolve the last warning.
-
-Subject: Re: [PATCH v7 00/29] net/hinic3 series
-
-All 29 patches apply to main and every commit builds with
--Dwerror=true. The open items from v6 are resolved: SP230 no longer
-allocates eventfds or enables the Rx vectors when intr_conf.rxq is
-off, dev_start honours admin_down, set_link_down restores admin_down
-on failure, the Fixes: hashes are 12 characters, and rss_en now
-tracks rss_type.
-
-Two warnings remain, both about documentation rather than code.
+Applied, thanks.
 
 
-Warning
-=======
 
-[PATCH 20/29] net/hinic3: refactor flow rule parsing
-
-The patch drops every vlan_flag mask/value pair from the TCAM key,
-e.g.:
-
-	-	tcam_key->key_mask.vlan_flag = 1;
-	-	tcam_key->key_info.vlan_flag = 0;
-
-Before, FDIR rules matched only untagged packets. Now they match
-tagged and untagged packets alike. That is a behaviour change, and
-the commit message does not mention it. If it is intended, add a
-sentence such as:
-
-	FDIR rules no longer match on the VLAN flag, so a rule now
-	hits both tagged and untagged packets.
-
-If it is not intended, restore the vlan_flag lines.
-
-
-[PATCH 22/29] net/hinic3: add device kvargs parameters support
-[PATCH 23/29] net/hinic3: add compact CQE Rx path and ptype table
-
-The new "Runtime Configuration" section uses a bullet list of
-term/description pairs. Make it a definition list:
-
-	``tx_pending_limit`` (default ``2``)
-	   Tx completion coalescing pending limit, in units of 8
-	   packets.
-
-	``tx_coalescing_time`` (default ``2``)
-	   Tx completion coalescing time, in microseconds.
-
-	``rx_cqe_compact_en`` (default ``1``)
-	   Enable (``1``) or disable (``0``) compact CQE mode.
-	   Ignored on NICs without compact CQE support.
-
-	``rx_cqe_coalesce_num`` (default ``7``)
-	   Rx CQE coalescing count, in units of 8 packets.
-
-	``rx_cqe_timer_loop`` (default ``5``)
-	   Rx CQE coalescing timer, in microseconds.
-
-The rx_cqe_compact_en entry belongs in 23/29 and the rest in 22/29.
-
-
-Info
-====
-
-[PATCH 06/29] rte_atomic_thread_fence() orders memory between CPUs,
-not between the CPU and the device. If the cleared rq_ci has to be
-ordered before the device runs again, use rte_io_wmb(). Otherwise
-drop the fence.
-
-[PATCH 07/29] dev_private is always present in a secondary process,
-so this check is dead code, and the message and -ENOMEM do not match
-what it tests:
-
-	if (nic_dev == NULL) {
-		PMD_DRV_LOG(ERR, "nic_dev hwdev is NULL, dev_name: %s",
-
-Drop it.
-
-[PATCH 10/29] This patch has Cc: stable, but it uses
-HINIC3_IS_SP230_NIC() from 09/29, which is not tagged. Either tag
-09/29 as well, or name the dependency so 25.11 backporters can find
-it.
-
-[PATCH 11/29] The explanation in the v6 reply checks out:
-disable_all_msix() turns off every vector at hwif init, and
-hinic3_dev_rx_queue_intr_enable() returns before
-hinic3_set_msix_state(..., HINIC3_MSIX_ENABLE) on SP230 when
-intr_conf.rxq is off. One gap remains. Nothing compares
-nb_rx_queues + HINIC3_RX_VEC_START against hwif->attr.num_irqs, so
-on a function with fewer vectors than queues, INTR names a vector
-that does not exist. The intr_conf.rxq path has the same gap. Reject
-that configuration in dev_configure, or skip the SP230 branch when
-there are not enough vectors.
-
-[PATCH 15/29] hinic3_dump_aeq_mbox_info() prints all
-HINIC3_MBOX_SAVE_NUM slots even when fewer messages were recorded,
-so empty slots appear as cmd 0, mod 0. Loop to save_mbox->count
-instead.
-
-[PATCH 17/29] hinic3_dev_set_link_up() clears admin_down before the
-vport and port enable, but unlike set_link_down it does not restore
-it on failure. If either call fails, admin_down stays cleared, and
-the next PF link-up event enables the vport. Restore it on the error
-paths, as set_link_down does.
-
-[PATCH 25/29] The hinic3_copy_mempool_init() comment says the pool
-"must be able to cover a full ring of in-flight packets", but the
-pool is capped at 256 mbufs per queue. Reword the comment to say the
-cap is deliberate, and that when the pool runs out the burst stops at
-that packet.
-
-[PATCH 26/29] Before this patch, every NIC got TCPUDP_CS set for
-VXLAN, VXLAN-GPE and GENEVE packets:
-
-	SQ_CTRL_QUEUE_INFO_SET(queue_info->udp_dp_en, TCPUDP_CS) |
-
-The new scalar path builds queue_info from TSO, PLDOFF, MSS and UC
-only, so NICs without TX_WQE_COMPACT_TASK no longer set the bit. The
-commit message does not mention this.
-
-[PATCH 26/29, 28/29] The Tx path is selected by
-NIC_F_TX_WQE_COMPACT_TASK and has no CQE, yet the function is named
-hinic3_xmit_pkts_compact_cqe() and burst mode reports "compact CQE".
-"compact task" would match what it does. In the scalar burst,
-hinic3_get_sq_wqe() never returns NULL, so the !sq_wqe branch is dead
-code.
-
-Review-Result: WARNING
