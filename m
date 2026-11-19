@@ -2,105 +2,80 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7BF606A32F
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Nov 2026 00:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C94606A31C
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Nov 2026 00:00:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=0rW0EL9B;
-	dkim=fail reason="signature verification failed" (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=EmkC05E0
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=jZ7Nr6vK
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C1CE7402EA;
-	Thu, 19 Nov 2026 01:00:08 +0100 (CET)
-Received: from fout-a4-smtp.messagingengine.com
- (fout-a4-smtp.messagingengine.com [103.168.172.147])
- by mails.dpdk.org (Postfix) with ESMTPS id E1A46402DA
- for <dev@dpdk.org>; Thu, 19 Nov 2026 01:00:07 +0100 (CET)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfout.phl.internal (Postfix) with ESMTP id E77F4EC05CD
- for <dev@dpdk.org>; Wed, 18 Nov 2026 19:00:06 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-03.internal (MEProxy); Wed, 18 Nov 2026 19:00:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1795046406;
- x=1795132806; bh=UPQidNgdnFv8C8vtzbKfCEcuOBXNnuRldz1S2LhbAH8=; b=
- 0rW0EL9BQs05VCEqdJM6keLGPu7wW6PWH4bmHVglP1DAJge2B/QGaF7oQyaQDd1e
- Dt365xTpds74fURubkx9n5vogpR9sPhqFM+nFAygR61RluTd35jRjB3MBW66SLU8
- w7PPeab4f7gwmmFTsNW83KsJzm/k/XOaBhCCvj8AEXCztCF7U+X8Dc1qaWxGTRMP
- 4SMwjUMK7PwLzwR12dRL015yYHJLkeDMzgaS24q4ho1dKbGbfNtgLlm9+0dvRU9F
- Q/UR493DtEtuStcEqj1IxPb4SoWJdLb6FQxtQYDFP65nrnhxsIc5xWooH/NrBUJz
- U0UxkU/rm078TaYDR8zhnQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795046406; x=
- 1795132806; bh=UPQidNgdnFv8C8vtzbKfCEcuOBXNnuRldz1S2LhbAH8=; b=E
- mkC05E0ppUCLimniH8CUplpPLCMPOD6iLDnD/XnuJrm88MhDizHPDDY8aQEE9JaN
- Oz1m6agtCJkGeuBW+gqGQDGwwUBbq2kyw2gd1+u43IHorXFNKgMHuGssQhJjqmV3
- G9k6JNLxtLiio4grFSTJyKAgaaFKB0VluOA05laWnHrKdyJox6hXrS3MMKVx1jJk
- uYwWoeAtihxmHwOa2l275YefccFHZF54BaM/9nAyq/zipc50d98L8gPrpWKDv1gp
- oE3ZiA2iQEvdVlv+HL6eKK+rRu9Bl4WH892oRM8An4ryomNS+ikN65tydeQUIi4l
- AjLsGIfa/xIvXqUENSunw==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
- repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
- action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1795046406; d=monjalon.net;
- mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm3:rsa-sha256:KTYtEFwz8GiJK8ur/mpDBFGpUzwlgNYbOdi2V9iAPpGzpFr
- EMIe7iOplJLa53N+FFcJvn3J8viAtpjTgtaurUO9TjU3ppD+XZ0sfaDxdxXz0UBr
- 8OECPnm+WH9PbUL4ljNIco4+DH0nyLiK+RmuIpggzt5rTpXCZyMHkLxSHl2MO6d+
- kMnC3Ti/XeEy+VlZdxV3yUJygPtouk8BTln0naaAu33QLBhnbutiKOIADt7OEAVs
- OdR9/oa/MsJXK8A68ZY24xoOMz9uQCpx30CBeZEcOhNrx6+NoHAZUZGHuq8NWWjI
- uECqTfHYmviZa/u0M3BWqhi+6a6yDRQWhIhwwyw==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
- repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
- action=mi-m=1; hc=12;
- hn=cc,content-transfer-encoding,content-type,date,feedback-id,
- from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1;
- h=sha256:vCHs48DXznZCsKIbw90qpLXe4SVj+W+8Jc0i0ozqh7I=:UPQidNgdnFv8C8vtzbKfCEcuOBXNnuRldz1S2LhbAH8=;
-X-ME-Sender: <xms:BTz-avDE-1Zy1crbeBJbYia1QGhVxlF0I1oLdhpSOJEzf_CPuDlSKQ>
- <xme:BTz-aviXS14TRh0GaCBAofr_Xy7l12KuAAIjYrD-ZWjMakjF9mHETcmtHM77EDHNI
- zxGu891kCswNSy8zE2dEdrtPt42tKciTJ09E5M3miH6Pzf8H5r1wA>
-X-ME-Received: <xmr:BTz-ahMTl2EWvM9DUw4zGYkeI-uDLzhkIRt4LWaYXJpHhKM8e-_O3U9Dqd9LHKrzvGxIcI39qfRFkg37cDKv9VA>
-X-ME-Proxy-Cause: dmFkZTElbQnHJ/utrr5xrVwu5PESXUIqREIsKiyXV8gL4ZtO30B2D5+i8vPNDtI8F6/Nkt
- ff9uaAV+6VX8sVCVJjhanhmaoKuEgH2Bt0MfpvLBVTfoWMAbixTq+V43MwO5hCNZZ1UysI
- 18q2P8UnYcZauz8gk4q52CwmdRZNvIRcjfLRENXYMQfbegRYNa8FlsndxV6+TPm7YxM95j
- OEFlbCNtq+arSdPZjWqKlMRMq8RfVN5opVQQL6qy2GHYgnXBADpXZKdRVoUJuXGTD+jQyo
- Z80OcualEZnU5KRd2CuQAtgeQAbp26lQMMQaDxjMexzNLb/pDHuLrQdn4vErbf+PfJikAu
- lHDmQq7ubVvJOR4i7N8Hy3aJJHCh4tBGJImrUvlswl/ecPbBgTvyJwUhH5187xAS4AjAH7
- GK1ePEpiw0K/8fCZlKRtC7VNRc+3mU7LvLkozwGHHWkoBrj/bDd6EWTf8mV2bbl4A/1Xwk
- Njn1C0b4ZcFKBCtgd+Veqi8eC8af/BJgyMlmtjU7aA0oxD74tJjfrPtYaKdMBu5oZceOG9
- eu/gY96qjyv5DuqeipnnanOuMJ1u3ASJQwnbFu+hO1SVTKcc4DVL05D91HS23iLFfTDw5I
- zoz2SJQqGFzNB1MhjFEoixIFgiKfPy07KSfQhM3Db1HnnjoUKOkZo+qUL+yw
-X-ME-Proxy: <xmx:BTz-av8usjjejd6ehLpsOu5W2QQ9-AcU4WqT-kEYl5ucMrJPlWfxOQ>
- <xmx:BTz-aidt7jFtFCNzHWCjkYdYMPJPgR0EOWuHWiHkdv7ADaKxGPJX5w>
- <xmx:BTz-auxjPR1YjVQ90Hu6pWgcoiAcvjyzD9CJrmndL7k0OEDKQ8_k_g>
- <xmx:BTz-anJol-dQEkwC73TwDmIPhoC1RjTYRoDUJpwU2RcLw0G-MxgEYg>
- <xmx:Bjz-ar7D9Gh0ThcZpFLxdRZMpURR0BNdCLOBCIfzGUkkvg0Kj6r9lWlv>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 18 Nov 2026 19:00:04 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>,
- Jack Bond-Preston <jack.bond-preston@foss.arm.com>
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>,
- Ferruh Yigit <ferruh.yigit@amd.com>, dev@dpdk.org, stable@dpdk.org,
- Mark Bulatov <ms.bulatov7@gmail.com>
-Subject: Re: [PATCH v3] bitops: document max input value for rte_align[32,
- 64]pow2
-Date: Thu, 19 Nov 2026 01:00:01 +0100
-Message-ID: <ppCZkCpFSy2hiYv6SI2Now@monjalon.net>
-In-Reply-To: <20261116143759.51525-1-jack.bond-preston@foss.arm.com>
-References: <20261113141307.4727-1-ms.bulatov7@gmail.com>
- <20261116143759.51525-1-jack.bond-preston@foss.arm.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 96A0940395;
+	Thu, 19 Nov 2026 01:00:15 +0100 (CET)
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com
+ [209.85.216.52])
+ by mails.dpdk.org (Postfix) with ESMTPS id 0A6CC402DE
+ for <dev@dpdk.org>; Thu, 19 Nov 2026 01:00:14 +0100 (CET)
+Received: by mail-pj1-f52.google.com with SMTP id
+ 98e67ed59e1d1-3b3bf3bef9aso1561163a91.1
+ for <dev@dpdk.org>; Wed, 18 Nov 2026 16:00:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1795046412;
+ x=1795651212; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=MXn0gtIIVf9OtMPxilh1JETVrBcJacW+lTwDGcJ5JNI=;
+ b=jZ7Nr6vK0HT83ZYsjF/6E+j3DZKsFYdZZ1Efg0EMt8t2oEhQ3GADuovbHE3mS+QqYY
+ bdcggUbi1b7AFgYrZR9QWp82YvdV/eWkvhK/eV9jQvcdL0YHrCocGBJb++S538gtOzwW
+ wg/AuJQ+8jvCW/JShqzVH2A1zr13A5AC36a0dcZGXXN+JmB+knRk/uAYE0EHA4GsBijc
+ IkM51Jmsfo5IvnFixXv70KMp4WbF0YpOPaxKuxdceE1uxHFLlxhwqKttWerV0Dhzynih
+ q9+XIOVn7x1azFaqldN8p95q6516AvqI2c7Qy+vgQTMG6lb9zdNDpN2aN0DdGonpZpm/
+ AMdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1795046412; x=1795651212;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=MXn0gtIIVf9OtMPxilh1JETVrBcJacW+lTwDGcJ5JNI=;
+ b=E7Lx7dDIo74leIjC1SjDxRJKrLT6mikbsAp0Dc9Zf5pv5n8zAfHyYL9ExbwxRvo1JU
+ uxrmNBdTaB7sfam+DVYQ3SCZKVGdAhPO5kLP1P5mEvEzfYS+Hji160XGWBw5CFbNbjMe
+ tZLaRi6OMzoZewnDazTi20XRy74zOWIakJ1DfBXGkqNQxggIB1Zsg6kFDlXOCddi1hkR
+ mSCpXFKk7znapvwYNHVwhLoUTkS5s/2J3fh/suxSgxFEBh7sBwvlnFmhClZGyWfZpbXM
+ T5NJXixcm8dxqyNo8hncFZAYi7v6F+7Yzi5QCZnSPAtOaa+gr06pfEtCL8p2PPBUdNMX
+ rSbw==
+X-Gm-Message-State: APuU4Z/0Zo8J7j/PXd87l9fEFdCsBzwtgNptGuXKAIu+RAK0D/ygsoQq
+ Y1aIwULaSIVbpsF8WMAGkuZJMxEM13E4Z9xLftASVS5fSSkUtJgiUskpg9jkrK1+a8w=
+X-Gm-Gg: AZFdTZfU5LiI6Yp2yQKlQ+PsHCHTBF0x4mJpBJxsHZ8pwgEDnQE023DbnKAO1EgPW3F
+ xQpUhgyDzNRWipfs+yqo8IDIf4hT4Y3pO0Me91xWfJ+YqgtkX6tlV/vdSs6tVWxllJv4/gfsTcd
+ zf4hG2S7y2MjJ4LylLhTpvnrQhGXt+zr5a0PyYIrzZ9afhCimHRzMpwfXDY/3gYJJsfdIB3CHoc
+ WouAORIEA91+IOJx9hPzpopesQuDUlgXzhe0MNdiALWr+nfCB62YBR8yS1kuzgHprz+KhuhE7Fw
+ lg9yqhBzrrsL78BUIpn60hZ9fVS/7H/f6/u/9E7ANg/Bt1/iCabHg6PZVkxlegsgXOvLgjO3BFw
+ Kf91zK4/vkF8EVKqvkCZ2KoUD1BfPaJFGPccJ2XGgSNQ9YkcfUKcNnUHaoQ5WcnAfOBCzZokXLa
+ ekMO7Tove9MEsfFBk4EJj+yQb1bROsTQRnC4Jvwd5P30fGSU9/an66w/ZJFevg9mkEtR8288PLs
+ 9TsGS2uPr+mclb6fPR4QD8bYX5zN6d5/1EC3xrRM/6BUoJAGj014kOf5slHrS+FTD2Rv/PcFvG1
+ v82wvqvhW0xTxUjCnAxv5vj/GdCN3Rzqyx3x9uA3K5FTIGs6KZdQRS9oqAdPvAjmqBBRrj8=
+X-Received: by 2002:a17:90b:1810:b0:3b1:bdc8:c32b with SMTP id
+ 98e67ed59e1d1-3b3d07e0cbbmr4528571a91.53.1795046412235; 
+ Wed, 18 Nov 2026 16:00:12 -0800 (PST)
+Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-3b401f73a4bsm17673a91.0.2026.11.18.16.00.10
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 18 Nov 2026 16:00:11 -0800 (PST)
+Date: Wed, 18 Nov 2026 16:00:09 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Ryan Wolfe <rnwolfe@google.com>
+Cc: dev@dpdk.org, Junfeng Guo <junfeng.guo@intel.com>, Joshua Washington
+ <joshwash@google.com>, stable@dpdk.org, Harshitha Ramamurthy
+ <hramamurthy@google.com>, Rushil Gupta <rushilg@google.com>
+Subject: Re: [PATCH v2 0/3] net/gve: fix GQI Tx cleanup and QPL FIFO reclaim
+Message-ID: <20261118160009.0c72d768@phoenix.local>
+In-Reply-To: <cover.1794908231.git.rnwolfe@google.com>
+References: <20261115140016.3830109-1-rnwolfe@google.com>
+ <cover.1794908231.git.rnwolfe@google.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -110,33 +85,90 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-16/11/2026 15:37, Jack Bond-Preston:
-> rte_align32pow2 and rte_align62pow2 will overflow and return incorrect
-> values for input values exceeding 1<<31 and 1<<63, respectively. There
-> is no way to return a valid result here: the next power of two above
-> these values is unrepresentable with 32/64 bit unsigned integers.
->=20
-> Adjust the documentation for these functions to clarify that input
-> values above these limits will return invalid results, and thus should
-> not be provided to these functions. Additionally, document an existing
-> edge case of the implementation: when the input is 0, it returns 0 (not
-> a power of 2).
->=20
-> Fixes: 7253e3d2a5b6 ("bitops: move bit count functions")
-> Cc: stable@dpdk.org
->=20
-> Reported-by: Mark Bulatov <ms.bulatov7@gmail.com>
-> Signed-off-by: Jack Bond-Preston <jack.bond-preston@foss.arm.com>
-> Acked-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+On Tue, 17 Nov 2026 09:11:41 -0500
+Ryan Wolfe <rnwolfe@google.com> wrote:
 
-Applied, thanks.
+> This series fixes three independent bugs in the GQI Tx paths of net/gve:
+> 
+> - 1/3 clears the first freed sw_ring entry in gve_free_bulk_mbuf() so
+>   completed or refcounted segments do not leave stale mbuf pointers that
+>   are freed a second time on queue stop or release.
+> - 2/3 fixes GQI_RDA multi-segment non-TSO packet descriptors to pass
+>   data_len instead of pkt_len for the head segment, reclaims completed
+>   descriptors when nb_free runs low mid-burst, and stops counting normal
+>   ring-full backpressure as stats.errors.
+> - 3/3 fixes GQI_QPL jumbo Tx FIFO reclaim, TSO pre-allocation space
+>   checks, malformed TSO mbuf handling, and doorbell flushing.
+> 
+> v2:
+> - split v1 into three atomic Fixes patches for stable backporting
+> - free and count malformed TSO mbufs (pkt_len <= hlen) in
+>   gve_tx_burst_qpl() while tracking nb_sent separately from nb_tx so an
+>   invalid TSO request cannot stall the queue at tx_pkts[0]
+> - use for (;;) and add the missing blank line after
+>   gve_tx_reclaim_fifo_qpl()
 
+AI review looks clean, though it did see some pre-existing issues
 
+Subject: Re: [PATCH v2 0/3] net/gve: GQI Tx fixes
+
+Applied to main, builds with -Dwerror=true. All three fixes are
+correct. Remaining notes are pre-existing code next to what the
+series touches, worth picking up while in this area.
+
+Patch 2/3: net/gve: fix GQI RDA multi-seg descriptor length and clean
+
+Info (pre-existing): TSO payload length underflows when the headers
+are not all in the first segment.
+
+    gve_tx_fill_seg_desc(txd, ol_flags, tx_offload,
+                         tx_pkt->data_len - hlen, addr);
+
+If data_len < l2+l3+l4, the uint16_t wraps and the device is given a
+near-64K segment. Either reject that case (free and count as error,
+as patch 3 does for QPL) or require headers in the first segment via
+tx_prepare.
+
+Patch 3/3: net/gve: fix GQI QPL jumbo Tx FIFO reclaim and doorbell
+
+Info (pre-existing): the 32-bit widening stops at is_fifo_avail().
+The allocator still takes uint16_t:
+
+    gve_tx_alloc_from_fifo(struct gve_tx_queue *txq, uint16_t tx_id,
+                           uint16_t len)
+
+and is called with
+
+    fifo_addr = gve_tx_alloc_from_fifo(txq, tx_id,
+                                       tx_pkt->pkt_len - hlen);
+
+GQI advertises RTE_ETH_TX_OFFLOAD_TCP_TSO with no size limit and no
+tx_prepare. A TSO mbuf with payload > 65535 now passes the full-width
+"need" check, reserves only (len & 0xffff) bytes, then
+rte_pktmbuf_read() copies the full payload into the FIFO, overwriting
+in-flight frames or running past fifo_size. pkt.len is __be16 so the
+device cannot describe such a packet anyway. Simplest fix is to drop
+it with the malformed case:
+
+    if (unlikely(tx_pkt->pkt_len <= hlen ||
+                 tx_pkt->pkt_len > UINT16_MAX)) {
+            rte_pktmbuf_free(tx_pkt);
+            txq->stats.errors++;
+            continue;
+    }
+
+Info (pre-existing): the QPL path has the same descriptor-low abort
+that patch 2 fixes for RDA:
+
+    if (txq->nb_free < nb_used)
+            goto end_of_tx;
+
+Using gve_tx_reclaim_fifo_qpl() style clean (or at least
+gve_tx_clean()) there would be consistent.
 
