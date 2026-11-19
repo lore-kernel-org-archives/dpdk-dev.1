@@ -2,99 +2,78 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD452606A32F
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Nov 2026 01:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB63606A32F
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Nov 2026 03:15:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=c4Askm7u;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=sCp7QP0L
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=t/nd2C5D
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D72A9402DE;
-	Thu, 19 Nov 2026 02:36:13 +0100 (CET)
-Received: from fhigh-a7-smtp.messagingengine.com
- (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
- by mails.dpdk.org (Postfix) with ESMTPS id 27E91402DA
- for <dev@dpdk.org>; Thu, 19 Nov 2026 02:36:12 +0100 (CET)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 2C36514000D4
- for <dev@dpdk.org>; Wed, 18 Nov 2026 20:36:11 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-03.internal (MEProxy); Wed, 18 Nov 2026 20:36:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1795052171;
- x=1795138571; bh=cUfT/mSmjh6cxIWlSbrYwDHwqxeOoXTmVLRJ5/mt248=; b=
- c4Askm7ubOedms/o4Zxy97gt0m70JUzXvFh99kLREcXxO/VKAXVxYPevCZ05yRuX
- ZtQ0m6RsLiHxaTwQoz30dNc+S75ShFyWR0ygkqZkA3+yzfTjYIwSofrqPiTeUe0J
- fu8J0gxh7NEnkoOqIoaUJnJds8uJxrTMTpa1h/Qi8WLnvqM3w8m5fQv6tjCx/60p
- kjbuek3bCga/Mb8SeRcPTThEQJ4HIZEjweO0ocyjJSXeWf2NkdILqGbAqaPPEHxh
- AVZ57GhUd6D3kk8hwct+x9QzPczmgPC21DWMlH/IbezVVT9o3/X0qZMlgaWliVxv
- KjAYAuRUSwxQD+l+1VGVBg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795052171; x=
- 1795138571; bh=cUfT/mSmjh6cxIWlSbrYwDHwqxeOoXTmVLRJ5/mt248=; b=s
- Cp7QP0L+RTHOKHQWdJh4069QgawoJB1jRXSzL3VDytGS6do9BORSp62C11LhrUgn
- jpplPCvmR9OoOg92JjjVSzVTT/vQx7SIRGTpBjr1BOUPPE0zD2iMcFNEapLZi1AC
- 7fITFwNggFLvK4k4uk3GiwlG4oclRJ7d9AJLPYxmxaeiV/7OM9R3xbbfnNs/pdPA
- 58FTsHTE6ksP97erUJJ6gDgh6jazIcSHcKYLfPKebEziBF5MKDWuW/sfqZyfGGDR
- bfD9eamx/p8Ens3TTE5fVcvi5ajNiVWE6WYPDQkRkuf2OciXi4O3pOXfXlAKSzag
- rlEXxO8RDVXLCAPHdIoQg==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
- repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
- action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1795052171; d=monjalon.net;
- mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm3:rsa-sha256:UnOVIaHFUwZgUzP3I5t1qaaxYD2t+P05AVRHtN85ESEIXzL
- qfEAuWT7Ocpzyr33D/jXzcm0zRSXHsjrq3PjMnBgjG3FsQeqkQJDjDgT8jh/bTZz
- djHd95cq+kowA1UCB2+Y32Fp9ZvuRu5BysjM2IWK3RGVIqV9V2jjfRgkP9lw6Gz5
- JlbEWuq72/QighWbmSzfuIFw7wLhGq/dRsYUOM5LQmf4I3Qtg34cV0bzc7KCnmDY
- hTiuiGcXdcpZ5VbJXrTOS6yFhR1u3QmWBRCnzg9lQ1WSPlcfNkUshjZdVbxjHtHM
- RreHf0OTFELOSUiVeYYvPG30GYC6SXsjlJGHZeg==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
- repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
- action=mi-m=1; hc=12;
- hn=cc,content-transfer-encoding,content-type,date,feedback-id,
- from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1;
- h=sha256:Bam6cpl9SKbvw2ipmsQOjSYpoI5J5yYiTAS+15GQEGM=:5hhSyS3yF4VepHPsKhQlekGLPoIL7MzqJE7IPJjcYCA=;
-X-ME-Sender: <xms:ilL-ahGy2hMb_5km9Jhrh4DkGPUkW9Yw37ZF1grLk631vDJRCTXwQA>
- <xme:ilL-aioEcJdv-ERBfz98Cb65EIEYUem9bbW7BcbnvhiSAwXh9ey8nrlm3pC7886s8
- QwGPej9wj7Lu0xJ99PooTOIKWOaBw6TkEF8jDBSOLZqMtVmLxvh55I>
-X-ME-Received: <xmr:ilL-al6LJnDkMb5N_tun1T23G0skcFSDZMwJj0A3JueOYqXOehmQALLQIy2Hbqm82F-LCj8HB8moYueb8K_knoM>
-X-ME-Proxy-Cause: dmFkZTGph15xSjqA1OYfIhlQpnW3bT+7g15kAJkfPfbCedxbxJUn8Ula5SPNHJVblpM2kG
- 8B+C7JLl48NANhdBrzF/Xbll85IE1x35k3PBYVG/BqCJ7bIc08znC517JDnkNE8Ptc3C60
- xmExk1cUaqGmYI8cc4IEAtPKYXaYey6akahMsCKOZXG75M5DYqAtQ9/ryEriqDTF5K/77a
- YuetkX744mmOK/LY/6IpygEPuJYLMh5rb/xd1AwivsDtteorkV+LYYYgpA760xwsYqZL3H
- uBnCxluo403e6fVzkQ6h0Ke5OdEkDTLRMMNfQpPEg05LxvqH5i4KDdpW7LY2IlaH0vXTFF
- 0ihcSb2Sfyko+gvcOHeruczwdSo/VyngdzFJO+sEgUC5tObr2+TE/QXibclKUtAy3+/Kjw
- iP7A5ez3ilec4Q79R+gmXmsskBmdPLDbEJ0BLN4r/BtH+KZdfn46abELK0VZ+5XGdrIQvQ
- xyhBY0d2AokR8Mga5aa+o93OdP9JTdAGU5CObBOnoAnrgiD+Kuh04PBDte9WD0dcfccwR+
- zYAQcrpr8+zoZUZW5s1XewPkWx8Rz4IBf7RfE/bGwDysOJppp8qQHT7YQIJiFSueZnj822
- jSRlHqR2kDjvopZDfzvsLdpKFGRC+5G04PWWAAoKsUmMR+jA0u+SEb7Ja7WA
-X-ME-Proxy: <xmx:ilL-ao5q2zjJY6ua_j_bS3MDD7oegwz6APBYicHfoMJ7JoftM2S8Jw>
- <xmx:ilL-aqHoWOqLzXrZPgEUODoZngidQS87bmbSZzg98iVwmMthpQHitw>
- <xmx:ilL-apT7IeMts5HQHCrhIM4-w-WWcB0UNvcVrT9v9rwkZU3NWXneHA>
- <xmx:ilL-aruTtWujwMBqM_EOQ9DwND59fOADnMWMkRD-b71NenQC86s4Nw>
- <xmx:i1L-amM-e7Fm4SKomKU5mzHeT-rh0kjqRcGhQDceufdfKZ335P3hQWxn>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 18 Nov 2026 20:36:10 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Kai Ji <kai.ji@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH] app/wycheproof: avoid path check before opening vectors
-Date: Thu, 19 Nov 2026 02:36:07 +0100
-Message-ID: <Ad-bjAABQIuKcHhbeHhYgw@monjalon.net>
-In-Reply-To: <20261117154949.4153145-1-kai.ji@intel.com>
-References: <20261117154949.4153145-1-kai.ji@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 6B251402DE;
+	Thu, 19 Nov 2026 04:15:27 +0100 (CET)
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com
+ [209.85.215.180])
+ by mails.dpdk.org (Postfix) with ESMTPS id 65F36402DA
+ for <dev@dpdk.org>; Thu, 19 Nov 2026 04:15:25 +0100 (CET)
+Received: by mail-pg1-f180.google.com with SMTP id
+ 41be03b00d2f7-cdb9f760337so256672a12.0
+ for <dev@dpdk.org>; Wed, 18 Nov 2026 19:15:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1795058123;
+ x=1795662923; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=KpvOBDLMm760Jj9aIiM/t4vryTkhaAmWluToSTe64sk=;
+ b=t/nd2C5Dqm2/0t3fTpsFXNyTAszgaIkUAMLaHS40KV98tNvYnNnkJQGPD93hlzxm1y
+ URWd0sv8QthWERY1wlYBAAlBLZV1cJ5kPj9FkN6JncsTLfB+bmkfO2d6a/V05IcqqLDg
+ vz/n7xO8MEkIsUhT38eScCcpX7xvyFqZXDLlgEVOgtfb2GCLSXjhe2o//i5ACFtG8lD1
+ xB8zs+LKuzTrVTA3DoxwHBsjDNWLxHudV8QuvpDu8X28QL583f8iK4JOHpqIdjF92iDC
+ MBJPGbF8gX0EdFXHnVaBfpBS0VGTEm2+wMlE7nMWxA3OtSm6rqKc+CPnexGGaJcZOoGQ
+ qXAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1795058123; x=1795662923;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=KpvOBDLMm760Jj9aIiM/t4vryTkhaAmWluToSTe64sk=;
+ b=oeN9P2QCXJs8qZxmXdhxTe7If6dSU5VeIwROiC46sd9js8bDgafPgC/s+PV8TPFjGa
+ UOOHpEqCCFzo0NxfknqfBUYcwfn1/kZlEnOy4PFcmikEpLVXGanfPQiTZ3UY+yWUXyHm
+ GMGfjOxNGSigZ9bN4Wq2JLep2P9q8jrHtHXv6IRPL243VwfKwJ3gFWRcbtN4/sI97CYa
+ 3pGB/DGeTiCVLGzEOnF2utH+PSO0aDP5hgpBcjwoNSaBPluAulBfZ5EPmsmUm8xt2Sv3
+ EvGDeDbPgGC3SC1pmGRCkEyIkiyGVDHJfeFVt2NQOKCnz7IZjp3i3ysXnR1QQsBEXneI
+ 3Evg==
+X-Gm-Message-State: APuU4Z/5T1k8Pu3lzSWiY+SNoT+o/IFBAiUGNI0Vhp52aJpdjGG6yXDf
+ RzR0Bkk9vQG1foKSzBTUf4uuK14Urb0sIpyK5VKh8XPBhoSOYYuh/O8hkVWHTBs8E7o=
+X-Gm-Gg: AZFdTZcCDYs5mnTizS/CI0OiigwEq51CH1jKTqgqH0Z+IcmL6tdygLK7sabUMqjPQBC
+ eRwrJoEQBjP5XmxFq9KGTxw+675pPd36k29AP+Dw/yd5zGZvmX7ud20ahEpeVwo+5CApg/ACfzS
+ pvzfpjG+e33L5FTRiEkoVwW8oBe1m1c5eCfy4NbkapBHoub3gkcgVSzKXX35Y/ExX+G6QWh0hRX
+ y8zFAJOaNcaPoSgqk3bKAfuu5UkGYWMcdmIQ3Bc1Ll5Pvnmjk6oq6eAzd+u86QD8eA4Wp8YCNru
+ Vm4DlvHBi6bJ5+rGcuphT5VEzzUOiPxU4eGZtHtCbl6BMbDGNWKZ7Mk16V58S3PQ/GSHq2qpfJG
+ ZmGnYEGlFZpbU1jM/g4JuaXeeHd6A6SQsIcCjLQ9LULXbR8Kt6SzpzxIZ3oszW05DYs4f8V3YO+
+ lHU55zr4k2nDKGDt7qeOGktZdRL+86gJLka/Zo2FSB6ICYhPLjkBuKu0LdOWPkqcXpl5bqjYpwl
+ PbOZ3s4MOtOGhHJbMfmFwXXrNZp/xkcJDVYYMOMskcKPBrbNwotx3LrppvGUk6blfuvzE6z9Xho
+ XLmCnw+Jf/Zr1tUWWWttIFATAW5jvu8/Nz55Nd6tex/LAWU8tM5TXl475TiGLRZ3RIq+PKM=
+X-Received: by 2002:a17:90b:1d4e:b0:3b3:b3c0:71c8 with SMTP id
+ 98e67ed59e1d1-3b3ffa1cebemr436805a91.13.1795058123463; 
+ Wed, 18 Nov 2026 19:15:23 -0800 (PST)
+Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-3b405776019sm241292a91.4.2026.11.18.19.15.23
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 18 Nov 2026 19:15:23 -0800 (PST)
+Date: Wed, 18 Nov 2026 19:15:21 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Ajit Kumar <Ajit.Kumar@amd.com>
+Cc: <dev@dpdk.org>
+Subject: Re: [PATCH v2] net/axgbe: serialize PHY and link status access
+Message-ID: <20261118191521.6f272ebe@phoenix.local>
+In-Reply-To: <20261117094805.4134371-1-Ajit.Kumar@amd.com>
+References: <20261112135611.2757325-1-Ajit.Kumar@amd.com>
+ <20261117094805.4134371-1-Ajit.Kumar@amd.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -104,26 +83,33 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-17/11/2026 16:49, Kai Ji:
-> Checking the vector path with stat() before opening it leaves a
-> check/use race if the path changes between the two operations.
+On Tue, 17 Nov 2026 15:18:05 +0530
+Ajit Kumar <Ajit.Kumar@amd.com> wrote:
+
+> From: Ajit Kumar <ajit.kumar@amd.com>
 > 
-> Open the directory directly and fall back to file processing only
-> when opendir() fails with ENOTDIR. Propagate other directory-open
-> errors and remove the unused stat header.
+> The I2C and MDIO buses are shared by all ports on the device.
+> axgbe_phy_get_comm_ownership() takes the per-port phy_mutex, which
+> does not stop two ports in the same process from using the bus at
+> once, causing I2C failures (-EAGAIN, -ENOTCONN, -ETIMEDOUT) and
+> incorrect link status reporting.
 > 
-> Coverity issue: 360736
+> Add a driver-wide mutex taken before the per-port one, as the Linux
+> xgbe driver does (xgbe_phy_comm_lock), which this DPDK PMD lost when
+> its equivalent global lock became the per-port pdata->phy_mutex.
 > 
-> Signed-off-by: Kai Ji <kai.ji@intel.com>
+> This fix applies to ports owned by a single process. If ports of the
+> same device are ever split across separate processes, or one port
+> stays with the kernel xgbe driver, the hardware mutex registers
+> remain the only arbitration between them; this is a pre-existing
+> limitation, not something this patch changes.
 
-Applied, thanks.
-
-
-
+Applied to next-net for 27.03 but I trimmed the commit message down.
+The version change should be below cutline --- and the link status
+part was not here anymore
