@@ -2,97 +2,95 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0536606A320
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Nov 2026 01:27:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD452606A32F
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Nov 2026 01:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=N+I+Cwve;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=fWUz6u56
+	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=c4Askm7u;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=sCp7QP0L
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0D240402DF;
-	Thu, 19 Nov 2026 02:27:01 +0100 (CET)
-Received: from fout-a2-smtp.messagingengine.com
- (fout-a2-smtp.messagingengine.com [103.168.172.145])
- by mails.dpdk.org (Postfix) with ESMTPS id 379D6402DE
- for <dev@dpdk.org>; Thu, 19 Nov 2026 02:26:59 +0100 (CET)
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
- by mailfout.phl.internal (Postfix) with ESMTP id 534DEEC0169
- for <dev@dpdk.org>; Wed, 18 Nov 2026 20:26:58 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-05.internal (MEProxy); Wed, 18 Nov 2026 20:26:58 -0500
+	by mails.dpdk.org (Postfix) with ESMTP id D72A9402DE;
+	Thu, 19 Nov 2026 02:36:13 +0100 (CET)
+Received: from fhigh-a7-smtp.messagingengine.com
+ (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+ by mails.dpdk.org (Postfix) with ESMTPS id 27E91402DA
+ for <dev@dpdk.org>; Thu, 19 Nov 2026 02:36:12 +0100 (CET)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 2C36514000D4
+ for <dev@dpdk.org>; Wed, 18 Nov 2026 20:36:11 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-03.internal (MEProxy); Wed, 18 Nov 2026 20:36:11 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1795051618;
- x=1795138018; bh=oqGWYWFZeKh8QFK3CTaSbJA49ubAidhugVWwd737EyE=; b=
- N+I+Cwve0bSN++Nv3DcXBXMaiVZWcG9MobHObiNoCyNyaKSzSY4dqmT4Q16CI463
- u7B16ecm2SXCydqWyxzyLAkgQgtdPu7qQpCK/KnGhELozn8I642FyJc9PPG1Vhn0
- Wk84uc3EFqqCar9/1vW31cqYnWd1qNpopRT2NUlLRSjbWx7fCkOiY/SvwFgn/0jU
- qpNBQ57baztnEc7wIJavIuLPXbjjnJAZiqIpzhO3liTHgYrv95KUieX/EwompBaZ
- kI+vl+C9JbmQdX1AGcgAAOX8pqe1RgazIsYNGqfQr4jSdxXvpWlBC0RCVhoTMQ4T
- tYaUqr6UF2wkaHGqKyMV8w==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1795052171;
+ x=1795138571; bh=cUfT/mSmjh6cxIWlSbrYwDHwqxeOoXTmVLRJ5/mt248=; b=
+ c4Askm7ubOedms/o4Zxy97gt0m70JUzXvFh99kLREcXxO/VKAXVxYPevCZ05yRuX
+ ZtQ0m6RsLiHxaTwQoz30dNc+S75ShFyWR0ygkqZkA3+yzfTjYIwSofrqPiTeUe0J
+ fu8J0gxh7NEnkoOqIoaUJnJds8uJxrTMTpa1h/Qi8WLnvqM3w8m5fQv6tjCx/60p
+ kjbuek3bCga/Mb8SeRcPTThEQJ4HIZEjweO0ocyjJSXeWf2NkdILqGbAqaPPEHxh
+ AVZ57GhUd6D3kk8hwct+x9QzPczmgPC21DWMlH/IbezVVT9o3/X0qZMlgaWliVxv
+ KjAYAuRUSwxQD+l+1VGVBg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795051618; x=
- 1795138018; bh=oqGWYWFZeKh8QFK3CTaSbJA49ubAidhugVWwd737EyE=; b=f
- WUz6u56WmnQMUwfZudXrU2z+MYu3e5zNfFBumj0nodUpm/ZTVW6n2nCBmKxOr6cG
- pWVEU0U3DrhSobEUhJXaRO6Ku+LI9QqQ4ovi8Tc0mlTyVt6s2QqShbtv53zXSdG2
- XoCm1zTM3wAM96DIvSWk/OgbM7UMGJZZ75m7aHJgqWbc32ZfGID4pAuVOidUnwre
- uT4hBXTQTOXWXElsSmRjjkf/1GcsLf3WUqct9SqBQKVQOKDSm6n0fLwfbbXglDzI
- 8Z8pMfjnUCIbBNusyuPQLfl97377zEFbLY4n2p1mJ6Gy22UMFZZAADFJCbywIDfl
- HKhwRO4dDdJ7jZoHmz1XA==
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795052171; x=
+ 1795138571; bh=cUfT/mSmjh6cxIWlSbrYwDHwqxeOoXTmVLRJ5/mt248=; b=s
+ Cp7QP0L+RTHOKHQWdJh4069QgawoJB1jRXSzL3VDytGS6do9BORSp62C11LhrUgn
+ jpplPCvmR9OoOg92JjjVSzVTT/vQx7SIRGTpBjr1BOUPPE0zD2iMcFNEapLZi1AC
+ 7fITFwNggFLvK4k4uk3GiwlG4oclRJ7d9AJLPYxmxaeiV/7OM9R3xbbfnNs/pdPA
+ 58FTsHTE6ksP97erUJJ6gDgh6jazIcSHcKYLfPKebEziBF5MKDWuW/sfqZyfGGDR
+ bfD9eamx/p8Ens3TTE5fVcvi5ajNiVWE6WYPDQkRkuf2OciXi4O3pOXfXlAKSzag
+ rlEXxO8RDVXLCAPHdIoQg==
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
  repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
  action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1795051618; d=monjalon.net;
+DKIM2-Signature: i=1; m=1; t=1795052171; d=monjalon.net;
  mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm3:rsa-sha256:fYxCuJv+NSP5yE7qWASR7HUW5vgjmEA7/HTP3S4UK2WSlox
- qW14A0Ik3qFNnm3q14yIf0rlcInZQCx081wLnCCwf7L381JeYuwXE5XtdsqGXFlu
- svzNWSb7AJNVf9GhlB4qAZGly1+NcAIxOsX8r4RJaOuo+uqFaViT8AS6MQ79JY+d
- 9hWS+o9oLcUqUkae2v/ejEXQUruDObu+O1AA3jaWHVvPDNvU+t4WrEvzOvD34YvY
- 9yh+l5sKoHAiB2g+nT8zoMRDImSWGyb+gBZ8re/DZ17SPVyBa8YQezBJJxKAdZ7D
- 1DQrcD+/fNuDGoKd2hBK0WHLg67+avZgQ+igIow==;
+ s=fm3:rsa-sha256:UnOVIaHFUwZgUzP3I5t1qaaxYD2t+P05AVRHtN85ESEIXzL
+ qfEAuWT7Ocpzyr33D/jXzcm0zRSXHsjrq3PjMnBgjG3FsQeqkQJDjDgT8jh/bTZz
+ djHd95cq+kowA1UCB2+Y32Fp9ZvuRu5BysjM2IWK3RGVIqV9V2jjfRgkP9lw6Gz5
+ JlbEWuq72/QighWbmSzfuIFw7wLhGq/dRsYUOM5LQmf4I3Qtg34cV0bzc7KCnmDY
+ hTiuiGcXdcpZ5VbJXrTOS6yFhR1u3QmWBRCnzg9lQ1WSPlcfNkUshjZdVbxjHtHM
+ RreHf0OTFELOSUiVeYYvPG30GYC6SXsjlJGHZeg==;
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
  repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
  action=mi-m=1; hc=12;
  hn=cc,content-transfer-encoding,content-type,date,feedback-id,
  from,in-reply-to,message-id,mime-version,references,subject,to;
 Message-Instance: m=1;
- h=sha256:4Le2aLk3bFBfGVh9UQlURDY0nVGl1JpIhF5Esmg6Hpo=:JLdwNU3C+mlDqy8LcInYuu7K3a3nWaIShir9WZS6Uyk=;
-X-ME-Sender: <xms:YlD-apWzMhJ1g0Ib1jyq5_50uhWlrXmWZGXTbPhSrwA5z1v70JoN_w>
- <xme:YlD-apvV2xrHeYdlU72DKX3bcd-tBxahoWsHC3sUceXaYJvNUQ2cuMkRcxV7HdK4B
- BoEAfVmwzEKKqtxOIUkFLXPyQuV9RSDzEk2KG4Sq-MUaJIuyslJE_w>
-X-ME-Received: <xmr:YlD-atU-OrRhB-O2SO23DUKdxkC5ZPNx4Ou6qxXYuQhvphhE9tIqTm8ObvtFv-sfFvyf5z2maav-vLB0eRKpNUE>
-X-ME-Proxy-Cause: dmFkZTGMSbCw7h+usmDaotbPGu9H6NNAm/GIHRSBjspcciT+jENMMOYei7C3oeI2DyCU7c
- aMvWlkB92AOnowHzUXfsk+AKMHLX5+SRUIbj8bkSj9jKVRztgLRm9dhJ7i3GnPAPNG9Ddp
- 2e0Q1ZKC3EcUbYWEnhkyMEFj84NZ4eEzlbkm1nQ332GKVZJJmtXrN0Fewc+x2XfdAgcXTg
- k4oToHeWYzS5OsCJEReq+4F6+maiplz8qJzXEQsh0zdaSklr9MgZBjhRPHuSAZrHIxnMTf
- Dn1evYMb6IeW2dwPYaql/Gt89z76Y4L9gQ2HTtPSnC+IwxYDeXGfOa8gNYY0aFS3+qmWYA
- BakmmPOnz+xWBLnS0GDNnleSvywSkb5oL5VYiMqSGxggBlEQgIYuyeJFC2xl8ozt65NddS
- capsIv6Q5CS/RXyodOs3QekXDvLJxlUEVBTCpK/uYtxHK8ifccCuo/jGm3re9+ZEK40qUv
- TM3ROX/hYGBZ2A0AhCyu+WY/VrMc5a+NI9cAKckCjg2QOTOfDUg0t0gsAFRCKji4um8Pw+
- 4DNVOTpVnTDabHd9k/xQx8CItcQael8tZDCVWxbK4k9tKZvQk5CvBHa9nrM5ta1jEHx1O6
- TuQ8ft3u+YXqbvNn9F5kfsmV3QSTMup4DnNlFOb18kiFqoCUEf+kHjOvQDRA
-X-ME-Proxy: <xmx:YlD-aknfyhYOPE8iKvTBAJhrLNMEBKJ_SU1TFXZ2-vDa61DdYOFFKQ>
- <xmx:YlD-aua1MoxYt4qEKOPGIVxcGSio1uMY9-tGOCjDyLjty5XaHqmllQ>
- <xmx:YlD-avMkLD7G6OJezR3tbtgKMdSKziSN5t_h8YdRxgcfTZPTPr0TNw>
- <xmx:YlD-ajZDQ5mw9Z0UYbZrWVdXo9zMA4neXlHJfUnFIau3MqweY6HGVQ>
- <xmx:YlD-aqCbEkNQxVu-Q3kzXHuh2Ntxz2fLCXibXpsjgyEDom_PBKbwXs_V>
+ h=sha256:Bam6cpl9SKbvw2ipmsQOjSYpoI5J5yYiTAS+15GQEGM=:5hhSyS3yF4VepHPsKhQlekGLPoIL7MzqJE7IPJjcYCA=;
+X-ME-Sender: <xms:ilL-ahGy2hMb_5km9Jhrh4DkGPUkW9Yw37ZF1grLk631vDJRCTXwQA>
+ <xme:ilL-aioEcJdv-ERBfz98Cb65EIEYUem9bbW7BcbnvhiSAwXh9ey8nrlm3pC7886s8
+ QwGPej9wj7Lu0xJ99PooTOIKWOaBw6TkEF8jDBSOLZqMtVmLxvh55I>
+X-ME-Received: <xmr:ilL-al6LJnDkMb5N_tun1T23G0skcFSDZMwJj0A3JueOYqXOehmQALLQIy2Hbqm82F-LCj8HB8moYueb8K_knoM>
+X-ME-Proxy-Cause: dmFkZTGph15xSjqA1OYfIhlQpnW3bT+7g15kAJkfPfbCedxbxJUn8Ula5SPNHJVblpM2kG
+ 8B+C7JLl48NANhdBrzF/Xbll85IE1x35k3PBYVG/BqCJ7bIc08znC517JDnkNE8Ptc3C60
+ xmExk1cUaqGmYI8cc4IEAtPKYXaYey6akahMsCKOZXG75M5DYqAtQ9/ryEriqDTF5K/77a
+ YuetkX744mmOK/LY/6IpygEPuJYLMh5rb/xd1AwivsDtteorkV+LYYYgpA760xwsYqZL3H
+ uBnCxluo403e6fVzkQ6h0Ke5OdEkDTLRMMNfQpPEg05LxvqH5i4KDdpW7LY2IlaH0vXTFF
+ 0ihcSb2Sfyko+gvcOHeruczwdSo/VyngdzFJO+sEgUC5tObr2+TE/QXibclKUtAy3+/Kjw
+ iP7A5ez3ilec4Q79R+gmXmsskBmdPLDbEJ0BLN4r/BtH+KZdfn46abELK0VZ+5XGdrIQvQ
+ xyhBY0d2AokR8Mga5aa+o93OdP9JTdAGU5CObBOnoAnrgiD+Kuh04PBDte9WD0dcfccwR+
+ zYAQcrpr8+zoZUZW5s1XewPkWx8Rz4IBf7RfE/bGwDysOJppp8qQHT7YQIJiFSueZnj822
+ jSRlHqR2kDjvopZDfzvsLdpKFGRC+5G04PWWAAoKsUmMR+jA0u+SEb7Ja7WA
+X-ME-Proxy: <xmx:ilL-ao5q2zjJY6ua_j_bS3MDD7oegwz6APBYicHfoMJ7JoftM2S8Jw>
+ <xmx:ilL-aqHoWOqLzXrZPgEUODoZngidQS87bmbSZzg98iVwmMthpQHitw>
+ <xmx:ilL-apT7IeMts5HQHCrhIM4-w-WWcB0UNvcVrT9v9rwkZU3NWXneHA>
+ <xmx:ilL-aruTtWujwMBqM_EOQ9DwND59fOADnMWMkRD-b71NenQC86s4Nw>
+ <xmx:i1L-amM-e7Fm4SKomKU5mzHeT-rh0kjqRcGhQDceufdfKZ335P3hQWxn>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 18 Nov 2026 20:26:57 -0500 (EST)
+ 18 Nov 2026 20:36:10 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, stable@dpdk.org,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: Re: [PATCH v2] app/test: rewrite telemetry test in python
-Date: Thu, 19 Nov 2026 02:26:55 +0100
-Message-ID: <XfuFZ-HpQwi2KkquRcjNkg@monjalon.net>
-In-Reply-To: <20260812190224.678892-1-stephen@networkplumber.org>
-References: <20260724201541.801099-1-stephen@networkplumber.org>
- <20260812190224.678892-1-stephen@networkplumber.org>
+To: Kai Ji <kai.ji@intel.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH] app/wycheproof: avoid path check before opening vectors
+Date: Thu, 19 Nov 2026 02:36:07 +0100
+Message-ID: <Ad-bjAABQIuKcHhbeHhYgw@monjalon.net>
+In-Reply-To: <20261117154949.4153145-1-kai.ji@intel.com>
+References: <20261117154949.4153145-1-kai.ji@intel.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
@@ -113,24 +111,17 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-12/08/2026 21:01, Stephen Hemminger:
-> The test_telemetry.sh was failing with test timeout.
-> This was caused by the overhead of spawning a fresh dpdk-telemetry.py
-> for every command it walked. With every endpoint queried three times,
-> that is several hundred Python interpreter startups per run.
+17/11/2026 16:49, Kai Ji:
+> Checking the vector path with stat() before opening it leaves a
+> check/use race if the path changes between the two operations.
 > 
-> Replace the shell script with a python test that opens the telemetry
-> socket once and issues every command over that single connection.
+> Open the directory directly and fall back to file processing only
+> when opendir() fails with ENOTDIR. Propagate other directory-open
+> errors and remove the unused stat header.
 > 
-> Each reply is parsed as JSON and checked directly in Python.
-> This also drops the jq dependency.
+> Coverity issue: 360736
 > 
-> Bugzilla ID: 1972
-> Fixes: 9da71dc4f96e ("test: add test case for scripted telemetry commands")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+> Signed-off-by: Kai Ji <kai.ji@intel.com>
 
 Applied, thanks.
 
