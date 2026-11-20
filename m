@@ -2,30 +2,30 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A86660A2600
-	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Nov 2026 16:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1173A606A335
+	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Nov 2026 16:35:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=ASzk2oHG
+	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=ZQBJjQBZ
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 45AAF40655;
+	by mails.dpdk.org (Postfix) with ESMTP id E91594066C;
 	Fri, 20 Nov 2026 17:35:18 +0100 (CET)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.221])
- by mails.dpdk.org (Postfix) with ESMTPS id E7550402E3;
- Fri, 20 Nov 2026 17:35:12 +0100 (CET)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.222])
+ by mails.dpdk.org (Postfix) with ESMTPS id 8BDF540263
+ for <dev@dpdk.org>; Fri, 20 Nov 2026 17:35:13 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=p8z8eoIn9ljkcRoFq9hJlN47t+mxZamkx+UTzgmL2zU=;
- b=ASzk2oHG4EnmTW58w48zMq7mPQLyV3uyB6NgkKMpYollELuYpB4cv2/H8ar1S1
- gEYdw7h6DmBhsthS+/lJ8NZ/IhhCCBQu/1MQgl9gVxAEeEYf+NeeMLU+QUmXkcZo
- /aPeNudKr3xIEZXsDydzvvHIHoha9Wu4afAjDK94SwQAw=
+ MIME-Version; bh=/mq+9kpaWHIbCYxr4wkkpB1vCA3T/dGSu184htMereY=;
+ b=ZQBJjQBZb2cFe8kr1fpAF3aF52R0NChE/hEWZEyMYWRZlLQGn4JsmSPjVOp1V2
+ qHvuXiQfn1DKNArVsXA+FHI9Plg4D86zQKKut6FlmCuM5xcQUUVCCP4peo8d67sz
+ tr+VQ9veIoTPaq3dlTBjyXTfV1TH+f3+p7gHdZsbU6OOM=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
- Anatoly Burakov <anatoly.burakov@intel.com>, stable@dpdk.org
-Subject: [PATCH v8 04/28] net/hinic3: fix VXLAN VNI spec and mask write
-Date: Sat, 21 Nov 2026 00:34:29 +0800
-Message-ID: <20261120163454.1159-5-yejiacheng4@h-partners.com>
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH v8 05/28] net/hinic3: fix vport enable null dereference
+Date: Sat, 21 Nov 2026 00:34:30 +0800
+Message-ID: <20261120163454.1159-6-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.53.0.windows.2
 In-Reply-To: <20261120163454.1159-1-yejiacheng4@h-partners.com>
 References: <20261117155711.1048-1-yejiacheng4@h-partners.com>
@@ -33,13 +33,13 @@ References: <20261117155711.1048-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Ac8vCgCHL5q7dgBrCNqsBQ--.46998S6
-X-Coremail-Antispam: 1Uf129KBjvJXoW7CFWxAFy3XrW5CFyxGw47XFb_yoW8XF1xpF
- 4UG3yDXr4vqFW5Cwnrtw1fAFyYg3s7Jay3CFyDCa4ayryUZryxC3yfG3y2krnxKr1kJFyS
- yF4UCr4qy3Z0qaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j7SdgUUUUU=
+X-CM-TRANSID: Ac8vCgCHL5q7dgBrCNqsBQ--.46998S7
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Gr45XFy5XFW8CFyDZrW7twb_yoW8Jr15pF
+ WUWa92kr98KFW8tw1DJw1xAas0vw1xC34UKa45A3WYvFn8XFs0y3y7trZFvFyayrW3AF47
+ uF4I9FWqvryDt37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j8YFAUUUUU=
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNR6nsWsAdr4QFQAA3b
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiMx6nsWsAdr4LKAAA37
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,43 +56,37 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The VXLAN parser writes the flow item spec into key_mask and never
-populates the mask, so VNI matches against a wrong value. Store the spec
-into key_spec and the mask into key_mask.
+hinic3_set_vport_enable() dereferences hwdev->dev_handle in the
+declaration block, before checking hwdev. Move the dereference below the
+hwdev check so a NULL hwdev returns an error instead of crashing during
+early PF initialization.
 
-Fixes: efa3b9b36fc7 ("net/hinic3: add flow control and filters")
-Cc: stable@dpdk.org
+Fixes: 9204b6b7bb1a ("net/hinic3: split new/old command queue operations")
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- drivers/net/hinic3/hinic3_flow.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/net/hinic3/base/hinic3_nic_cfg.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/hinic3/hinic3_flow.c b/drivers/net/hinic3/hinic3_flow.c
-index 453b4369b3..1f686d4675 100644
---- a/drivers/net/hinic3/hinic3_flow.c
-+++ b/drivers/net/hinic3/hinic3_flow.c
-@@ -967,6 +967,7 @@ hinic3_flow_fdir_vxlan(struct rte_flow_error *error,
+diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.c b/drivers/net/hinic3/base/hinic3_nic_cfg.c
+index 5387626b98..1520f88a1b 100644
+--- a/drivers/net/hinic3/base/hinic3_nic_cfg.c
++++ b/drivers/net/hinic3/base/hinic3_nic_cfg.c
+@@ -443,12 +443,13 @@ int
+ hinic3_set_vport_enable(struct hinic3_hwdev *hwdev, bool enable)
  {
- 	const struct rte_flow_item_vxlan *spec_vxlan, *mask_vxlan;
- 	uint32_t vxlan_vni_id = 0;
-+	uint32_t vxlan_vni_id_mask = 0;
+ 	struct hinic3_vport_state en_state;
+-	struct hinic3_nic_dev *nic_dev = hwdev->dev_handle;
++	struct hinic3_nic_dev *nic_dev;
+ 	uint16_t out_size = sizeof(en_state);
+ 	int err;
  
- 	spec_vxlan = (const struct rte_flow_item_vxlan *)flow_item->spec;
- 	mask_vxlan = (const struct rte_flow_item_vxlan *)flow_item->mask;
-@@ -990,8 +991,11 @@ hinic3_flow_fdir_vxlan(struct rte_flow_error *error,
- 	}
+ 	if (!hwdev)
+ 		return -EINVAL;
++	nic_dev = hwdev->dev_handle;
  
- 	memcpy(((uint8_t *)&vxlan_vni_id + 1), spec_vxlan->vni, 3);
--	filter->fdir_filter.key_mask.tunnel.tunnel_id =
-+	filter->fdir_filter.key_spec.tunnel.tunnel_id =
- 		rte_be_to_cpu_32(vxlan_vni_id);
-+	memcpy(((uint8_t *)&vxlan_vni_id_mask + 1), mask_vxlan->vni, 3);
-+	filter->fdir_filter.key_mask.tunnel.tunnel_id =
-+		rte_be_to_cpu_32(vxlan_vni_id_mask);
- 	return 0;
- }
- 
+ 	memset(&en_state, 0, sizeof(en_state));
+ 	en_state.func_id = hinic3_global_func_id(hwdev);
 -- 
 2.33.0
 
