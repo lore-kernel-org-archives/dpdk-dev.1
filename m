@@ -2,30 +2,31 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ADF1606A337
-	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Nov 2026 16:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C9C606A33D
+	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Nov 2026 16:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=aS7kno4G
+	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=PtPZMFmR
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4095D40DD2;
-	Fri, 20 Nov 2026 17:35:42 +0100 (CET)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.223])
- by mails.dpdk.org (Postfix) with ESMTPS id 01AF440684
- for <dev@dpdk.org>; Fri, 20 Nov 2026 17:35:19 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 0D67740DF6;
+	Fri, 20 Nov 2026 17:35:43 +0100 (CET)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.220])
+ by mails.dpdk.org (Postfix) with ESMTPS id D8FF740612
+ for <dev@dpdk.org>; Fri, 20 Nov 2026 17:35:20 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=ib1giLwYgDOSEHyFkAw36HZrrG/8PyFmgim3l/mRhLA=;
- b=aS7kno4G68oZYpBjZrsPtmtPy4A5zf626FhipA/llu74HJlStli6dEno0h0x2m
- hkUdf75cnn8gIoyG1okjTU9AVOwIPZqgb3XSij0aqAeInNTrdrvjZurAXGpTjA4o
- hC4hHhFWPV1QOtUEKwE+sM/egZOPit2T3FPHMPryGYzI4=
+ MIME-Version; bh=gBZJVTVgqaj8PnKnMKkr/8E5WRRfdphdxTZlSsy3fuI=;
+ b=PtPZMFmRzjjH0vPzXHZRt+D+c/gnl4Dz7+ZdmpF2ucsPyVGeJ2/76yr0Udle89
+ Sy3Cmh5Mr8nrBZGQGtEXZAJVzjyIz315R+aq8EThn4hTavQF6Qj5zejjAJlpARb6
+ 9AVic5SLlZ8bdZXq23afIARu6SEyEYB6tTbI4gCuLkeRk=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
  Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v8 22/28] net/hinic3: add compact CQE Rx path and ptype table
-Date: Sat, 21 Nov 2026 00:34:47 +0800
-Message-ID: <20261120163454.1159-23-yejiacheng4@h-partners.com>
+Subject: [PATCH v8 25/28] net/hinic3: split Tx burst function for compact task
+ support
+Date: Sat, 21 Nov 2026 00:34:50 +0800
+Message-ID: <20261120163454.1159-26-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.53.0.windows.2
 In-Reply-To: <20261120163454.1159-1-yejiacheng4@h-partners.com>
 References: <20261117155711.1048-1-yejiacheng4@h-partners.com>
@@ -33,13 +34,13 @@ References: <20261117155711.1048-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Ac8vCgCHL5q7dgBrCNqsBQ--.46998S24
-X-Coremail-Antispam: 1Uf129KBjvAXoWDWw4xJrWDtF13WFW5ZFy3twb_yoWrtF43Co
- WfXr1ayrn3tr4xCrWjgrn2kFWDJrWqv39Yy3909392qa47XFy5tF9xtw1rJFy0qa93CFnx
- AF97J39rtwsrZ34Dn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUziiSDUUUU
+X-CM-TRANSID: Ac8vCgCHL5q7dgBrCNqsBQ--.46998S27
+X-Coremail-Antispam: 1Uf129KBjvAXoWfWFWUGw1fur18XryrAry7Jrb_yoW5KF48to
+ WSqr15trn2yryxCayj9w4DWF1DtrWvgFZ8Jw4Ykr4Iq3WUXryUtayayw1rX3W0qr98C3Zr
+ A3WfGwnFyrsxJw4Un29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+ AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU2UDGUUUUU
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNAWps2sAdsUMZwAA3Y
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiMwaps2sAdsYLOgAA3F
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,1437 +57,1019 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Add a precomputed ptype table and a compact CQE Rx burst function, and
-add the rx_cqe_compact_en device argument that selects between the
-compact and the separate CQE format. The request is honoured only on the
-NICs that report the SW compact CQE capability, so a NIC without compact
-CQE support always keeps the separate format.
+The compact task and normal Tx paths share one burst function, which
+interleaves two WQE formats in the same loop. Split out a dedicated
+compact task entry point and select it by the
+NIC_F_TX_WQE_COMPACT_TASK feature bit, so the Tx WQE task format always
+matches the hardware capability rather than the NIC model. The SP230
+and the SP560 use the compact task WQE, the SP620 uses the scalar task
+WQE.
 
-The same value drives the compact RQ WQE, the firmware vport flag and
-the Rx burst.
+Selecting the burst once at device init also makes the per-queue
+capability copy redundant: the compact task burst runs only when the same
+feature bit is set, so its test of txq->tx_wqe_compact_task is always true
+and the scalar WQE fallback it guarded is unreachable. Remove the field and
+the dead branch; the scalar burst already derives its WQE count from the
+offload flags directly.
 
-Only report the inner L4 types that the driver also advertises in the
-supported ptype set. Inner IPv4 fragments, ICMP and ESP are
-firmware-reserved values that the current hardware does not produce, so
-drop those branches and fall back to the inner non-fragment type.
+Stop the burst at the first packet that cannot be enqueued and leave that
+mbuf to the caller, so the returned count stays a contiguous consumed
+prefix as rte_eth_tx_burst() requires. Use the returned count for the
+statistics directly, since the per-burst packet counter was always equal
+to it.
 
-A compact CQE reports the L3 and L4 checksum result in a single error
-value, and the failure can be in either the inner or the outer header.
-The layer cannot be told apart, so keep the checksum result unknown and
-only account for the error in the statistics.
+Clear the per-packet offload state before a packet is filled, guard the
+first prefetch against an empty burst, and drop the per-packet logs from
+the data path.
 
-That combined mapping applies only to the compact RQ WQE: with the
-separate WQE format the same field is a bitmap where bit 0 means an IPv4
-header checksum error.
+Clear queue_info per packet in the scalar burst for SQ_WQE_COMPACT_TYPE:
+a compact WQE has no SQ control section, so the scalar burst does not
+fill its 4-byte task, while a NIC using the compact task WQE carries the
+task in queue_info.
 
-The SP230 reports the HW compact CQE feature bit and always uses the
-compact Rx mode, while the SP560 reports the SW compact CQE feature bit
-and follows "rx_cqe_compact_en". When the separate mode is selected, the
-SW compact CQE capability is cleared as well so that the RQ context, the
-CQ attributes and the vport flag stay in the same mode.
+Accept tunnel packets by the tunnel type instead of a feature bit;
+VXLAN_GPE TSO and IPIP TSO stay rejected at DEBUG level. The scalar
+burst is only selected for a NIC that does not report the
+NIC_F_TX_WQE_COMPACT_TASK bit, so its IPIP check no longer needs the NIC
+model. Drop the unused nic_dev argument from
+hinic3_get_inner_l3_offset() and hinic3_get_tx_offload(), and the now
+redundant enum nic_type argument from hinic3_set_tx_offload(); the error
+paths still stop with break and leave the mbuf to the caller.
+
+The scalar path builds the SQ control section from the local queue_info,
+which is assembled from TSO, PLDOFF, MSS and UC only. The TCPUDP_CS bit,
+previously set from the tunnel offload flags for VXLAN, VXLAN-GPE and
+GENEVE, is therefore no longer set on this path, while the compact task
+path keeps setting it. This changes the Tx descriptor only for NICs that
+select the scalar burst.
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- doc/guides/nics/hinic3.rst               |   6 +
- doc/guides/rel_notes/release_26_11.rst   |   1 +
- drivers/net/hinic3/base/hinic3_nic_cfg.c |   3 +-
- drivers/net/hinic3/hinic3_ethdev.c       | 127 +++--
- drivers/net/hinic3/hinic3_ethdev.h       |   8 +-
- drivers/net/hinic3/hinic3_rx.c           | 611 +++++++++++++++++++----
- drivers/net/hinic3/hinic3_rx.h           | 205 ++++----
- 7 files changed, 715 insertions(+), 246 deletions(-)
+ doc/guides/nics/hinic3.rst             |   7 +
+ doc/guides/rel_notes/release_26_11.rst |   1 +
+ drivers/net/hinic3/hinic3_ethdev.c     |  35 +-
+ drivers/net/hinic3/hinic3_ethdev.h     |   1 -
+ drivers/net/hinic3/hinic3_tx.c         | 527 +++++++++++++++++++++----
+ drivers/net/hinic3/hinic3_tx.h         |  45 +--
+ 6 files changed, 473 insertions(+), 143 deletions(-)
 
 diff --git a/doc/guides/nics/hinic3.rst b/doc/guides/nics/hinic3.rst
-index cb2d696a94..38f4a2236a 100644
+index 1b771a510a..47e6a88132 100644
 --- a/doc/guides/nics/hinic3.rst
 +++ b/doc/guides/nics/hinic3.rst
-@@ -61,6 +61,12 @@ The following parameters are supported:
- ``tx_coalescing_time`` (default ``2``)
-    Tx completion coalescing time, in microseconds.
+@@ -7,6 +7,13 @@ HINIC3 Poll Mode Driver
+ The hinic3 PMD (**librte_net_hinic3**) provides poll mode driver support
+ for 25Gbps/100Gbps/200Gbps/400Gbps Huawei SP230, SP560 and SP620 series Network Adapters.
  
-+``rx_cqe_compact_en`` (default ``1``)
-+   Enable (``1``) or disable (``0``) compact CQE mode. The SP230 reports the
-+   HW compact CQE feature bit and always uses the compact Rx mode; the SP560
-+   reports the SW compact CQE feature bit and follows this setting; the SP620
-+   reports neither.
++The Tx WQE task format is chosen from the firmware capabilities rather
++than from the NIC model: the SP230 and the SP560 use the compact task
++WQE, while the SP620 uses the scalar task WQE.
 +
- ``rx_cqe_coalesce_num`` (default ``7``)
-    Rx CQE coalescing count, in units of 8 packets.
++The compact CQE is likewise a firmware capability. The SP620 does not
++report it, so it always uses the separate CQE format.
++
  
+ Features
+ --------
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 10ba88a529..06b6d3fecc 100644
+index 65472908df..89a182a17a 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -176,6 +176,7 @@ New Features
-   * Added mailbox message counter reporting through the device private dump API.
-   * Added support for the SP560 NIC.
+@@ -178,6 +178,7 @@ New Features
    * Added device parameters for runtime configuration.
-+  * Added a compact CQE receive data path.
+   * Added a compact CQE receive data path.
+   * Extended TCP segmentation offload (TSO) to 255 segments.
++  * Added a compact task transmit data path.
  
  * **Updated Intel iavf driver.**
  
-diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.c b/drivers/net/hinic3/base/hinic3_nic_cfg.c
-index 7766acfb87..c6ebf7f4c4 100644
---- a/drivers/net/hinic3/base/hinic3_nic_cfg.c
-+++ b/drivers/net/hinic3/base/hinic3_nic_cfg.c
-@@ -455,8 +455,7 @@ hinic3_set_vport_enable(struct hinic3_hwdev *hwdev, bool enable)
- 	en_state.func_id = hinic3_global_func_id(hwdev);
- 	en_state.state = enable ? 1 : 0;
- 	en_state.num_qps = nic_dev->num_rqs;
--	en_state.rx_compact_wqe_en = HINIC3_SUPPORT_RX_HW_COMPACT_CQE(nic_dev) ||
--				     HINIC3_SUPPORT_RX_SW_COMPACT_CQE(nic_dev);
-+	en_state.rx_compact_wqe_en = nic_dev->config.rx_cqe_compact_en;
- 
- 	err = hinic3_msg_to_mgmt_sync(hwdev, HINIC3_MOD_L2NIC,
- 				      HINIC3_NIC_CMD_SET_VPORT_ENABLE,
 diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index f9968fe89f..ebd7988436 100644
+index 68fe3bcc7f..880b76f8c8 100644
 --- a/drivers/net/hinic3/hinic3_ethdev.c
 +++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -1195,8 +1195,7 @@ hinic3_rx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
- 	}
+@@ -1465,7 +1465,6 @@ hinic3_tx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
+ 			(HINIC3_COS_NUM_MAX - 1) & nic_dev->cos_mask];
  
- 	/* If NIC support compact CQE, use compact wqe as default. */
--	if (HINIC3_SUPPORT_RX_HW_COMPACT_CQE(nic_dev) ||
--	    HINIC3_SUPPORT_RX_SW_COMPACT_CQE(nic_dev)) {
-+	if (nic_dev->config.rx_cqe_compact_en) {
- 		rxq->wqe_type = HINIC3_COMPACT_RQ_WQE;
- 	} else {
- 		if (buf_size >= HINIC3_RX_BUF_SIZE_4K &&
-@@ -1256,8 +1255,7 @@ hinic3_rx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
- 		goto alloc_rx_info_fail;
- 	}
+ 	txq->tx_deferred_start = tx_conf->tx_deferred_start;
+-	txq->tx_wqe_compact_task = HINIC3_SUPPORT_TX_WQE_COMPACT_TASK(nic_dev);
  
--	if (HINIC3_SUPPORT_RX_HW_COMPACT_CQE(nic_dev) ||
--	    HINIC3_SUPPORT_RX_SW_COMPACT_CQE(nic_dev)) {
-+	if (nic_dev->config.rx_cqe_compact_en) {
- 		ci_mz = hinic3_dma_zone_reserve(dev, "hinic3_ci_mz", qid,
- 						sizeof(*rxq->rq_ci),
- 						RTE_CACHE_LINE_SIZE, (int)socket_id);
-@@ -1496,8 +1494,7 @@ hinic3_rx_queue_release(struct rte_eth_dev *dev, uint16_t queue_id)
+ 	ci_mz = hinic3_dma_zone_reserve(dev, "hinic3_sq_ci", qid,
+ 					HINIC3_CI_Q_ADDR_SIZE,
+@@ -3932,14 +3931,6 @@ static const struct eth_dev_ops hinic3_pmd_vf_ops = {
+ 	.eth_dev_priv_dump             = hinic3_eth_dev_priv_dump,
+ };
  
- 	hinic3_free_rxq_mbufs(rxq);
- 
--	if (HINIC3_SUPPORT_RX_HW_COMPACT_CQE(nic_dev) ||
--	    HINIC3_SUPPORT_RX_SW_COMPACT_CQE(nic_dev))
-+	if (nic_dev->config.rx_cqe_compact_en)
- 		hinic3_memzone_free(rxq->ci_mz);
- 	else
- 		hinic3_memzone_free(rxq->cqe_mz);
-@@ -2354,6 +2351,8 @@ hinic3_dev_release(struct rte_eth_dev *eth_dev)
- 
- 	rte_free(nic_dev->hwdev);
- 	nic_dev->hwdev = NULL;
-+	rte_free(nic_dev->ptype_tbl);
-+	nic_dev->ptype_tbl = NULL;
- }
- 
- /**
-@@ -3334,6 +3333,40 @@ hinic3_dev_xstats_get_names(struct rte_eth_dev *dev,
- 	return count;
- }
- 
-+static const uint32_t *
-+hinic3_dev_supported_ptypes_get(__rte_unused struct rte_eth_dev *dev, size_t *no_of_elements)
-+{
-+	static const uint32_t ptypes[] = {
-+		RTE_PTYPE_L2_ETHER,
-+		RTE_PTYPE_L2_ETHER_FCOE,
-+		RTE_PTYPE_L2_ETHER_NSH,
-+		RTE_PTYPE_L3_IPV4_EXT_UNKNOWN,
-+		RTE_PTYPE_L3_IPV6_EXT_UNKNOWN,
-+		RTE_PTYPE_L4_TCP,
-+		RTE_PTYPE_L4_UDP,
-+		RTE_PTYPE_L4_SCTP,
-+		RTE_PTYPE_L4_NONFRAG,
-+		RTE_PTYPE_L4_FRAG,
-+		RTE_PTYPE_L4_ICMP,
-+		RTE_PTYPE_L4_IGMP,
-+		RTE_PTYPE_L4_ESP,
-+		RTE_PTYPE_TUNNEL_IP,
-+		RTE_PTYPE_TUNNEL_GRE,
-+		RTE_PTYPE_TUNNEL_VXLAN,
-+		RTE_PTYPE_TUNNEL_VXLAN_GPE,
-+		RTE_PTYPE_TUNNEL_GENEVE,
-+		RTE_PTYPE_INNER_L2_ETHER,
-+		RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN,
-+		RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN,
-+		RTE_PTYPE_INNER_L4_TCP,
-+		RTE_PTYPE_INNER_L4_UDP,
-+		RTE_PTYPE_INNER_L4_SCTP,
-+		RTE_PTYPE_INNER_L4_NONFRAG,
-+	};
-+	*no_of_elements = RTE_DIM(ptypes);
-+	return ptypes;
-+}
-+
- static void
- hinic3_rxq_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
- 		    struct rte_eth_rxq_info *qinfo)
-@@ -3709,6 +3742,7 @@ hinic3_eth_dev_priv_dump(struct rte_eth_dev *dev, FILE *file)
- static const struct eth_dev_ops hinic3_pmd_ops = {
- 	.dev_configure                 = hinic3_dev_configure,
- 	.dev_infos_get                 = hinic3_dev_infos_get,
-+	.dev_supported_ptypes_get      = hinic3_dev_supported_ptypes_get,
- 	.fw_version_get                = hinic3_fw_version_get,
- 	.dev_set_link_up               = hinic3_dev_set_link_up,
- 	.dev_set_link_down             = hinic3_dev_set_link_down,
-@@ -3761,6 +3795,7 @@ static const struct eth_dev_ops hinic3_pmd_ops = {
- static const struct eth_dev_ops hinic3_pmd_vf_ops = {
- 	.dev_configure                 = hinic3_dev_configure,
- 	.dev_infos_get                 = hinic3_dev_infos_get,
-+	.dev_supported_ptypes_get      = hinic3_dev_supported_ptypes_get,
- 	.fw_version_get                = hinic3_fw_version_get,
- 	.dev_set_link_up               = hinic3_dev_set_link_up,
- 	.dev_set_link_down             = hinic3_dev_set_link_down,
-@@ -3813,17 +3848,6 @@ static void hinic3_nic_tx_rx_ops_init(struct hinic3_nic_dev *nic_dev)
- 		nic_dev->tx_ops->nic_tx_set_wqe_offload = hinic3_tx_set_compact_task_offload;
- 	else
- 		nic_dev->tx_ops->nic_tx_set_wqe_offload = hinic3_tx_set_normal_task_offload;
+-static void hinic3_nic_tx_rx_ops_init(struct hinic3_nic_dev *nic_dev)
+-{
+-	if (HINIC3_SUPPORT_TX_WQE_COMPACT_TASK(nic_dev))
+-		nic_dev->tx_ops->nic_tx_set_wqe_offload = hinic3_tx_set_compact_task_offload;
+-	else
+-		nic_dev->tx_ops->nic_tx_set_wqe_offload = hinic3_tx_set_normal_task_offload;
+-}
 -
--	if (HINIC3_SUPPORT_RX_HW_COMPACT_CQE(nic_dev) ||
--	    HINIC3_SUPPORT_RX_SW_COMPACT_CQE(nic_dev)) {
--		nic_dev->rx_ops->nic_rx_get_cqe_info = hinic3_rx_get_compact_cqe_info;
--		nic_dev->rx_ops->nic_rx_cqe_done = hinic3_rx_integrated_cqe_done;
--		nic_dev->rx_ops->nic_rx_poll_rq_empty = hinic3_poll_integrated_cqe_rq_empty;
--	} else {
--		nic_dev->rx_ops->nic_rx_get_cqe_info = hinic3_rx_get_cqe_info;
--		nic_dev->rx_ops->nic_rx_cqe_done = hinic3_rx_separate_cqe_done;
--		nic_dev->rx_ops->nic_rx_poll_rq_empty = hinic3_poll_rq_empty;
--	}
- }
- 
  /**
-@@ -3881,13 +3905,6 @@ hinic3_func_init(struct rte_eth_dev *eth_dev)
+  * Initialize the network function, including hardware configuration, memory
+  * allocation for data structures, MAC address setup, and interrupt enabling.
+@@ -3995,13 +3986,6 @@ hinic3_func_init(struct rte_eth_dev *eth_dev)
  		goto alloc_eth_addr_fail;
  	}
  
--	nic_dev->rx_ops = rte_zmalloc("rx_ops", sizeof(struct hinic3_nic_rx_ops), 0);
--	if (!nic_dev->rx_ops) {
--		PMD_DRV_LOG(ERR, "Allocate rx_ops memory failed");
+-	nic_dev->tx_ops = rte_zmalloc("tx_ops", sizeof(struct hinic3_nic_tx_ops), 0);
+-	if (!nic_dev->tx_ops) {
+-		PMD_DRV_LOG(ERR, "Allocate tx_ops memory failed");
 -		err = -ENOMEM;
--		goto alloc_rx_ops_fail;
+-		goto alloc_tx_ops_fail;
 -	}
 -
- 	nic_dev->tx_ops = rte_zmalloc("tx_ops", sizeof(struct hinic3_nic_tx_ops), 0);
- 	if (!nic_dev->tx_ops) {
- 		PMD_DRV_LOG(ERR, "Allocate tx_ops memory failed");
-@@ -3989,6 +4006,7 @@ hinic3_func_init(struct rte_eth_dev *eth_dev)
- 			    eth_dev->data->name);
- 		goto enable_intr_fail;
+ 	nic_dev->mc_list = rte_zmalloc("hinic3_mc",
+ 		HINIC3_MAX_MC_MAC_ADDRS * sizeof(struct rte_ether_addr), 0);
+ 	if (!nic_dev->mc_list) {
+@@ -4055,8 +4039,6 @@ hinic3_func_init(struct rte_eth_dev *eth_dev)
+ 		goto get_cap_fail;
  	}
-+
- 	tcam_info = &nic_dev->tcam;
- 	memset(tcam_info, 0, sizeof(struct hinic3_tcam_info));
- 	TAILQ_INIT(&tcam_info->tcam_list);
-@@ -4042,10 +4060,6 @@ hinic3_func_init(struct rte_eth_dev *eth_dev)
- 	nic_dev->tx_ops = NULL;
  
- alloc_tx_ops_fail:
--	rte_free(nic_dev->rx_ops);
--	nic_dev->rx_ops = NULL;
+-	hinic3_nic_tx_rx_ops_init(nic_dev);
 -
--alloc_rx_ops_fail:
+ 	err = hinic3_init_sw_rxtxqs(nic_dev);
+ 	if (err) {
+ 		PMD_DRV_LOG(ERR, "Init sw rxqs or txqs failed, dev_name: %s",
+@@ -4146,10 +4128,6 @@ hinic3_func_init(struct rte_eth_dev *eth_dev)
+ 	nic_dev->mc_list = NULL;
+ 
+ alloc_mc_list_fail:
+-	rte_free(nic_dev->tx_ops);
+-	nic_dev->tx_ops = NULL;
+-
+-alloc_tx_ops_fail:
  	rte_free(eth_dev->data->mac_addrs);
  	eth_dev->data->mac_addrs = NULL;
  
-@@ -4082,6 +4096,8 @@ hinic3_nic_common_args_check_handler(const char *key, const char *val, void *opa
- 		if (tmp > UINT8_MAX)
- 			goto out_of_range;
- 		config->tx_coalescing_time = tmp;
-+	} else if (strcmp(key, "rx_cqe_compact_en") == 0) {
-+		config->rx_cqe_compact_en = !!tmp;
- 	} else if (strcmp(key, "rx_cqe_coalesce_num") == 0) {
- 		if (tmp > UINT8_MAX)
- 			goto out_of_range;
-@@ -4105,6 +4121,7 @@ hinic3_nic_common_args_check_handler(const char *key, const char *val, void *opa
- static const char *const hinic3_nic_common_valid_args[] = {
- 	"tx_pending_limit",
- 	"tx_coalescing_time",
-+	"rx_cqe_compact_en",
- 	"rx_cqe_coalesce_num",
- 	"rx_cqe_timer_loop",
- 	NULL
-@@ -4121,6 +4138,7 @@ hinic3_nic_common_config_get(struct rte_pci_device *pci_dev,
- 	/* Set private param defaults. */
- 	config->tx_pending_limit = HINIC3_DEFAULT_TX_CI_PENDING_LIMIT;
- 	config->tx_coalescing_time = HINIC3_DEFAULT_TX_CI_COALESCING_TIME;
-+	config->rx_cqe_compact_en = HINIC3_RX_CQE_COMPACT_EN;
- 	config->rx_cqe_coalesce_num = HINIC3_RX_CQE_COALESCE_NUM;
- 	config->rx_cqe_timer_loop = HINIC3_RX_CQE_TIMER_LOOP;
+@@ -4336,7 +4314,6 @@ hinic3_dev_init(struct rte_eth_dev *eth_dev)
+ 	}
  
-@@ -4149,6 +4167,35 @@ hinic3_nic_common_config_get(struct rte_pci_device *pci_dev,
- 	return ret;
+ 	eth_dev->tx_pkt_prepare = hinic3_prep_pkts;
+-	eth_dev->tx_pkt_burst = hinic3_xmit_pkts;
+ 
+ 	/*
+ 	 * The Rx burst follows the same per-port CQE mode that drives the
+@@ -4347,6 +4324,18 @@ hinic3_dev_init(struct rte_eth_dev *eth_dev)
+ 	else
+ 		eth_dev->rx_pkt_burst = hinic3_recv_pkts;
+ 
++	/*
++	 * Select the burst from the firmware capability bit rather than the
++	 * NIC model: SP230/SP560 report NIC_F_TX_WQE_COMPACT_TASK and use the
++	 * compact-task burst, SP620 uses the scalar burst. The task-info bit
++	 * layout itself is model-specific (SQ_TASK_INFO0_* for SP620,
++	 * SQ_TASK_INFO_* for SP230/SP560).
++	 */
++	if (HINIC3_SUPPORT_TX_WQE_COMPACT_TASK(nic_dev))
++		eth_dev->tx_pkt_burst = hinic3_xmit_pkts_compact_task;
++	else
++		eth_dev->tx_pkt_burst = hinic3_xmit_pkts;
++
+ 	return 0;
  }
  
-+static void hinic3_nic_feature_init(struct hinic3_nic_dev *nic_dev)
+diff --git a/drivers/net/hinic3/hinic3_ethdev.h b/drivers/net/hinic3/hinic3_ethdev.h
+index dfa5bf8b8f..4600e37f0b 100644
+--- a/drivers/net/hinic3/hinic3_ethdev.h
++++ b/drivers/net/hinic3/hinic3_ethdev.h
+@@ -190,7 +190,6 @@ struct hinic3_nic_dev {
+ 	struct hinic3_fdir_rule_filter_list filter_fdir_rule_list;
+ 	uint8_t cos_map[HINIC3_COS_NUM_MAX];
+ 	struct hinic3_ptype_table *ptype_tbl;
+-	struct hinic3_nic_tx_ops *tx_ops;
+ 	enum nic_type nic_type; /**< NIC type. */
+ 
+ };
+diff --git a/drivers/net/hinic3/hinic3_tx.c b/drivers/net/hinic3/hinic3_tx.c
+index f9ae9df431..3f44814405 100644
+--- a/drivers/net/hinic3/hinic3_tx.c
++++ b/drivers/net/hinic3/hinic3_tx.c
+@@ -77,6 +77,30 @@ hinic3_get_and_update_sq_owner(struct hinic3_txq *sq, uint16_t curr_pi, uint16_t
+ 	return owner;
+ }
+ 
++static void *
++hinic3_get_sq_wqe(struct hinic3_txq *sq,
++		  struct hinic3_wqe_info *wqe_info)
 +{
-+	/*
-+	 * The SP230 reports the HW compact CQE feature bit
-+	 * (NIC_F_RX_HW_COMPACT_CQE, bit 20) and always uses the compact
-+	 * Rx mode. The SP560 reports the SW compact CQE feature bit
-+	 * (NIC_F_RX_SW_COMPACT_CQE, bit 27) and uses either mode. The
-+	 * SP620 reports neither.
-+	 */
-+	if (HINIC3_SUPPORT_RX_HW_COMPACT_CQE(nic_dev)) {
-+		nic_dev->config.rx_cqe_compact_en = HINIC3_RX_CQE_COMPACT_EN;
-+	} else if (HINIC3_SUPPORT_RX_SW_COMPACT_CQE(nic_dev)) {
-+		if (nic_dev->config.rx_cqe_compact_en == 0) {
-+			/*
-+			 * Drop the SW capability too, so the RQ context setup
-+			 * in hinic3_nic_io.c builds the separate-CQE layout.
-+			 */
-+			nic_dev->feature_cap &= ~NIC_F_RX_SW_COMPACT_CQE;
-+		}
-+	} else {
-+		nic_dev->config.rx_cqe_compact_en = 0;
++	uint16_t cur_pi = MASKED_QUEUE_IDX(sq, sq->prod_idx);
++	uint32_t end_pi;
++
++	end_pi = cur_pi + wqe_info->wqebb_cnt;
++	sq->prod_idx += wqe_info->wqebb_cnt;
++
++	wqe_info->owner = (uint8_t)(sq->owner);
++	wqe_info->pi = cur_pi;
++	wqe_info->wrapped = 0;
++
++	if (unlikely(end_pi >= sq->q_depth)) {
++		sq->owner = !sq->owner;
++
++		if (likely(end_pi > sq->q_depth))
++			wqe_info->wrapped = (uint8_t)(sq->q_depth - cur_pi);
 +	}
 +
-+	PMD_DRV_LOG(INFO, "nic rx burst mode is %s.",
-+		    nic_dev->config.rx_cqe_compact_en ? "compact" : "separate");
++	return NIC_WQE_ADDR(sq, cur_pi);
 +}
 +
-+static int hinic3_dev_uninit(struct rte_eth_dev *dev);
-+
- static int
- hinic3_dev_init(struct rte_eth_dev *eth_dev)
+ static inline void
+ hinic3_put_sq_wqe(struct hinic3_txq *sq, struct hinic3_wqe_info *wqe_info)
  {
-@@ -4186,12 +4233,29 @@ hinic3_dev_init(struct rte_eth_dev *eth_dev)
- 	if (err)
- 		return err;
+@@ -97,9 +121,9 @@ hinic3_put_sq_wqe(struct hinic3_txq *sq, struct hinic3_wqe_info *wqe_info)
+  * Point to wqe_info of send queue(SQ).
+  */
+ static void
+-hinic3_set_wqe_combo(struct hinic3_txq *sq,
+-		     struct hinic3_sq_wqe_combo *wqe_combo,
+-		     struct hinic3_wqe_info *wqe_info)
++hinic3_set_wqe_combo_compact_task(struct hinic3_txq *sq,
++				 struct hinic3_sq_wqe_combo *wqe_combo,
++				 struct hinic3_wqe_info *wqe_info)
+ {
+ 	uint16_t tmp_pi;
  
--	if (rte_eal_process_type() == RTE_PROC_PRIMARY)
-+	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
- 		nic_dev->config = config;
-+		hinic3_nic_feature_init(nic_dev);
+@@ -124,6 +148,62 @@ hinic3_set_wqe_combo(struct hinic3_txq *sq,
+ 	wqe_info->owner = hinic3_get_and_update_sq_owner(sq, wqe_info->pi, wqe_info->wqebb_cnt);
+ }
+ 
++/**
++ * Sets the WQE combination information in the transmit queue (SQ).
++ *
++ * @param[in] sq
++ * Point to send queue.
++ * @param[out] wqe_combo
++ * Point to wqe_combo of send queue(SQ).
++ * @param[in] wqe_info
++ * Point to wqe_info of send queue(SQ).
++ */
++static void
++hinic3_set_wqe_combo(struct hinic3_txq *sq,
++		     struct hinic3_sq_wqe_combo *wqe_combo,
++		     struct hinic3_sq_wqe *wqe,
++		     struct hinic3_wqe_info *wqe_info)
++{
++	wqe_combo->hdr = &wqe->compact_wqe.wqe_desc;
 +
-+		err = hinic3_init_rx_ptype_table(eth_dev);
-+		if (err) {
-+			PMD_DRV_LOG(ERR, "Failed to create ptype_table.");
-+			hinic3_dev_uninit(eth_dev);
-+			return err;
++	if (wqe_info->offload) {
++		if (wqe_info->wrapped == HINIC3_TX_TASK_WRAPPED) {
++			wqe_combo->task = (struct hinic3_sq_task *)
++				(void *)sq->sq_head_addr;
++			wqe_combo->bds_head = (struct hinic3_sq_bufdesc *)
++				(void *)(sq->sq_head_addr + sq->wqebb_size);
++		} else if (wqe_info->wrapped == HINIC3_TX_BD_DESC_WRAPPED) {
++			wqe_combo->task = &wqe->extend_wqe.task;
++			wqe_combo->bds_head = (struct hinic3_sq_bufdesc *)
++				(void *)(sq->sq_head_addr);
++		} else {
++			wqe_combo->task = &wqe->extend_wqe.task;
++			wqe_combo->bds_head = wqe->extend_wqe.buf_desc;
 +		}
-+	}
- 
--	eth_dev->rx_pkt_burst = hinic3_recv_pkts;
--	eth_dev->tx_pkt_burst = hinic3_xmit_pkts;
- 	eth_dev->tx_pkt_prepare = hinic3_prep_pkts;
-+	eth_dev->tx_pkt_burst = hinic3_xmit_pkts;
 +
-+	/*
-+	 * The Rx burst follows the same per-port CQE mode that drives the
-+	 * RQ WQE type, the CI/CQE memzone and the ptype table.
-+	 */
-+	if (nic_dev->config.rx_cqe_compact_en)
-+		eth_dev->rx_pkt_burst = hinic3_recv_pkts_compact_cqe;
-+	else
-+		eth_dev->rx_pkt_burst = hinic3_recv_pkts;
++		wqe_combo->wqe_type = SQ_WQE_EXTENDED_TYPE;
++		wqe_combo->task_type = SQ_WQE_TASKSECT_16BYTES;
++		return;
++	}
++
++	if (wqe_info->wrapped == HINIC3_TX_TASK_WRAPPED) {
++		wqe_combo->bds_head = (struct hinic3_sq_bufdesc *)
++				(void *)(sq->sq_head_addr);
++	} else {
++		wqe_combo->bds_head =
++			(struct hinic3_sq_bufdesc *)(&wqe->extend_wqe.task);
++	}
++
++	if (wqe_info->wqebb_cnt > 1) {
++		wqe_combo->wqe_type = SQ_WQE_EXTENDED_TYPE;
++		wqe_combo->task_type = SQ_WQE_TASKSECT_4BYTES;
++		/* This section used as vlan insert, needs to clear */
++		wqe_combo->bds_head->rsvd = 0;
++	} else {
++		wqe_combo->wqe_type = SQ_WQE_COMPACT_TYPE;
++	}
++}
++
+ int
+ hinic3_start_all_sqs(struct rte_eth_dev *eth_dev)
+ {
+@@ -411,21 +491,17 @@ static inline void hinic3_calculate_phdr_checksum(struct rte_mbuf *mbuf,
+ }
+ 
+ static int
+-hinic3_get_inner_l3_offset(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *mbuf,
+-			   uint16_t *inner_l3_offset)
++hinic3_get_inner_l3_offset(struct rte_mbuf *mbuf, uint16_t *inner_l3_offset)
+ {
+ 	uint64_t ol_flags = mbuf->ol_flags;
+ 	uint64_t tunnel_type = ol_flags & HINIC3_PKT_TX_TUNNEL_MASK;
+ 
+-	if (tunnel_type) {
+-		if (!((tunnel_type == HINIC3_PKT_TX_TUNNEL_VXLAN &&
+-		       HINIC3_SUPPORT_VXLAN_OFFLOAD(nic_dev)) ||
+-		      (tunnel_type == HINIC3_PKT_TX_TUNNEL_GENEVE &&
+-		       HINIC3_SUPPORT_GENEVE_OFFLOAD(nic_dev)) ||
+-		      (tunnel_type == HINIC3_PKT_TX_TUNNEL_IPIP &&
+-		       HINIC3_SUPPORT_IPXIP_OFFLOAD(nic_dev))))
+-			return -EINVAL;
+-	}
++	if (tunnel_type &&
++	    tunnel_type != HINIC3_PKT_TX_TUNNEL_VXLAN &&
++	    tunnel_type != HINIC3_PKT_TX_TUNNEL_GENEVE &&
++	    tunnel_type != HINIC3_PKT_TX_TUNNEL_VXLAN_GPE &&
++	    tunnel_type != HINIC3_PKT_TX_TUNNEL_IPIP)
++		return -EINVAL;
+ 
+ #ifdef RTE_LIBRTE_ETHDEV_DEBUG
+ 	if (rte_validate_tx_offload(mbuf) != 0)
+@@ -472,7 +548,6 @@ hinic3_get_inner_l3_offset(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *mbuf
+ 	return 0;
+ }
+ 
+-
+ uint16_t
+ hinic3_prep_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ {
+@@ -489,7 +564,7 @@ hinic3_prep_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 		if (!(mbuf->ol_flags & HINIC3_TX_OFFLOAD_MASK))
+ 			continue;
+ 
+-		ret = hinic3_get_inner_l3_offset(nic_dev, mbuf, &inner_l3_offset);
++		ret = hinic3_get_inner_l3_offset(mbuf, &inner_l3_offset);
+ 		if (unlikely(ret)) {
+ 			rte_errno = -ret;
+ 			return i;
+@@ -531,33 +606,15 @@ hinic3_prep_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 	return i;
+ }
+ 
+-void
+-hinic3_tx_set_normal_task_offload(struct hinic3_wqe_info *wqe_info,
+-				  struct hinic3_sq_wqe_combo *wqe_combo)
++static inline void hinic3_set_vlan_tx_offload(struct hinic3_sq_task *task,
++					      uint16_t vlan_tag, uint8_t vlan_type)
+ {
+-	struct hinic3_sq_task *task = wqe_combo->task;
+-	struct hinic3_offload_info *offload_info = &wqe_info->offload_info;
+-
+-	task->pkt_info0 = 0;
+-	task->pkt_info0 |= SQ_TASK_INFO0_SET(offload_info->inner_l4_en, INNER_L4_EN);
+-	task->pkt_info0 |= SQ_TASK_INFO0_SET(offload_info->inner_l3_en, INNER_L3_EN);
+-	task->pkt_info0 |= SQ_TASK_INFO0_SET(offload_info->encapsulation, TUNNEL_FLAG);
+-	task->pkt_info0 |= SQ_TASK_INFO0_SET(offload_info->out_l3_en, OUT_L3_EN);
+-	task->pkt_info0 |= SQ_TASK_INFO0_SET(offload_info->out_l4_en, OUT_L4_EN);
+-	task->pkt_info0 = hinic3_hw_be32(task->pkt_info0);
+-
+-	if (wqe_combo->task_type == SQ_WQE_TASKSECT_16BYTES) {
+-		task->ip_identify = 0;
+-		task->pkt_info2 = 0;
+-		task->vlan_offload = 0;
+-		task->vlan_offload = SQ_TASK_INFO3_SET(offload_info->vlan_tag, VLAN_TAG) |
+-				     SQ_TASK_INFO3_SET(offload_info->vlan_sel, VLAN_TYPE) |
+-				     SQ_TASK_INFO3_SET(offload_info->vlan_valid, VLAN_TAG_VALID);
+-		task->vlan_offload = hinic3_hw_be32(task->vlan_offload);
+-	}
++	task->vlan_offload = SQ_TASK_INFO3_SET(vlan_tag, VLAN_TAG) |
++			     SQ_TASK_INFO3_SET(vlan_type, VLAN_TYPE) |
++			     SQ_TASK_INFO3_SET(1U, VLAN_TAG_VALID);
+ }
+ 
+-void
++static void
+ hinic3_tx_set_compact_task_offload(struct hinic3_wqe_info *wqe_info,
+ 				   struct hinic3_sq_wqe_combo *wqe_combo)
+ {
+@@ -578,10 +635,9 @@ hinic3_tx_set_compact_task_offload(struct hinic3_wqe_info *wqe_info,
+ }
+ 
+ static int
+-hinic3_set_tx_offload(struct hinic3_nic_dev *nic_dev,
+-		      struct rte_mbuf *mbuf,
+-		      struct hinic3_sq_wqe_combo *wqe_combo,
+-		      struct hinic3_wqe_info *wqe_info)
++hinic3_set_tx_offload_compact_task(struct rte_mbuf *mbuf,
++				  struct hinic3_sq_wqe_combo *wqe_combo,
++				  struct hinic3_wqe_info *wqe_info)
+ {
+ 	uint64_t ol_flags = mbuf->ol_flags;
+ 	struct hinic3_offload_info *offload_info = &wqe_info->offload_info;
+@@ -618,7 +674,7 @@ hinic3_set_tx_offload(struct hinic3_nic_dev *nic_dev,
+ 		case HINIC3_PKT_TX_L4_NO_CKSUM:
+ 			break;
+ 		default:
+-			PMD_DRV_LOG(INFO, "not support pkt type");
++			PMD_DRV_LOG(DEBUG, "not support pkt type");
+ 			return -EINVAL;
+ 		}
+ 	}
+@@ -630,11 +686,14 @@ hinic3_set_tx_offload(struct hinic3_nic_dev *nic_dev,
+ 		offload_info->encapsulation = 1;
+ 		wqe_info->queue_info.udp_dp_en = 1;
+ 		break;
++	case HINIC3_PKT_TX_TUNNEL_IPIP:
++		offload_info->encapsulation = 1;
++		break;
+ 	case 0:
+ 		break;
+ 
+ 	default:
+-		PMD_DRV_LOG(INFO, "not support tunnel pkt type");
++		PMD_DRV_LOG(DEBUG, "not support tunnel pkt type");
+ 		return -EINVAL;
+ 	}
+ 
+@@ -645,11 +704,111 @@ hinic3_set_tx_offload(struct hinic3_nic_dev *nic_dev,
+ 		offload_info->out_l4_en = 1;
+ 
+ set_tx_wqe_offload:
+-	nic_dev->tx_ops->nic_tx_set_wqe_offload(wqe_info, wqe_combo);
++	hinic3_tx_set_compact_task_offload(wqe_info, wqe_combo);
  
  	return 0;
  }
-@@ -4251,6 +4315,7 @@ RTE_PMD_REGISTER_PCI_TABLE(net_hinic3, pci_id_hinic3_map);
- RTE_PMD_REGISTER_PARAM_STRING(net_hinic3,
- 	"tx_pending_limit=<int> "
- 	"tx_coalescing_time=<int> "
-+	"rx_cqe_compact_en=<int> "
- 	"rx_cqe_coalesce_num=<int> "
- 	"rx_cqe_timer_loop=<int>");
  
-diff --git a/drivers/net/hinic3/hinic3_ethdev.h b/drivers/net/hinic3/hinic3_ethdev.h
-index f8d146f3bc..0763665885 100644
---- a/drivers/net/hinic3/hinic3_ethdev.h
-+++ b/drivers/net/hinic3/hinic3_ethdev.h
-@@ -64,6 +64,7 @@
- 
- #define HINIC3_DEFAULT_TX_CI_PENDING_LIMIT	2
- #define HINIC3_DEFAULT_TX_CI_COALESCING_TIME	2
-+#define HINIC3_RX_CQE_COMPACT_EN		1
- #define HINIC3_RX_CQE_TIMER_LOOP		5
- #define HINIC3_RX_CQE_COALESCE_NUM		7
- #define HINIC3_COALESCING_UNIT_PKTS		8 /**< Coalescing unit: 8 packets. */
-@@ -115,6 +116,11 @@ enum nic_feature_cap {
- TAILQ_HEAD(hinic3_ethertype_filter_list, rte_flow);
- TAILQ_HEAD(hinic3_fdir_rule_filter_list, rte_flow);
- 
-+#define HINIC3_PTYPE_NUM 4096
-+struct hinic3_ptype_table {
-+	alignas(RTE_CACHE_LINE_SIZE) uint32_t ptype[HINIC3_PTYPE_NUM];
-+};
-+
- struct hinic3_nic_common_dev_config {
- 	unsigned int tx_pending_limit; /**< TX CI coalescing parameter pending_limit. */
- 	unsigned int tx_coalescing_time; /**< TX CI coalescing parameter coalescing_time. */
-@@ -179,7 +185,7 @@ struct hinic3_nic_dev {
- 	struct hinic3_ethertype_filter_list filter_ethertype_list;
- 	struct hinic3_fdir_rule_filter_list filter_fdir_rule_list;
- 	uint8_t cos_map[HINIC3_COS_NUM_MAX];
--	struct hinic3_nic_rx_ops *rx_ops;
-+	struct hinic3_ptype_table *ptype_tbl;
- 	struct hinic3_nic_tx_ops *tx_ops;
- 	enum nic_type nic_type; /**< NIC type. */
- 
-diff --git a/drivers/net/hinic3/hinic3_rx.c b/drivers/net/hinic3/hinic3_rx.c
-index eef4ab5a30..7061afeec4 100644
---- a/drivers/net/hinic3/hinic3_rx.c
-+++ b/drivers/net/hinic3/hinic3_rx.c
-@@ -1,16 +1,275 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  * Copyright(c) 2025 Huawei Technologies Co., Ltd
-  */
-+#include <rte_ether.h>
-+#include <rte_mbuf.h>
- 
- #include "base/hinic3_compat.h"
- #include "base/hinic3_hwif.h"
- #include "base/hinic3_hwdev.h"
- #include "base/hinic3_wq.h"
-+#include "base/hinic3_mgmt.h"
- #include "base/hinic3_nic_cfg.h"
- #include "hinic3_nic_io.h"
- #include "hinic3_ethdev.h"
-+#include "hinic3_tx.h"
- #include "hinic3_rx.h"
- 
-+#define HINIC3_RX_EMPTY_THRESHOLD 3
-+
-+static uint32_t
-+hinic3_get_l3_ptype(uint32_t ip_type)
++static int
++hinic3_set_tx_offload(struct rte_mbuf *mbuf,
++		      struct hinic3_sq_task *task,
++		      struct hinic3_wqe_info *wqe_info)
 +{
-+	uint32_t ptype = 0;
-+	if (ip_type == IPSU_METADATA_L3_TP_IPV4)
-+		ptype |= RTE_PTYPE_L3_IPV4_EXT_UNKNOWN;
-+	else if (ip_type == IPSU_METADATA_L3_TP_IPV6)
-+		ptype |= RTE_PTYPE_L3_IPV6_EXT_UNKNOWN;
-+	return ptype;
-+}
-+static uint32_t
-+hinic3_get_l4_ptype(uint32_t packet_type)
-+{
-+	int ptype = 0;
-+	switch (packet_type) {
-+	case IPSU_PKT_TYPE_NULL:
-+		break;
-+	case IPSU_PKT_TYPE_TCP:
-+		ptype |= RTE_PTYPE_L4_TCP;
-+		break;
-+	case IPSU_PKT_TYPE_UDP:
-+		ptype |= RTE_PTYPE_L4_UDP;
-+		break;
-+	case IPSU_PKT_TYPE_IPV4_FRAG:
-+		ptype |= RTE_PTYPE_L4_FRAG;
-+		break;
-+	case IPSU_PKT_TYPE_SCTP:
-+		ptype |= RTE_PTYPE_L4_SCTP;
-+		break;
-+	case IPSU_PKT_TYPE_ICMP:
-+		ptype |= RTE_PTYPE_L4_ICMP;
-+		break;
-+	case IPSU_PKT_TYPE_IGMP:
-+		ptype |= RTE_PTYPE_L4_IGMP;
-+		break;
-+	case IPSU_PKT_TYPE_ESP_OVER_IP:
-+		ptype |= RTE_PTYPE_L4_ESP;
-+		break;
-+	default:
-+		ptype |= RTE_PTYPE_L4_NONFRAG;
++	uint64_t ol_flags = mbuf->ol_flags;
++	uint16_t pld_offset = 0;
++	uint32_t queue_info = 0;
++	uint16_t vlan_tag;
++
++	task->pkt_info0 = 0;
++	task->ip_identify = 0;
++	task->pkt_info2 = 0;
++	task->vlan_offload = 0;
++
++	/* Vlan offload */
++	if (unlikely(ol_flags & HINIC3_PKT_TX_VLAN_PKT)) {
++		vlan_tag = mbuf->vlan_tci;
++		hinic3_set_vlan_tx_offload(task, vlan_tag, HINIC3_TX_TPID0);
++		task->vlan_offload = hinic3_hw_be32(task->vlan_offload);
 +	}
-+	return ptype;
-+}
 +
-+static uint32_t
-+hinic3_get_inner_l4_ptype(uint32_t packet_type)
-+{
-+	int ptype = 0;
-+	switch (packet_type) {
-+	case IPSU_PKT_TYPE_NULL:
-+		break;
-+	case IPSU_PKT_TYPE_TCP:
-+		ptype |= RTE_PTYPE_INNER_L4_TCP;
-+		break;
-+	case IPSU_PKT_TYPE_UDP:
-+		ptype |= RTE_PTYPE_INNER_L4_UDP;
-+		break;
-+	case IPSU_PKT_TYPE_SCTP:
-+		ptype |= RTE_PTYPE_INNER_L4_SCTP;
-+		break;
-+	case IPSU_PKT_TYPE_IGMP:
-+		ptype |= RTE_PTYPE_INNER_L4_NONFRAG;
-+		break;
-+	default:
-+		ptype |= RTE_PTYPE_INNER_L4_NONFRAG;
-+	}
-+	return ptype;
-+}
++	if (!(ol_flags & HINIC3_TX_CKSUM_OFFLOAD_MASK))
++		return 0;
 +
-+/**
-+ * Calculate the ptype value of given offload type.
-+ *
-+ * @param[in] offload_type
-+ *   The offload of Packet
-+ * @return
-+ *   Ptype value
-+ */
-+static uint32_t
-+hinic3_calc_rx_ptype_table(uint32_t offload_type, struct hinic3_nic_dev *nic_dev)
-+{
-+	uint32_t packet_type, ip_type, enc_l3_type, pkt_fmt;
-+	uint32_t ptype = RTE_PTYPE_UNKNOWN;
-+
-+	packet_type = HINIC3_GET_RX_PKT_TYPE(offload_type);
-+	ip_type = HINIC3_GET_RX_IP_TYPE(offload_type);
-+	enc_l3_type = HINIC3_GET_RX_ENC_L3_TYPE(offload_type);
-+	pkt_fmt = HINIC3_GET_RX_PKT_FORMAT(offload_type);
-+
-+	switch (pkt_fmt) {
-+	case IPSU_METADATA_FMT_NO_ENC:
-+		ptype |= RTE_PTYPE_L2_ETHER;
-+		ptype |= hinic3_get_l3_ptype(ip_type);
-+		ptype |= hinic3_get_l4_ptype(packet_type);
-+		break;
-+	case IPSU_METADATA_FMT_FC:
-+		ptype |= RTE_PTYPE_L2_ETHER_FCOE;
-+		break;
-+	case IPSU_METADATA_FMT_NSH:
-+		ptype |= RTE_PTYPE_L2_ETHER_NSH;
-+		break;
-+	/* IPinIP */
-+	case IPSU_METADATA_FMT_IPIP:
-+		ptype |= RTE_PTYPE_L2_ETHER;
-+		ptype |= RTE_PTYPE_TUNNEL_IP;
-+		if (!(nic_dev->feature_cap & NIC_F_TX_WQE_COMPACT_TASK)) {
-+			ptype |= hinic3_get_l3_ptype(ip_type);
-+		} else {
-+			ptype |= hinic3_get_l3_ptype(enc_l3_type);
-+			ptype |= hinic3_get_inner_l4_ptype(packet_type);
-+			if (ip_type == IPSU_METADATA_L3_TP_IPV4)
-+				ptype |= RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN;
-+			else if (ip_type == IPSU_METADATA_L3_TP_IPV6)
-+				ptype |= RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN;
++	/* Tso offload */
++	if (ol_flags & HINIC3_PKT_TX_TCP_SEG) {
++		if ((ol_flags & HINIC3_PKT_TX_TUNNEL_MASK) ==
++		    HINIC3_PKT_TX_TUNNEL_VXLAN_GPE)
++			return -EINVAL;
++		if ((ol_flags & HINIC3_PKT_TX_TUNNEL_MASK) ==
++		    HINIC3_PKT_TX_TUNNEL_IPIP) {
++			PMD_DRV_LOG(DEBUG, "IPinIP TSO is not supported on SP620");
++			return -EINVAL;
 +		}
-+		break;
-+	default:
-+	/* VXLAN, NVGRE, VXLAN_GPE, GENEVE */
-+		ptype |= RTE_PTYPE_L2_ETHER;
-+		ptype |= hinic3_get_l3_ptype(enc_l3_type);
++		pld_offset = wqe_info->payload_offset;
++		if ((pld_offset >> 1) > MAX_PAYLOAD_OFFSET)
++			return -EINVAL;
 +
-+		switch (pkt_fmt) {
-+		case IPSU_METADATA_FMT_VXLAN:
-+			ptype |= RTE_PTYPE_L4_UDP;
-+			ptype |= RTE_PTYPE_TUNNEL_VXLAN;
-+			ptype |= RTE_PTYPE_INNER_L2_ETHER;
-+			break;
-+		case IPSU_METADATA_FMT_NVGRE:
-+			ptype |= RTE_PTYPE_TUNNEL_GRE;
-+			if (!HINIC3_IS_SP560_NIC(nic_dev))
-+				return ptype;
-+			break;
-+		case IPSU_METADATA_FMT_GPE:
-+			ptype |= RTE_PTYPE_L4_UDP;
-+			ptype |= RTE_PTYPE_TUNNEL_VXLAN_GPE;
-+			break;
-+		case IPSU_METADATA_FMT_GENEVE:
-+			ptype |= RTE_PTYPE_L4_UDP;
-+			ptype |= RTE_PTYPE_TUNNEL_GENEVE;
-+			ptype |= RTE_PTYPE_INNER_L2_ETHER;
-+			break;
-+		default:
-+			ptype |= RTE_PTYPE_L4_NONFRAG;
-+			break;
-+		}
-+		if (ip_type == IPSU_METADATA_L3_TP_IPV4)
-+			ptype |= RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN;
-+		else if (ip_type == IPSU_METADATA_L3_TP_IPV6)
-+			ptype |= RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN;
-+		else
-+			return ptype;
-+		/* shift ptype to inner*/
-+		ptype |= hinic3_get_inner_l4_ptype(packet_type);
-+	}
-+	return ptype;
-+}
++		task->pkt_info0 |= SQ_TASK_INFO0_SET(1U, INNER_L4_EN);
++		task->pkt_info0 |= SQ_TASK_INFO0_SET(1U, INNER_L3_EN);
 +
-+static uint32_t
-+hinic3_calc_rx_ptype_compact_table(uint32_t offload_type)
-+{
-+	uint32_t packet_type, ip_type, pkt_fmt;
-+	uint32_t ptype = RTE_PTYPE_UNKNOWN;
++		queue_info |= SQ_CTRL_QUEUE_INFO_SET(1U, TSO);
++		queue_info |= SQ_CTRL_QUEUE_INFO_SET(pld_offset >> 1, PLDOFF);
 +
-+	pkt_fmt = HINIC3_RQ_COMPACT_CQE_STATUS_GET(offload_type << HINIC3_COMPACT_CQE_PTYPE_SHIFT,
-+						   PKT_FORMAT);
-+	ip_type = HINIC3_RQ_COMPACT_CQE_STATUS_GET(offload_type << HINIC3_COMPACT_CQE_PTYPE_SHIFT,
-+						   IP_TYPE);
-+	packet_type = HINIC3_RQ_COMPACT_CQE_STATUS_GET(offload_type <<
-+							HINIC3_COMPACT_CQE_PTYPE_SHIFT,
-+							PKT_TYPE);
-+
-+	switch (pkt_fmt) {
-+	case IPSU_METADATA_FMT_NO_ENC:
-+		ptype |= RTE_PTYPE_L2_ETHER;
-+		ptype |= hinic3_get_l3_ptype(ip_type);
-+		ptype |= hinic3_get_l4_ptype(packet_type);
-+		break;
-+	case IPSU_METADATA_FMT_FC:
-+		ptype |= RTE_PTYPE_L2_ETHER_FCOE;
-+		break;
-+	case IPSU_METADATA_FMT_NSH:
-+		ptype |= RTE_PTYPE_L2_ETHER_NSH;
-+		break;
-+	default:
-+	/* VXLAN, NVGRE, VXLAN_GPE, GENEVE, IPinIP */
-+		ptype |= RTE_PTYPE_L2_ETHER;
-+
-+		switch (pkt_fmt) {
-+		case IPSU_METADATA_FMT_VXLAN:
-+			ptype |= RTE_PTYPE_L4_UDP;
-+			ptype |= RTE_PTYPE_TUNNEL_VXLAN;
-+			ptype |= RTE_PTYPE_INNER_L2_ETHER;
-+			break;
-+		case IPSU_METADATA_FMT_NVGRE:
-+			ptype |= RTE_PTYPE_TUNNEL_GRE;
-+			return ptype;
-+		case IPSU_METADATA_FMT_GENEVE:
-+			ptype |= RTE_PTYPE_L4_UDP;
-+			ptype |= RTE_PTYPE_TUNNEL_GENEVE;
-+			ptype |= RTE_PTYPE_INNER_L2_ETHER;
-+			break;
-+
-+		case IPSU_METADATA_FMT_IPIP:
-+			ptype |= RTE_PTYPE_TUNNEL_IP;
-+			break;
-+		default:
-+			ptype |= RTE_PTYPE_L4_NONFRAG;
-+			break;
-+		}
-+		if (ip_type == IPSU_METADATA_L3_TP_IPV4)
-+			ptype |= RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN;
-+		else if (ip_type == IPSU_METADATA_L3_TP_IPV6)
-+			ptype |= RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN;
-+		else
-+			return ptype;
-+		/* shift ptype to inner*/
-+		ptype |= hinic3_get_inner_l4_ptype(packet_type);
-+	}
-+	return ptype;
-+}
-+
-+/**
-+ * Get receive queue local ci
-+ *
-+ * @param[in] rxq
-+ *   Receive queue
-+ * @return
-+ *   Receive queue local ci
-+ */
-+static inline uint16_t hinic3_get_rq_local_ci(struct hinic3_rxq *rxq)
-+{
-+	return MASKED_QUEUE_IDX(rxq, rxq->cons_idx);
-+}
-+
-+static inline uint16_t hinic3_get_rq_free_wqebb(struct hinic3_rxq *rxq)
-+{
-+	return rxq->delta - 1;
-+}
-+
-+/**
-+ * Update receive queue local ci
-+ *
-+ * @param[in] rxq
-+ *   Receive queue
-+ * @param[in] wqe_cnt
-+ *   Wqebb counters
-+ */
-+static inline void hinic3_update_rq_local_ci(struct hinic3_rxq *rxq,
-+					     uint16_t wqe_cnt)
-+{
-+	rxq->cons_idx += wqe_cnt;
-+	rxq->delta += wqe_cnt;
-+}
-+
- /**
-  * Get wqe from receive queue.
-  *
-@@ -62,6 +321,13 @@ hinic3_get_rq_local_pi(struct hinic3_rxq *rxq)
- 	return MASKED_QUEUE_IDX(rxq, rxq->prod_idx);
- }
- 
-+static inline uint16_t hinic3_get_rq_hw_ci(struct hinic3_rxq *rxq)
-+{
-+	struct hinic3_rq_ci_wb rq_ci;
-+	rq_ci.dw1.value = hinic3_hw_cpu32(rte_read32(&rxq->rq_ci->dw1.value));
-+	return rq_ci.dw1.bs.hw_ci;
-+}
-+
- uint16_t
- hinic3_rx_fill_wqe(struct hinic3_rxq *rxq)
- {
-@@ -508,6 +774,37 @@ hinic3_update_rss_config(struct rte_eth_dev *dev,
- 	return err;
- }
- 
-+/**
-+ * Initialize the receive packet type table
-+ * @param[in] dev
-+ *   Pointer to ethernet device structure.
-+ */
-+
-+int
-+hinic3_init_rx_ptype_table(struct rte_eth_dev *dev)
-+{
-+	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
-+	struct hinic3_ptype_table *tbl =
-+		rte_zmalloc("ptype_tbl", sizeof(struct hinic3_ptype_table), 0);
-+
-+	if (tbl == NULL)
-+		return -ENOMEM;
-+
-+	uint32_t *ptype = tbl->ptype;
-+	uint32_t i;
-+
-+	/* The ptype encoding follows the CQE format selected for this port. */
-+	if (nic_dev->config.rx_cqe_compact_en) {
-+		for (i = 0; i < HINIC3_PTYPE_NUM; i++)
-+			ptype[i] = hinic3_calc_rx_ptype_compact_table(i);
++		/* Set MSS value */
++		queue_info = SQ_CTRL_QUEUE_INFO_CLEAR(queue_info, MSS);
++		queue_info |= SQ_CTRL_QUEUE_INFO_SET(mbuf->tso_segsz, MSS);
 +	} else {
-+		for (i = 0; i < HINIC3_PTYPE_NUM; i++)
-+			ptype[i] = hinic3_calc_rx_ptype_table(i, nic_dev);
++		if (ol_flags & HINIC3_PKT_TX_IP_CKSUM)
++			task->pkt_info0 |= SQ_TASK_INFO0_SET(1U, INNER_L3_EN);
++
++		switch (ol_flags & HINIC3_PKT_TX_L4_MASK) {
++		case HINIC3_PKT_TX_TCP_CKSUM:
++		case HINIC3_PKT_TX_UDP_CKSUM:
++		case HINIC3_PKT_TX_SCTP_CKSUM:
++			task->pkt_info0 |= SQ_TASK_INFO0_SET(1U, INNER_L4_EN);
++			break;
++		case HINIC3_PKT_TX_L4_NO_CKSUM:
++			break;
++		default:
++			PMD_DRV_LOG(DEBUG, "not support pkt type");
++			return -EINVAL;
++		}
 +	}
-+	nic_dev->ptype_tbl = tbl;
++
++	/* For vxlan, also can support PKT_TX_TUNNEL_GENEVE/GRE, etc */
++	switch (ol_flags & HINIC3_PKT_TX_TUNNEL_MASK) {
++	case HINIC3_PKT_TX_TUNNEL_VXLAN:
++		task->pkt_info0 |= SQ_TASK_INFO0_SET(1U, TUNNEL_FLAG);
++		break;
++	case HINIC3_PKT_TX_TUNNEL_VXLAN_GPE:
++		task->pkt_info0 |= SQ_TASK_INFO0_SET(1U, TUNNEL_FLAG);
++		break;
++	case HINIC3_PKT_TX_TUNNEL_GENEVE:
++		task->pkt_info0 |= SQ_TASK_INFO0_SET(1U, TUNNEL_FLAG);
++		break;
++	case HINIC3_PKT_TX_TUNNEL_IPIP:
++		task->pkt_info0 |= SQ_TASK_INFO0_SET(1U, TUNNEL_FLAG);
++		break;
++	case 0:
++		break;
++	default:
++		/* For non UDP/GRE tunneling, drop the tunnel packet */
++		PMD_DRV_LOG(DEBUG, "not support tunnel pkt type");
++		return -EINVAL;
++	}
++
++	if (ol_flags & HINIC3_PKT_TX_OUTER_IP_CKSUM)
++		task->pkt_info0 |= SQ_TASK_INFO0_SET(1U, OUT_L3_EN);
++
++	if (ol_flags & HINIC3_PKT_TX_OUTER_UDP_CKSUM)
++		task->pkt_info0 |= SQ_TASK_INFO0_SET(1U, OUT_L4_EN);
++
++	task->pkt_info0 = hinic3_hw_be32(task->pkt_info0);
++	task->pkt_info2 = hinic3_hw_be32(task->pkt_info2);
++	wqe_info->queue_info_sp620 = queue_info;
 +	return 0;
 +}
 +
  /**
-  * Search given queue array to find position of given id.
-  * Return queue pos or queue_count if not found.
-@@ -604,7 +901,7 @@ hinic3_rx_queue_release_mbufs(struct hinic3_rxq *rxq)
- 	hinic3_update_rq_local_ci(rxq, nr_released);
- }
- 
--int
-+static int
- hinic3_poll_rq_empty(struct hinic3_rxq *rxq)
+  * Check whether the number of segments in the mbuf is valid.
+  *
+@@ -779,15 +938,16 @@ hinic3_non_tso_pkt_pre_process(struct rte_mbuf *mbuf, struct hinic3_wqe_info *wq
+  * Point to the mbuf to send.
+  * @param[in] wqe_info
+  * Point to wqe_info of send queue(SQ).
++ * @param[in] non_tso_max_pkt_len
++ *  Number of non_tso_max_pkt_len(SP230 is 9600, SP620/SP560 is 64K)
+  * @param[in] q_depth
+  *  Depth of the send queue, used to reject a WQE that can never fit.
+  * @return
+  * 0 as success, -EINVAL as failure.
+  */
+ static int
+-hinic3_get_tx_offload(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *mbuf,
+-		      struct hinic3_wqe_info *wqe_info, uint32_t non_tso_max_pkt_len,
+-		      uint16_t q_depth)
++hinic3_get_tx_offload(struct rte_mbuf *mbuf, struct hinic3_wqe_info *wqe_info,
++		      uint32_t non_tso_max_pkt_len, uint16_t q_depth)
  {
- 	uint64_t end;
-@@ -625,29 +922,21 @@ hinic3_poll_rq_empty(struct hinic3_rxq *rxq)
- 	return err;
- }
+ 	uint64_t ol_flags = mbuf->ol_flags;
+ 	uint16_t inner_l3_offset = 0;
+@@ -795,6 +955,13 @@ hinic3_get_tx_offload(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *mbuf,
  
--int
-+static int
- hinic3_poll_integrated_cqe_rq_empty(struct hinic3_rxq *rxq)
- {
- 	struct hinic3_rx_info *rx_info;
--	struct hinic3_rq_ci_wb rq_ci;
--	uint16_t sw_ci;
--	uint16_t hw_ci;
--	uint32_t val;
-+	uint16_t sw_ci, sw_pi, hw_ci;
-+	uint64_t end;
- 
- 	sw_ci = hinic3_get_rq_local_ci(rxq);
--	val = rte_read32(&rxq->rq_ci->dw1.value);
--	rq_ci.dw1.value = hinic3_hw_cpu32(val);
--	hw_ci = rq_ci.dw1.bs.hw_ci;
-+	sw_pi = hinic3_get_rq_local_pi(rxq);
-+	hw_ci = hinic3_get_rq_hw_ci(rxq);
- 
- 	if (HINIC3_IS_SP560_NIC(rxq->nic_dev)) {
--		uint16_t sw_pi = hinic3_get_rq_local_pi(rxq);
--		uint64_t end;
--
- 		end = cycles + msecs_to_cycles(HINIC3_FLUSH_QUEUE_TIMEOUT);
- 		do {
--			val = rte_read32(&rxq->rq_ci->dw1.value);
--			rq_ci.dw1.value = hinic3_hw_cpu32(val);
--			hw_ci = rq_ci.dw1.bs.hw_ci;
-+			hw_ci = hinic3_get_rq_hw_ci(rxq);
- 			if (sw_pi == hw_ci)
- 				break;
- 
-@@ -671,22 +960,33 @@ hinic3_poll_integrated_cqe_rq_empty(struct hinic3_rxq *rxq)
- 	return 0;
- }
- 
--void
--hinic3_dump_cqe_status(struct hinic3_rxq *rxq, uint32_t *cqe_done_cnt,
--		       uint32_t *cqe_hole_cnt, uint32_t *head_ci, uint32_t *head_done)
-+static void
-+hinic3_dump_cqe_status(struct hinic3_rxq *rxq)
- {
--	uint16_t sw_ci;
-+	volatile struct hinic3_rq_cqe *rx_cqe;
-+	uint16_t sw_ci, sw_pi, hw_ci;
-+	uint32_t head_ci, head_done;
- 	uint16_t avail_pkts = 0;
- 	uint16_t hit_done = 0;
- 	uint16_t cqe_hole = 0;
--	RTE_ATOMIC(uint32_t)status;
--	volatile struct hinic3_rq_cqe *rx_cqe;
-+	uint32_t status;
-+
-+	if (rxq->wqe_type == HINIC3_COMPACT_RQ_WQE) {
-+		sw_ci = hinic3_get_rq_local_ci(rxq);
-+		sw_pi = hinic3_get_rq_local_pi(rxq);
-+		hw_ci = hinic3_get_rq_hw_ci(rxq);
-+		PMD_DRV_LOG(ERR, "Poll rq empty timeout, eth_dev:%s, queue_idx:%d, mbuf_left:%d, sw_pi:%d, sw_ci:%d, hw_ci:%d",
-+			rxq->nic_dev->dev_name, rxq->q_id,
-+			rxq->q_depth - hinic3_get_rq_free_wqebb(rxq),
-+			sw_pi, sw_ci, hw_ci);
-+		return;
-+	}
- 
- 	sw_ci = hinic3_get_rq_local_ci(rxq);
- 	rx_cqe = &rxq->rx_cqe[sw_ci];
- 	status = rx_cqe->status;
--	*head_done = HINIC3_GET_RX_DONE(status);
--	*head_ci = sw_ci;
-+	head_done = HINIC3_GET_RX_DONE(status);
-+	head_ci = sw_ci;
- 
- 	for (sw_ci = 0; sw_ci < rxq->q_depth; sw_ci++) {
- 		rx_cqe = &rxq->rx_cqe[sw_ci];
-@@ -707,17 +1007,16 @@ hinic3_dump_cqe_status(struct hinic3_rxq *rxq, uint32_t *cqe_done_cnt,
- 		hit_done = 1;
- 	}
- 
--	*cqe_done_cnt = avail_pkts;
--	*cqe_hole_cnt = cqe_hole;
-+	PMD_DRV_LOG(ERR, "Poll rq empty timeout, eth_dev:%s, queue_idx:%d, mbuf_left:%d, cqe_done:%d, cqe_hole:%d, cqe[%d].done=%d",
-+		rxq->nic_dev->dev_name, rxq->q_id,
-+		rxq->q_depth - hinic3_get_rq_free_wqebb(rxq),
-+		avail_pkts, cqe_hole, head_ci, head_done);
- }
- 
- int
- hinic3_stop_rq(struct rte_eth_dev *eth_dev, struct hinic3_rxq *rxq)
- {
- 	struct hinic3_nic_dev *nic_dev = rxq->nic_dev;
--	uint32_t cqe_done_cnt = 0;
--	uint32_t cqe_hole_cnt = 0;
--	uint32_t head_ci, head_done;
- 	int err;
- 
- 	rte_atomic_store_explicit(&rxq->rss_en, 0, rte_memory_order_relaxed);
-@@ -766,23 +1065,21 @@ hinic3_stop_rq(struct rte_eth_dev *eth_dev, struct hinic3_rxq *rxq)
- 		goto rq_flush_failed;
- 	}
- 
--	err = nic_dev->rx_ops->nic_rx_poll_rq_empty(rxq);
-+	if (nic_dev->config.rx_cqe_compact_en)
-+		err = hinic3_poll_integrated_cqe_rq_empty(rxq);
-+	else
-+		err = hinic3_poll_rq_empty(rxq);
-+
- 	if (err) {
--		hinic3_dump_cqe_status(rxq, &cqe_done_cnt, &cqe_hole_cnt,
--				       &head_ci, &head_done);
--		PMD_DRV_LOG(ERR, "Poll rq empty timeout");
--		PMD_DRV_LOG(ERR,
--			    "eth_dev:%s, queue_idx:%d, mbuf_left:%d, cqe_done:%d, cqe_hole:%d, cqe[%d].done=%d",
--			    nic_dev->dev_name, rxq->q_id,
--			    rxq->q_depth - hinic3_get_rq_free_wqebb(rxq),
--			    cqe_done_cnt, cqe_hole_cnt, head_ci, head_done);
-+		hinic3_dump_cqe_status(rxq);
- 		goto poll_rq_failed;
- 	}
- 
- 	return 0;
- 
- poll_rq_failed:
--	hinic3_set_rq_enable(nic_dev, rxq->q_id, true);
-+	if ((hinic3_get_driver_feature(nic_dev) & NIC_F_HTN_FDIR) != 0)
-+		(void)hinic3_set_rq_enable(nic_dev, rxq->q_id, true);
- rq_flush_failed:
- 	rte_spinlock_lock(&nic_dev->queue_list_lock);
- set_indir_failed:
-@@ -875,6 +1172,17 @@ hinic3_rx_csum(uint16_t csum_err, struct hinic3_rxq *rxq)
- 	if (unlikely(csum_err & HINIC3_RX_CSUM_HW_CHECK_NONE))
- 		return HINIC3_PKT_RX_IP_CKSUM_UNKNOWN;
- 
+ 	wqe_info->sge_cnt = mbuf->nb_segs;
+ 	wqe_info->cpy_mbuf_cnt = 0;
 +	/*
-+	 * The compact CQE reports a checksum failure somewhere in the
-+	 * inner or the outer header without saying where, so the failing
-+	 * layer cannot be blamed: leave both results unknown and only
-+	 * account the error.
++	 * These are filled in only for the offloads the packet carries.
++	 * Clear them so a previous packet's VLAN/TSO state cannot leak
++	 * into this one.
 +	 */
-+	if (unlikely(csum_err & HINIC3_RX_CSUM_LAYER_UNKNOWN_ERR)) {
-+		rxq->rxq_stats.csum_errors++;
-+		return HINIC3_PKT_RX_IP_CKSUM_UNKNOWN;
++	wqe_info->queue_info = (struct hinic3_queue_info){ 0 };
++	wqe_info->offload_info = (struct hinic3_offload_info){ 0 };
+ 	/* Check if the packet set available offload flags. */
+ 	if (!(ol_flags & HINIC3_TX_OFFLOAD_MASK)) {
+ 		wqe_info->offload = 0;
+@@ -804,7 +971,7 @@ hinic3_get_tx_offload(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *mbuf,
+ 			return err;
+ 	} else {
+ 		wqe_info->offload = 1;
+-		err = hinic3_get_inner_l3_offset(nic_dev, mbuf, &inner_l3_offset);
++		err = hinic3_get_inner_l3_offset(mbuf, &inner_l3_offset);
+ 		if (err)
+ 			return err;
+ 
+@@ -995,6 +1162,7 @@ hinic3_mbuf_dma_map_sge(struct hinic3_txq *txq, struct rte_mbuf *mbuf,
+ 			hinic3_set_buf_desc(buf_desc, dma_addr, mbuf->data_len);
+ 			buf_desc++;
+ 		}
++
+ 		mbuf = mbuf->next;
+ 	}
+ 
+@@ -1042,8 +1210,8 @@ hinic3_mbuf_dma_map_sge(struct hinic3_txq *txq, struct rte_mbuf *mbuf,
+  * Point to wqe_info of send queue.
+  */
+ static void
+-hinic3_prepare_sq_ctrl(struct hinic3_sq_wqe_combo *wqe_combo,
+-		       struct hinic3_wqe_info *wqe_info)
++hinic3_prepare_sq_ctrl_compact_task(struct hinic3_sq_wqe_combo *wqe_combo,
++				   struct hinic3_wqe_info *wqe_info)
+ {
+ 	struct hinic3_queue_info *queue_info = &wqe_info->queue_info;
+ 	struct hinic3_sq_wqe_desc *wqe_desc = wqe_combo->hdr;
+@@ -1056,7 +1224,7 @@ hinic3_prepare_sq_ctrl(struct hinic3_sq_wqe_combo *wqe_combo,
+ 	if (wqe_combo->wqe_type == SQ_WQE_EXTENDED_TYPE) {
+ 		wqe_desc->ctrl_len |= SQ_CTRL_SET(wqe_info->sge_cnt, BUFDESC_NUM) |
+ 				      SQ_CTRL_SET(wqe_combo->task_type, TASKSECT_LEN) |
+-				      SQ_CTRL_SET(SQ_NORMAL_WQE, DATA_FORMAT);
++				      SQ_CTRL_SET(SQ_WQE_SGL, DATA_FORMAT);
+ 
+ 		*qsf = SQ_CTRL_QUEUE_INFO_SET(1, UC) |
+ 		       SQ_CTRL_QUEUE_INFO_SET(queue_info->sctp, SCTP) |
+@@ -1077,14 +1245,56 @@ hinic3_prepare_sq_ctrl(struct hinic3_sq_wqe_combo *wqe_combo,
+ 		*qsf = hinic3_hw_be32(*qsf);
+ 	} else {
+ 		wqe_desc->ctrl_len |= SQ_CTRL_COMPACT_QUEUE_INFO_SET(queue_info->sctp, SCTP) |
+-				SQ_CTRL_COMPACT_QUEUE_INFO_SET(queue_info->udp_dp_en, UDP_DP_EN) |
+-				SQ_CTRL_COMPACT_QUEUE_INFO_SET(queue_info->ufo, UFO) |
+-				SQ_CTRL_COMPACT_QUEUE_INFO_SET(queue_info->pkt_type, PKT_TYPE);
++				      SQ_CTRL_COMPACT_QUEUE_INFO_SET(queue_info->udp_dp_en,
++								     UDP_DP_EN) |
++				      SQ_CTRL_COMPACT_QUEUE_INFO_SET(queue_info->ufo, UFO) |
++				      SQ_CTRL_COMPACT_QUEUE_INFO_SET(queue_info->pkt_type,
++								     PKT_TYPE);
+ 	}
+ 
+ 	wqe_desc->ctrl_len = hinic3_hw_be32(wqe_desc->ctrl_len);
+ }
+ 
++/**
++ * Sets and configures fields in the transmit queue control descriptor based on
++ * the WQE type.
++ *
++ * @param[out] wqe_combo
++ * Point to wqe_combo of send queue.
++ * @param[in] wqe_info
++ * Point to wqe_info of send queue.
++ */
++static void
++hinic3_prepare_sq_ctrl(struct hinic3_sq_wqe_combo *wqe_combo,
++		       struct hinic3_wqe_info *wqe_info)
++{
++	struct hinic3_sq_wqe_desc *wqe_desc = wqe_combo->hdr;
++
++	wqe_desc->ctrl_len |= SQ_CTRL_SET(wqe_info->sge_cnt, BUFDESC_NUM) |
++			      SQ_CTRL_SET(wqe_combo->task_type, TASKSECT_LEN) |
++			      SQ_CTRL_SET(SQ_NORMAL_WQE, DATA_FORMAT) |
++			      SQ_CTRL_SET(wqe_combo->wqe_type, EXTENDED) |
++			      SQ_CTRL_SET(wqe_info->owner, OWNER);
++
++	wqe_desc->ctrl_len = hinic3_hw_be32(wqe_desc->ctrl_len);
++
++	wqe_desc->queue_info = wqe_info->queue_info_sp620;
++	wqe_desc->queue_info |= SQ_CTRL_QUEUE_INFO_SET(1U, UC);
++
++	if (!SQ_CTRL_QUEUE_INFO_GET(wqe_desc->queue_info, MSS)) {
++		wqe_desc->queue_info |=
++			SQ_CTRL_QUEUE_INFO_SET(TX_MSS_DEFAULT, MSS);
++	} else if (SQ_CTRL_QUEUE_INFO_GET(wqe_desc->queue_info, MSS) <
++		   TX_MSS_MIN) {
++		/* Mss should not less than 80 */
++		wqe_desc->queue_info =
++			SQ_CTRL_QUEUE_INFO_CLEAR(wqe_desc->queue_info, MSS);
++		wqe_desc->queue_info |= SQ_CTRL_QUEUE_INFO_SET(TX_MSS_MIN, MSS);
 +	}
 +
- 	flags = 0;
++	wqe_desc->queue_info = hinic3_hw_be32(wqe_desc->queue_info);
++}
++
+ /**
+  * It is responsible for sending data packets.
+  *
+@@ -1104,6 +1314,7 @@ hinic3_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 	struct hinic3_tx_info *tx_info = NULL;
+ 	struct rte_mbuf *mbuf_pkt = NULL;
+ 	struct hinic3_sq_wqe_combo wqe_combo = {0};
++	struct hinic3_sq_wqe *sq_wqe = NULL;
+ 	struct hinic3_wqe_info wqe_info = {0};
+ 	uint32_t offload_err, free_cnt;
+ 	uint64_t tx_bytes = 0;
+@@ -1118,6 +1329,8 @@ hinic3_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 	if (unlikely(!HINIC3_TXQ_IS_STARTED(txq)))
+ 		return 0;
  
- 	/* IP checksum error. */
-@@ -1015,38 +1323,14 @@ hinic3_start_all_rqs(struct rte_eth_dev *eth_dev)
- 	}
- 	return err;
- }
--
--bool
--hinic3_rx_separate_cqe_done(struct hinic3_rxq *rxq, volatile struct hinic3_rq_cqe **rx_cqe)
--{
--	volatile struct hinic3_rq_cqe *cqe = NULL;
--	uint16_t sw_ci;
--	uint32_t status;
--
--	sw_ci = hinic3_get_rq_local_ci(rxq);
--	*rx_cqe = &rxq->rx_cqe[sw_ci];
--	cqe = *rx_cqe;
--
--	status = hinic3_hw_cpu32((uint32_t)(rte_atomic_load_explicit(&cqe->status,
--								     rte_memory_order_acquire)));
--	if (!HINIC3_GET_RX_DONE(status))
--		return false;
--
--	return true;
--}
--
--bool
-+static bool
- hinic3_rx_integrated_cqe_done(struct hinic3_rxq *rxq, volatile struct hinic3_rq_cqe **rx_cqe)
- {
--	struct hinic3_rq_ci_wb rq_ci;
- 	struct rte_mbuf *rxm = NULL;
- 	uint16_t sw_ci, hw_ci;
--	uint32_t val;
++	if (nb_pkts)
++		rte_prefetch0(tx_pkts[0]);
+ 	free_cnt = txq->tx_free_thresh;
+ 	/* Reclaim tx mbuf before xmit new packets. */
+ 	if (hinic3_get_sq_free_wqebbs(txq) < txq->tx_free_thresh)
+@@ -1125,54 +1338,69 @@ hinic3_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
  
- 	sw_ci = hinic3_get_rq_local_ci(rxq);
--	val = rte_read32(&rxq->rq_ci->dw1.value);
--	rq_ci.dw1.value = hinic3_hw_cpu32(val);
--	hw_ci = rq_ci.dw1.bs.hw_ci;
-+	hw_ci = hinic3_get_rq_hw_ci(rxq);
- 
- 	if (hw_ci == sw_ci)
- 		return false;
-@@ -1058,28 +1342,7 @@ hinic3_rx_integrated_cqe_done(struct hinic3_rxq *rxq, volatile struct hinic3_rq_
- 	return true;
- }
- 
--void
--hinic3_rx_get_cqe_info(struct hinic3_rxq *rxq __rte_unused, volatile struct hinic3_rq_cqe *rx_cqe,
--		       struct hinic3_cqe_info *cqe_info)
--{
--	uint32_t dw0 = hinic3_hw_cpu32(rx_cqe->status);
--	uint32_t dw1 = hinic3_hw_cpu32(rx_cqe->vlan_len);
--	uint32_t dw2 = hinic3_hw_cpu32(rx_cqe->offload_type);
--	uint32_t dw3 = hinic3_hw_cpu32(rx_cqe->hash_val);
--
--	cqe_info->lro_num = RQ_CQE_STATUS_GET(dw0, NUM_LRO);
--	cqe_info->csum_err = RQ_CQE_STATUS_GET(dw0, CSUM_ERR);
--
--	cqe_info->pkt_len = RQ_CQE_SGE_GET(dw1, LEN);
--	cqe_info->vlan_tag = RQ_CQE_SGE_GET(dw1, VLAN);
--
--	cqe_info->ptype = HINIC3_GET_RX_PTYPE_OFFLOAD(dw0);
--	cqe_info->vlan_offload = RQ_CQE_OFFOLAD_TYPE_GET(dw2, VLAN_EN);
--	cqe_info->rss_type = RQ_CQE_OFFOLAD_TYPE_GET(dw2, RSS_TYPE);
--	cqe_info->rss_hash_value = dw3;
--}
--
--void
-+static void
- hinic3_rx_get_compact_cqe_info(struct hinic3_rxq *rxq, volatile struct hinic3_rq_cqe *rx_cqe,
- 			       struct hinic3_cqe_info *cqe_info)
- {
-@@ -1106,7 +1369,21 @@ hinic3_rx_get_compact_cqe_info(struct hinic3_rxq *rxq, volatile struct hinic3_rq
- 	cqe_info->rss_type = rte_atomic_load_explicit(&rxq->rss_en,
- 						      rte_memory_order_relaxed);
- 	cqe_info->rss_hash_value = dw1;
--
-+	if (rxq->wqe_type == HINIC3_COMPACT_RQ_WQE) {
-+		switch (cqe_info->csum_err) {
-+		case HINIC3_RX_COMPACT_L3_L4_CSUM_ERROR:
-+			cqe_info->csum_err = HINIC3_RX_CSUM_LAYER_UNKNOWN_ERR;
-+			break;
-+		case HINIC3_RX_COMPACT_CSUM_OTHER_ERROR:
-+			cqe_info->csum_err = HINIC3_RX_CSUM_IPSU_OTHER_ERR;
-+			break;
-+		case HINIC3_RX_COMPACT_HW_BYPASS_ERROR:
-+			cqe_info->csum_err = HINIC3_RX_CSUM_HW_CHECK_NONE;
-+			break;
-+		default:
-+			break;
-+		}
-+	}
- 	if (cqe_info->cqe_len == HINIC3_RQ_COMPACT_CQE_16BYTE) {
- 		cqe_info->lro_num = HINIC3_RQ_COMPACT_CQE_OFFLOAD_GET(dw2, NUM_LRO);
- 		cqe_info->vlan_tag = HINIC3_RQ_COMPACT_CQE_OFFLOAD_GET(dw2, VLAN);
-@@ -1117,15 +1394,15 @@ hinic3_rx_get_compact_cqe_info(struct hinic3_rxq *rxq, volatile struct hinic3_rq
- 				(cqe_info->cqe_len == HINIC3_RQ_COMPACT_CQE_16BYTE) ? 16 : 8;
- }
- 
--#define HINIC3_RX_EMPTY_THRESHOLD 3
- uint16_t
--hinic3_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
-+hinic3_recv_pkts_compact_cqe(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
- {
- 	struct hinic3_rxq *rxq = rx_queue;
- 	struct hinic3_nic_dev *nic_dev = rxq->nic_dev;
-+	const struct hinic3_ptype_table * const ptype_tbl = nic_dev->ptype_tbl;
- 	struct hinic3_rx_info *rx_info = NULL;
- 	volatile struct hinic3_rq_cqe *rx_cqe = NULL;
--	struct hinic3_cqe_info cqe_info = {0};
-+	struct hinic3_cqe_info cqe_info;
- 	struct rte_mbuf *rxm = NULL;
- 	uint16_t sw_ci, rx_buf_len, pkts = 0;
- 	uint32_t pkt_len;
-@@ -1142,13 +1419,18 @@ hinic3_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
- 	sw_ci = hinic3_get_rq_local_ci(rxq);
- 
- 	while (pkts < nb_pkts) {
--		rx_cqe = &rxq->rx_cqe[sw_ci];
--		if (!nic_dev->rx_ops->nic_rx_cqe_done(rxq, &rx_cqe)) {
-+		if (!hinic3_rx_integrated_cqe_done(rxq, &rx_cqe)) {
- 			rxq->rxq_stats.empty++;
+ 	/* Tx loop routine. */
+ 	for (nb_tx = 0; nb_tx < nb_pkts; nb_tx++) {
+-		mbuf_pkt = *tx_pkts++;
+-		if (unlikely(hinic3_get_tx_offload(txq->nic_dev, mbuf_pkt, &wqe_info,
++		mbuf_pkt = tx_pkts[nb_tx];
++		if (nb_tx + 1 < nb_pkts)
++			rte_prefetch0(tx_pkts[nb_tx + 1]);
++		if (unlikely(hinic3_get_tx_offload(mbuf_pkt, &wqe_info,
+ 						   txq->non_tso_max_pkt_len,
+ 						   txq->q_depth))) {
+ 			txq->txq_stats.offload_errors++;
  			break;
  		}
  
--		nic_dev->rx_ops->nic_rx_get_cqe_info(rxq, rx_cqe, &cqe_info);
+-		wqe_info.wqebb_cnt = wqe_info.sge_cnt;
+-		if (likely(wqe_info.offload || wqe_info.wqebb_cnt > 1)) {
+-			if (txq->tx_wqe_compact_task) {
+-				/**
+-				 * One more wqebb is needed for compact task under two situations:
+-				 * 1. TSO: MSS field is needed, no available space for
+-				 *    compact task in compact wqe.
+-				 * 2. SGE number > 1: wqe is handlerd as extended wqe by nic.
+-				 */
+-				if (mbuf_pkt->ol_flags & HINIC3_PKT_TX_TCP_SEG ||
+-				    wqe_info.wqebb_cnt > 1)
+-					wqe_info.wqebb_cnt++;
+-			} else {
+-				/* Use extended sq wqe with normal TS */
+-				wqe_info.wqebb_cnt++;
+-			}
+-		}
++		if (!wqe_info.offload)
++			/*
++			 * Use extended sq wqe with small TS, which can include
++			 * multi sges, or compact sq normal wqe, which just
++			 * supports one sge
++			 */
++			wqe_info.wqebb_cnt = wqe_info.sge_cnt;
++		else
++			/* Use extended sq wqe with normal TS */
++			wqe_info.wqebb_cnt = wqe_info.sge_cnt + 1;
+ 
+ 		free_wqebb_cnt = hinic3_get_sq_free_wqebbs(txq);
+-		if (unlikely(wqe_info.wqebb_cnt > free_wqebb_cnt)) {
+-			/* Reclaim again. */
++		if (wqe_info.wqebb_cnt > free_wqebb_cnt) {
++			/*
++			 * Try to reclaim completed Tx WQEs when SQ space is
++			 * insufficient. This gives hardware a chance to free
++			 * descriptors and helps prevent packet drops caused
++			 * by transient SQ congestion.
++			 */
+ 			hinic3_xmit_mbuf_cleanup(txq, free_cnt);
+ 			free_wqebb_cnt = hinic3_get_sq_free_wqebbs(txq);
+-			if (unlikely(wqe_info.wqebb_cnt > free_wqebb_cnt)) {
++			if (wqe_info.wqebb_cnt > free_wqebb_cnt) {
+ 				txq->txq_stats.tx_busy += (nb_pkts - nb_tx);
+-				break;
++				goto end;
+ 			}
+ 		}
+ 
+-		/* Task or bd section maybe wrapped for one wqe. */
+-		hinic3_set_wqe_combo(txq, &wqe_combo, &wqe_info);
++		/* Get sq wqe address from wqe_page */
++		sq_wqe = hinic3_get_sq_wqe(txq, &wqe_info);
+ 
+-		/* Fill tx packet offload into qsf and task field. */
+-		offload_err = hinic3_set_tx_offload(txq->nic_dev, mbuf_pkt, &wqe_combo, &wqe_info);
++		/* Task or bd section maybe wrapped for one wqe */
++		hinic3_set_wqe_combo(txq, &wqe_combo, sq_wqe, &wqe_info);
++
 +		/*
-+		 * The getter leaves the fields that do not apply to the
-+		 * current CQE format untouched, so clear the whole structure
-+		 * to keep the previous packet's LRO/VLAN state out of this one.
++		 * A compact WQE has no SQ control section and the scalar
++		 * burst does not fill its 4-byte task, so clear queue_info
++		 * once per packet.
 +		 */
-+		memset(&cqe_info, 0, sizeof(cqe_info));
-+		hinic3_rx_get_compact_cqe_info(rxq, rx_cqe, &cqe_info);
- 
- 		pkt_len = cqe_info.pkt_len;
- 		/*
-@@ -1194,8 +1476,9 @@ hinic3_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
- 		/* 5. Vlan offload. */
- 		rxm->ol_flags |= hinic3_rx_vlan(cqe_info.vlan_offload, cqe_info.vlan_tag,
- 						&rxm->vlan_tci);
++		if (wqe_combo.wqe_type == SQ_WQE_COMPACT_TYPE)
++			wqe_combo.hdr->queue_info = 0;
++
++		wqe_info.queue_info_sp620 = 0;
++		/* Fill tx packet offload into qsf and task field */
++		if (wqe_info.offload) {
++			offload_err = hinic3_set_tx_offload(mbuf_pkt,
++							    wqe_combo.task,
++							    &wqe_info);
+ 			if (unlikely(offload_err)) {
+ 				hinic3_put_sq_wqe(txq, &wqe_info);
+ 				txq->txq_stats.offload_errors++;
+ 				break;
+ 			}
 -
--		/* 6. RSS. */
-+		/* 6. Packet ptype */
-+		rxm->packet_type = ptype_tbl->ptype[cqe_info.ptype];
-+		/* 7. RSS. */
- 		rxm->ol_flags |= hinic3_rx_rss_hash(cqe_info.rss_type, cqe_info.rss_hash_value,
- 						    &rxm->hash.rss);
- 		/* 8. LRO. */
-@@ -1235,3 +1518,141 @@ hinic3_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
++		}
+ 		/* Fill sq_wqe buf_desc and bd_desc. */
+ 		err = hinic3_mbuf_dma_map_sge(txq, mbuf_pkt, &wqe_combo,
+ 					      &wqe_info);
+@@ -1196,7 +1424,7 @@ hinic3_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
  
- 	return pkts;
+ 		tx_bytes += mbuf_pkt->pkt_len;
+ 	}
+-
++end:
+ 	/* Update txq stats. */
+ 	if (nb_tx) {
+ 		hinic3_write_db(txq->db_addr, txq->q_id, (int)(txq->cos),
+@@ -1271,3 +1499,130 @@ hinic3_flush_txqs(struct hinic3_nic_dev *nic_dev)
+ 			PMD_DRV_LOG(ERR, "Stop sq%d failed", qid);
+ 	}
  }
 +
-+uint16_t hinic3_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
++/**
++ * It is responsible for sending data packets.
++ *
++ * @param[in] tx_queue
++ * Point to send queue.
++ * @param[in] tx_pkts
++ * Pointer to the array of data packets to be sent.
++ * @param[in] nb_pkts
++ * Number of sent packets.
++ * @return
++ * Number of actually sent packets.
++ */
++uint16_t
++hinic3_xmit_pkts_compact_task(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
 +{
-+	struct hinic3_rxq *rxq = rx_queue;
-+	struct hinic3_nic_dev *nic_dev = rxq->nic_dev;
-+	struct hinic3_rx_info *rx_info = NULL;
-+	volatile struct hinic3_rq_cqe *rx_cqe = NULL;
-+	struct rte_mbuf *rxm = NULL;
-+	uint16_t sw_ci, rx_buf_len, wqebb_cnt = 0, pkts = 0;
-+	uint32_t status, pkt_len, vlan_len, offload_type, pkt_type, lro_num;
-+	uint64_t rx_bytes = 0;
-+	uint32_t hash_value = 0;
-+	const struct hinic3_ptype_table * const ptype_tbl = nic_dev->ptype_tbl;
++	struct hinic3_txq *txq = tx_queue;
++	struct hinic3_tx_info *tx_info = NULL;
++	struct rte_mbuf *mbuf_pkt = NULL;
++	struct hinic3_sq_wqe_combo wqe_combo = { 0 };
++	struct hinic3_wqe_info wqe_info = { 0 };
++	uint32_t offload_err, free_cnt;
++	uint64_t tx_bytes = 0;
++	uint16_t free_wqebb_cnt, nb_tx;
++	int err;
 +
-+#ifdef HINIC3_XSTAT_PROF_RX
-+	uint64_t t1 = rte_get_tsc_cycles();
-+	uint64_t t2;
++#ifdef HINIC3_XSTAT_PROF_TX
++	uint64_t t1, t2;
++	t1 = rte_get_tsc_cycles();
 +#endif
-+	if (((rte_get_timer_cycles() - rxq->rxq_stats.tsc) < rxq->wait_time_cycle) &&
-+	    rxq->rxq_stats.empty >= HINIC3_RX_EMPTY_THRESHOLD)
-+		goto out;
 +
-+	sw_ci = hinic3_get_rq_local_ci(rxq);
-+	rx_buf_len = rxq->buf_len;
++	if (unlikely(!HINIC3_TXQ_IS_STARTED(txq)))
++		return 0;
 +
-+	while (pkts < nb_pkts) {
-+		rx_cqe = &rxq->rx_cqe[sw_ci];
-+		status = hinic3_hw_cpu32((uint32_t)(rte_atomic_load_explicit(&rx_cqe->status,
-+								     rte_memory_order_acquire)));
-+		if (!HINIC3_GET_RX_DONE(status)) {
-+			rxq->rxq_stats.empty++;
++	free_cnt = txq->tx_free_thresh;
++	/* Reclaim tx mbuf before xmit new packets. */
++	if (hinic3_get_sq_free_wqebbs(txq) < txq->tx_free_thresh)
++		hinic3_xmit_mbuf_cleanup(txq, free_cnt);
++
++	/* Tx loop routine. */
++	for (nb_tx = 0; nb_tx < nb_pkts; nb_tx++) {
++		mbuf_pkt = *tx_pkts++;
++		if (unlikely(hinic3_get_tx_offload(mbuf_pkt, &wqe_info,
++						   txq->non_tso_max_pkt_len,
++						   txq->q_depth))) {
++			txq->txq_stats.offload_errors++;
 +			break;
 +		}
 +
-+		vlan_len = hinic3_hw_cpu32(rx_cqe->vlan_len);
-+
-+		pkt_len = HINIC3_GET_RX_PKT_LEN(vlan_len);
-+
-+		rx_info = &rxq->rx_info[sw_ci];
-+		rxm = rx_info->mbuf;
-+
-+		/* 1. Next ci point and prefetch */
-+		sw_ci++;
-+		sw_ci &= rxq->q_mask;
-+
-+		/* 2. Prefetch next mbuf first 64B */
-+		rte_prefetch0(rxq->rx_info[sw_ci].mbuf);
-+
-+		/* 3. Jumbo frame process */
-+
-+		if (likely(pkt_len <= (uint32_t)rx_buf_len)) {
-+			rxm->data_len = (uint16_t)pkt_len;
-+			rxm->pkt_len = pkt_len;
-+			wqebb_cnt++;
-+		} else {
-+			rxm->data_len = rx_buf_len;
-+			rxm->pkt_len = rx_buf_len;
-+
-+			/* If receive jumbo, updating ci will be done by
-+			 * hinic3_recv_jumbo_pkt function.
++		wqe_info.wqebb_cnt = wqe_info.sge_cnt;
++		if (likely(wqe_info.offload || wqe_info.wqebb_cnt > 1)) {
++			/**
++			 * One more wqebb is needed for compact task under two situations:
++			 * 1. TSO: MSS field is needed, no available space for
++			 *    compact task in compact wqe.
++			 * 2. SGE number > 1: wqe is handled as extended wqe by nic.
 +			 */
-+			hinic3_update_rq_local_ci(rxq, wqebb_cnt + 1);
-+			wqebb_cnt = 0;
-+			hinic3_recv_jumbo_pkt(rxq, rxm, pkt_len - rx_buf_len);
-+			sw_ci = hinic3_get_rq_local_ci(rxq);
++			if (mbuf_pkt->ol_flags & HINIC3_PKT_TX_TCP_SEG ||
++			    wqe_info.wqebb_cnt > 1)
++				wqe_info.wqebb_cnt++;
 +		}
 +
++		free_wqebb_cnt = hinic3_get_sq_free_wqebbs(txq);
++		if (wqe_info.wqebb_cnt > free_wqebb_cnt) {
++			/* Reclaim again */
++			hinic3_xmit_mbuf_cleanup(txq, free_cnt);
++			free_wqebb_cnt = hinic3_get_sq_free_wqebbs(txq);
++			if (wqe_info.wqebb_cnt > free_wqebb_cnt) {
++				txq->txq_stats.tx_busy += (nb_pkts - nb_tx);
++				goto end;
++			}
++		}
++
++		/* Task or bd section maybe wrapped for one wqe. */
++		hinic3_set_wqe_combo_compact_task(txq, &wqe_combo, &wqe_info);
++
++		/* Fill tx packet offload into qsf and task field. */
++		offload_err = hinic3_set_tx_offload_compact_task(mbuf_pkt, &wqe_combo, &wqe_info);
++		if (unlikely(offload_err)) {
++			hinic3_put_sq_wqe(txq, &wqe_info);
++			txq->txq_stats.offload_errors++;
++			break;
++		}
++
++		/* Fill sq_wqe buf_desc and bd_desc. */
++		err = hinic3_mbuf_dma_map_sge(txq, mbuf_pkt, &wqe_combo, &wqe_info);
++
++		if (err) {
++			hinic3_put_sq_wqe(txq, &wqe_info);
++			txq->txq_stats.offload_errors++;
++			break;
++		}
++
++		/* Record tx info. */
++		tx_info = &txq->tx_info[wqe_info.pi];
++		tx_info->mbuf = mbuf_pkt;
++		tx_info->wqebb_cnt = wqe_info.wqebb_cnt;
 +
 +		/*
-+		 * data_off was already set by rearm to the offset of the DMA
-+		 * start address relative to buf (HEADROOM + alignment offset
-+		 * when alignment is enabled, HEADROOM when disabled). The packet
-+		 * data starts at buf + data_off, so no further adjustment is
-+		 * needed.
++		 * For wqe compact type, no need to prepare
++		 * sq ctrl info.
 +		 */
-+		rxm->port = rxq->port_id;
++		hinic3_prepare_sq_ctrl_compact_task(&wqe_combo, &wqe_info);
 +
-+		/* 4. Rx checksum offload */
-+		rxm->ol_flags |= hinic3_rx_csum(HINIC3_GET_RX_CSUM_ERR(status), rxq);
-+
-+		/* 5. Vlan offload */
-+		offload_type = hinic3_hw_cpu32(rx_cqe->offload_type);
-+
-+		rxm->ol_flags |= hinic3_rx_vlan(HINIC3_GET_RX_VLAN_OFFLOAD_EN(offload_type),
-+						HINIC3_GET_RX_VLAN_TAG(vlan_len),
-+						&rxm->vlan_tci);
-+
-+		/* 6. Packet ptype */
-+		pkt_type = HINIC3_GET_RX_PTYPE_OFFLOAD(offload_type);
-+		rxm->packet_type = ptype_tbl->ptype[pkt_type];
-+
-+		/* 7. RSS */
-+		hash_value = hinic3_hw_cpu32(rx_cqe->hash_val);
-+		rxm->ol_flags |= hinic3_rx_rss_hash(HINIC3_GET_RSS_TYPES(offload_type),
-+						    hash_value,
-+						    &rxm->hash.rss);
-+
-+		/* 8. LRO */
-+		lro_num = HINIC3_GET_RX_NUM_LRO(status);
-+		if (unlikely(lro_num != 0)) {
-+			rxm->ol_flags |= HINIC3_PKT_RX_LRO;
-+			rxm->tso_segsz = pkt_len / lro_num;
-+		}
-+
-+		rx_cqe->status = 0;
-+
-+		rx_bytes += pkt_len;
-+		rx_pkts[pkts++] = rxm;
++		tx_bytes += mbuf_pkt->pkt_len;
 +	}
-+
-+	if (pkts) {
-+		/* 9. Update local ci */
-+		hinic3_update_rq_local_ci(rxq, wqebb_cnt);
-+
-+		/* Update packet stats */
-+		rxq->rxq_stats.packets += pkts;
-+		rxq->rxq_stats.bytes += rx_bytes;
-+		rxq->rxq_stats.empty = 0;
-+#ifdef HINIC3_XSTAT_MBUF_USE
-+		rxq->rxq_stats.rx_free_mbuf_bytes += pkts;
-+#endif
++end:
++	/* Update txq stats. */
++	if (nb_tx) {
++		hinic3_write_db(txq->db_addr, txq->q_id, (int)(txq->cos),
++				SQ_CFLAG_DP,
++				MASKED_QUEUE_IDX(txq, txq->prod_idx));
++		txq->txq_stats.packets += nb_tx;
++		txq->txq_stats.bytes += tx_bytes;
 +	}
-+	rxq->rxq_stats.burst_pkts = pkts;
-+	rxq->rxq_stats.tsc = rte_get_timer_cycles();
-+out:
-+	/* 10. Rearm mbuf to rxq */
-+	hinic3_rearm_rxq_mbuf(rxq);
++	txq->txq_stats.burst_pkts = nb_tx;
 +
-+#ifdef HINIC3_XSTAT_PROF_RX
-+	/* do profiling stats */
++#ifdef HINIC3_XSTAT_PROF_TX
 +	t2 = rte_get_tsc_cycles();
-+	rxq->rxq_stats.app_tsc = t1 - rxq->prof_rx_end_tsc;
-+	rxq->prof_rx_end_tsc = t2;
-+	rxq->rxq_stats.pmd_tsc = t2 - t1;
++	txq->txq_stats.app_tsc = t1 - txq->prof_tx_end_tsc;
++	txq->prof_tx_end_tsc = t2;
++	txq->txq_stats.pmd_tsc = t2 - t1;
++	txq->txq_stats.burst_pkts = nb_tx;
 +#endif
 +
-+	return pkts;
++	return nb_tx;
 +}
-diff --git a/drivers/net/hinic3/hinic3_rx.h b/drivers/net/hinic3/hinic3_rx.h
-index 59a198c070..29bf3159aa 100644
---- a/drivers/net/hinic3/hinic3_rx.h
-+++ b/drivers/net/hinic3/hinic3_rx.h
-@@ -7,11 +7,23 @@
+diff --git a/drivers/net/hinic3/hinic3_tx.h b/drivers/net/hinic3/hinic3_tx.h
+index e5aa0a6f8e..51024e4e99 100644
+--- a/drivers/net/hinic3/hinic3_tx.h
++++ b/drivers/net/hinic3/hinic3_tx.h
+@@ -55,10 +55,10 @@ struct hinic3_wqe_info {
+ 	uint16_t sge_cnt;
  
- #include <rte_stdatomic.h>
+ 	uint8_t offload;
+-	uint8_t rsvd0; /**< Reserved field 0. */
++	uint8_t wrapped;
+ 	uint16_t payload_offset;
  
-+#include "hinic3_wq.h"
+-	uint8_t rsvd1; /**< Reserved field 1. */
++	uint32_t queue_info_sp620; /**< Scalar/SP620 queue-info word. */
+ 	uint8_t owner;
+ 	uint16_t pi;
+ 
+@@ -174,6 +174,10 @@ enum sq_wqe_tasksect_len_type {
+ #define SQ_CTRL_QUEUE_INFO_PLDOFF_SHIFT	   2
+ #define SQ_CTRL_QUEUE_INFO_UFO_SHIFT	   10
+ #define SQ_CTRL_QUEUE_INFO_TSO_SHIFT	   11
++/*
++ * Compact task format only: set for VXLAN, VXLAN-GPE and GENEVE.
++ * The scalar/SP620 WQE does not use this bit.
++ */
+ #define SQ_CTRL_QUEUE_INFO_TCPUDP_CS_SHIFT 12
+ #define SQ_CTRL_QUEUE_INFO_MSS_SHIFT	   13
+ #define SQ_CTRL_QUEUE_INFO_SCTP_SHIFT	   27
+@@ -228,6 +232,11 @@ enum sq_wqe_tasksect_len_type {
+ 		    SQ_CTRL_COMPACT_QUEUE_INFO_##member##_SHIFT)))
+ 
+ /* Setting and obtaining task information */
 +
- #define RQ_CQE_OFFOLAD_TYPE_PTYPE_OFFLOAD_SHIFT	0
-+#define RQ_CQE_OFFOLAD_TYPE_PKT_TYPE_SHIFT	0
-+#define RQ_CQE_OFFOLAD_TYPE_IP_TYPE_SHIFT	5
-+#define RQ_CQE_OFFOLAD_TYPE_ENC_L3_TYPE_SHIFT	7
-+#define RQ_CQE_OFFOLAD_TYPE_PKT_FORMAT_SHIFT	8
-+#define RQ_CQE_OFFOLAD_TYPE_PKT_UMBCAST_SHIFT	19
- #define RQ_CQE_OFFOLAD_TYPE_VLAN_EN_SHIFT	21
- #define RQ_CQE_OFFOLAD_TYPE_RSS_TYPE_SHIFT	24
- 
- #define RQ_CQE_OFFOLAD_TYPE_PTYPE_OFFLOAD_MASK	0xFFFU
-+#define RQ_CQE_OFFOLAD_TYPE_PKT_TYPE_MASK	0x1FU
-+#define RQ_CQE_OFFOLAD_TYPE_IP_TYPE_MASK	0x3U
-+#define RQ_CQE_OFFOLAD_TYPE_ENC_L3_TYPE_MASK	0X1U
-+#define RQ_CQE_OFFOLAD_TYPE_PKT_FORMAT_MASK	0xFU
-+#define RQ_CQE_OFFOLAD_TYPE_PKT_UMBCAST_MASK	0x3U
- #define RQ_CQE_OFFOLAD_TYPE_VLAN_EN_MASK	0x1U
- #define RQ_CQE_OFFOLAD_TYPE_RSS_TYPE_MASK	0xFFU
- 
-@@ -27,6 +39,15 @@
- #define HINIC3_GET_RX_PKT_TYPE(offload_type) \
- 	RQ_CQE_OFFOLAD_TYPE_GET(offload_type, PKT_TYPE)
- 
-+#define HINIC3_GET_RX_IP_TYPE(offload_type) \
-+	RQ_CQE_OFFOLAD_TYPE_GET(offload_type, IP_TYPE)
-+
-+#define HINIC3_GET_RX_ENC_L3_TYPE(offload_type) \
-+	RQ_CQE_OFFOLAD_TYPE_GET(offload_type, ENC_L3_TYPE)
-+
-+#define HINIC3_GET_RX_PKT_FORMAT(offload_type) \
-+	RQ_CQE_OFFOLAD_TYPE_GET(offload_type, PKT_FORMAT)
-+
- #define HINIC3_GET_RX_PKT_UMBCAST(offload_type) \
- 	RQ_CQE_OFFOLAD_TYPE_GET(offload_type, PKT_UMBCAST)
- 
-@@ -144,10 +165,10 @@
- #define RQ_COMPACT_CQE_STATUS_CQE_TYPE_MASK		0x1U
- #define RQ_COMPACT_CQE_STATUS_TS_FLAG_MASK		0x1U
- #define RQ_COMPACT_CQE_STATUS_VLAN_EN_MASK		0x1U
--#define RQ_COMPACT_CQE_STATUS_PKT_FORMAT_MASK	0x7U
-+#define RQ_COMPACT_CQE_STATUS_PKT_FORMAT_MASK		0x7U
- #define RQ_COMPACT_CQE_STATUS_IP_TYPE_MASK		0x1U
- #define RQ_COMPACT_CQE_STATUS_CQE_LEN_MASK		0x1U
--#define RQ_COMPACT_CQE_STATUS_PKT_MC_MASK		0x1U
-+#define RQ_COMPACT_CQE_STATUS_PKT_MC_MASK		0x3U
- #define RQ_COMPACT_CQE_STATUS_CSUM_ERR_MASK		0x3U
- #define RQ_COMPACT_CQE_STATUS_PKT_TYPE_MASK		0x7U
- #define RQ_COMPACT_CQE_STATUS_PTYPE_MASK		0xFFFU
-@@ -183,6 +204,15 @@
- #define HINIC3_RX_CSUM_SCTP_CRC_ERR     RTE_BIT32(6)
- #define HINIC3_RX_CSUM_HW_CHECK_NONE    RTE_BIT32(7)
- #define HINIC3_RX_CSUM_IPSU_OTHER_ERR   RTE_BIT32(8)
-+/* Compact CQE: some inner/outer L3 or L4 checksum failed, layer unknown. */
-+#define HINIC3_RX_CSUM_LAYER_UNKNOWN_ERR RTE_BIT32(9)
-+
-+enum hinic3_compact_cqe_csum_err_type {
-+	HINIC3_RX_COMPACT_CSUM_NO_ERROR = 0,
-+	HINIC3_RX_COMPACT_L3_L4_CSUM_ERROR,
-+	HINIC3_RX_COMPACT_CSUM_OTHER_ERROR,
-+	HINIC3_RX_COMPACT_HW_BYPASS_ERROR
-+};
- 
- #define HINIC3_DEFAULT_RX_CSUM_OFFLOAD 0xFFF
- #define HINIC3_CQE_LEN		       32
-@@ -202,6 +232,59 @@
- 	RTE_ETH_RSS_IPV6_TCP_EX |        \
- 	RTE_ETH_RSS_IPV6_UDP_EX)
- 
-+#define HINIC3_COMPACT_CQE_PTYPE_SHIFT 16
-+
-+enum IPSU_METADATA_L3_TP_E {
-+	IPSU_METADATA_L3_TP_IPV4 = 0u,
-+	IPSU_METADATA_L3_TP_IPV6 = 1u,
-+};
-+
-+enum IPSU_PKT_TYPE_L45FINAL_E {
-+	IPSU_PKT_TYPE_NULL = 0,
-+	IPSU_PKT_TYPE_ROCEV2,
-+	IPSU_PKT_TYPE_TCPCOCO,
-+	IPSU_PKT_TYPE_TCP,
-+	IPSU_PKT_TYPE_UDP,
-+	IPSU_PKT_TYPE_ICMP,
-+	IPSU_PKT_TYPE_IGMP,
-+	IPSU_PKT_TYPE_SCTP,
-+	IPSU_PKT_TYPE_DHCP,
-+	IPSU_PKT_TYPE_IPV4_FRAG,
-+	IPSU_PKT_TYPE_IPV6_MC,
-+	IPSU_PKT_TYPE_1588,
-+	IPSU_PKT_TYPE_AH_OVER_IP,
-+	IPSU_PKT_TYPE_ESP_OVER_IP,
-+	IPSU_PKT_TYPE_NATT,
-+	IPSU_PKT_TYPE_AH_OVER_VXLAN_GPE,
-+	IPSU_PKT_TYPE_ESP_OVER_VXLAN_GPE,
-+	IPSU_PKT_TYPE_TSO,
-+	IPSU_PKT_TYPE_UFO,
-+	IPSU_PKT_TYPE_INT,
-+	IPSU_PKT_TYPE_IOAM,
-+	IPSU_PKT_TYPE_VXLAN_GPE,
-+	IPSU_PKT_TYPE_GENEVE,
-+	IPSU_PKT_TYPE_NSH_OVER_GENEVE,
-+	IPSU_PKT_TYPE_NSH_OVER_VXLAN_GPE,
-+	IPSU_PKT_TYPE_ESP_OVER_GENEVE,
-+	IPSU_PKT_TYPE_PPOP_OVER_GENEVE,
-+	IPSU_PKT_TYPE_OSPF,
-+	IPSU_PKT_TYPE_VRRP,
-+	IPSU_PKT_TYPE_BGP,
-+	IPSU_PKT_TYPE_GRE,
-+	IPSU_ERR_RSVD,
-+};
-+
-+enum IPSU_METADATA_FMT_E {
-+	IPSU_METADATA_FMT_NO_ENC	= 0u,
-+	IPSU_METADATA_FMT_VXLAN		= 1u,
-+	IPSU_METADATA_FMT_NVGRE		= 2u,
-+	IPSU_METADATA_FMT_FC		= 3u,
-+	IPSU_METADATA_FMT_GPE		= 4u,
-+	IPSU_METADATA_FMT_GENEVE	= 5u,
-+	IPSU_METADATA_FMT_NSH		= 6u,
-+	IPSU_METADATA_FMT_IPIP		= 7U,
-+};
-+
- struct hinic3_rxq_stats {
- 	uint64_t packets;
- 	uint64_t bytes;
-@@ -315,7 +398,6 @@ struct hinic3_rq_ci_wb {
- 	uint32_t rsvd[3];
- };
- 
--
- struct __rte_cache_aligned hinic3_rxq {
- 	struct hinic3_nic_dev *nic_dev;
- 
-@@ -378,24 +460,6 @@ struct __rte_cache_aligned hinic3_rxq {
++/* SQ_TASK_INFO0_* serves the SP620 scalar WQE from hinic3_xmit_pkts();
++ * SQ_TASK_INFO_* serves the SP230/SP560 compact task WQE from
++ * hinic3_xmit_pkts_compact_task().
++ */
+ #define SQ_TASK_INFO0_TUNNEL_FLAG_SHIFT	    19
+ #define SQ_TASK_INFO0_ESP_NEXT_PROTO_SHIFT  22
+ #define SQ_TASK_INFO0_INNER_L4_EN_SHIFT	    24
+@@ -379,7 +388,6 @@ struct __rte_cache_aligned hinic3_txq {
+ 	uint64_t sq_head_addr;
+ 	uint64_t sq_bot_sge_addr;
+ 	uint32_t cos;
+-	uint8_t tx_wqe_compact_task;
+ 	uint32_t non_tso_max_pkt_len;
+ 	struct hinic3_txq_stats txq_stats;
+ #ifdef HINIC3_XSTAT_PROF_TX
+@@ -387,42 +395,13 @@ struct __rte_cache_aligned hinic3_txq {
  #endif
  };
  
--/* Rx CQE info get callback function */
--typedef void  (*nic_rx_get_cqe_info_t)(struct hinic3_rxq *rxq,
--				       volatile struct hinic3_rq_cqe *rx_cqe,
--				       struct hinic3_cqe_info *cqe_info);
+-/* Tx WQE offload set callback function */
+-typedef void  (*nic_tx_set_wqe_offload_t)(struct hinic3_wqe_info *wqe_info,
+-					  struct hinic3_sq_wqe_combo *wqe_combo);
 -
--/* Rx CQE check status callback function */
--typedef bool  (*nic_rx_cqe_done_t)(struct hinic3_rxq *rxq,
--				   volatile struct hinic3_rq_cqe **rx_cqe);
--
--/* Rx CQE empty poll callback function */
--typedef int   (*nic_rx_poll_rq_empty_t)(struct hinic3_rxq *rxq);
--
--struct hinic3_nic_rx_ops {
--	nic_rx_get_cqe_info_t		nic_rx_get_cqe_info;
--	nic_rx_cqe_done_t		nic_rx_cqe_done;
--	nic_rx_poll_rq_empty_t		nic_rx_poll_rq_empty;
+-struct hinic3_nic_tx_ops {
+-	nic_tx_set_wqe_offload_t	nic_tx_set_wqe_offload;
 -};
 -
- uint16_t hinic3_rx_fill_wqe(struct hinic3_rxq *rxq);
- 
- uint16_t hinic3_rx_fill_buffers(struct hinic3_rxq *rxq);
-@@ -407,16 +471,14 @@ void hinic3_free_all_rxq_mbufs(struct hinic3_nic_dev *nic_dev);
- int hinic3_update_rss_config(struct rte_eth_dev *dev,
- 			     struct rte_eth_rss_conf *rss_conf);
- 
--int hinic3_poll_integrated_cqe_rq_empty(struct hinic3_rxq *rxq);
--int hinic3_poll_rq_empty(struct hinic3_rxq *rxq);
--
--void hinic3_dump_cqe_status(struct hinic3_rxq *rxq, uint32_t *cqe_done_cnt,
--			    uint32_t *cqe_hole_cnt, uint32_t *head_ci, uint32_t *head_done);
-+int hinic3_init_rx_ptype_table(struct rte_eth_dev *dev);
- 
- int hinic3_stop_rq(struct rte_eth_dev *eth_dev, struct hinic3_rxq *rxq);
- 
- int hinic3_start_rq(struct rte_eth_dev *eth_dev, struct hinic3_rxq *rxq);
- 
-+uint16_t hinic3_recv_pkts_compact_cqe(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
-+
- uint16_t hinic3_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
- 
- void hinic3_add_rq_to_rx_queue_list(struct hinic3_nic_dev *nic_dev,
-@@ -435,95 +497,4 @@ void hinic3_rxq_rss_en_update(struct rte_eth_dev *eth_dev);
- void hinic3_get_stats(struct hinic3_rxq *rxq);
- #endif
- 
--/**
-- * Get receive queue local ci.
-- *
-- * @param[in] rxq
-- * Pointer to receive queue structure.
-- * @return
-- * Receive queue local ci.
-- */
--static inline uint16_t
--hinic3_get_rq_local_ci(struct hinic3_rxq *rxq)
--{
--	return MASKED_QUEUE_IDX(rxq, rxq->cons_idx);
--}
--
--static inline uint16_t
--hinic3_get_rq_free_wqebb(struct hinic3_rxq *rxq)
--{
--	return rxq->delta - 1;
--}
+ void hinic3_flush_txqs(struct hinic3_nic_dev *nic_dev);
+ void hinic3_free_txq_mbufs(struct hinic3_txq *txq);
+ void hinic3_free_all_txq_mbufs(struct hinic3_nic_dev *nic_dev);
++uint16_t hinic3_xmit_pkts_compact_task(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
+ uint16_t hinic3_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
+ uint16_t hinic3_prep_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
+ int hinic3_stop_sq(struct hinic3_txq *txq);
+ int hinic3_start_all_sqs(struct rte_eth_dev *eth_dev);
+ int hinic3_tx_done_cleanup(void *txq, uint32_t free_cnt);
 -
 -/**
-- * Update receive queue local ci.
+- * Set wqe task section
 - *
-- * @param[in] rxq
-- * Pointer to receive queue structure.
-- * @param[out] wqe_cnt
-- * Wqebb counters.
+- * @param[in] wqe_info
+- * Packet info parsed according to mbuf
+- * @param[in] wqe_combo
+- * Wqe need to format
 - */
--static inline void
--hinic3_update_rq_local_ci(struct hinic3_rxq *rxq, uint16_t wqe_cnt)
--{
--	rxq->cons_idx += wqe_cnt;
--	rxq->delta += wqe_cnt;
--}
+-void hinic3_tx_set_normal_task_offload(struct hinic3_wqe_info *wqe_info,
+-				       struct hinic3_sq_wqe_combo *wqe_combo);
 -
 -/**
-- * Get receive cqe information
+- * Set compact wqe task section
 - *
-- * @param[in] rxq
-- *   Receive queue
-- * @param[in] rx_cqe
-- *   Receive cqe
-- * @param[in] cqe_info
-- *   Packet information parsed from cqe
+- * @param[in] wqe_info
+- * Packet info parsed according to mbuf
+- * @param[in] wqe_combo
+- * Wqe need to format
 - */
--void
--hinic3_rx_get_cqe_info(struct hinic3_rxq *rxq, volatile struct hinic3_rq_cqe *rx_cqe,
--		       struct hinic3_cqe_info *cqe_info);
--
--/**
-- * Get receive compact cqe information
-- *
-- * @param[in] rx_queue
-- *   Receive queue
-- * @param[in] rx_cqe
-- *   Receive compact cqe
-- * @param[in] cqe_info
-- *   Packet information parsed from cqe
-- */
--void
--hinic3_rx_get_compact_cqe_info(struct hinic3_rxq *rxq, volatile struct hinic3_rq_cqe *rx_cqe,
--			       struct hinic3_cqe_info *cqe_info);
--
--/**
-- * Check whether pkt is received when CQE is separated
-- *
-- * @param[in] rxq
-- *   Receive queue
-- * @param[in] rx_cqe
-- *   The CQE written by hw
-- * @return
-- *   True: Packet is received
-- *   False: Packet is not received
-- */
--bool
--hinic3_rx_separate_cqe_done(struct hinic3_rxq *rxq, volatile struct hinic3_rq_cqe **rx_cqe);
--
--/**
-- * Check whether pkt is received when CQE is integrated
-- *
-- * @param[in] rxq
-- *   Receive queue
-- * @param[in] rx_cqe
-- *   The CQE written by hw
-- * @return
-- *   True: Packet is received
-- *   False: Packet is not received
-- */
--bool
--hinic3_rx_integrated_cqe_done(struct hinic3_rxq *rxq, volatile struct hinic3_rq_cqe **rx_cqe);
--
- #endif /* _HINIC3_RX_H_ */
+-void hinic3_tx_set_compact_task_offload(struct hinic3_wqe_info *wqe_info,
+-					struct hinic3_sq_wqe_combo *wqe_combo);
+ #endif /**< _HINIC3_TX_H_ */
 -- 
 2.33.0
 
