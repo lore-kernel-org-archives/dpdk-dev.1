@@ -2,40 +2,39 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF216606A330
-	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Nov 2026 18:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DBB60A2614
+	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Nov 2026 18:43:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CCCE740263;
-	Fri, 20 Nov 2026 19:31:27 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 8BE6F40263;
+	Fri, 20 Nov 2026 19:43:20 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTPS id 4B953400D7
- for <dev@dpdk.org>; Fri, 20 Nov 2026 19:31:26 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id 11354400D7
+ for <dev@dpdk.org>; Fri, 20 Nov 2026 19:43:20 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 3D9424F703; Fri, 20 Nov 2026 19:31:26 +0100 (CET)
+ id E2A6C51A7E; Fri, 20 Nov 2026 19:43:19 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/other Bug 2152] ip_frag: IPv6 fragmentation overflows pkts_out
- on short first segment
-Date: Fri, 20 Nov 2026 18:31:26 +0000
+Subject: [DPDK/other Bug 2153] ip_frag: all IPV6 fragments have ID of zero
+Date: Fri, 20 Nov 2026 18:43:19 +0000
 X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: changed
+X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
 X-Bugzilla-Component: other
 X-Bugzilla-Version: 26.11
 X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: major
+X-Bugzilla-Severity: normal
 X-Bugzilla-Who: stephen@networkplumber.org
-X-Bugzilla-Status: RESOLVED
-X-Bugzilla-Resolution: FIXED
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
 X-Bugzilla-Priority: Normal
 X-Bugzilla-Assigned-To: dev@dpdk.org
 X-Bugzilla-Target-Milestone: ---
 X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_status resolution
-Message-ID: <bug-2152-3-eOpCte0E4G@https.bugs.dpdk.org/>
-In-Reply-To: <bug-2152-3@https.bugs.dpdk.org/>
-References: <bug-2152-3@https.bugs.dpdk.org/>
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-2153-3@https.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: https://bugs.dpdk.org/
@@ -57,17 +56,48 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D2152
+https://bugs.dpdk.org/show_bug.cgi?id=3D2153
 
-Stephen Hemminger (stephen@networkplumber.org) changed:
+            Bug ID: 2153
+           Summary: ip_frag: all IPV6 fragments have ID of zero
+           Product: DPDK
+           Version: 26.11
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: other
+          Assignee: dev@dpdk.org
+          Reporter: stephen@networkplumber.org
+  Target Milestone: ---
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-             Status|UNCONFIRMED                 |RESOLVED
-         Resolution|---                         |FIXED
+TLDR; all IPV6 fragments go out with id of 0 which can lead to botched
+reassembly at receiver.
 
---- Comment #1 from Stephen Hemminger (stephen@networkplumber.org) ---
-Already fixed
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
+ANT-2026-70V47B5Y  [low]  CWE-340  logic
+ip_frag: constant IPv6 fragment ID allows off-path fragment injection
+Location: lib/ip_frag/rte_ipv6_fragmentation.c:34  in __fill_ipv6hdr_frag()
+Commit:   9a45341f18a1ab47af7123e63d942b90c1b79f38
+=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+`rte_ipv6_fragment_packet()` puts Identification 0 in the fragment header of
+every fragment of every packet, so receivers cannot tell apart fragments of
+different packets sent between the same two addresses. An off-path sender w=
+ho
+knows the two addresses and can spoof the source address can send one forged
+"last fragment" with Identification 0, with nothing to guess. That fragment
+replaces the tail of the next fragmented datagram, and each datagram after =
+it
+is then completed with its predecessor's tail. The DPDK process itself is n=
+ot
+affected; the harm falls on the receiver of the IPv6 traffic the application
+fragments.
 
 --=20
 You are receiving this mail because:
