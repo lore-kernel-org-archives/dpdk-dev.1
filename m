@@ -2,102 +2,102 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE9F606A320
-	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Nov 2026 13:09:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62862606A33B
+	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Nov 2026 13:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=hwaXYBC2;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=cMo8mYuq
+	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=OdFunHor;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=aHTFX8Pg
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E2A0B40284;
-	Fri, 20 Nov 2026 14:09:22 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 684B3402E5;
+	Fri, 20 Nov 2026 14:20:57 +0100 (CET)
+Received: from mails.dpdk.org (localhost [127.0.0.1])
+ by mails.dpdk.org (Postfix) with ESMTP id B045C40263;
+ Fri, 20 Nov 2026 14:20:55 +0100 (CET)
 Received: from fhigh-a6-smtp.messagingengine.com
  (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
- by mails.dpdk.org (Postfix) with ESMTPS id B7E2340151
- for <dev@dpdk.org>; Fri, 20 Nov 2026 14:09:21 +0100 (CET)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfhigh.phl.internal (Postfix) with ESMTP id B7180140023D
- for <dev@dpdk.org>; Fri, 20 Nov 2026 08:09:20 -0500 (EST)
+ by mails.dpdk.org (Postfix) with ESMTPS id D9D6C40151
+ for <announce@dpdk.org>; Fri, 20 Nov 2026 14:20:53 +0100 (CET)
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 0789E1400248
+ for <announce@dpdk.org>; Fri, 20 Nov 2026 08:20:53 -0500 (EST)
 Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-01.internal (MEProxy); Fri, 20 Nov 2026 08:09:20 -0500
+ by phl-compute-06.internal (MEProxy); Fri, 20 Nov 2026 08:20:53 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1795180160;
- x=1795266560; bh=odH5dzdst5kgP+1O1hVtnA7bOVhnjQRpqOjCenOVFMU=; b=
- hwaXYBC2H8M+rvVqPbsOgu1eaCYSDEKttSVtZYGJD4jmcV6EdRLe2sEYkcK0p0Kd
- wtGlUiC0tFE8K85gwXjvdZn8I74xH3NBy1/tuolLWcdNcu7+l+KM2VOBy7lS9npr
- yiuYq3fmUdUafjorjXe/8T/+k8JZxWitDS9YZ4xJyW/Pt8wK6P/mXyueEgWct+xi
- o9lO9YT1GLQVkUESt5uHm4LbkvXD32aXIV21JRrGJpKDJiEKWnWAWp7XZIpADIaz
- AKyrxqRi+MxStTarppFWSPYkxuQywwwzj6CHaeSJLwHHBs/7yudGjdgRtgQ3rkXJ
- WH5ND1RXrBRuVTbt7RRc3w==
+ cc:content-transfer-encoding:content-type:content-type:date:date
+ :from:from:in-reply-to:message-id:mime-version:reply-to:subject
+ :subject:to:to; s=fm3; t=1795180853; x=1795267253; bh=+Ezmb/p39r
+ Acu39dsCX7aXPWe3w5GK/vEQZrY7L73Jg=; b=OdFunHorI16QnmBUz+YpbMUjh1
+ ilh1L02EYeksBX9I3cigCkbg6/SaQrw6qK7Vbsud5D00p/gH1yGLmxQIcPoymlQ2
+ +IYt34N2pgwuUeCfZHBzdsLbFKJcmovxc6ablsLR2lmYE75pQgYx1EDkMREiVAIn
+ XYeZ5YLuWy0A3CASEXEDcoCSoOEm/WG+6ESj9WwQMhmBYEy8BTw94qmyGLYq7tg/
+ G2mdOwxLjervWrTUV2fbp8B5d4bY3F6n8O9gXbefDmLNoOhwEa/n1QusZcfA2muk
+ DLtZDivqXdN1haAuSzdrkYyfCGv0+ppZs4qKIk7qptF6xiwVk/jhmX7xiHUQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795180160; x=
- 1795266560; bh=odH5dzdst5kgP+1O1hVtnA7bOVhnjQRpqOjCenOVFMU=; b=c
- Mo8mYuq4u9/gfD1C3Jbf/oZGAy3ic0pUrFQy3YLQwxV+IegfU3AHl3n8kRwklMFn
- SleV9gl1uJnHzvOaWLJDwJ6/BIPJf0I9+vDCEmqJrUVs5acjDeqQRJSj6IsM7jyo
- 9Dn44PdRq+Spycl6tBW5eGc9WU37VCyAtLzYKekFq2PEUu5Qf0laN54Mu8Zn5KNG
- 0+wxjn3TnYEJ3EQv+I46tF2+4VunNGYCQ5GblE+075JXLkkpBOyPVrPCj9RQFnXr
- /48F+zTOolJofSjsf+kQOxWZOoEHeDqP2pV03u2lilSxVtZaqIxH+BCXX85QTsPG
- GC3qSNpi3DCuvECGgP4kQ==
+ messagingengine.com; h=cc:content-transfer-encoding:content-type
+ :content-type:date:date:feedback-id:feedback-id:from:from
+ :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+ :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+ 1795180853; x=1795267253; bh=+Ezmb/p39rAcu39dsCX7aXPWe3w5GK/vEQZ
+ rY7L73Jg=; b=aHTFX8PgZZoa+ULM6J0MKtscIgbvzcHpgjfklM2nJogcA2U3Y8x
+ QDVh9j4/6caqWHhtQQn46OWikx6ombNst0VoUFtWnJV2wGrGRwZgZgrym86D+ho/
+ YWOZers1rVinarpw3DjGIZbYXoek01yuY5FkFKho7LN5dj6kxRa8CZaFYYt3AX8c
+ 3woyGxGPfqedeXjQPvGXii51c7tR7O8SeJHSdKkC/pNl+PM0/rhy2c7Ai5aKypfJ
+ GRKxAJmT0HS5FsnrkYaDGiCiKKmjZoO64vvYXzgF4YwITyw0krp80Wfq/eoonmNC
+ SxwH7ZNIMRaBJ9UplEJpJr+Pbc7/W/4sn7A==
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
  repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
  action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1795180160; d=monjalon.net;
- mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm3:rsa-sha256:OHQb+NUyxbU6jNIx8iN6pP39ef5OPEK7pc+TeFiK0w7Aqxx
- tloWO8BNu2zYxgtUxY0AHO1rHIIEYAtdj983K/+Wj89egHk+Uml1SQ1VMxx2YVq6
- hLUnAVtl1jlGNs/Inz7sBxUdpFqXC9O0jCPEqsuwJbBTGzYcWdKr/JTDACqaIjm9
- UNXbj8AHPSdNKPcqH7NTXaOwSfvAaeCjQyQjVbIx/rhw4eDptlamFp5maHB4HzGp
- FZCrCjxWlAoOl7XSXfw6oll1fVbuV3X+QPSs6vFTjnWCXeM+3xdqW8RXtjwYJ0In
- 0S/yMyBJcS9/iTWmrbJjDsKHCP8tUgnjlGt+szQ==;
+DKIM2-Signature: i=1; m=1; t=1795180853; d=monjalon.net;
+ mf=PHRob21hc0Btb25qYWxvbi5uZXQ+;
+ rt=PGFubm91bmNlQGRwZGsub3JnPg==;
+ s=fm3:rsa-sha256:2I97RC1apbESfXfnzFAw2tqvQBUtxuKZvaY+Up2VFU4CB4y
+ MbvDP3DZqKfGlFeqy09Hf0qKehHxsNgqlEj9nnnhATLlOZDYZIJay/VGvTdTcyn7
+ CKigjYMGxzblDdLHZf4Bo77ugbRqoiAYZbBd1r6gJnskVTsjO2WmJAgPNMq/1/U3
+ bv+Dxi7LmCu5hrEbys0GheD8spodNqBMxbyqyAydXOKF/BnO39qTzMw7J9sRwyQ8
+ BSjbQwEebmXurr57VykU50Eq6mJ80QnthVPkEDRjqtquod73pTN1vBCzoijvMMH/
+ nDTfv4VRywHQYuSuSDtUx/KkAXpLbUCgOygXMtg==;
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
  repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
- action=mi-m=1; hc=12;
- hn=cc,content-transfer-encoding,content-type,date,feedback-id,
- from,in-reply-to,message-id,mime-version,references,subject,to;
+ action=mi-m=1; hc=9;
+ hn=content-transfer-encoding,content-type,date,feedback-id,from,
+ message-id,mime-version,subject,to;
 Message-Instance: m=1;
- h=sha256:V3o8fEMLq/KqgRbqA8orQpauldmOFeu/5a6iAhA4hSk=:10V2FO/Ema7sI6yTG5gk2sLyzGTRCEGoMvgVFrHpme8=;
-X-ME-Sender: <xms:gEYAawjx0LTDob29bSpVADVmI9xS-T5kRVcM4U1O1N8i4hBO0ufM3A>
- <xme:gEYAa1W9jprLNE7SHbwGjLnKGiy-yQCJFGB8_JbdSsSVs4PEeLYThkod7AYVtqLxn
- 7r2auYBIauVFjD7_r8k9yyujfyU4On1SI1qiVAJlUWKpli-k8Y6yMk>
-X-ME-Received: <xmr:gEYAa60EPFwo4d7LrfIsm6YjCqwKzdFtPmuk8T_KBRW_VkvXtGuszAXplnFFmLWNgx-0fZ7POrkrx0aC-Wix9rI>
-X-ME-Proxy-Cause: dmFkZTEr2KHpqANrw/yZVz5H5Bx9abtErXt7xvxxwGtt69uFe80ivQInGNBC86b7+bIIuH
- RtJIzLkMLbeq93MyJor3BQnF74sW5h6KMB1FcJSS7KExnESs0WpNpmZhQubKoPFiQ9kRR3
- Tg/anfh9o8xZ+FYHATPSKxPb6EnX+NiOe8WQbXoHOJ7DbUsSFNMwmiYHlJapswbTr5yKfe
- bzWoSAu0uz7iU9ZGwYsaNfLI7dub7xBz2XlpwMeH7TSYB0RP29YFKNbFVW2s/zRKCOkD23
- rQaKhAn/tLwl7qznD+j2LTtv5wIpL4CBRZanl41G27soqeEDs7LcFPWmlbpMyEc79XlEHg
- 64aJf4WpWD1ZiA0Gx8g0mlHpCTsT8gvtbXrQr9BQ3F4nO7OS+YNhwZhIVOcZfV7Ja4LjS8
- P3vf5jjLuXgqiVRB7NwCHFfVW/oxmCP77MtuRUq5cuGe9d0ZWWwzd1+pZlp7+7V2eVvJSs
- r82VirB/BE88EaqNbsVVayz5Msr3cyGf2D9x5BinPI8FvE5XCmyjd7XXq19qDtSs4S7BjU
- MQI6cPRzSfdnqTZscE7k4W+2HOyxC0GHv338AETgvaH3y3I7npjjC30rOTz9Z5lC7ZqMUa
- D4HQaJ7HLhSMHfQIYSnX2c/4wqXhV1ty4Hek6YLNRabrT2c/wPz+oXGZ9uMw
-X-ME-Proxy: <xmx:gEYAazEL0V92pelLD7WnSc72l6RgqmfuS3ut0mCSxwBFWOl7jEpi5w>
- <xmx:gEYAawjAhJ-pty-53oY5W-m-YTczhSaZP0rdtYN3QYIzjWJXvqONMQ>
- <xmx:gEYAa288R0-riJy_2i5ERtCQBEAbdWWcOPzPxDeMSre6rlgBvoQlrw>
- <xmx:gEYAa_ryuqML8HvyvLGeUljc2NEdN56XPB-pRVIo8EVRbRQbVSOtig>
- <xmx:gEYAa1JcpAaGseJ_EKO7a-GAr5r82Uw5uN3qqOo1irKZYOgMTQG6uGqT>
+ h=sha256:Bhe2YqHaAT+aP6qQwCDv6FYsPc9ljMtXUvz13Mv6qLc=:y5V+S8SFIZ2J6vkoyJgdnwSjRA5HMV9F2oxCqwKPZqo=;
+X-ME-Sender: <xms:NEkAa4ph21tTued7wpkf6G1RXGHKyo8Y_oIQ7ivb_ewH8Nj2d7phjw>
+ <xme:NEkAa0gV4D8orsQe3bR9T34pGoVB9KNrB6NSGViNvaLzG_tIuT0Uc8dgNBlFBFNSi
+ 3K22zguAZUWwFCTCK68oNZj2AJGfVE0GXJg6NkYesPw0TEuClOBOw>
+X-ME-Received: <xmr:NEkAa4SMmJyC38Gm-0hkKtc4PXI3fnyWAycK9GnDU3AasC69UHl6s2HFETpHDu9DTixcnEx0u6-gFOJqPZYWrck>
+X-ME-Proxy-Cause: dmFkZTGDQug+u/mNKSmUpLbxZwmDDLWK5DzWoS288rFUmgJCcUwyEe0FLN6NhAJxB3Xcsw
+ tnZr2wrN8/YvbP85EgBDiPwCZCla6kmXB8ms0SN01kx7cazfzAWK93aH3MC+eijFU9Y+i8
+ Xuq2siN07wfT2rS0ywu3GYh/6NuJP6VKz1r3SnRTxBl4HFrAJXGzHG9KLfN+cRjT8JugYP
+ Q0ZkSJQEFB8uzE5YO8pPHJl4OLVnFT8pnss1vS89U/krisNew2UuPCCM064P9nsPh9YSwf
+ Jk1f1uO8iU/Kfey+X8i38ue2AN8IaijPS6eDVAZtp87Q83YfF5BGb4b6mu2FziyK1aErAJ
+ xQQKpNtVoQQkZ30OJgvVkkUZTsL+qpg8k2hm4wDs+ovbLenv265Kv7Bn9LyX8QyZ7fSzfl
+ gOOtn6wtDinzMy7dFMwZ6ij7PV11HctJyIwzq5g+q6OKA4PhHQUgJMDMZPgT9jGWPq8rzi
+ Q47ZYaa+ps4J0Swqh2hNEMmeyXiw37ZOxTQTem1eEoRFBRebRGELV41SeoTllVCJOZGV3j
+ DydApbQmcRIXCwTDbQrcftOJsfqbkYOFDyDhYHGhejeDxMV5Z7cjmrVj8aelCSeOqj0hhz
+ nscpeBwQU4AkBOtlpTkvzXZbzThfDymAs6HZ4b9/HRSxE+srDCv81ViPqOXg
+X-ME-Proxy: <xmx:NEkAa8uAgmMEatcnXzS-P6nM9C2zSWCyF-fenMBWNGJRswzibZUKIg>
+ <xmx:NEkAa7ejjd9Uwr9W-mg2ZpRVp0_UFsP-1ZWOwD5op_VixhPgloQm5A>
+ <xmx:NEkAaxKgjncUfuKS3oVXZNIcddlafGgQ52z1hIifzeYUyi5utNoO6w>
+ <xmx:NEkAaxZJR9mUe4GqSmv_qgBvYoC2ohODs7U80TECL-i9P63qTvUaCw>
+ <xmx:NUkAa6b3W0MJ7jWWFVn2CEqKgZZTeEDtXmwWExxK7mdWx-2xtJs_TcUY>
 Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 20 Nov 2026 08:09:19 -0500 (EST)
+Received: by mail.messagingengine.com (Postfix) with ESMTPA for
+ <announce@dpdk.org>; Fri, 20 Nov 2026 08:20:52 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: John McNamara <john.mcnamara@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v1] doc: update release notes for 26.11
-Date: Fri, 20 Nov 2026 14:09:17 +0100
-Message-ID: <q04UnXq5Qw66kjk0lw46rQ@monjalon.net>
-In-Reply-To: <20261120111419.576367-1-john.mcnamara@intel.com>
-References: <20261120111419.576367-1-john.mcnamara@intel.com>
+To: announce@dpdk.org
+Subject: DPDK release candidate 26.11-rc4
+Date: Fri, 20 Nov 2026 14:19:50 +0100
+Message-ID: <cku3Z3NASyqANwzCcnMu7g@monjalon.net>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
-X-BeenThere: dev@dpdk.org
+X-BeenThere: announce@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
+X-BeenThere: dev@dpdk.org
 List-Id: DPDK patches and discussions <dev.dpdk.org>
 List-Archive: <http://mails.dpdk.org/archives/dev/>
 List-Post: <mailto:dev@dpdk.org>
@@ -106,17 +106,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
 	autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-20/11/2026 12:14, John McNamara:
-> Fix grammar, spelling and formatting of DPDK 26.11 release notes.
-> 
-> Signed-off-by: John McNamara <john.mcnamara@intel.com>
+A new DPDK release candidate is ready for testing:
+	https://git.dpdk.org/dpdk/tag/?id=v26.11-rc4
 
-Applied with comments removed, thanks.
+There are 44 new patches in this snapshot.
 
+Release notes:
+	https://doc.dpdk.org/guides/rel_notes/release_26_11.html
+
+Please test and report issues on bugs.dpdk.org.
+
+You may share some release validation results
+by replying to this message at dev@dpdk.org
+and by adding tested hardware in the release notes.
+
+We'll close the 26.11 release cycle
+once we have received enough positive validation results.
+
+Thank you everyone
 
 
