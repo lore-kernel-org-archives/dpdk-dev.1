@@ -2,30 +2,30 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6C9606A333
-	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Nov 2026 16:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F27606A32A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Nov 2026 16:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=KUBma+O/
+	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=BrnKdkAE
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6421E40E28;
-	Fri, 20 Nov 2026 17:35:45 +0100 (CET)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.220])
- by mails.dpdk.org (Postfix) with ESMTPS id 9DF5240685
+	by mails.dpdk.org (Postfix) with ESMTP id 54FA740E2C;
+	Fri, 20 Nov 2026 17:35:46 +0100 (CET)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.2])
+ by mails.dpdk.org (Postfix) with ESMTPS id 2876540612
  for <dev@dpdk.org>; Fri, 20 Nov 2026 17:35:21 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=17Za9iFCDQmCc8pFO/Wny+T0Zq2QhL2UkKi9du8CqKo=;
- b=KUBma+O/7XR9uM4TbzchKDRQbGDShmBCGbO8fAyL965RM4rR31eNwTA3/Yaxxv
- 9r2f+J/B9ljl2ngZMkIzM/arjd6XqNDGH23oNAYl5wh+IfOtIl0sFIidlcDkn+yH
- XyEaU8Z1Ds7lkSQjBiFATa9wuNnOd42qldpNWCO9Cn/80=
+ MIME-Version; bh=te9sH+/p3cPxBgL9IRiEJ7hw+8jdQKZmzBPfOjE3R8s=;
+ b=BrnKdkAEGpaX94natkYaWMNslpfIykujfgh1TafDkXcmaPmsTD7o3zywopaqSV
+ sl/gGES4RbVXaH/9eRJUOi3iJXSvYPWfP/EY1LplW46Hmj1+38zdpA0rCmCXD/hx
+ 8Iu/BCSFy0mU3FA1ZcmcDB6ryUNKiAEnoTbG0G9HH4DUU=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
  Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v8 28/28] net/hinic3: expose Tx queue copied-mbuf statistics
-Date: Sat, 21 Nov 2026 00:34:53 +0800
-Message-ID: <20261120163454.1159-29-yejiacheng4@h-partners.com>
+Subject: [PATCH v8 26/28] net/hinic3: add SP230 VF software statistics
+Date: Sat, 21 Nov 2026 00:34:51 +0800
+Message-ID: <20261120163454.1159-27-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.53.0.windows.2
 In-Reply-To: <20261120163454.1159-1-yejiacheng4@h-partners.com>
 References: <20261117155711.1048-1-yejiacheng4@h-partners.com>
@@ -33,13 +33,13 @@ References: <20261117155711.1048-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Ac8vCgCHL5q7dgBrCNqsBQ--.46998S30
-X-Coremail-Antispam: 1Uf129KBjvJXoW7ur4kKr4DGw48JryruryUKFg_yoW8XFyDp3
- ZxGFWDAF90qa1UAr12ga1DCryrZas8J3yjgr1xK34rZFn5CF1xu3y5J3yIyrnxJ34fA3WS
- vFWIvF97AFWj9rJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: Ac8vCgCHL5q7dgBrCNqsBQ--.46998S28
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Kw1UZFyUKr1UKryDXr4xJFb_yoW8tF4kpF
+ yDGa43Ar9rXFZ7X3ZxKayUZ345Gws3Z3y7Gas7JayYkF4DXrn0y343KrWjyr98GrW3Za17
+ Zws0kFs0k3yjgwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Ut5rxUUUUU=
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNAeps2sAdscMbAAA3T
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNAaps2sAdsYMaQAA3W
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,42 +56,71 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The Tx path copies mbufs when the segment count exceeds the inline
-limit, tracking the number of copied packets and the number of segments
-too large to inline. Expose these two counters in the per-queue extended
-statistics so they are visible to applications.
+For an SP230 VF, aggregate the software queue counters to report
+ipackets/ibytes/opackets/obytes. PF ports keep using the firmware vport
+statistics.
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- doc/guides/rel_notes/release_26_11.rst | 1 +
- drivers/net/hinic3/hinic3_ethdev.c     | 2 ++
- 2 files changed, 3 insertions(+)
+ drivers/net/hinic3/hinic3_ethdev.c | 27 ++++++++++++++++++++++-----
+ 1 file changed, 22 insertions(+), 5 deletions(-)
 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index aba7601a04..62073ea45f 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -180,6 +180,7 @@ New Features
-   * Extended TCP segmentation offload (TSO) to 255 segments.
-   * Added a compact task transmit data path.
-   * Added Tx burst mode reporting.
-+  * Added Tx queue copied-mbuf statistics.
- 
- * **Updated Intel iavf driver.**
- 
 diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index 4bbc1a1efb..54d266b1b2 100644
+index 880b76f8c8..0f38e6b2b6 100644
 --- a/drivers/net/hinic3/hinic3_ethdev.c
 +++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -287,6 +287,8 @@ static const struct hinic3_xstats_name_off hinic3_txq_stats_strings[] = {
- 	HINIC3_TXQ_STAT(burst_pkts),
- 	HINIC3_TXQ_STAT(sge_len0),
- 	HINIC3_TXQ_STAT(mbuf_null),
-+	HINIC3_TXQ_STAT(cpy_pkts),
-+	HINIC3_TXQ_STAT(sge_len_too_large),
+@@ -3075,13 +3075,16 @@ hinic3_dev_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
+ 	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
+ 	struct hinic3_vport_stats vport_stats;
+ 	uint64_t rx_discards_pmd = 0;
++	bool sw_stats = HINIC3_IS_VF(nic_dev->hwdev) && HINIC3_IS_SP230_NIC(nic_dev);
+ 	int err;
  
- #ifdef HINIC3_XSTAT_PROF_TX
- 	HINIC3_TXQ_STAT(app_tsc),
+-	err = hinic3_get_vport_stats(nic_dev->hwdev, &vport_stats);
+-	if (err) {
+-		PMD_DRV_LOG(ERR, "Get vport stats from fw failed, nic_dev: %s",
+-			    nic_dev->dev_name);
+-		return err;
++	if (!sw_stats) {
++		err = hinic3_get_vport_stats(nic_dev->hwdev, &vport_stats);
++		if (err) {
++			PMD_DRV_LOG(ERR, "Get vport stats from fw failed, nic_dev: %s",
++				    nic_dev->dev_name);
++			return err;
++		}
+ 	}
+ 
+ 	/* Rx queue stats. */
+@@ -3102,6 +3105,12 @@ hinic3_dev_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
+ 		stats->ierrors += rxq->rxq_stats.errors;
+ 		rx_discards_pmd += rxq->rxq_stats.dropped;
+ 		dev->data->rx_mbuf_alloc_failed += rxq->rxq_stats.rx_nombuf;
++
++		if (sw_stats) {
++			stats->ipackets += rxq->rxq_stats.packets;
++			stats->ibytes += rxq->rxq_stats.bytes;
++			stats->imissed += rxq->rxq_stats.dropped;
++		}
+ 	}
+ 
+ 	/* Tx queue stats. */
+@@ -3112,8 +3121,16 @@ hinic3_dev_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
+ 			qstats[i].q_opackets = txq->txq_stats.packets;
+ 			qstats[i].q_obytes = txq->txq_stats.bytes;
+ 		}
++
++		if (sw_stats) {
++			stats->opackets += txq->txq_stats.packets;
++			stats->obytes += txq->txq_stats.bytes;
++		}
+ 	}
+ 
++	if (sw_stats)
++		return 0;
++
+ 	/* Vport stats. */
+ 	stats->oerrors += vport_stats.tx_discard_vport;
+ 
 -- 
 2.33.0
 
