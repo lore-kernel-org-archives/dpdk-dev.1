@@ -2,31 +2,30 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D421660A262B
-	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Nov 2026 16:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A86660A2600
+	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Nov 2026 16:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=hgEFB7XX
+	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=ASzk2oHG
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 75A1340431;
-	Fri, 20 Nov 2026 17:35:17 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 45AAF40655;
+	Fri, 20 Nov 2026 17:35:18 +0100 (CET)
 Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.221])
- by mails.dpdk.org (Postfix) with ESMTPS id 8182C402C6;
+ by mails.dpdk.org (Postfix) with ESMTPS id E7550402E3;
  Fri, 20 Nov 2026 17:35:12 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=9loECt8hrIGh5sy147D10dpfpWo6lWHVJUsm7KRsC00=;
- b=hgEFB7XXUw3eScHutZ8Y479TjLfgZt20n+nbS8fWx19TwfJLA6NgrmViWxSYYT
- bXHOA47b0frsksJqGHRWyBYftOqaeFUuVQYT5JHL23VYyOp9F9yf5gswnoROZxHl
- O+E96cz5tF13E4SlRe3aHDo1rtELZSmHzxO6Rnp/r09JA=
+ MIME-Version; bh=p8z8eoIn9ljkcRoFq9hJlN47t+mxZamkx+UTzgmL2zU=;
+ b=ASzk2oHG4EnmTW58w48zMq7mPQLyV3uyB6NgkKMpYollELuYpB4cv2/H8ar1S1
+ gEYdw7h6DmBhsthS+/lJ8NZ/IhhCCBQu/1MQgl9gVxAEeEYf+NeeMLU+QUmXkcZo
+ /aPeNudKr3xIEZXsDydzvvHIHoha9Wu4afAjDK94SwQAw=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
  Anatoly Burakov <anatoly.burakov@intel.com>, stable@dpdk.org
-Subject: [PATCH v8 02/28] net/hinic3: fix double removal in ethertype flow
- destroy
-Date: Sat, 21 Nov 2026 00:34:27 +0800
-Message-ID: <20261120163454.1159-3-yejiacheng4@h-partners.com>
+Subject: [PATCH v8 04/28] net/hinic3: fix VXLAN VNI spec and mask write
+Date: Sat, 21 Nov 2026 00:34:29 +0800
+Message-ID: <20261120163454.1159-5-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.53.0.windows.2
 In-Reply-To: <20261120163454.1159-1-yejiacheng4@h-partners.com>
 References: <20261117155711.1048-1-yejiacheng4@h-partners.com>
@@ -34,13 +33,13 @@ References: <20261117155711.1048-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Ac8vCgCHL5q7dgBrCNqsBQ--.46998S4
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZrWrZr4rWw4DGw13Xw4Dtwb_yoWDCrg_Cr
- yI9F17A34qkr48tw1UKr43Z34akr4vqFyIvw4Iqry3G34UAF4IqFyUur4fJas7GF1UZFnx
- Cr9rK34Ik3s5KjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
- 9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU01q2tUUUUU==
+X-CM-TRANSID: Ac8vCgCHL5q7dgBrCNqsBQ--.46998S6
+X-Coremail-Antispam: 1Uf129KBjvJXoW7CFWxAFy3XrW5CFyxGw47XFb_yoW8XF1xpF
+ 4UG3yDXr4vqFW5Cwnrtw1fAFyYg3s7Jay3CFyDCa4ayryUZryxC3yfG3y2krnxKr1kJFyS
+ yF4UCr4qy3Z0qaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j7SdgUUUUU=
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNB2nsWsAdr0MWQAA3K
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNR6nsWsAdr4QFQAA3b
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,33 +56,43 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The ethertype destroy path removes the same flow node from
-filter_ethertype_list twice, corrupting the tailq and leading to
-use-after-free. Drop the redundant removal.
+The VXLAN parser writes the flow item spec into key_mask and never
+populates the mask, so VNI matches against a wrong value. Store the spec
+into key_spec and the mask into key_mask.
 
 Fixes: efa3b9b36fc7 ("net/hinic3: add flow control and filters")
 Cc: stable@dpdk.org
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- drivers/net/hinic3/hinic3_flow.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/net/hinic3/hinic3_flow.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/hinic3/hinic3_flow.c b/drivers/net/hinic3/hinic3_flow.c
-index 5c255619e3..453b4369b3 100644
+index 453b4369b3..1f686d4675 100644
 --- a/drivers/net/hinic3/hinic3_flow.c
 +++ b/drivers/net/hinic3/hinic3_flow.c
-@@ -1332,10 +1332,6 @@ hinic3_flow_destroy(struct rte_eth_dev *dev, struct rte_flow *flow,
- 			&rules->ethertype_filter, false);
- 		if (!ret)
- 			TAILQ_REMOVE(&nic_dev->filter_ethertype_list, flow, node);
--
--		flow->rule = rules;
--		flow->filter_type = rules->filter_type;
--		TAILQ_REMOVE(&nic_dev->filter_ethertype_list, flow, node);
- 		break;
+@@ -967,6 +967,7 @@ hinic3_flow_fdir_vxlan(struct rte_flow_error *error,
+ {
+ 	const struct rte_flow_item_vxlan *spec_vxlan, *mask_vxlan;
+ 	uint32_t vxlan_vni_id = 0;
++	uint32_t vxlan_vni_id_mask = 0;
  
- 	case RTE_ETH_FILTER_FDIR:
+ 	spec_vxlan = (const struct rte_flow_item_vxlan *)flow_item->spec;
+ 	mask_vxlan = (const struct rte_flow_item_vxlan *)flow_item->mask;
+@@ -990,8 +991,11 @@ hinic3_flow_fdir_vxlan(struct rte_flow_error *error,
+ 	}
+ 
+ 	memcpy(((uint8_t *)&vxlan_vni_id + 1), spec_vxlan->vni, 3);
+-	filter->fdir_filter.key_mask.tunnel.tunnel_id =
++	filter->fdir_filter.key_spec.tunnel.tunnel_id =
+ 		rte_be_to_cpu_32(vxlan_vni_id);
++	memcpy(((uint8_t *)&vxlan_vni_id_mask + 1), mask_vxlan->vni, 3);
++	filter->fdir_filter.key_mask.tunnel.tunnel_id =
++		rte_be_to_cpu_32(vxlan_vni_id_mask);
+ 	return 0;
+ }
+ 
 -- 
 2.33.0
 
