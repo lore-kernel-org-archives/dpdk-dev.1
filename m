@@ -2,30 +2,30 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08961606A32C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Nov 2026 16:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B57606A333
+	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Nov 2026 16:37:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=Ug7NeYbV
+	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=cdT1z75w
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CFB2740BA0;
-	Fri, 20 Nov 2026 17:35:32 +0100 (CET)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.4])
- by mails.dpdk.org (Postfix) with ESMTPS id 818254067A
+	by mails.dpdk.org (Postfix) with ESMTP id A9D644067C;
+	Fri, 20 Nov 2026 17:35:33 +0100 (CET)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.223])
+ by mails.dpdk.org (Postfix) with ESMTPS id F23E64060C
  for <dev@dpdk.org>; Fri, 20 Nov 2026 17:35:19 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=sRcGlBeuGrqR+w7GLXC44+LIqVOyYm/bOp0LiM7w3UY=;
- b=Ug7NeYbVL0BeVOATJ7zt3W1fbf7cfvQ9f/wBTZcgCEujkQfw/zcrJPSDJ8yeS5
- RgyDCf3KHamsQ+6REcoum6D/MiMPR2ItGCw6kFkyay563rmMaKYFYnMbO+5ShRLz
- K3rIxDFmsjgs1Ra3vJdG7MpUIsrKGKNyXIVn3/RD5gyLo=
+ MIME-Version; bh=YumZX1WCmRoySXBNQyD57aK/N05j+yNPje4n1kSzQns=;
+ b=cdT1z75wjIrytc/ii/LHBuDFKffnpkZ8X1ygLxFrA9bieO9C0iMR+oUGU0BrXo
+ g24rGu8Jl83fzhKEAO2ioFULAT+VYChFJQRWCHxSH13ZA+VWq+KVFVFLgMr0og+j
+ AVzhaOQOrKYKVNXXfPTOQc/IqDcKCyOVqRFivCh9+kEqY=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
  Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v8 15/28] net/hinic3: add COS mask and COS map support
-Date: Sat, 21 Nov 2026 00:34:40 +0800
-Message-ID: <20261120163454.1159-16-yejiacheng4@h-partners.com>
+Subject: [PATCH v8 23/28] net/hinic3: ensure queue depth and state consistency
+Date: Sat, 21 Nov 2026 00:34:48 +0800
+Message-ID: <20261120163454.1159-24-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.53.0.windows.2
 In-Reply-To: <20261120163454.1159-1-yejiacheng4@h-partners.com>
 References: <20261117155711.1048-1-yejiacheng4@h-partners.com>
@@ -33,13 +33,13 @@ References: <20261117155711.1048-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Ac8vCgCHL5q7dgBrCNqsBQ--.46998S17
-X-Coremail-Antispam: 1Uf129KBjvJXoWxKFykJr4DGF13uFW5WrWkXrb_yoWfGrWUpF
- WUGayDAFZrtr4Ut3WkJ3yDA3W5X3sFk3y2k340kas09Fs5ZFyDZ34UKFW7Ar4FqrW7AF17
- Zr4jk39F9w1vqwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07ULzV8UUUUU=
+X-CM-TRANSID: Ac8vCgCHL5q7dgBrCNqsBQ--.46998S25
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Xw1fJw1fZF4DAw4rXw47Jwb_yoWxKw43pF
+ WDKayDta47JrsF9ws0ka1fuF13XFsay34UGFySq3WYyw15XF4UAa43tF4Fvrs7J395AF47
+ Zr1kAa1vgw1jgaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07URMKZUUUUU=
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiMwKosmsAdsILMQAA3O
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiMwWps2sAdsULOAAA3H
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,246 +56,219 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Apply the firmware COS mask/map when setting up Tx queues so the configured
-COS value selects the intended queue.
+The hardware tracks a single queue depth, which the root context takes
+from queue 0. A queue configured with a different depth used to be
+silently coerced to the first queue's depth; reject it with -EINVAL
+instead, since the application sized its mempool for the requested
+depth.
 
-The VF default COS limit HINIC3_COS_NUM_MAX_HTN (4) only applies to the
-HTN tile used by SP230, where the firmware cos_mask can select four
-non-contiguous COS values for the NIC and cos_map[] maps every other COS
-to default_cos. SP620 and SP560 assign all eight COS to the NIC, so drop
-the clamp there.
+Keep the expected depth in the per-port state, reset it in
+dev_configure() and dev_stop(), and validate in dev_start() that every
+configured queue is present and shares queue 0's depth.
 
-Fixes: 9204b6b7bb1a ("net/hinic3: split new/old command queue operations")
+Reset the rx/tx queue states in dev_stop, including the tx queue status
+used by the Tx path, so the queue state reflects the stopped device
+before the next start.
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- doc/guides/rel_notes/release_26_11.rst   |  1 +
- drivers/net/hinic3/base/hinic3_hw_cfg.c  |  2 +
- drivers/net/hinic3/base/hinic3_hw_cfg.h  |  8 +++-
- drivers/net/hinic3/base/hinic3_nic_cfg.c |  2 +-
- drivers/net/hinic3/base/hinic3_nic_cfg.h |  1 -
- drivers/net/hinic3/hinic3_ethdev.c       | 59 +++++++++++++++++++++---
- drivers/net/hinic3/hinic3_ethdev.h       |  2 +
- 7 files changed, 64 insertions(+), 11 deletions(-)
+ drivers/net/hinic3/hinic3_ethdev.c | 88 +++++++++++++++++++++++++-----
+ drivers/net/hinic3/hinic3_ethdev.h |  5 ++
+ 2 files changed, 80 insertions(+), 13 deletions(-)
 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 032007ebda..4e56ac3fbb 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -168,6 +168,7 @@ New Features
-   * Added vport statistics, including CIR drop, and VF link
-     aggregation (LAG) support.
-   * Added FEC mode get and set support.
-+  * Added Class of Service (COS) mask and map support.
-   * Added mailbox message counter reporting through the device private dump API.
- 
- * **Updated Intel iavf driver.**
-diff --git a/drivers/net/hinic3/base/hinic3_hw_cfg.c b/drivers/net/hinic3/base/hinic3_hw_cfg.c
-index 8899f98515..e7971509d5 100644
---- a/drivers/net/hinic3/base/hinic3_hw_cfg.c
-+++ b/drivers/net/hinic3/base/hinic3_hw_cfg.c
-@@ -22,6 +22,8 @@ parse_pub_res_cap(struct service_cap *cap,
- 	cap->chip_svc_type = cap->svc_type;
- 
- 	cap->cos_valid_bitmap = dev_cap->valid_cos_bitmap;
-+	cap->cos_mask_mode = dev_cap->cos_mask_mode;
-+	cap->cos_mask_bitmap = dev_cap->cos_mask_bitmap;
- 	cap->flexq_en = dev_cap->flexq_en;
- 
- 	cap->host_total_function = dev_cap->host_total_func;
-diff --git a/drivers/net/hinic3/base/hinic3_hw_cfg.h b/drivers/net/hinic3/base/hinic3_hw_cfg.h
-index 46a9c9bf4b..62af1daa25 100644
---- a/drivers/net/hinic3/base/hinic3_hw_cfg.h
-+++ b/drivers/net/hinic3/base/hinic3_hw_cfg.h
-@@ -40,6 +40,8 @@ struct service_cap {
- 
- 	uint8_t flexq_en;
- 	uint8_t cos_valid_bitmap;
-+	uint8_t cos_mask_mode;
-+	uint8_t cos_mask_bitmap;
- 	uint16_t max_vf; /**< Max VF number that PF supported. */
- 
- 	struct nic_service_cap nic_cap; /**< NIC capability. */
-@@ -80,9 +82,11 @@ struct hinic3_cfg_cmd_dev_cap {
- 	uint8_t flexq_en;
- 	uint8_t valid_cos_bitmap;
- 	/* Reserved for func_valid_cos_bitmap. */
--	uint16_t rsvd_cos;
-+	uint16_t rsvd_valid_cos[2];
-+	uint8_t cos_mask_mode;
-+	uint8_t cos_mask_bitmap;
- 
--	uint32_t rsvd[11];
-+	uint32_t rsvd[10];
- 
- 	/* l2nic */
- 	uint16_t nic_max_sq_id;
-diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.c b/drivers/net/hinic3/base/hinic3_nic_cfg.c
-index 5fcc641ac3..2725f49df5 100644
---- a/drivers/net/hinic3/base/hinic3_nic_cfg.c
-+++ b/drivers/net/hinic3/base/hinic3_nic_cfg.c
-@@ -1492,7 +1492,7 @@ hinic3_vf_get_default_cos(struct hinic3_hwdev *hwdev, uint8_t *cos_id)
- 		return -EIO;
- 	}
- 
--	*cos_id = vf_dcb.state.default_cos % HINIC3_COS_NUM_MAX_HTN;
-+	*cos_id = vf_dcb.state.default_cos;
- 
- 	return 0;
- }
-diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.h b/drivers/net/hinic3/base/hinic3_nic_cfg.h
-index 9458a576c4..b5d7ce07a1 100644
---- a/drivers/net/hinic3/base/hinic3_nic_cfg.h
-+++ b/drivers/net/hinic3/base/hinic3_nic_cfg.h
-@@ -23,7 +23,6 @@
- #define HINIC3_MIN_MTU_SIZE		256
- 
- #define HINIC3_COS_NUM_MAX		8
--#define HINIC3_COS_NUM_MAX_HTN		4
- 
- #define HINIC3_VLAN_TAG_SIZE	4
- #define HINIC3_ETH_OVERHEAD \
 diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index 8f299ba50c..563bea3981 100644
+index ebd7988436..7ba33a0c02 100644
 --- a/drivers/net/hinic3/hinic3_ethdev.c
 +++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -76,6 +76,9 @@ enum hinic3_rx_mod {
- #define HINIC3_DEFAULT_RX_MODE \
- 	(HINIC3_RX_MODE_UC | HINIC3_RX_MODE_MC | HINIC3_RX_MODE_BC)
- 
-+#define HINIC3_DEFAULT_COS_MASK		0x7
-+#define HINIC3_DEFAULT_COS_MASK_BITMAP	0xff
-+
- struct hinic3_xstats_name_off {
- 	char name[RTE_ETH_XSTATS_NAME_SIZE];
- 	uint32_t offset;
-@@ -451,10 +454,8 @@ hinic3_deinit_mac_addr(struct rte_eth_dev *eth_dev)
- static int
- hinic3_pf_get_default_cos(struct hinic3_hwdev *hwdev, uint8_t *cos_id)
- {
--	struct hinic3_nic_dev *nic_dev = hwdev->dev_handle;
- 	uint8_t default_cos = 0;
- 	uint8_t valid_cos_bitmap;
--	uint8_t cos_num_max;
- 	uint8_t i;
- 
- 	valid_cos_bitmap = hwdev->cfg_mgmt->svc_cap.cos_valid_bitmap;
-@@ -463,10 +464,7 @@ hinic3_pf_get_default_cos(struct hinic3_hwdev *hwdev, uint8_t *cos_id)
- 		return -EFAULT;
+@@ -318,8 +318,6 @@ hinic3_xstats_calc_num(struct hinic3_nic_dev *nic_dev)
  	}
- 
--	cos_num_max = nic_dev->feature_cap & NIC_F_HTN_CMDQ ?
--		      HINIC3_COS_NUM_MAX_HTN : HINIC3_COS_NUM_MAX;
--
--	for (i = 0; i < cos_num_max; i++) {
-+	for (i = 0; i < HINIC3_COS_NUM_MAX; i++) {
- 		if (valid_cos_bitmap & RTE_BIT32(i))
- 			/* Find max cos id as default cos. */
- 			default_cos = i;
-@@ -477,12 +475,53 @@ hinic3_pf_get_default_cos(struct hinic3_hwdev *hwdev, uint8_t *cos_id)
- 	return 0;
  }
  
-+static void
-+hinic3_get_cos_mask(struct hinic3_hwdev *hwdev, uint8_t *cos_mask)
-+{
-+	uint8_t cos_mask_mode;
-+
-+	cos_mask_mode = hwdev->cfg_mgmt->svc_cap.cos_mask_mode;
-+	if (!cos_mask_mode) {
-+		*cos_mask = HINIC3_DEFAULT_COS_MASK; /* default: 8 COS*/
-+		PMD_DRV_LOG(INFO,
-+			"cos mask not provided by firmware, use default 0x%x",
-+			HINIC3_DEFAULT_COS_MASK);
-+		return;
+-#define HINIC3_MAX_QUEUE_DEPTH 16384
+-#define HINIC3_MIN_QUEUE_DEPTH 128
+ #define HINIC3_TXD_ALIGN       1
+ #define HINIC3_RXD_ALIGN       1
+ 
+@@ -739,6 +737,8 @@ hinic3_dev_configure(struct rte_eth_dev *dev)
+ 
+ 	nic_dev->num_sqs = dev->data->nb_tx_queues;
+ 	nic_dev->num_rqs = dev->data->nb_rx_queues;
++	nic_dev->rxq_depth = 0;
++	nic_dev->txq_depth = 0;
+ 
+ 	nic_dev->mtu_size =
+ 		(uint16_t)HINIC3_PKTLEN_TO_MTU(HINIC3_MAX_RX_PKT_LEN(dev->data->dev_conf.rxmode));
+@@ -1118,16 +1118,8 @@ hinic3_rx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
+ 
+ 	nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
+ 
+-	/* Queue depth must be equal to queue 0 */
+-	if (qid != 0 && nb_desc != nic_dev->rxqs[0]->q_depth) {
+-		PMD_DRV_LOG(WARNING, "rxq%u depth:%u is not equal to queue0 depth:%u.",
+-			    qid, nb_desc, nic_dev->rxqs[0]->q_depth);
+-		nb_desc = nic_dev->rxqs[0]->q_depth;
+-	}
+-
+ 	/* Queue depth must be power of 2, otherwise will be aligned up. */
+-	rq_depth = (nb_desc & (nb_desc - 1))
+-			? ((uint16_t)(1U << (rte_log2_u32(nb_desc) + 1))) : nb_desc;
++	rq_depth = (uint16_t)rte_align32pow2(nb_desc);
+ 
+ 	/*
+ 	 * Validate number of receive descriptors.
+@@ -1144,6 +1136,19 @@ hinic3_rx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
+ 		return -EINVAL;
+ 	}
+ 
++	/*
++	 * The hardware tracks a single queue depth. Keep the value chosen by
++	 * the first queue of this configuration and compare against it, so a
++	 * runtime reconfiguration with a different depth is not rejected by
++	 * queues that still hold the previous depth.
++	 */
++	if (nic_dev->rxq_depth != 0 && nic_dev->rxq_depth != rq_depth) {
++		PMD_DRV_LOG(ERR,
++			    "rxq%u depth:%u is not equal to the port depth:%u.",
++			    qid, rq_depth, nic_dev->rxq_depth);
++		return -EINVAL;
 +	}
 +
-+	*cos_mask = cos_mask_mode;
-+}
+ 	/*
+ 	 * The RX descriptor ring will be cleaned after rxq->rx_free_thresh
+ 	 * descriptors are used or if the number of descriptors required
+@@ -1297,6 +1302,7 @@ hinic3_rx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
+ 		}
+ 	}
+ 	dev->data->rx_queues[qid] = rxq;
++	nic_dev->rxq_depth = rq_depth;
+ 
+ 	return 0;
+ 
+@@ -1353,8 +1359,7 @@ hinic3_tx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
+ 	hwdev = nic_dev->hwdev;
+ 
+ 	/* Queue depth must be power of 2, otherwise will be aligned up. */
+-	sq_depth = (nb_desc & (nb_desc - 1))
+-				? ((uint16_t)(1U << (rte_log2_u32(nb_desc) + 1))) : nb_desc;
++	sq_depth = (uint16_t)rte_align32pow2(nb_desc);
+ 
+ 	/*
+ 	 * Validate number of transmit descriptors.
+@@ -1371,6 +1376,19 @@ hinic3_tx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
+ 		return -EINVAL;
+ 	}
+ 
++	/*
++	 * The hardware tracks a single queue depth. Keep the value chosen by
++	 * the first queue of this configuration and compare against it, so a
++	 * runtime reconfiguration with a different depth is not rejected by
++	 * queues that still hold the previous depth.
++	 */
++	if (nic_dev->txq_depth != 0 && nic_dev->txq_depth != sq_depth) {
++		PMD_DRV_LOG(ERR,
++			    "txq%u depth:%u is not equal to the port depth:%u.",
++			    qid, sq_depth, nic_dev->txq_depth);
++		return -EINVAL;
++	}
 +
-+static void
-+hinic3_get_cos_mask_bitmap(struct hinic3_nic_dev *nic_dev)
-+{
-+	int i;
-+	uint8_t default_cos = 0;
-+	uint8_t cos_mask_bitmap = nic_dev->hwdev->cfg_mgmt->svc_cap.cos_mask_bitmap == 0
-+			? HINIC3_DEFAULT_COS_MASK_BITMAP
-+			: nic_dev->hwdev->cfg_mgmt->svc_cap.cos_mask_bitmap;
+ 	/*
+ 	 * The TX descriptor ring will be cleaned after txq->tx_free_thresh
+ 	 * descriptors are used or if the number of descriptors required
+@@ -1468,6 +1486,7 @@ hinic3_tx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
+ 	}
+ 
+ 	dev->data->tx_queues[qid] = txq;
++	nic_dev->txq_depth = sq_depth;
+ 
+ 	return 0;
+ 
+@@ -2113,6 +2132,33 @@ hinic3_dev_start(struct rte_eth_dev *eth_dev)
+ 	int err;
+ 
+ 	nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(eth_dev);
 +
-+	PMD_DRV_LOG(INFO, "cos_mask_bitmap: 0x%x", cos_mask_bitmap);
-+	for (i = HINIC3_COS_NUM_MAX - 1; i >= 0; i--) {
-+		if (cos_mask_bitmap & RTE_BIT32(i)) {
-+			default_cos = i;
-+			break;
++	/*
++	 * The root context carries a single depth per direction, taken from
++	 * queue 0, and a queue setup cannot change the other queues. A partial
++	 * reconfiguration would therefore leave the rings sized differently
++	 * from the root context, so refuse to start unless every configured
++	 * queue is present and shares the depth of queue 0.
++	 */
++	for (i = 0; i < nic_dev->num_rqs; i++) {
++		if (nic_dev->rxqs[i] == NULL ||
++		    nic_dev->rxqs[i]->q_depth != nic_dev->rxqs[0]->q_depth) {
++			PMD_DRV_LOG(ERR,
++				    "rxq%u is missing or has a different depth than rxq0.",
++				    i);
++			return -EINVAL;
++		}
++	}
++	for (i = 0; i < nic_dev->num_sqs; i++) {
++		if (nic_dev->txqs[i] == NULL ||
++		    nic_dev->txqs[i]->q_depth != nic_dev->txqs[0]->q_depth) {
++			PMD_DRV_LOG(ERR,
++				    "txq%u is missing or has a different depth than txq0.",
++				    i);
++			return -EINVAL;
 +		}
 +	}
 +
-+	for (i = 0; i < HINIC3_COS_NUM_MAX; i++)
-+		nic_dev->cos_map[i] = ((RTE_BIT32(i) & cos_mask_bitmap) == 0) ? default_cos : i;
-+}
-+
- static int
- hinic3_init_default_cos(struct hinic3_nic_dev *nic_dev)
+ 	err = hinic3_copy_mempool_init(nic_dev);
+ 	if (err) {
+ 		PMD_DRV_LOG(ERR, "Create copy mempool failed, dev_name: %s",
+@@ -2263,6 +2309,7 @@ hinic3_dev_stop(struct rte_eth_dev *dev)
  {
-+	uint8_t cos_mask = 0;
- 	uint8_t cos_id = 0;
+ 	struct hinic3_nic_dev *nic_dev;
+ 	struct rte_eth_link link;
++	uint16_t i;
  	int err;
  
-+	hinic3_get_cos_mask(nic_dev->hwdev, &cos_mask);
-+
- 	if (!HINIC3_IS_VF(nic_dev->hwdev)) {
- 		err = hinic3_pf_get_default_cos(nic_dev->hwdev, &cos_id);
- 		if (err) {
-@@ -497,8 +536,9 @@ hinic3_init_default_cos(struct hinic3_nic_dev *nic_dev)
- 		}
- 	}
+ 	nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
+@@ -2314,6 +2361,21 @@ hinic3_dev_stop(struct rte_eth_dev *dev)
  
-+	nic_dev->cos_mask = cos_mask;
- 	nic_dev->default_cos = cos_id;
--	PMD_DRV_LOG(DEBUG, "Default cos %d", nic_dev->default_cos);
-+	PMD_DRV_LOG(DEBUG, "Default cos %d, cos mask %d", nic_dev->default_cos, nic_dev->cos_mask);
+ 	/* Free mempool. */
+ 	hinic3_copy_mempool_uninit(nic_dev);
++
++	/* A stopped device starts a new queue configuration. */
++	nic_dev->rxq_depth = 0;
++	nic_dev->txq_depth = 0;
++
++	for (i = 0; i < dev->data->nb_rx_queues; i++)
++		dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
++	for (i = 0; i < dev->data->nb_tx_queues; i++) {
++		struct hinic3_txq *txq = dev->data->tx_queues[i];
++
++		if (txq != NULL)
++			HINIC3_SET_TXQ_STOPPED(txq);
++		dev->data->tx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
++	}
++
  	return 0;
  }
  
-@@ -533,6 +573,7 @@ hinic3_set_default_hw_feature(struct hinic3_nic_dev *nic_dev)
- {
- 	int err;
- 
-+	hinic3_get_cos_mask_bitmap(nic_dev);
- 	err = hinic3_init_default_cos(nic_dev);
- 	if (err)
- 		return err;
-@@ -1297,6 +1338,10 @@ hinic3_tx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
- 	else
- 		txq->cos = nic_dev->default_cos;
- 
-+	if (HINIC3_IS_SP230_NIC(nic_dev))
-+		txq->cos = nic_dev->cos_map[txq->cos &
-+			(HINIC3_COS_NUM_MAX - 1) & nic_dev->cos_mask];
-+
- 	txq->tx_deferred_start = tx_conf->tx_deferred_start;
- 	txq->tx_wqe_compact_task = HINIC3_SUPPORT_TX_WQE_COMPACT_TASK(nic_dev);
- 
 diff --git a/drivers/net/hinic3/hinic3_ethdev.h b/drivers/net/hinic3/hinic3_ethdev.h
-index c3384e5fd0..935b7719ca 100644
+index 0763665885..eff0bca29e 100644
 --- a/drivers/net/hinic3/hinic3_ethdev.h
 +++ b/drivers/net/hinic3/hinic3_ethdev.h
-@@ -133,6 +133,7 @@ struct hinic3_nic_dev {
- 	uint8_t rx_queue_list[HINIC3_MAX_QUEUE_NUM];
- 	rte_spinlock_t queue_list_lock;
+@@ -15,6 +15,9 @@
  
-+	uint32_t cos_mask;
- 	uint32_t default_cos;
- 	uint32_t rx_csum_en;
+ #define HINIC3_PMD_DRV_VERSION "B106"
  
-@@ -155,6 +156,7 @@ struct hinic3_nic_dev {
- 	struct hinic3_tcam_info tcam;
- 	struct hinic3_ethertype_filter_list filter_ethertype_list;
- 	struct hinic3_fdir_rule_filter_list filter_fdir_rule_list;
-+	uint8_t cos_map[HINIC3_COS_NUM_MAX];
- 	struct hinic3_nic_cmdq_ops *cmdq_ops;
- 	struct hinic3_nic_rx_ops *rx_ops;
- 	struct hinic3_nic_tx_ops *tx_ops;
++#define HINIC3_MAX_QUEUE_DEPTH         16384
++#define HINIC3_MIN_QUEUE_DEPTH         128
++
+ #define PCI_DEV_TO_INTR_HANDLE(pci_dev) ((pci_dev)->intr_handle)
+ 
+ #define HINIC3_PKT_RX_L4_CKSUM_BAD	RTE_MBUF_F_RX_L4_CKSUM_BAD
+@@ -144,6 +147,8 @@ struct hinic3_nic_dev {
+ 
+ 	uint16_t num_sqs;
+ 	uint16_t num_rqs;
++	uint16_t rxq_depth;
++	uint16_t txq_depth;
+ 	uint16_t max_sqs;
+ 	uint16_t max_rqs;
+ 
 -- 
 2.33.0
 
