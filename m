@@ -2,73 +2,74 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1C9606A320
-	for <dpdk-dev@archiver.kernel.org>; Sun, 22 Nov 2026 18:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9DF606A320
+	for <dpdk-dev@archiver.kernel.org>; Sun, 22 Nov 2026 18:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=SzuEtvMf
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=JGQ7jDGg
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 54D984042C;
-	Sun, 22 Nov 2026 19:04:21 +0100 (CET)
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
- [209.85.214.169])
- by mails.dpdk.org (Postfix) with ESMTPS id 2C3FC402B9
- for <dev@dpdk.org>; Sun, 22 Nov 2026 19:04:19 +0100 (CET)
-Received: by mail-pl1-f169.google.com with SMTP id
- d9443c01a7336-2f04b676219so12173155ad.0
- for <dev@dpdk.org>; Sun, 22 Nov 2026 10:04:19 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6372240615;
+	Sun, 22 Nov 2026 19:04:23 +0100 (CET)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
+ [209.85.214.178])
+ by mails.dpdk.org (Postfix) with ESMTPS id BC80240395
+ for <dev@dpdk.org>; Sun, 22 Nov 2026 19:04:20 +0100 (CET)
+Received: by mail-pl1-f178.google.com with SMTP id
+ d9443c01a7336-2f041f88577so13446365ad.1
+ for <dev@dpdk.org>; Sun, 22 Nov 2026 10:04:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1795370657;
- x=1795975457; darn=dpdk.org; 
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1795370659;
+ x=1795975459; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
  bh=3tvc4D2ZGbWX/0NJRlVEKvRy1/rCXVZXIoPu8vHLUJo=;
- b=SzuEtvMf/5WFoMf6JjPEZufsOrjVsw6vU030yTe6/amx5dALba2Pz+chjhxfcmwzfu
- lAQ4UUOBiJDgbai3NlH3yRvzcRE3VpfrB2hQZgKuarXVvuuni9G7VGVF7/du8olOomdm
- L1UM3LFXVOVYMVQE5ugenaYDwIRcHQ/yqdc0J/ZKS39DJTBHQpXv49K3buQmFSa1ortO
- iW0YGisO0d4JZHnNfA+rWIY9pjRXeTMkyVkbWYhN+fWBLraoIIxBoFgjLgMhiKSJUfjE
- MniSyzyk6p5kktCSSHnJ26W3I92nkts236Pfn5ID3grrVcRoW++85NuXxRXU9autWOdA
- aOMw==
+ b=JGQ7jDGgDGcvOkGdriWLQR98iAD3u1x+jrjBI15Y4dhWirDbYzj+9DQFckm6+zjPHt
+ DiljXt4FVpoYHGUmTiGpH3Ae+NIKJa7UnG6QtHvfouLG3J/OMdI+I4D+P1Ra/mMIAXsn
+ i9JhIcD5hcZ/09+gy9hJlPWZhebTRChxFFbCyGJLXgcWUesT0v/C3Nf0fA7Yavw/krkC
+ oMh5SxuK812tpWcNhTaEIZ6ma5QtxhMm4iJDBUhe3e/QoFCJIy2+hmtfISuHY9zDgrVY
+ 2SghpjuVxmWBufyTIk94VvBiPiEDG0L1XXs3jg9HpDrwqgHu7unXGK/5gH0SMUqG6VsW
+ N3TA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1795370657; x=1795975457;
+ d=1e100.net; s=20260707; t=1795370659; x=1795975459;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
  bh=3tvc4D2ZGbWX/0NJRlVEKvRy1/rCXVZXIoPu8vHLUJo=;
- b=kQMKokMQKBK/zzDmdiMfU3RRVj1Ds+Z0DsIV4PhKQc1/pU9Bvj0pWEnvIBVTANYhwJ
- r1V9sheDJoST1BMpy/OlJCBLB763EdVHKC2cSn7YUFUpTTXhhVRR0kpaWJV+hJSE1oLu
- YsnjAEDBKgHviyorbsXucD1Vg7x5aZwWG4juVr5190P+5ZZeePBlVFYtX/lewHAW3Avm
- eXlT2HAZAsfjAPO8Z3CkX/C+ZWkpQNQZ3D2ldynfEGnpWfnN1MDv7s+1xmkLZ59NcUud
- x8F/cddIUq/jcdFhAr2PPy0PKGHVmS+TKE/H0nKl3mnRSuxiiTpkiB254dnFYGnUYnkI
- YTsg==
-X-Gm-Message-State: APuU4Z+wMTNU2V87Wua5JrgO7XFpPF68QicwBIF38VlSFPRgKHjqMVna
- mOLML+SuasarRKWBg9rR+5BcF8RCa3D5j9tg7XjBtB5eA4rj73OctPy7Xoz5EABgMvQ=
-X-Gm-Gg: AZFdTZdztWRxOQFgY8mfXwPHMRt79KAgrHtlHOxJMyC4QxTp5+f1JaAXAnQjmSCSFsQ
- xT6PQZ+432keZT4qjTKNkDPRDWspi+1ezZOuMtEkGjm859Fgle2Q31+ZutQ7YFfNk9VrDiajqr7
- pc9MP/7oiMTFS7KG2PRHTFNvMGm1v412sDd/r9kypyENk3uNq3g36UZn5gjPS0DR0Jxf2iKVxt4
- aG4T38mGN6mAxcvHSznsuqIxDND8qV9AF9z2TqpNYlQ6068lAsXvvAoSCigSLQ3cSFJjMciQ97G
- u8AKq7zyOte07aYOEq7+og/NvWqFjLJlUV455dAHzx6D1aHdNAcyjVrNTnLy6+wVe/5BlfGF3OY
- 35AwNssKgY2YJmySPWG5k3umRAQN/nNloYEIr6aKIbuCW74Z6t+y4V221W7oiy0w8UBnT9zeaiX
- v/A1Jb93abh8a1CuCSftag9ljwI3+XbqBKFeAUcDN+/KdXf5GsmNY+wk9iopecDyuDx61hCC1Fs
- KUHL7yYIG+eSgMMI4Dr8W1nSA5qNdg9G+O1/d76/DbToMSXrNp2cFJhQI+Ax0UYtpqZRXC5YWN0
- Wv5HnmEuBKYU707plNQQ9OUB2EJ+crrP2BVAnhUpYZymJ3HqOrulPnMld/INs2gaRR6YQC4=
-X-Received: by 2002:a17:902:cec5:b0:2dd:c100:80ba with SMTP id
- d9443c01a7336-2f03f1bece2mr101884985ad.53.1795370657562; 
- Sun, 22 Nov 2026 10:04:17 -0800 (PST)
+ b=ZfeG8xWoO+fDxCDRk3ifPJUAf1UL5kyPS9PtWzp9sfEhTePlkx4roPZ5/42tdXrTi0
+ voiWsSEnjUpawSjx6c/ZxQ/DfsLkysRiXxs4vvxvZzwmbnG+i7+xEaNTAG3utasjGPws
+ pWnpZafEHJRFW7kabqwYrmoGe/nwRXm64/IOtn+BjXHZBUbxRKWABvEdsgEYqFSjaXwp
+ o5Jf4x++txTHc5ZRITbAkJQH14cxfIH7/8kc1NI3tKO0H9vpYdn7kBb+VS6rBbWA5OxR
+ sLJcg78dDU55ertqngEV8qm0o6ypqRnhl3wcLKKlEqV9rgKKC//ZgFIBNxgfAaqs6467
+ ViQA==
+X-Gm-Message-State: APuU4Z/U6WFMxoMHKJWbuJ4BRMs4qv96MTMEsGZXAWZRnKxXSLDbUUnw
+ OtJJbRIAKDNFwflDvq8fdAS1AM/LdviBgj/P7teMmXFqNipxEARTHu6MjrQsZSdrz6YsOBSplEx
+ GT2+5DEc=
+X-Gm-Gg: AZFdTZfji7Pmh9h9ed0eRq5wwQqClPCkhkQHshYOtsTFovcIn8eJo8GGoQ5LRt42/Df
+ GNK2nZ0YhPWAAvusuxwfxuGAPrh5K52P4e/uABOm0qSsGV3Gkt+a2afXl2Ce75TtawPphvOF7lz
+ yaIXA1xmz118gdCeqhmCClbxNr0Dp4hu0xnnyINQ4azZmI/Bw2ooVnhfzodKF3e9ZojE/9FBvAY
+ +1aINxmuNVt/LPeKQK1p0lpEN0G3aGoyeUvO36I2j/1q8DA1up87+n6O95mHcXTppiT6EQIo00B
+ /4WHrfEYUHCiat/DNTx8jzG/Fkz1lMfVXddcObFmn5lk8Eq3Rk8tSRzDaz59RPCOaN8rBELinww
+ 44qNo1F55IvG6GlKuOT5iUhEEgDetHFUmY2iVSjMgUuqUZH7Sheqcx/c+8KafyVcCMAu2U+xTKN
+ /UxRMlLXyxqYfDP0maUJRpXxZXdq1mttdTeF6vP4tmJMMWYamISKaLUB61PKenYyMaeRmeXr4ak
+ OJNCGw9zzYre7LWaWcE+kA5daZCH/cImCc2lmcbnmgQ2hG4Kr6P3yjn8r0NNSlzKM4AkIl7KDcv
+ 79pAd5odgvvs3CTB/tA+T344ak1jpEreX1dcxQUnjn/6aHR5Ay/yeXSKmMcJ1bivMQN9QXU=
+X-Received: by 2002:a17:902:dacc:b0:2f0:25ea:8fc6 with SMTP id
+ d9443c01a7336-2f03f1a47dbmr86202055ad.28.1795370659229; 
+ Sun, 22 Nov 2026 10:04:19 -0800 (PST)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2f03f0c1a69sm38587815ad.18.2026.11.22.10.04.17
+ d9443c01a7336-2f03f0c1a69sm38587815ad.18.2026.11.22.10.04.18
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 22 Nov 2026 10:04:17 -0800 (PST)
-Date: Sun, 22 Nov 2026 09:46:43 -0800
+ Sun, 22 Nov 2026 10:04:19 -0800 (PST)
+Date: Sun, 22 Nov 2026 09:47:35 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Ryan Wolfe <rnwolfe@google.com>
 Cc: dev@dpdk.org, Junfeng Guo <junfeng.guo@intel.com>, Joshua Washington
  <joshwash@google.com>, stable@dpdk.org, Harshitha Ramamurthy
  <hramamurthy@google.com>, Rushil Gupta <rushilg@google.com>
 Subject: Re: [PATCH v2 0/3] net/gve: fix GQI Tx cleanup and QPL FIFO reclaim
-Message-ID: <20261122094643.7c312abc@phoenix.local>
+Message-ID: <20261122094735.2e406bdf@phoenix.local>
 In-Reply-To: <cover.1794908231.git.rnwolfe@google.com>
 References: <20261115140016.3830109-1-rnwolfe@google.com>
  <cover.1794908231.git.rnwolfe@google.com>
