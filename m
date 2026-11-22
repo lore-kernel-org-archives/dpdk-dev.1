@@ -2,44 +2,44 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EDBE606A32A
-	for <dpdk-dev@archiver.kernel.org>; Sun, 22 Nov 2026 14:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34DCF606A320
+	for <dpdk-dev@archiver.kernel.org>; Sun, 22 Nov 2026 14:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yunsilicon.com header.i=@yunsilicon.com header.a=rsa-sha256 header.s=feishu2403070942 header.b=EObGbmdD
+	dkim=pass (2048-bit key) header.d=yunsilicon.com header.i=@yunsilicon.com header.a=rsa-sha256 header.s=feishu2403070942 header.b=hUXIbMet
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DACC940430;
-	Sun, 22 Nov 2026 15:22:54 +0100 (CET)
-Received: from lf-1-13.ptr.blmpb.com (lf-1-13.ptr.blmpb.com [103.149.242.13])
- by mails.dpdk.org (Postfix) with ESMTPS id A6A9D402CC
- for <dev@dpdk.org>; Sun, 22 Nov 2026 15:22:52 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id DEB4E4060C;
+	Sun, 22 Nov 2026 15:22:56 +0100 (CET)
+Received: from lf-2-37.ptr.blmpb.com (lf-2-37.ptr.blmpb.com [101.36.218.37])
+ by mails.dpdk.org (Postfix) with ESMTPS id 7416D402B9
+ for <dev@dpdk.org>; Sun, 22 Nov 2026 15:22:54 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=feishu2403070942; d=yunsilicon.com; t=1795357365; h=from:subject:
+ s=feishu2403070942; d=yunsilicon.com; t=1795357367; h=from:subject:
  mime-version:from:date:message-id:subject:to:cc:reply-to:content-type:
  mime-version:in-reply-to:message-id;
- bh=DH8Fq2hbk8XrUGQv6fZ+A3ZMsQrGiJKwRZmiwtpYhkg=;
- b=EObGbmdDm133y+ulq12+Slj4lk63DOVsS8ibvV7i4Y9nVqMh2E1urpptRi8RN4C+e6/qBS
- xYdQRR81yhLE+XI82gJetW5/vQ+3+0vpUaQRjMGlGsp7vel3QrvRc80JTIyZi6rLvFLf/+
- ctGfrEWyd+t38nSsfLqXNSFC1ar+AXOehjwjBe/QADWL1CyBZfu6DXm+yjedZ9MfaKIqld
- MBlYUuJXfeRsdCCiMeQso0p3kSa+dehnF6emSu/WYTYJXu1RzCjSZz1xg4hvsabLk/DPas
- UnUbCTnBJBAtB8uauCet/ylPEC3Kn3szOl3B4qMbzUR2S8VGiIkY/RUNjPWtnw==
+ bh=JnGi7RSqFYAU/TwyPV4yTP6sqe3W/WtXqoCrkdtPyx4=;
+ b=hUXIbMetk9gnL758xoKF7LymRiffMZSuvPM+Ot02B8vNtYSYFZRpauiUL14ZrzhYiLiot3
+ 8x5/9xxy+YoTXBj4Sq+E5ezYJ4mkV8vSbHeiUPw3x9V8ghe63zMd0dGKquNlao+s72D8Q9
+ WvmngRvTX1HeJ19MF/3QWK2wTLiTensNkqt6cL83W4tHdJaXzEW9f4jsE3/JJnF231WOo1
+ +QX0MEQv8fT6Ab+YCDTfBHqYO9vzSIfd1oD/s7ukFYZ2Xop//Hrr2z377KJ8bNKWegg60d
+ gwtQJyrsrktBJK87aE8u7o3OQ9b0UYPcw9Ii6NLloc220ufmOfLaemCa0I7yFA==
+From: "Renyong Wan" <wanry@yunsilicon.com>
+Subject: [PATCH v5 2/4] net/xsc: fix leak on device init failure
+Message-Id: <1795357356.655948@yunsilicon.com>
 To: <dev@dpdk.org>
-Date: Sun, 22 Nov 2026 22:22:36 +0800
 Content-Type: text/plain; charset=UTF-8
+Received: from [192.168.0.85] ([114.92.245.110]) by smtp.feishu.cn with ESMTPS;
+ Sun, 22 Nov 2026 22:22:45 +0800
+In-Reply-To: <1795357356.312312@yunsilicon.com>
+X-Archived-By: <archiver.kernel.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Original-From: Renyong Wan <wanry@yunsilicon.com>
 Cc: "Stephen Hemminger" <stephen@networkplumber.org>, <nana@yunsilicon.com>, 
  <qianr@yunsilicon.com>, <zhangxx@yunsilicon.com>, <xudw@yunsilicon.com>, 
  <stable@dpdk.org>
-From: "Renyong Wan" <wanry@yunsilicon.com>
-Subject: [PATCH v5 1/4] net/xsc: fix jumbo buffer allocation and leak
-Content-Transfer-Encoding: 7bit
-Message-Id: <1795357356.579787@yunsilicon.com>
-X-Archived-By: <archiver.kernel.org>
-Mime-Version: 1.0
-X-Original-From: Renyong Wan <wanry@yunsilicon.com>
-Received: from [192.168.0.85] ([114.92.245.110]) by smtp.feishu.cn with ESMTPS;
- Sun, 22 Nov 2026 22:22:42 +0800
+X-Lms-Return-Path: <lba+26b02fab5+dfe1d0+dpdk.org+wanry@yunsilicon.com>
 References: <1795357356.312312@yunsilicon.com>
-In-Reply-To: <1795357356.312312@yunsilicon.com>
-X-Lms-Return-Path: <lba+26b02fab3+d0892c+dpdk.org+wanry@yunsilicon.com>
+Date: Sun, 22 Nov 2026 22:22:36 +0800
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,136 +57,26 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The jumbo buffer is allocated inside the WQE loop, so a device without
-IOVA retries it on every WQE and logs an error each time. The fallback
-also hands XSC_MAX_RECV_LEN bytes to a segment that points into an
-mbuf, which is a DMA overrun.
+xsc_dev_init() leaks the structure when the dev_ops lookup fails. Free
+it there: xsc_dev_uninit() cannot be used, as xsc_dev_close()
+dereferences xdev->dev_ops.
 
-Allocate it once before the loop and fail the queue start on error.
-Nothing frees it on removal either, so free it in xsc_dev_close() once
-the last port stops the hardware.
-
-Fixes: 0ff4b93c318f ("net/xsc: support device start")
+Fixes: fb7d4f7ae39a ("net/xsc: add device initialization")
 Cc: stable@dpdk.org
 Reported-by: Stephen Hemminger <stephen@networkplumber.org>
 Signed-off-by: Renyong Wan <wanry@yunsilicon.com>
 ---
- drivers/net/xsc/xsc_dev.c | 16 ++++++++++---
- drivers/net/xsc/xsc_rx.c  | 47 ++++++++++++++++++++++-----------------
- 2 files changed, 39 insertions(+), 24 deletions(-)
+ drivers/net/xsc/xsc_dev.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/net/xsc/xsc_dev.c b/drivers/net/xsc/xsc_dev.c
-index 478f4895..953409a9 100644
+index 953409a9..f048efd7 100644
 --- a/drivers/net/xsc/xsc_dev.c
 +++ b/drivers/net/xsc/xsc_dev.c
-@@ -141,11 +141,21 @@ xsc_dev_tx_qp_create(struct xsc_dev *xdev, struct xsc_tx_qp_params *qp_params,
- int
- xsc_dev_close(struct xsc_dev *xdev, int repr_id)
- {
-+	int ret = 0;
-+
- 	xsc_dev_clear_pct(xdev, repr_id);
- 
--	if (repr_id == xdev->num_repr_ports - 1)
--		return xdev->dev_ops->dev_close(xdev);
--	return 0;
-+	if (repr_id == xdev->num_repr_ports - 1) {
-+		ret = xdev->dev_ops->dev_close(xdev);
-+		/*
-+		 * The buffer is shared by all the ports, the other Rx
-+		 * queues hold its IOVA until the device is stopped.
-+		 */
-+		rte_free(xdev->jumbo_buffer_pa);
-+		xdev->jumbo_buffer_pa = NULL;
-+	}
-+
-+	return ret;
- }
- 
- int
-diff --git a/drivers/net/xsc/xsc_rx.c b/drivers/net/xsc/xsc_rx.c
-index 13b2e269..30b40df3 100644
---- a/drivers/net/xsc/xsc_rx.c
-+++ b/drivers/net/xsc/xsc_rx.c
-@@ -195,7 +195,7 @@ xsc_rx_burst(void *dpdk_rxq, struct rte_mbuf **pkts, uint16_t pkts_n)
- 	return nb_pkts;
- }
- 
--static void
-+static int
- xsc_rxq_initialize(struct xsc_dev *xdev, struct xsc_rxq_data *rxq_data)
- {
- 	const uint32_t wqe_n = rxq_data->wqe_s;
-@@ -211,6 +211,24 @@ xsc_rxq_initialize(struct xsc_dev *xdev, struct xsc_rxq_data *rxq_data)
- 	volatile struct xsc_wqe_data_seg *seg;
- 	volatile struct xsc_wqe_data_seg *seg_next;
- 
-+	if (rx_ds_num != 1 && jumbo_buffer_pa == NULL) {
-+		jumbo_buffer_pa = rte_malloc(NULL, XSC_MAX_RECV_LEN, 0);
-+		if (jumbo_buffer_pa == NULL) {
-+			PMD_DRV_LOG(ERR, "Failed to malloc jumbo_buffer");
-+			return -ENOMEM;
-+		}
-+
-+		jumbo_buffer_va = (void *)rte_malloc_virt2iova(jumbo_buffer_pa);
-+		if ((rte_iova_t)jumbo_buffer_va == RTE_BAD_IOVA) {
-+			PMD_DRV_LOG(ERR, "Failed to get IOVA of jumbo_buffer");
-+			rte_free(jumbo_buffer_pa);
-+			return -EFAULT;
-+		}
-+
-+		xdev->jumbo_buffer_pa = jumbo_buffer_pa;
-+		xdev->jumbo_buffer_va = jumbo_buffer_va;
-+	}
-+
- 	for (i = 0; (i != wqe_n); ++i) {
- 		mbuf = (*rxq_data->elts)[i];
- 		seg = &((volatile struct xsc_wqe_data_seg *)rxq_data->wqes)[i * rx_ds_num];
-@@ -227,25 +245,6 @@ xsc_rxq_initialize(struct xsc_dev *xdev, struct xsc_rxq_data *rxq_data)
- 
- 		if (rx_ds_num != 1) {
- 			seg_next = seg + 1;
--			if (jumbo_buffer_va == NULL) {
--				jumbo_buffer_pa = rte_malloc(NULL, XSC_MAX_RECV_LEN, 0);
--				if (jumbo_buffer_pa == NULL) {
--					/* Rely on mtu */
--					seg->seg_len = XSC_MAX_RECV_LEN;
--					PMD_DRV_LOG(ERR, "Failed to malloc jumbo_buffer");
--					continue;
--				} else {
--					jumbo_buffer_va =
--						(void *)rte_malloc_virt2iova(jumbo_buffer_pa);
--					if ((rte_iova_t)jumbo_buffer_va == RTE_BAD_IOVA) {
--						seg->seg_len = XSC_MAX_RECV_LEN;
--						PMD_DRV_LOG(ERR, "Failed to turn jumbo_buffer");
--						continue;
--					}
--				}
--				xdev->jumbo_buffer_pa = jumbo_buffer_pa;
--				xdev->jumbo_buffer_va = jumbo_buffer_va;
--			}
- 			*seg_next = (struct xsc_wqe_data_seg){
- 				.va = rte_cpu_to_le_64((uint64_t)jumbo_buffer_va),
- 				.seg_len = rte_cpu_to_le_32(XSC_MAX_RECV_LEN - seg_len),
-@@ -264,6 +263,8 @@ xsc_rxq_initialize(struct xsc_dev *xdev, struct xsc_rxq_data *rxq_data)
- 	recv_db.next_pid = wqe_n << log2ds;
- 	recv_db.qp_num = rxq_data->qpn;
- 	rte_write32(rte_cpu_to_le_32(recv_db.recv_data), rxq_data->rq_db);
-+
-+	return 0;
- }
- 
- static int
-@@ -484,7 +485,11 @@ xsc_rss_qp_create(struct xsc_ethdev_priv *priv, int port_id)
- 
- 		rxq_data->qpn = rqn_base + i;
- 		xsc_dev_modify_qp_status(xdev, rxq_data->qpn, 1, XSC_CMD_OP_RTR2RTS_QP);
--		xsc_rxq_initialize(xdev, rxq_data);
-+		ret = xsc_rxq_initialize(xdev, rxq_data);
-+		if (ret != 0) {
-+			rte_errno = -ret;
-+			goto set_qp_fail;
-+		}
- 		rxq_data->cq_ci = 0;
- 		PMD_DRV_LOG(INFO, "Port %d create rx qp, wqe_s:%d, wqe_n:%d, qp_db=%p, qpn:%u",
- 			    port_id,
+@@ -375,6 +375,7 @@ xsc_dev_init(struct rte_pci_device *pci_dev, struct xsc_dev **xdev)
+ 	d->dev_ops = xsc_dev_ops_get(pci_dev->kdrv);
+ 	if (d->dev_ops == NULL) {
+ 		PMD_DRV_LOG(ERR, "Could not get dev_ops, kdrv=%d", pci_dev->kdrv);
++		rte_free(d);
+ 		return -ENODEV;
+ 	}
