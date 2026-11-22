@@ -2,101 +2,79 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D880606A32C
-	for <dpdk-dev@archiver.kernel.org>; Sun, 22 Nov 2026 15:46:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B91606A334
+	for <dpdk-dev@archiver.kernel.org>; Sun, 22 Nov 2026 17:30:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=X+j3DpdB
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=nOxmS+KZ
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C7A14402CC;
-	Sun, 22 Nov 2026 16:46:35 +0100 (CET)
-Received: from DM1PR04CU001.outbound.protection.outlook.com
- (mail-centralusazon11010004.outbound.protection.outlook.com [52.101.61.4])
- by mails.dpdk.org (Postfix) with ESMTPS id E695A402B9
- for <dev@dpdk.org>; Sun, 22 Nov 2026 16:46:33 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oAnd+7NMj3V43WvbHXIohvkhqxUBQ73TXzmDPra3updsKOzMr6jvjazfmXNDVyUmkyL9eesDhEiGN/b6cywlaELcBi1kL3E9PpuBq/CKQPwjZ/rdl6FRzG0wMWmIcillQ3Dq2EcSpxpWZD21u5KnZZI3jwpJ0hO0bw0nY7sie1gN9+UEg2MQI9s7bufsFlrCQRyCmDEfmWVV/DI4G7XAWoJmTHxCgyKAKenbwi1nchqQDmw7Mq+TaEdcnn8PsRoFx6hTOemTO6TOawyaheSTov9WrL80UvZ2blsa59U5xiUg4pvSNdcI0h5YsmqByl5X3iO/AU5Np7nv/RpBQZV9yw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YmSmRjevCNuuRaGr18JMLwBV5WE9WT3km5a9DyCx8Tg=;
- b=KWOquyeWYhJCgudsouwNb9Qxj/2wuTzeQZQB9kf/AWvR81YYLAhFKbYTLUikC7Oo1vrscmAnaKvDe7LKnZhBi57CLmOg0AnSjqRxmYrpBl00BPI+0Ryz5YYS3bCv5lBbK6uTGwOUgasH+NajUCKVfVIoetVk9cZcAwLkXlfasq7+yNCOCzGI5jeZ/7A0L4zupB3LFPXgScCzaEiWMs6hdUIGtyMkQr7zJ3CjFTr8xulAMt3KlLE15Q7ZWIdKbLcosEwIfLNFIZvH1UPl5jrIJvttCOpozNXoJvjd6YZSKzCqknbdsjtBAhQBnOKF8fnsMNg0tyzGf9lvcbZFvIkdIA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=monjalon.net smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YmSmRjevCNuuRaGr18JMLwBV5WE9WT3km5a9DyCx8Tg=;
- b=X+j3DpdBrSqLlp3HvXGdAltm7jRq8u7DQ69X341fZmF8h1CeuFi2MAFpQsrHwpcbsC6dGKLJXHg+OJv8z0+fS/CVYTEQtcSGzSqTjJ7Mg1G2wuQ1I9LFMFs2IcOxLPbCneDG8swVlINeJyoPt37GZPvyDhnHlgF84j70lSrGZCo9unEoY85r5KmEOYyT0ctxqCWICL4yVfJm0z55RAGuM5fvXdv+OuD+HdS/Fl+DnbjDT56jdbsRS96PScUILqkHHB6B3pcLdcrKXXuIIvMQKXjScbwjWzc5+ULTTbrJxOBJjnM4UP1SyfZ7Wgl5HncfheHswAVj3VCXbr2iA4JD4Q==
-Received: from SJ0PR03CA0192.namprd03.prod.outlook.com (2603:10b6:a03:2ef::17)
- by CY8PR12MB8196.namprd12.prod.outlook.com (2603:10b6:930:78::17)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.639.14; Sun, 22 Nov
- 2026 15:46:17 +0000
-Received: from SJ1PEPF000037AC.namprd03.prod.outlook.com
- (2603:10b6:a03:2ef:cafe::6f) by SJ0PR03CA0192.outlook.office365.com
- (2603:10b6:a03:2ef::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.639.12 via Frontend Transport; Sun,
- 22 Nov 2026 15:46:16 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SJ1PEPF000037AC.mail.protection.outlook.com (10.167.244.186) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.639.5 via Frontend Transport; Sun, 22 Nov 2026 15:46:16 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.57; Sun, 22 Nov
- 2026 07:46:06 -0800
-Received: from nvidia.com (10.126.231.37) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.57; Sun, 22 Nov
- 2026 07:46:04 -0800
-From: Raslan Darawsheh <rasland@nvidia.com>
-To: <thomas@monjalon.net>
-CC: <dev@dpdk.org>
-Subject: [PATCH] doc: add tested platforms with NVIDIA NICs
-Date: Sun, 22 Nov 2026 17:45:49 +0200
-Message-ID: <20261122154549.48329-1-rasland@nvidia.com>
-X-Mailer: git-send-email 2.55.0
+	by mails.dpdk.org (Postfix) with ESMTP id 31757402CC;
+	Sun, 22 Nov 2026 18:30:56 +0100 (CET)
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com
+ [209.85.210.170])
+ by mails.dpdk.org (Postfix) with ESMTPS id C6AB7402B9
+ for <dev@dpdk.org>; Sun, 22 Nov 2026 18:30:54 +0100 (CET)
+Received: by mail-pf1-f170.google.com with SMTP id
+ d2e1a72fcca58-8b271e573adso1067646b3a.2
+ for <dev@dpdk.org>; Sun, 22 Nov 2026 09:30:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1795368653;
+ x=1795973453; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=bN9zHdJy/uZ3vzhIH5dX6SepTnRUrRwO7B2X+mlZxio=;
+ b=nOxmS+KZB6bkSihrlbG3Z9aSCeRwPBPJs2DqOBmoEHxZkHercpL/OjqDqsU3Isc8zR
+ 7yoYvXesCrsGrdHCdVEfv9wVTuOVVR8pezgj7kNjI2RjKts67hBsjAbuE6RB6/R+eOSR
+ gergmjvC1lVJoFCqnGz6WPEB99nrOxU5NVZlSDuWaysEnxs/Vm7wQVRErc0uwzMhgIs8
+ l3X+ZookXSIjbr1T+uN81aD2yhvVA9Myz7utNH25ns57KBaX8XTN636MdRoylpRagLGS
+ o91yLMShPpbGJjjrEJmZZZtXs5TRy++WpkdOME9nXU62/ozU/WSXBVPKJy6K9yPqcvCJ
+ 490A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1795368653; x=1795973453;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=bN9zHdJy/uZ3vzhIH5dX6SepTnRUrRwO7B2X+mlZxio=;
+ b=Q0+yA6eIDAf7osu3Ia+/Re0R/xucU4f6My+dIGf+ruP+qSYhwi0l4+PUJ4D+tFSVNS
+ d0/GWFcLAluNCR1SUvZC2oIWLO1jNE87PcIJaUPqes5/6OQ491URuVko7d6DiaxCj/Lk
+ w81H2bNyY+UrbvGEwUPkBBEeZk+RFdP6urrhxwJQr+qOeolSOtXpMtDtCccONQ27MbpE
+ CzJcsYofXjREkMDiqhbb5B+Dx9VefBaTW6Si0ZMSh8Sdyv+QvxwlL3+Hpe4OpeE96scq
+ uDzFWzowUQ4d3zaPtkMN9K36nzuo69s0cTki92wjf4I9o2Lpy/jr8o6hDRyXmKNTOFeZ
+ ferw==
+X-Gm-Message-State: APuU4Z+RDrHFgpD+JAL4zRcmfBSuWj4wK/HNOH6ftgUnk8ajoqUfXaXS
+ MIDjlAlB5ntnBPmnvj/Fsw0JEPzLrLwpcxK1u6xl4VkcvvwsDXuUaPdjRkMGO/cL6Po=
+X-Gm-Gg: AZFdTZenXomYjnQtYVvkLAjcH8EbpNiWVzza8A39Rd8CT2gGqfjJrgFTMh3OucY20Jb
+ WtA6SW7S+jptb0F5sXRGD5DiEajF61gUCwUzZpkP6v3wu1mc4x3610K4lARlHVE0X2EpMRxi9tc
+ rTxBdLn/VLDwm+vBjlB78npul1GTFPm21dqK3wRkbrYmd2DFoxtU57FBttT2k8BJf3kOf4Vh/hi
+ RVbt2RNHe08x6ZaEngjnu4vMHHn03WYfUYMJjaQHe/6pY1Db0tSV9RGviJ1w7Hsdqm/p1d0rgbY
+ N7fQqma3q02LDSprbBVBz/QPaPCX+dJJy9022belFiidm2ILDxOb8+MVJIHKpZKL4hxeCMO9HBu
+ fzOqG5CBn32PJKri3wvq3Jb5ZWC5g03WmCopIt3fACn8xjZroDopJUt7okKk6QiVYMiP2VvWepe
+ JT5H6FxVtiBbydbjoWctTG2KPHk0lrAJXApXgXa/UhwyFN03zskaRLT2BWR8eWWX7uplsNABWSt
+ 2qNXZQnKbKRj8CBRMdMycga4lkG7/uTtgMI2Nw1YAx4LSwQW/OauYSJkToo3Os81kOCWP+avnSc
+ InrjI2d/ewLKtJW0A24XVkCJweI6WzCNntiRaVVjJNuRwB/eJk0SzSSHOyUM/w5nAPzo6VkLyO4
+ yP+lNydHDaRGQodCY
+X-Received: by 2002:a05:6a00:124f:b0:89e:b12e:7ee1 with SMTP id
+ d2e1a72fcca58-8c8794b9878mr7565472b3a.1.1795368652998; 
+ Sun, 22 Nov 2026 09:30:52 -0800 (PST)
+Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
+ by smtp.gmail.com with ESMTPSA id
+ d2e1a72fcca58-8c87344184fsm4336977b3a.35.2026.11.22.09.30.52
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sun, 22 Nov 2026 09:30:52 -0800 (PST)
+Date: Sun, 22 Nov 2026 09:30:50 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Ajit Kumar <Ajit.Kumar@amd.com>
+Cc: <dev@dpdk.org>
+Subject: Re: [PATCH v2] net/axgbe: retry transient SFP I2C read failures
+Message-ID: <20261122093050.2936faed@phoenix.local>
+In-Reply-To: <20261119173506.840405-1-Ajit.Kumar@amd.com>
+References: <20261119035140.2074510-1-Ajit.Kumar@amd.com>
+ <20261119173506.840405-1-Ajit.Kumar@amd.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000037AC:EE_|CY8PR12MB8196:EE_
-X-MS-Office365-Filtering-Correlation-Id: bed3f171-2739-45fa-df41-08df48afbed3
-X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700016|23010399003|82310400026|1800799024|376014|261026121527099003|261021121427099003|261021135927099003|261102123227099003|11063799006|56012099006|10067099003|18002099003|261009223027099003;
-X-Microsoft-Antispam-Message-Info: 1UibHconHoD35rG5e++gp4pUk3NsqmFETMVfTrdT6z0fW7CitPr3oUL8jb9m1W04rFpEMXHG1l744DsqAE1MDwmMfot1RFCjCO1IbJkGNgZ8nxBsgm9gaz9eX62gFJrofzZTOWEU/oky+9cg5JG2jaLveReBP4bKUYMmbQFmfrfj/GRx3GM9eeP0t2D38IuCdKSWjjt9MqLap+fwdWwaos6mw7iDPtq1W7CVmpfDcl2G6MOf0lVegMhYkkyGQs80F15L9C9wLOv43vMSdGMZkcprD5eq7lYui1FIWQjAgXCsX/Ruqe77+kPyB2iuSgddiJ+tyeqLxPFIocrZLwxC0vrQSHywdoPb0Y51f5YQK5SwCrG8LkpF5Eo0DyElhiB/cNwcgNZJab9SwYmOOJ6bK6+aGv+xIZgzUkQJAGDsHoOS6jc3b4iJ/aMeFTLcSxqqzMPQ6tu5FWvJ/joADh0hfTLmXWV/9i7lnXkfqsWWcfyS2fOx7tdvSSASZRCAN/um6FSjuGZTJC8AcdTtxOXtsNyNmcFR0aLyn1pIGeYBwIf2gByQNtAn0iXOmOhMYOs3bCxjTS4bmDwbBewmeU/PwbaMz7BPO2c7rXE1JMxz/tlQxoP0MKlDla0Jq5F9ezFoYw+XgYtTgZQSdGy2EcCzekVcWmZBUDjJUOEQQSi44kzusDGFwZhIpU7BTUAyRfGkcTV3VH79tBcayhSC3n+nkg==
-X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(36860700016)(23010399003)(82310400026)(1800799024)(376014)(261026121527099003)(261021121427099003)(261021135927099003)(261102123227099003)(11063799006)(56012099006)(10067099003)(18002099003)(261009223027099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: oCj8n+5EDgd7YbECR9msGxBoaILNjUijzMA2bacMrNtpnhB3LKdX0XK+tDbJBMNsmQVNEQhlE8I+/etf0YJsOVBDGHYw4XD3MibZJH6j7jEpuissnpz13z679Ufx7QLwiNYIag5SeSb1vgiVI2r8P5Ztd64RNSGJN+HfXt91AhoycPFyiDlnrOyTouvDSU/TSz6iSo+XomgmgQaAH5XBgmvF9qhgRJOtkm+RDzFWdrF2n99PtBqzoWSA/5NX302ZigvFVNH1yWoBOzTWwJ6KpEErJrSIBmAqrUBAr/cryOvJo80B2u846cGvyjn2sN2HfPz27H+jT+wHCVFnUfESQSZqf6NJIxycTY9mIJ1Q0hRk1st3XxTkaPp+MzuADeD7d+nu5qnseKbuDbXnU9FB+SrtlTaPHxcM2ev7Y7MdXZEzB19EDGonhec9JyReSPa2
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Nov 2026 15:46:16.7593 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bed3f171-2739-45fa-df41-08df48afbed3
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PEPF000037AC.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8196
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -106,146 +84,100 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Add tested platforms with NVIDIA NICs to the 26.11 release notes.
+On Thu, 19 Nov 2026 23:05:06 +0530
+Ajit Kumar <Ajit.Kumar@amd.com> wrote:
 
-Signed-off-by: Raslan Darawsheh <rasland@nvidia.com>
----
- doc/guides/rel_notes/release_26_11.rst | 118 +++++++++++++++++++++++++
- 1 file changed, 118 insertions(+)
+> From: Ajit Kumar <ajit.kumar@amd.com>
+> 
+> A port's first I2C access to its SFP cage can fail right after
+> axgbe_phy_init(), even alone on the bus: a quick NACK (-ENOTCONN) or
+> a full stall until axgbe_i2c_xfer()'s own 1s timeout (-ETIMEDOUT).
+> This is separate from the cross-port race fixed by
+> axgbe_i2c_mdio_bus_mutex; it shows up on a single port with no
+> sibling active, so serializing the bus doesn't help.
+> 
+> axgbe_phy_i2c_read() only retried -EAGAIN. Retry -ENOTCONN and
+> -ETIMEDOUT too, with a short settle delay, but only until the port's
+> bus has one successful transfer since phy_init(). After that, a
+> repeat is a real fault, not a settling device, and shouldn't cost
+> every later poll an extra second while holding the shared mutex.
+> 
+> Validated on AMD CRB V3C48 and Advantech FWA-1081: 0 I2C errors
+> across 30 iterations of the cross-port repro plus a solo-access
+> repro that now links up cleanly on both; both failed every time
+> without this change.
+> 
+> Depends on axgbe_i2c_mdio_bus_mutex from "net/axgbe: serialize PHY
+> and link status access" for the cross-port case; otherwise applies
+> independently.
+> 
+> Fixes: a5c7273771e8 ("net/axgbe: add phy programming APIs")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Ajit Kumar <ajit.kumar@amd.com>
 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index d3ab3662dd..ca8b2e7e78 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -758,3 +758,121 @@ Tested Platforms
-    This section is a comment. Do not overwrite or remove it.
-    Also, make sure to start the actual text at the margin.
-    =======================================================
-+
-+* Intel\ |reg| platforms with NVIDIA\ |reg| NICs combinations
-+
-+  * CPU:
-+
-+    * Intel\ |reg| Xeon\ |reg| Gold 6154 CPU @ 3.00GHz
-+    * Intel\ |reg| Xeon\ |reg| CPU E5-2697A v4 @ 2.60GHz
-+    * Intel\ |reg| Xeon\ |reg| CPU E5-2697 v3 @ 2.60GHz
-+    * Intel\ |reg| Xeon\ |reg| CPU E5-2680 v2 @ 2.80GHz
-+    * Intel\ |reg| Xeon\ |reg| CPU E5-2670 0 @ 2.60GHz
-+    * Intel\ |reg| Xeon\ |reg| CPU E5-2650 v4 @ 2.20GHz
-+    * Intel\ |reg| Xeon\ |reg| CPU E5-2650 v3 @ 2.30GHz
-+    * Intel\ |reg| Xeon\ |reg| CPU E5-2640 @ 2.50GHz
-+    * Intel\ |reg| Xeon\ |reg| CPU E5-2650 0 @ 2.00GHz
-+    * Intel\ |reg| Xeon\ |reg| CPU E5-2620 v4 @ 2.10GHz
-+
-+  * OS:
-+
-+    * Red Hat Enterprise Linux release 9.2 (Plow)
-+    * Red Hat Enterprise Linux release 9.1 (Plow)
-+    * Red Hat Enterprise Linux release 8.6 (Ootpa)
-+    * Ubuntu 24.04
-+    * Ubuntu 22.04
-+    * SUSE Enterprise Linux 15 SP4
-+
-+  * DOCA:
-+
-+    * DOCA 3.6.0-069000 and above.
-+
-+  * upstream kernel:
-+
-+    * Linux 6.18.0 and above
-+
-+  * rdma-core:
-+
-+    * rdma-core-60.0 and above
-+
-+  * NICs
-+
-+    * NVIDIA\ |reg| ConnectX\ |reg|-6 Dx EN 100G MCX623106AN-CDAT (2x100G)
-+
-+      * Host interface: PCI Express 4.0 x16
-+      * Device ID: 15b3:101d
-+      * Firmware version: 22.51.1000 and above
-+
-+    * NVIDIA\ |reg| ConnectX\ |reg|-6 Lx EN 25G MCX631102AN-ADAT (2x25G)
-+
-+      * Host interface: PCI Express 4.0 x8
-+      * Device ID: 15b3:101f
-+      * Firmware version: 26.51.1000 and above
-+
-+    * NVIDIA\ |reg| ConnectX\ |reg|-7 200G CX713106AE-HEA_QP1_Ax (2x200G)
-+
-+      * Host interface: PCI Express 5.0 x16
-+      * Device ID: 15b3:1021
-+      * Firmware version: 28.51.1000 and above
-+
-+    * NVIDIA\ |reg| ConnectX\ |reg|-8 SuperNIC 400G  MT4131 - 900-9X81Q-00CN-STA (2x400G)
-+
-+      * Host interface: PCI Express 6.0 x16
-+      * Device ID: 15b3:1023
-+      * Firmware version: 40.51.1000 and above
-+
-+    * NVIDIA\ |reg| ConnectX\ |reg|-9 SuperNIC 800G  MT4133 - 900-9X91E-00EB-STA_Ax (1x800G)
-+
-+      * Host interface: PCI Express 6.0 x16
-+      * Device ID: 15b3:1025
-+      * Firmware version: 82.51.1000 and above
-+
-+* NVIDIA\ |reg| BlueField\ |reg| SmartNIC
-+
-+  * NVIDIA\ |reg| BlueField\ |reg|-2 SmartNIC MT41686 - MBF2H332A-AEEOT_A1 (2x25G)
-+
-+    * Host interface: PCI Express 3.0 x16
-+    * Device ID: 15b3:a2d6
-+    * Firmware version: 24.51.1000 and above
-+
-+  * NVIDIA\ |reg| BlueField\ |reg|-3 P-Series DPU MT41692 - 900-9D3B6-00CV-AAB (2x200G)
-+
-+    * Host interface: PCI Express 5.0 x16
-+    * Device ID: 15b3:a2dc
-+    * Firmware version: 32.51.1000 and above
-+
-+  * Embedded software:
-+
-+    * Ubuntu 24.04
-+    * MLNX_OFED 26.10-0.59.1
-+    * DOCA 3.6.0-069000
-+    * bf-bundle-3.6.0-85_26.10_ubuntu-24.04
-+    * DPDK application running on ARM cores
-+
-+* IBM Power 9 platforms with NVIDIA\ |reg| NICs combinations
-+
-+  * CPU:
-+
-+    * POWER9 2.2 (pvr 004e 1202)
-+
-+  * OS:
-+
-+    * Ubuntu 24.04
-+
-+  * NICs:
-+
-+    * NVIDIA\ |reg| ConnectX\ |reg|-6 Dx 100G MCX623106AN-CDAT (2x100G)
-+
-+      * Host interface: PCI Express 4.0 x16
-+      * Device ID: 15b3:101d
-+      * Firmware version: 22.51.1000 and above
-+
-+    * NVIDIA\ |reg| ConnectX\ |reg|-7 200G CX713106AE-HEA_QP1_Ax (2x200G)
-+
-+      * Host interface: PCI Express 5.0 x16
-+      * Device ID: 15b3:1021
-+      * Firmware version: 28.51.1000 and above
-+
-+  * DOCA:
-+
-+    * DOCA 3.6.0-069000 and above
--- 
-2.55.0
+I haven't looked into all the complexities here, but AI warnings
+seem valid:
 
+Subject: Re: [PATCH v2] net/axgbe: retry transient SFP I2C read failures
+
+Applies on top of the bus mutex patch and builds clean with
+-Dwerror=true. Two problems with how the retry window is gated.
+
+Warning
+
+1. The settled flag follows the wrong lifecycle.
+
+phy_data is allocated once by axgbe_phy_init() at probe
+(axgbe_ethdev.c:2410) and sfp_i2c_settled is never cleared. The
+first I2C access is not after phy_init(); it is in axgbe_phy_start(),
+right after i2c_start(), via axgbe_phy_sfp_detect(). That runs on
+every dev_start. After a stop/start or port reset the flag is
+already 1, so the case this patch targets gets no retry.
+
+The comment and commit message should also say phy_start, not
+phy_init.
+
+2. A fault present from the start is still retried on every poll.
+
+The v2 changelog says a persistent fault no longer pays the retry
+cost. That is only true if some transfer has succeeded. If the GPIO
+expander never answers, axgbe_phy_sfp_signals() fails on every link
+poll (axgbe_phy_link_status -> axgbe_phy_sfp_detect), the flag is
+never set, and each poll can spend about 2s per transfer in two
+1s axgbe_i2c_xfer() timeouts while holding the driver-wide bus
+mutex. That stalls link_update on every port.
+
+Gate the window by when the access happens, not by success. Both
+issues go away if the extended retry only applies during the
+phy_start probe:
+
+	case AXGBE_PORT_MODE_SFP:
+		phy_data->sfp_i2c_probe = 1;
+		axgbe_phy_sfp_detect(pdata);
+		phy_data->sfp_i2c_probe = 0;
+		break;
+
+and in axgbe_phy_i2c_read() test sfp_i2c_probe instead of
+!sfp_i2c_settled, dropping the assignment after the read.
+
+Info
+
+What is the root cause? Linux xgbe does the same sequence with an
+-EAGAIN-only retry. If the expander needs time after the I2C
+controller is enabled, one delay in axgbe_phy_start() before
+sfp_detect would be simpler than per-transfer retries. Also, after a
+device has already stalled for the full 1s, does a 2ms sleep and a
+second try ever succeed in your testing, or was only -ENOTCONN seen
+to recover?
+
+The "Depends on" paragraph belongs below "---", and the commit
+message should not name axgbe_i2c_mdio_bus_mutex, since that symbol
+may be renamed.
