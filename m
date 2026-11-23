@@ -2,49 +2,53 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E67D606A6AA
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Nov 2026 15:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7781606A31A
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Nov 2026 15:46:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=n514XbYc
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=eE3hZKKd
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6F9554027A;
-	Mon, 23 Nov 2026 16:39:56 +0100 (CET)
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
- by mails.dpdk.org (Postfix) with ESMTPS id 1BED540262
- for <dev@dpdk.org>; Mon, 23 Nov 2026 16:39:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
- s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
- Message-ID; bh=4Ih7qKNxU764glu4vcP25U7MwQg82ZDFy4vlFLqwFuA=; b=n
- 514XbYc7rjV93dYjgaoDrzxtmawML6q4+WpxGniyjQ5rb9WpBjFg9bDDJcaPZFbo
- T0XOhiUom31agHflnXefY8n1JURqTGGIZlDcjanGwQLuUxS+moxO503npz3hP1pa
- S9QQpKEVEb/F291Kq9hrzfdJ9Yg551xosadqeI9ACc=
-Date: Mon, 23 Nov 2026 23:39:49 +0800 (CST)
-From: jiachengye_123  <jiachengye_123@163.com>
-To: "Stephen Hemminger" <stephen@networkplumber.org>
-Cc: "Jiacheng Ye" <yejiacheng4@h-partners.com>, dev@dpdk.org,
- "Feifei Wang" <wangfeifei40@huawei.com>,
- "Thomas Monjalon" <thomas@monjalon.net>,
- "Anatoly Burakov" <anatoly.burakov@intel.com>
-Subject: Re: [PATCH v8 08/28] net/hinic3: fix per-queue start/stop on
- non-HTN devices
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
- 20260511(2e539873) Copyright (c) 2002-2026 www.mailtech.cn 163com
-In-Reply-To: <20261122100357.5861f6ff@phoenix.local>
-References: <20261117155711.1048-1-yejiacheng4@h-partners.com>
- <20261120163454.1159-1-yejiacheng4@h-partners.com>
- <20261120163454.1159-9-yejiacheng4@h-partners.com>
- <20261122100357.5861f6ff@phoenix.local>
-X-NTES-SC: AL_Qu2SB/ift0sj7yCeYekamk4aheo+W8u5u/0i3YRUc/4EuQzR2RASZFFkA3zHy+GPBRy3rRGGbjVF8PVXf5dUEN5NV+t83wwpZ8ThmFtF3g==
-Content-Type: multipart/alternative; 
- boundary="----=_Part_160591_37483202.1795448389072"
+	by mails.dpdk.org (Postfix) with ESMTP id E1F4C40395;
+	Mon, 23 Nov 2026 16:46:08 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+ by mails.dpdk.org (Postfix) with ESMTPS id 958F640262;
+ Mon, 23 Nov 2026 16:46:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1795448768; x=1826984768;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=o8n7iQQr6/jLI4dmTpaqI3viBEF1w8A0p1koJp402g0=;
+ b=eE3hZKKdXjGCneYvnpuJCxd1mGy7pFL1fEQzk0Rv82LMOksvjKfZf0W1
+ Fhpg9iuj7YqDKEpyGv7hbTea3tre1ZZdN2hRn+15iTWrWNtbY5CNIw3Oy
+ R7i7C2lvDNgUBz/f72h3bGeEyW2VQN6eIGiPKeAadPggSer3E5hBRvBLd
+ QVGG9dKvDteFf/U9728ARWMeOAPHG9GyE+t81oC8t9eN1vSBgv6mVpD8r
+ R0z+03czdS54KyMK5fWK7fubaInp8TSbu0A1gMCur9h0IR+dRqS6yqJ6J
+ uKronkyT1iG247QItR/2QZ2cPfyaDxrjAVWRjv33mw4tdbi5ePxGxUb8B Q==;
+X-CSE-ConnectionGUID: q3zo/ppcRBO2SusM8qoXqA==
+X-CSE-MsgGUID: oGJz0SFDSnSoayAUx5cCSQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11975"; a="4303138"
+X-IronPort-AV: E=Sophos;i="6.27,229,1787036400"; 
+   d="scan'208";a="4303138"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+ by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 23 Nov 2026 07:46:06 -0800
+X-CSE-ConnectionGUID: 4CFr/KK/SwqybkCHgY+sRA==
+X-CSE-MsgGUID: lqWpiWQrTQmM9ppdEsg2rQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,229,1787036400"; d="scan'208";a="11685754"
+Received: from silpixa00401921.ir.intel.com ([10.20.224.96])
+ by fmviesa009.fm.intel.com with ESMTP; 23 Nov 2026 07:46:05 -0800
+From: Ciara Loftus <ciara.loftus@intel.com>
+To: dev@dpdk.org
+Cc: Ciara Loftus <ciara.loftus@intel.com>,
+	stable@dpdk.org
+Subject: [PATCH] net/iavf: fix handling of refused queue request
+Date: Mon, 23 Nov 2026 15:45:43 +0000
+Message-ID: <20261123154543.305664-1-ciara.loftus@intel.com>
+X-Mailer: git-send-email 2.43.0
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Message-ID: <7ab50635.a696.1a209103dd0.Coremail.jiachengye_123@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: dSgvCgD3vyJFXgRrx2p0AA--.717W
-X-CM-SenderInfo: pmldux5hqj5vjbrsjqqrwthudrp/xtbC0gWEjGsEXkUlBQAA3L
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,84 +58,137 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-4.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-------=_Part_160591_37483202.1795448389072
-Content-Type: text/plain; charset=GBK
-Content-Transfer-Encoding: base64
+Currently, a request for additional queues is sent without waiting for
+a reply, as the PF resets the VF when it grants the request. If the PF
+refuses the request it sends a response instead, which the VF discards
+as a command mismatch. The driver then reports "only 0 queues
+available" after a two second timeout.
 
-CgoKCgoKCgoKCgoKCkF0IDIwMjYtMTEtMjMgMDI6MDM6NTcsICJTdGVwaGVuIEhlbW1pbmdlciIg
-PHN0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnPiB3cm90ZToKPk9uIFNhdCwgMjEgTm92IDIwMjYg
-MDA6MzQ6MzMgKzA4MDAKPkppYWNoZW5nIFllIDx5ZWppYWNoZW5nNEBoLXBhcnRuZXJzLmNvbT4g
-d3JvdGU6Cj4KPj4gT24gYSBkZXZpY2Ugd2l0aG91dCBIVE4gRkRJUiwgcnhfcXVldWVfc3RhcnQo
-KSBhbmQgcnhfcXVldWVfc3RvcCgpIHJldHVybgo+PiAtRUlOVkFMIHdoZW5ldmVyIHRoZSBxdWV1
-ZSBoYXMgbm8gVENBTSBydWxlOgo+PiBoaW5pYzNfZW5hYmxlX3J4cV9mZGlyX2ZpbHRlcigpIHJl
-cG9ydHMgLUVJTlZBTCBpbiB0aGF0IGNhc2UgYW5kIGJvdGgKPj4gY2FsbGVycyB0cmVhdCBpdCBh
-cyBmYXRhbC4gU3VjaCBhIHF1ZXVlIGhhcyBub3RoaW5nIHRvIHVwZGF0ZSwgc28gcmV0dXJuCj4+
-IHN1Y2Nlc3MuCj4+IAo+PiBoaW5pYzNfc3RhcnRfcnEoKSBnYXRlcyB0aGUgUlEgZW5hYmxlIGNv
-bW1hbmQgb24gTklDX0ZfRkRJUiwgYnV0IHRoZQo+PiBpbnRlbmRlZCBmbGFnIGlzIE5JQ19GX0hU
-Tl9GRElSLCBhcyB0aGUgc3RvcCBwYXRoIGFscmVhZHkgdXNlcy4gRml4IHRoZQo+PiBjaGVjayBz
-byBhbiBTVE4gZGV2aWNlIGlzIG5vdCBzZW50IGEgY29tbWFuZCBpdCByZWplY3RzLgo+PiAKPj4g
-Rml4ZXM6IGIyNDcxOTk5MjdhMSAoIm5ldC9oaW5pYzM6IGZpeCByZXR1cm4gdmFsdWUgb2YgRkRJ
-UiBlbmFibGluZyIpCj4+IEZpeGVzOiBiMjBkYzc4YjI4NmEgKCJuZXQvaGluaWMzOiBzdXBwb3J0
-IENvbXBhY3QgQ1FFIGluIFJ4IikKPj4gU2lnbmVkLW9mZi1ieTogSmlhY2hlbmcgWWUgPHllamlh
-Y2hlbmc0QGgtcGFydG5lcnMuY29tPgo+PiAtLS0KPgoKPlNob3VsZCBhbnkgb2YgdGhlc2UgYmUg
-YmFja3BvcnRlZCB0byBzdGFibGUgKGllIDI2LjExKT8KW0ppYWNoZW5nXSBZZXMuIFRoZSB0d28g
-Zml4ZXMgYXJlIGN1cnJlbnRseSBpbiBvbmUgcGF0Y2gsIHdoaWNoIG1ha2VzCnRoZWlyIHN0YWJs
-ZSBhcHBsaWNhYmlsaXR5IHVuY2xlYXIuIFRoZSBmaXJzdCBvbmUgc2hvdWxkIGdvIHRvIGJvdGgK
-MjUuMTEgYW5kIDI2LjExOiBiMjQ3MTk5OTI3YTEgaGFzIENjOiBzdGFibGUgYW5kIGl0cyBGaXhl
-czogdGFyZ2V0IGlzIGluCjI1LjExLCBzbyB0aGUgLUVJTlZBTCBpdCBpbnRyb2R1Y2VzIHdpbGwg
-YmUgYmFja3BvcnRlZCB0aGVyZSB0b28uIFRoZQpzZWNvbmQgb25lIGFwcGxpZXMgdG8gMjYuMTEg
-YnV0IG5vdCAyNS4xMTogYjIwZGM3OGIyODZhIGZpcnN0IGFwcGVhcmVkIGluCjI2LjAzIGFuZCBp
-cyBub3QgaW4gMjUuMTEuIEknbGwgc2VuZCB2OSB3aXRoIHRoZSB0d28gZml4ZXMgYXMgc2VwYXJh
-dGUKY29tbWl0cywgYW5kIGFkZCBDYzogc3RhYmxlQGRwZGsub3JnIHRvIHRoZSBmaXJzdCBjb21t
-aXQncyBjb21taXQKbWVzc2FnZS4=
-------=_Part_160591_37483202.1795448389072
-Content-Type: text/html; charset=GBK
-Content-Transfer-Encoding: base64
+Fix this by waiting for the reply, treating a VF reset during the wait
+as a grant. A refusal is now reported immediately, and a reply offering
+fewer queues than requested returns `-ENOSPC`. Any command waiting for
+a reply when a reset begins now fails with `-ECANCELED` instead of
+timing out, and the admin queue alarm is no longer cancelled around the
+request, as it delivers the reply when interrupts are unused.
 
-PGRpdiBkYXRhLW50ZXM9Im50ZXNfbWFpbF9ib2R5X3Jvb3QiIHN0eWxlPSJsaW5lLWhlaWdodDox
-Ljc7Y29sb3I6IzAwMDAwMDtmb250LXNpemU6MTRweDtmb250LWZhbWlseTpBcmlhbCI+PGRpdiBp
-ZD0ic3BuRWRpdG9yQ29udGVudCI+PGRpdiBzdHlsZT0ibWFyZ2luOiAwOyI+PGJyPjwvZGl2Pjxk
-aXYgc3R5bGU9Im1hcmdpbjogMDsiPjxicj48L2Rpdj48ZGl2IHN0eWxlPSJtYXJnaW46IDA7Ij48
-YnI+PC9kaXY+PGRpdiBzdHlsZT0ibWFyZ2luOiAwOyI+PGJyPjwvZGl2PjxkaXYgc3R5bGU9Im1h
-cmdpbjogMDsiPjxicj48L2Rpdj48L2Rpdj48ZGl2IHN0eWxlPSJwb3NpdGlvbjpyZWxhdGl2ZTt6
-b29tOjEiPjwvZGl2PjxkaXYgaWQ9ImRpdk5ldGVhc2VNYWlsQ2FyZCI+PC9kaXY+PGRpdiBzdHls
-ZT0ibWFyZ2luOiAwOyI+PGJyPjwvZGl2PjxwcmU+PGJyPkF0IDIwMjYtMTEtMjMgMDI6MDM6NTcs
-ICJTdGVwaGVuIEhlbW1pbmdlciIgJmx0O3N0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnJmd0OyB3
-cm90ZToKJmd0O09uIFNhdCwgMjEgTm92IDIwMjYgMDA6MzQ6MzMgKzA4MDAKJmd0O0ppYWNoZW5n
-IFllICZsdDt5ZWppYWNoZW5nNEBoLXBhcnRuZXJzLmNvbSZndDsgd3JvdGU6CiZndDsKJmd0OyZn
-dDsgT24gYSBkZXZpY2Ugd2l0aG91dCBIVE4gRkRJUiwgcnhfcXVldWVfc3RhcnQoKSBhbmQgcnhf
-cXVldWVfc3RvcCgpIHJldHVybgomZ3Q7Jmd0OyAtRUlOVkFMIHdoZW5ldmVyIHRoZSBxdWV1ZSBo
-YXMgbm8gVENBTSBydWxlOgomZ3Q7Jmd0OyBoaW5pYzNfZW5hYmxlX3J4cV9mZGlyX2ZpbHRlcigp
-IHJlcG9ydHMgLUVJTlZBTCBpbiB0aGF0IGNhc2UgYW5kIGJvdGgKJmd0OyZndDsgY2FsbGVycyB0
-cmVhdCBpdCBhcyBmYXRhbC4gU3VjaCBhIHF1ZXVlIGhhcyBub3RoaW5nIHRvIHVwZGF0ZSwgc28g
-cmV0dXJuCiZndDsmZ3Q7IHN1Y2Nlc3MuCiZndDsmZ3Q7IAomZ3Q7Jmd0OyBoaW5pYzNfc3RhcnRf
-cnEoKSBnYXRlcyB0aGUgUlEgZW5hYmxlIGNvbW1hbmQgb24gTklDX0ZfRkRJUiwgYnV0IHRoZQom
-Z3Q7Jmd0OyBpbnRlbmRlZCBmbGFnIGlzIE5JQ19GX0hUTl9GRElSLCBhcyB0aGUgc3RvcCBwYXRo
-IGFscmVhZHkgdXNlcy4gRml4IHRoZQomZ3Q7Jmd0OyBjaGVjayBzbyBhbiBTVE4gZGV2aWNlIGlz
-IG5vdCBzZW50IGEgY29tbWFuZCBpdCByZWplY3RzLgomZ3Q7Jmd0OyAKJmd0OyZndDsgRml4ZXM6
-IGIyNDcxOTk5MjdhMSAoIm5ldC9oaW5pYzM6IGZpeCByZXR1cm4gdmFsdWUgb2YgRkRJUiBlbmFi
-bGluZyIpCiZndDsmZ3Q7IEZpeGVzOiBiMjBkYzc4YjI4NmEgKCJuZXQvaGluaWMzOiBzdXBwb3J0
-IENvbXBhY3QgQ1FFIGluIFJ4IikKJmd0OyZndDsgU2lnbmVkLW9mZi1ieTogSmlhY2hlbmcgWWUg
-Jmx0O3llamlhY2hlbmc0QGgtcGFydG5lcnMuY29tJmd0OwomZ3Q7Jmd0OyAtLS0KJmd0Owo8ZGl2
-PiZndDtTaG91bGQgYW55IG9mIHRoZXNlIGJlIGJhY2twb3J0ZWQgdG8gc3RhYmxlIChpZSAyNi4x
-MSk/PC9kaXY+PGRpdj5bSmlhY2hlbmddIFllcy4gVGhlIHR3byBmaXhlcyBhcmUgY3VycmVudGx5
-IGluIG9uZSBwYXRjaCwgd2hpY2ggbWFrZXM8L2Rpdj48ZGl2PnRoZWlyIHN0YWJsZSBhcHBsaWNh
-YmlsaXR5IHVuY2xlYXIuIFRoZSBmaXJzdCBvbmUgc2hvdWxkIGdvIHRvIGJvdGg8L2Rpdj48ZGl2
-PjI1LjExIGFuZCAyNi4xMTogYjI0NzE5OTkyN2ExIGhhcyBDYzogc3RhYmxlIGFuZCBpdHMgRml4
-ZXM6IHRhcmdldCBpcyBpbjwvZGl2PjxkaXY+MjUuMTEsIHNvIHRoZSAtRUlOVkFMIGl0IGludHJv
-ZHVjZXMgd2lsbCBiZSBiYWNrcG9ydGVkIHRoZXJlIHRvby4gVGhlPC9kaXY+PGRpdj5zZWNvbmQg
-b25lIGFwcGxpZXMgdG8gMjYuMTEgYnV0IG5vdCAyNS4xMTogYjIwZGM3OGIyODZhIGZpcnN0IGFw
-cGVhcmVkIGluPC9kaXY+PGRpdj4yNi4wMyBhbmQgaXMgbm90IGluIDI1LjExLiBJJ2xsIHNlbmQg
-djkgd2l0aCB0aGUgdHdvIGZpeGVzIGFzIHNlcGFyYXRlPC9kaXY+PGRpdj5jb21taXRzLCBhbmQg
-YWRkIENjOiBzdGFibGVAZHBkay5vcmcgdG8gdGhlIGZpcnN0IGNvbW1pdCdzIGNvbW1pdDwvZGl2
-PjxkaXY+bWVzc2FnZS48L2Rpdj48L3ByZT48L2Rpdj4=
-------=_Part_160591_37483202.1795448389072--
+Fixes: 675a104e2e94 ("net/iavf: fix abnormal disable HW interrupt")
+Cc: stable@dpdk.org
+
+Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+---
+ drivers/net/intel/iavf/iavf_vchnl.c | 53 ++++++++++++-----------------
+ 1 file changed, 22 insertions(+), 31 deletions(-)
+
+diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
+index 64ca93c20b..a256e3219e 100644
+--- a/drivers/net/intel/iavf/iavf_vchnl.c
++++ b/drivers/net/intel/iavf/iavf_vchnl.c
+@@ -15,7 +15,6 @@
+ #include <rte_os_shim.h>
+ 
+ #include <rte_debug.h>
+-#include <rte_alarm.h>
+ #include <rte_atomic.h>
+ #include <rte_eal.h>
+ #include <rte_ether.h>
+@@ -456,8 +455,7 @@ iavf_get_cmd_resp_count(enum virtchnl_ops op)
+ {
+ 	switch (op) {
+ 	case VIRTCHNL_OP_RESET_VF:
+-	case VIRTCHNL_OP_REQUEST_QUEUES:
+-		/* These commands trigger reset and are not waited for */
++		/* This command triggers reset and is not waited for */
+ 		return 0;
+ 	case VIRTCHNL_OP_INLINE_IPSEC_CRYPTO:
+ 		/* IPsec crypto commands generate two responses */
+@@ -501,6 +499,11 @@ iavf_wait_for_msg(struct iavf_adapter *adapter, struct iavf_cmd_info *args,
+ 			if (vf->pend_cmd == VIRTCHNL_OP_UNKNOWN)
+ 				break;
+ 		}
++		/* the PF will discard the command and not answer if in reset */
++		if (rte_atomic_load_explicit(&vf->vf_reset, rte_memory_order_acquire)) {
++			PMD_DRV_LOG(INFO, "VF reset while waiting for cmd %d", args->ops);
++			return -ECANCELED;
++		}
+ 		iavf_msec_delay(ASQ_DELAY_MS);
+ 	} while (i++ < MAX_TRY_TIMES);
+ 
+@@ -2389,7 +2392,6 @@ iavf_request_queues(struct rte_eth_dev *dev, uint16_t num)
+ 	struct iavf_cmd_info args;
+ 	uint16_t num_queue_pairs;
+ 	int err;
+-	int i = 0;
+ 
+ 	if (!(vf->vf_res->vf_cap_flags &
+ 		VIRTCHNL_VF_OFFLOAD_REQ_QUEUES)) {
+@@ -2409,44 +2411,33 @@ iavf_request_queues(struct rte_eth_dev *dev, uint16_t num)
+ 	args.out_buffer = msg_buf;
+ 	args.out_size = IAVF_AQ_BUF_SZ;
+ 
+-	if (vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_WB_ON_ITR) {
+-		iavf_phc_sync_alarm_stop(dev);
+-		err = iavf_execute_vf_cmd_safe(adapter, &args);
+-		iavf_phc_sync_alarm_start(dev);
+-	} else {
+-		iavf_phc_sync_alarm_stop(dev);
+-		rte_eal_alarm_cancel(iavf_dev_alarm_handler, dev);
+-		err = iavf_execute_vf_cmd_safe(adapter, &args);
+-		rte_eal_alarm_set(IAVF_ALARM_INTERVAL,
+-				  iavf_dev_alarm_handler, dev);
+-		iavf_phc_sync_alarm_start(dev);
+-	}
+-
+-	if (err) {
+-		PMD_DRV_LOG(ERR, "fail to execute command OP_REQUEST_QUEUES");
+-		return err;
+-	}
+-
+-	/* wait for interrupt notification vf is resetting */
+-	while (i++ < MAX_TRY_TIMES) {
+-		if (rte_atomic_load_explicit(&vf->vf_reset, rte_memory_order_acquire))
+-			break;
+-		iavf_msec_delay(ASQ_DELAY_MS);
+-	}
++	iavf_phc_sync_alarm_stop(dev);
++	err = iavf_execute_vf_cmd_safe(adapter, &args);
++	iavf_phc_sync_alarm_start(dev);
+ 
+ 	/* request queues succeeded, vf is resetting */
+-	if (rte_atomic_load_explicit(&vf->vf_reset, rte_memory_order_acquire)) {
++	if (err == -ECANCELED ||
++	    (err == 0 && rte_atomic_load_explicit(&vf->vf_reset, rte_memory_order_acquire))) {
+ 		PMD_DRV_LOG(INFO, "vf is resetting");
+ 		return 0;
+ 	}
+ 
+-	/* request additional queues failed, return available number */
++	/* request additional queues failed */
++	if (err != 0) {
++		if (err == -EINVAL || err == -ENOTSUP)
++			PMD_DRV_LOG(ERR, "PF refused request for %u queues", num);
++		else
++			PMD_DRV_LOG(ERR, "fail to execute command OP_REQUEST_QUEUES");
++		return err;
++	}
++
++	/* PF replied with success but did not reset; it offers fewer queues than requested */
+ 	num_queue_pairs =
+ 	  ((struct virtchnl_vf_res_request *)args.out_buffer)->num_queue_pairs;
+ 	PMD_DRV_LOG(ERR, "request queues failed, only %u queues "
+ 		"available", num_queue_pairs);
+ 
+-	return -1;
++	return -ENOSPC;
+ }
+ 
+ int
+-- 
+2.43.0
 
