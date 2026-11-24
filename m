@@ -2,73 +2,73 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47B7606A336
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Nov 2026 18:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6CE606A339
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Nov 2026 18:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=AH6O8mTv
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=YN/fJtMi
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DAF8D40664;
-	Tue, 24 Nov 2026 19:03:40 +0100 (CET)
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com
- [209.85.221.44])
- by mails.dpdk.org (Postfix) with ESMTPS id 1F4694069D
- for <dev@dpdk.org>; Tue, 24 Nov 2026 19:03:40 +0100 (CET)
-Received: by mail-wr1-f44.google.com with SMTP id
- ffacd0b85a97d-4ad6219f7d8so4196405f8f.0
- for <dev@dpdk.org>; Tue, 24 Nov 2026 10:03:40 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2695140A72;
+	Tue, 24 Nov 2026 19:03:44 +0100 (CET)
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com
+ [209.85.128.49])
+ by mails.dpdk.org (Postfix) with ESMTPS id 55C064067A
+ for <dev@dpdk.org>; Tue, 24 Nov 2026 19:03:42 +0100 (CET)
+Received: by mail-wm1-f49.google.com with SMTP id
+ 5b1f17b1804b1-4bb70074ab2so52594365e9.0
+ for <dev@dpdk.org>; Tue, 24 Nov 2026 10:03:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20260707; t=1795543420; x=1796148220; darn=dpdk.org;
+ d=gmail.com; s=20260707; t=1795543422; x=1796148222; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=tXKQfd1u+s+hbBuo03s11wI/S7GY1vkh+8KVfh0UbYk=;
- b=AH6O8mTvvVvzgZC6cQ1/sZ5wkRpSWOYBtAdpm10OgqI11jZIbSIdynyhWCfBFAjE5X
- ZSAh4h1cIQssydf8TtmpB3RtbQqj9SYLn/njGNKk9YER/myv7XXfqTb7jCCdaLUD2vpR
- T0BudCJYX6Cr5vVt4YMtxA0JtqLQjRVSiJpDmwJSlo9BnqJUMS4frrbLfrck3b0YHH/T
- J6kHfjW+aVNDdGyfn/1JtwLAGaiDa8A5Xlea8sg/GTqEoZWSziS0X+aPqYIBngPBXoEl
- eiaFAPRyDPBmN0aK6/GhirhwyUFz+PfCab8vQKeBwkPZcFvNSHNQNb0t7OPv9L4gcv+6
- 0vBQ==
+ bh=+KYfctzgFZl4tesama/IikG+iK5p6yp/i8x69pE0RRw=;
+ b=YN/fJtMiVHA3of4o6QQRKhEYVKAUkLveCfHDeFopE3UbWLM7qMFmjWV+D25OWQlo9U
+ u787aBAFfeQAWOJuQ8k5MVDrVCCI69hXrfJ4wZeApwvvR/DVAiKmbxDMIe6G7H6r1sHk
+ afLveVXEiMq3/da8rVexr1rW/hLHy6tM7+6tfEb5fAwK6iH+aJ05O5VhY15cRhOzWYPS
+ 2bRIjbW7ej501yD969Txfi5hbxhetMs35Iu5PN1M0yDJJJeqAAHtfqUpV8JO+M8IJgli
+ eGwr27nr2ILWlU64nZV9EkjWnWImzF5pBKQOU9V0YSyjyqed6RBwFjz4NjqRaVy5JUA1
+ TYUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1795543420; x=1796148220;
+ d=1e100.net; s=20260707; t=1795543422; x=1796148222;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=tXKQfd1u+s+hbBuo03s11wI/S7GY1vkh+8KVfh0UbYk=;
- b=ZSPlYwE87GjoUQEvLuDBRlU8zmmLloHqEQJkfpO5dgnoRXqhZQrx8WN7lruyjNYFIH
- gYZdcsl+eacasWRspv+GFkVWBlyPmO9IAN/kgao4TFbptRREZrOjCfOurokffwh/fHqz
- xpG61vEQwRr0cBJ4l5aBxhvsLWvCV3RS6Ie1fPOBrYEuW+R72o6cOVhKg8L/1HQIj5eF
- Wt/PXMyTXMhXFdKAvWzj2uEp6tIaMunUznBsZ3e+K6OymGXD1YPLwBEc/RGvs94a8onz
- 6scvU191ukxE0VZ5VfeRCXyApLdOXfjClOmdk5vXKdJtwXtf0jZuReBN8sXPcEgpDqh9
- wIUw==
-X-Gm-Message-State: APuU4Z8lvE418Dek3wSqh+ivaSd7MsBJDUsza2b7YrzB8tczSewJfQUj
- wjF5Pdlb+n03GscnS5XtG18YSEvexV3zIog1RZ6Hrq2tMxZdGmW53cYk
-X-Gm-Gg: AZFdTZfISsIwcauBvCrDx0HgOHij+wI4lwvmA7tdaxEjkBkI/H1I1MSeSQzc1vVu85h
- 5ak0hpS6InJe4FRCfXN/Ymcf2RESYxfb7PHgQ21RDL6rynfDjhpzAJP/0qt7/v4fAECc4bLgsz7
- 4HysmCwZj0fw57UNPWpLR0g7yorp74pDLkPuKJarh4VMpXKYkIvdNYbwX3NnjBLxl7dQg087/Sq
- 2TMXsw3SQGobQn+nWH/bE4h0N4ZEoLlzMZJNm4f7XrCZ9tw3Xd9br/RM8BYDOya05M4yQow6W9n
- NMuXeoa6K1fgze6SpENPgMfBu7BDYaayfM8gC9o8nqYXQgJ0Q2opzPD9FSSBYJGTaNWXqQy/hWX
- 2+BdQZ4loUM826VeR9YX/AI2J7J4g741bCsBbwUmh2P7sQnI2M+aq7YBKTD2Y50x1IQCNQAnkrQ
- Dnv0WdY2cbRyvkW+jp2bdoju7+lJ6GSaBfcnitMWpMDTgEiSm3OamDt1V6nv1AKcAz+oIn+y+/7
- Qgpn2/SklMfnzBQnBPMFyrzAyiBqorgFe46r2TC2iMC4S2NlEXCwTYAgUaI0r5dVkI69W6tSOXE
- CCbOGz5umUtYDrUUVr4jzMO8wDfxuGACvsXaTLK3dNqKLl2zclWYhwXBsBhn
-X-Received: by 2002:a05:6000:22c2:b0:4ad:5e91:8fcb with SMTP id
- ffacd0b85a97d-4ad5e918ff5mr32823549f8f.25.1795543419617; 
- Tue, 24 Nov 2026 10:03:39 -0800 (PST)
+ bh=+KYfctzgFZl4tesama/IikG+iK5p6yp/i8x69pE0RRw=;
+ b=vw5NqQ1NxEIo5LW9ITd2HLm8B5HvaVHebexHibi5qOoUmML6uyDQuDZFhMmTuVH50Q
+ +9efPW4op/2+6XFgLpfHkhUV5CPsFtGz5g6EtovSMNJ/HZO701cQqRakXlTvM4jHS+aR
+ pWAv/SYF/lCzI9mEII/PXAtGKDbKkbGktmMTkoUWbE5ivZPsAUwZQqTvAuS28jMRlwlK
+ rbmlp5TPTllj53URfGLanNA9UsZCFctabA9zGlG1q7V0DUkAKXTXxohI03yjEFZ/VlAv
+ o+6iC42G8z8uPQuedbt9Ll1qVGkLEhsB7AKqgvQNYfpb94FMjGsAvJT72uqYp34Lc+ad
+ xQDw==
+X-Gm-Message-State: APuU4Z8bHGTdpzSePrY0ONSr4YB74YIapWNzTQ23DS6ezTAGnp188/Af
+ VdfHERpisupZ5gwgfPctRZ9TalVl0NrIbCYIi+ok/u7jkszNeW6fwtKD
+X-Gm-Gg: AZFdTZdZkYfbBoc9yDCNiYcqhFdOmGMEo4OScW5xyN83Hiw2qO6sIpt5aAxuOh+WbU/
+ AuNIwowpFXbOxP7bYVYBWfj/hwLbHU8AXZ2zD7yBwKjIcleg3bUKtruCWC53yBYhYKNxTq0N9pu
+ b9CZOJ4YiEtQ6wr6TobwRLdD0H+6bz+juL168HPhl0fR6cqWkhLRxE+6026yd8zfGKkoe3vyEGB
+ leIp6I4GRCe07wbhRUQMlLrefyax7H3sPuRLCzApDUWYb+JPQpumy9ZGdZ7glfeYRDscok21jTh
+ 0JBMGeJd5bJNApFQL1NDpCGEezmhSM1n7ClOprGLHCxx4JM++aNEmrmdIEKQpETR+SBSX79m3n+
+ 3vcrysk+Gs1Qfdfupyzjkzi707lHLKNZCQAFs2JpqGQLRxMCssluLxNhSJwv7vWXEj7kmxA4hba
+ sxyG5HhY82Noxk+P0BuRQOd46erXclFw+4CD9u00g3EfxT2Nn9/a08B8QoUVxAqfmRYCVjOpYn+
+ X/UwqlsXMcZ+vlpCLCZt69iSTRvvhnVS/WDIyzUiG5pqXNcM9ZgmaL1UEG0TSNow2mF5F6crGWf
+ varMcMHzbnEUeg622E01p0zPbjSaQETygmSJfEGDVopy/HrE4abGfkS0oZ6k
+X-Received: by 2002:a05:600c:4e87:b0:4a3:59c9:a758 with SMTP id
+ 5b1f17b1804b1-4bb88922c81mr316834935e9.32.1795543421695; 
+ Tue, 24 Nov 2026 10:03:41 -0800 (PST)
 Received: from freepad.home ([2a01:e0a:1248:bd70:ee15:c1ae:fed0:c345])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4ab6bc8ce06sm28775426f8f.47.2026.11.24.10.03.38
+ 5b1f17b1804b1-4bb9067846esm287424035e9.4.2026.11.24.10.03.41
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 24 Nov 2026 10:03:39 -0800 (PST)
+ Tue, 24 Nov 2026 10:03:41 -0800 (PST)
 Sender: Maxime Leroy <maxime.leroys@gmail.com>
 From: Maxime Leroy <maxime@leroys.fr>
 To: vladimir.medvedkin@intel.com
 Cc: dev@dpdk.org,
 	rjarry@redhat.com,
 	Maxime Leroy <maxime@leroys.fr>
-Subject: [RFC v2 09/13] fib: add tbl8 pool stats API
-Date: Tue, 24 Nov 2026 19:02:45 +0100
-Message-ID: <20261124180249.1099506-10-maxime@leroys.fr>
+Subject: [RFC v2 10/13] test/fib: cover tbl8 pool growth
+Date: Tue, 24 Nov 2026 19:02:46 +0100
+Message-ID: <20261124180249.1099506-11-maxime@leroys.fr>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261124180249.1099506-1-maxime@leroys.fr>
 References: <20260331214117.142495-1-maxime@leroys.fr>
@@ -92,87 +92,229 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Add rte_fib_tbl8_pool_get_stats() to retrieve the number of used and
-total tbl8 groups from a pool handle directly, without going through
-a FIB instance.
+Add routes longer than /24, each in its own /24, to a resizable tbl8
+pool created with one group. Half of them end on a /24 boundary, where
+the install needs two free groups. The pool has to grow along the way
+and every lookup is checked.
+
+A second case covers a tbl8 that is needed late: a prefix longer than
+/24 with the next hop of its parent gets no tbl8, until a sibling is
+added or the next hop of the parent changes. The pool is full at that
+time and has to grow.
 
 Signed-off-by: Maxime Leroy <maxime@leroys.fr>
 ---
- doc/guides/prog_guide/fib_lib.rst |  3 +++
- lib/fib/fib_tbl8_pool.c           | 17 +++++++++++++++++
- lib/fib/rte_fib_tbl8_pool.h       | 20 ++++++++++++++++++++
- 3 files changed, 40 insertions(+)
+ app/test/test_fib.c | 183 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 183 insertions(+)
 
-diff --git a/doc/guides/prog_guide/fib_lib.rst b/doc/guides/prog_guide/fib_lib.rst
-index 9623ffd44b..5d421c7fbd 100644
---- a/doc/guides/prog_guide/fib_lib.rst
-+++ b/doc/guides/prog_guide/fib_lib.rst
-@@ -160,6 +160,9 @@ variable, attached with ``rte_fib_tbl8_pool_rcu_qsbr_add()``, or by the first
- The previous array is freed once the readers are done with it.
- The pool never shrinks.
+diff --git a/app/test/test_fib.c b/app/test/test_fib.c
+index 62c0ce1e70..228201af8a 100644
+--- a/app/test/test_fib.c
++++ b/app/test/test_fib.c
+@@ -25,6 +25,8 @@ static int32_t test_lookup(void);
+ static int32_t test_wraparound(void);
+ static int32_t test_invalid_rcu(void);
+ static int32_t test_fib_rcu_sync_rw(void);
++static int32_t test_tbl8_pool_grow(void);
++static int32_t test_tbl8_pool_grow_late(void);
  
-+``rte_fib_tbl8_pool_get_stats()`` returns the number of tbl8 groups taken
-+from the pool, its current capacity and its maximum capacity.
-+
- The pool is not thread safe: the updates of all the FIBs sharing it,
- their creation and their destruction must be serialized by the caller.
- 
-diff --git a/lib/fib/fib_tbl8_pool.c b/lib/fib/fib_tbl8_pool.c
-index 2ea1484c29..3251647d11 100644
---- a/lib/fib/fib_tbl8_pool.c
-+++ b/lib/fib/fib_tbl8_pool.c
-@@ -346,3 +346,20 @@ rte_fib_tbl8_pool_rcu_qsbr_add(struct rte_fib_tbl8_pool *pool,
- 	pool->v = cfg->v;
- 	return 0;
+ #define MAX_ROUTES	(1 << 16)
+ #define MAX_TBL8	(1 << 15)
+@@ -681,6 +683,185 @@ test_fib_rcu_sync_rw(void)
+ 	return status == 0 ? TEST_SUCCESS : TEST_FAILED;
  }
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_fib_tbl8_pool_get_stats, 27.03)
-+int
-+rte_fib_tbl8_pool_get_stats(struct rte_fib_tbl8_pool *pool,
-+			    uint32_t *used, uint32_t *total, uint32_t *max)
-+{
-+	if (pool == NULL)
-+		return -EINVAL;
-+
-+	if (used != NULL)
-+		*used = pool->pool_pos;
-+	if (total != NULL)
-+		*total = pool->num_tbl8s;
-+	if (max != NULL)
-+		*max = pool->max_tbl8s;
-+	return 0;
-+}
-diff --git a/lib/fib/rte_fib_tbl8_pool.h b/lib/fib/rte_fib_tbl8_pool.h
-index c9354cdbad..28201d833f 100644
---- a/lib/fib/rte_fib_tbl8_pool.h
-+++ b/lib/fib/rte_fib_tbl8_pool.h
-@@ -132,6 +132,26 @@ int
- rte_fib_tbl8_pool_resize(struct rte_fib_tbl8_pool *pool,
- 			 uint32_t new_num_tbl8);
  
-+/**
-+ * Retrieve tbl8 pool statistics.
-+ *
-+ * @param pool
-+ *   Pool handle
-+ * @param used
-+ *   Number of tbl8 groups taken from the pool, including those waiting
-+ *   in an RCU defer queue (can be NULL)
-+ * @param total
-+ *   Total number of tbl8 groups (current capacity, can be NULL)
-+ * @param max
-+ *   Maximum number of tbl8 groups (0 = fixed, can be NULL)
-+ * @return
-+ *   0 on success, -EINVAL if pool is NULL
++/*
++ * A resizable pool created with a single tbl8 group has to grow while
++ * routes longer than /24 are added in different /24. Half of them end on
++ * a /24 boundary, which needs two free groups during the install. Every
++ * route must then resolve to its own next hop, and the rest of its /24
++ * to the default one.
 + */
-+__rte_experimental
-+int
-+rte_fib_tbl8_pool_get_stats(struct rte_fib_tbl8_pool *pool,
-+			    uint32_t *used, uint32_t *total, uint32_t *max);
++static int32_t
++test_tbl8_pool_grow(void)
++{
++	struct rte_fib_tbl8_pool_conf pool_conf = {
++		.num_tbl8 = 1,
++		.max_tbl8 = 256,
++		.nh_sz = RTE_FIB_DIR24_8_2B,
++		.socket_id = SOCKET_ID_ANY,
++	};
++	struct rte_fib_tbl8_pool_rcu_config rcu_cfg = { 0 };
++	struct rte_fib_conf config = { 0 };
++	const unsigned int n_routes = 40;
++	struct rte_fib_tbl8_pool *pool;
++	struct rte_rcu_qsbr *qsv;
++	struct rte_fib *fib;
++	uint32_t total, used;
++	uint32_t ip[2];
++	uint64_t nh[2];
++	unsigned int i;
++	size_t sz;
++	int ret;
 +
- #ifdef __cplusplus
- }
- #endif
++	config.max_routes = 1024;
++	config.default_nh = 0;
++	config.type = RTE_FIB_DIR24_8;
++	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_2B;
++
++	pool = rte_fib_tbl8_pool_create(__func__, &pool_conf);
++	RTE_TEST_ASSERT(pool != NULL, "Failed to create resizable pool\n");
++
++	sz = rte_rcu_qsbr_get_memsize(RTE_MAX_LCORE);
++	qsv = rte_zmalloc_socket(NULL, sz, RTE_CACHE_LINE_SIZE, SOCKET_ID_ANY);
++	RTE_TEST_ASSERT(qsv != NULL, "Can not allocate memory for RCU\n");
++	ret = rte_rcu_qsbr_init(qsv, RTE_MAX_LCORE);
++	RTE_TEST_ASSERT(ret == 0, "Can not initialize RCU\n");
++	rcu_cfg.v = qsv;
++	ret = rte_fib_tbl8_pool_rcu_qsbr_add(pool, &rcu_cfg);
++	RTE_TEST_ASSERT(ret == 0, "Can not attach RCU to pool (ret=%d)\n", ret);
++
++	config.dir24_8.tbl8_pool = pool;
++	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
++
++	for (i = 0; i < n_routes; i++) {
++		if (i & 1)
++			ret = rte_fib_add(fib, RTE_IPV4(10, 0, i, 128), 25,
++				0x100 + i);
++		else
++			ret = rte_fib_add(fib, RTE_IPV4(10, 0, i, 1), 32,
++				0x100 + i);
++		RTE_TEST_ASSERT(ret == 0, "ADD #%u failed (ret=%d)\n", i, ret);
++	}
++
++	ret = rte_fib_tbl8_pool_get_stats(pool, &used, &total, NULL);
++	RTE_TEST_ASSERT(ret == 0, "get_stats failed (ret=%d)\n", ret);
++	RTE_TEST_ASSERT(used == n_routes,
++		"expected %u tbl8 groups in use, got %u\n", n_routes, used);
++	RTE_TEST_ASSERT(total >= used && total > pool_conf.num_tbl8,
++		"pool did not grow, total=%u\n", total);
++
++	for (i = 0; i < n_routes; i++) {
++		ip[0] = RTE_IPV4(10, 0, i, (i & 1) ? 200 : 1);
++		ip[1] = RTE_IPV4(10, 0, i, 2);
++		rte_fib_lookup_bulk(fib, ip, nh, 2);
++		RTE_TEST_ASSERT(nh[0] == (uint64_t)(0x100 + i),
++			"lookup #%u got nh %" PRIu64 ", want %u\n",
++			i, nh[0], 0x100 + i);
++		RTE_TEST_ASSERT(nh[1] == 0,
++			"neighbour #%u got nh %" PRIu64 ", want 0\n",
++			i, nh[1]);
++	}
++
++	rte_fib_free(fib);
++	rte_fib_tbl8_pool_free(pool);
++	rte_free(qsv);
++	return TEST_SUCCESS;
++}
++
++/*
++ * A prefix longer than /24 with the next hop of its parent gets no tbl8.
++ * Its /24 needs one later, when a sibling is added or when the next hop
++ * of the parent changes. A resizable pool that is full at that time has
++ * to grow, and every route must keep resolving to its own next hop.
++ */
++static int32_t
++test_tbl8_pool_grow_late(void)
++{
++	static const struct {
++		uint32_t ip;
++		uint64_t nh;
++	} exp[] = {
++		{ RTE_IPV4(10, 0, 0, 1), 6 }, { RTE_IPV4(10, 0, 1, 1), 5 },
++		{ RTE_IPV4(10, 0, 1, 2), 8 }, { RTE_IPV4(10, 0, 1, 3), 6 },
++		{ RTE_IPV4(10, 0, 2, 1), 7 }, { RTE_IPV4(10, 0, 3, 1), 5 },
++		{ RTE_IPV4(10, 0, 3, 2), 6 }, { RTE_IPV4(10, 9, 9, 9), 6 },
++	};
++	struct rte_fib_tbl8_pool_conf pool_conf = {
++		.num_tbl8 = 1,
++		.max_tbl8 = 256,
++		.nh_sz = RTE_FIB_DIR24_8_2B,
++		.socket_id = SOCKET_ID_ANY,
++	};
++	struct rte_fib_tbl8_pool_rcu_config rcu_cfg = { 0 };
++	struct rte_fib_conf config = { 0 };
++	struct rte_fib_tbl8_pool *pool;
++	struct rte_rcu_qsbr *qsv;
++	struct rte_fib *fib;
++	uint32_t total, used;
++	unsigned int i;
++	uint32_t ip;
++	uint64_t nh;
++	size_t sz;
++	int ret;
++
++	config.max_routes = 64;
++	config.default_nh = 0;
++	config.type = RTE_FIB_DIR24_8;
++	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_2B;
++
++	pool = rte_fib_tbl8_pool_create("grow_late", &pool_conf);
++	RTE_TEST_ASSERT(pool != NULL, "Failed to create resizable pool\n");
++
++	sz = rte_rcu_qsbr_get_memsize(RTE_MAX_LCORE);
++	qsv = rte_zmalloc_socket(NULL, sz, RTE_CACHE_LINE_SIZE, SOCKET_ID_ANY);
++	RTE_TEST_ASSERT(qsv != NULL, "Can not allocate memory for RCU\n");
++	ret = rte_rcu_qsbr_init(qsv, RTE_MAX_LCORE);
++	RTE_TEST_ASSERT(ret == 0, "Can not initialize RCU\n");
++	rcu_cfg.v = qsv;
++	ret = rte_fib_tbl8_pool_rcu_qsbr_add(pool, &rcu_cfg);
++	RTE_TEST_ASSERT(ret == 0, "Can not attach RCU to pool (ret=%d)\n", ret);
++
++	config.dir24_8.tbl8_pool = pool;
++	fib = rte_fib_create("grow_late", SOCKET_ID_ANY, &config);
++	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
++
++	ret = rte_fib_add(fib, RTE_IPV4(10, 0, 0, 0), 8, 5);
++	ret |= rte_fib_add(fib, RTE_IPV4(10, 0, 1, 1), 32, 5);
++	ret |= rte_fib_add(fib, RTE_IPV4(10, 0, 3, 1), 32, 5);
++	ret |= rte_fib_add(fib, RTE_IPV4(10, 0, 2, 1), 32, 7);
++	RTE_TEST_ASSERT(ret == 0, "Failed to add the initial routes\n");
++
++	ret = rte_fib_tbl8_pool_get_stats(pool, &used, &total, NULL);
++	RTE_TEST_ASSERT(ret == 0, "get_stats failed (ret=%d)\n", ret);
++	RTE_TEST_ASSERT(used == 1 && total == 1,
++		"expected a full pool of one group, got %u/%u\n", used, total);
++
++	ret = rte_fib_add(fib, RTE_IPV4(10, 0, 1, 2), 32, 8);
++	RTE_TEST_ASSERT(ret == 0, "ADD of a sibling failed (ret=%d)\n", ret);
++
++	ret = rte_fib_add(fib, RTE_IPV4(10, 0, 0, 0), 8, 6);
++	RTE_TEST_ASSERT(ret == 0,
++		"next hop update of the parent failed (ret=%d)\n", ret);
++
++	for (i = 0; i < RTE_DIM(exp); i++) {
++		ip = exp[i].ip;
++		rte_fib_lookup_bulk(fib, &ip, &nh, 1);
++		RTE_TEST_ASSERT(nh == exp[i].nh,
++			"lookup #%u got nh %" PRIu64 ", want %" PRIu64 "\n",
++			i, nh, exp[i].nh);
++	}
++
++	ret = rte_fib_tbl8_pool_get_stats(pool, &used, &total, NULL);
++	RTE_TEST_ASSERT(ret == 0, "get_stats failed (ret=%d)\n", ret);
++	RTE_TEST_ASSERT(used == 3 && total >= used,
++		"expected 3 tbl8 groups in use, got %u/%u\n", used, total);
++
++	rte_fib_free(fib);
++	rte_fib_tbl8_pool_free(pool);
++	rte_free(qsv);
++	return TEST_SUCCESS;
++}
++
+ static struct unit_test_suite fib_fast_tests = {
+ 	.suite_name = "fib autotest",
+ 	.setup = NULL,
+@@ -694,6 +875,8 @@ static struct unit_test_suite fib_fast_tests = {
+ 	TEST_CASE(test_wraparound),
+ 	TEST_CASE(test_invalid_rcu),
+ 	TEST_CASE(test_fib_rcu_sync_rw),
++	TEST_CASE(test_tbl8_pool_grow),
++	TEST_CASE(test_tbl8_pool_grow_late),
+ 	TEST_CASES_END()
+ 	}
+ };
 -- 
 2.43.0
 
