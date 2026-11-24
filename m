@@ -2,105 +2,98 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6D4606A321
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 10:26:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA28606A31E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 10:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=ericsson.com header.i=@ericsson.com header.a=rsa-sha256 header.s=selector2 header.b=J1vFmEWp
+	dkim=pass (1024-bit key, unprotected) header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=WplmiNIK
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6DF0040395;
-	Wed, 25 Nov 2026 11:26:15 +0100 (CET)
-Received: from AM0PR83CU005.outbound.protection.outlook.com
- (mail-westeuropeazon11010056.outbound.protection.outlook.com [52.101.69.56])
- by mails.dpdk.org (Postfix) with ESMTPS id 8200A4027A;
- Tue, 24 Nov 2026 16:24:28 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 37B4940612;
+	Wed, 25 Nov 2026 11:26:16 +0100 (CET)
+Received: from BL0PR03CU003.outbound.protection.outlook.com
+ (mail-eastusazon11012067.outbound.protection.outlook.com [52.101.53.67])
+ by mails.dpdk.org (Postfix) with ESMTPS id 2087B4027A
+ for <dev@dpdk.org>; Tue, 24 Nov 2026 18:25:49 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iYHSum3Hj+Wu4tA3NfdVJFBftR39mg0bfhL1npDktmrNW4m6i+OOnpxOGJW+8d+PLKF3pj+tdSbslHZovNd+BMVMM+4eittiBD1VU/my5wlXlCipV53XB4LZUrlmWfEK/8lEHRg27h6IWudpwDTIQ+flYXCVDQEfBIZP3zizVsq5S7qHmheO3a2JQhn2NMavO0MxtfMlsioxh0S8oOlHzRzTNTM2ilug+6+4Hj0Z4KDRlsLH1u219RcXvGieSoPs9dXQd0wXVRhFK6h7NesnZ9gwz/CKG4BqiacXnu2D1claD2Klgqdu4bAdUPvJNFKRNUebXYHsVRno1ttlMJS96A==
+ b=IY1OL58R3PRmhuezFjQzAdQ8GOCgKz3W6tmHJ4KAc1NiyXTC25/u2jR5TNdrkvlPFR5T0qtEut5jKPkzX2NqzirPTtHAQlit41fKKdfhPZXwnRIh7iakzleBsJmXXbhD7gcNDcWmC55mZhsEgfRJmglMHfixctAHlGWVIutKu3xfkeHbn4qxd/eAbmIbo74KIyWJHRWKEbsV7ZiIUIbT7j+BAggBWZ++9ydFxo0uHur0j/3XlRJEtDYOg6CapcsShez6Uk3ssaXHcPyk3X3IsGPcAlaLnqyzJu/ymMrMQk+HI2k0A9fvT/OP9NfYi5kbpS3W4IXx7RgypXh6vrl0pg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gNYBXvYtrMb4tVTIo8BnFJ3gQRsiiMZ8XK8rw+mjjY4=;
- b=S/2Kd8xoxy1VFAhOi06tPTZ+Dyqu1TV4ASunmkW+zH7IXmOPLCEKIAqgVZ83+i1px0sRYlEIWXjnHnyRAxzrn+aLju8K/VmSW42u/sJI6paezyDoGJG93MakV6bDf2o03VPZhv/i/Ztg02omiQ31AAsX7c4zli2Y0A9lZuXhsURn+b8sG19Vz3LKNf8JQlsTNgSbfQRtrKHMRQSJEupjy1zQE1yTtObOubEhak7P7PfOr5+YHewePvNjzigKpNSxuDMGUxT7X/PnQDvRkTye7GSfypn8lALckiTkBjRpu1frdQ2bgTGhNZqTD9W45pRdAHD/dGcY2EM7Qllo3qnZJA==
+ bh=cKfmeKf6XwWZ+uCiJvlbJ6wJaq8lD6WI0gEaNrqcLrc=;
+ b=BaCL4mx1ooivFsJr3789sZEmwaab2955w2TkEX/axwvLT5/weGFfSTX7keZied9k9kjDXAHuRXpl8nuL74+r0GeFZf3t5gKHLs/Qu5a+V27mr93xI7BmSYzans4nWl65vKtUX9RYEHdum5Sx4+kdpbIxfMH2Si9Xn5Qz3wWN+m1jNTXLb+5iPRdEx/34jERTRX3DfsV5aGJR8hitXu8YotmJMTWCSbla2FoK7DRuQ8nudSkOhh04S1x1nvwv1QnN4wlCFIRVSmbsCzkm49/HnVTsKi+W4dz+7NrWk5fl9k/IMFyq9Kw+j2VpVgPH1XlwzDYsGDg7GT6VIpS1FuNbrA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 192.176.1.74) smtp.rcpttodomain=dpdk.org smtp.mailfrom=ericsson.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ericsson.com; 
+ 165.204.84.17) smtp.rcpttodomain=dpdk.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
- s=selector2;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gNYBXvYtrMb4tVTIo8BnFJ3gQRsiiMZ8XK8rw+mjjY4=;
- b=J1vFmEWpgdJ8ycyjrnMMdEMhymVXwySBIVFoMAuOVAFkqC02XZx5vVMgepGd+YFOVujM1uHlTbfKxVNlunDGOwdxH5UcLyCcQuZpmSZ+4jw2tOJc1UQxWBFsJbXArt//jeVuQeuafZh7YJ3g1tysefVnt20PoNaFbaRqo6p6ZoXzuCw9wRsN7Mm3C+E2rvOx+5aqjRpvjvcifxjEO+5DLfr0ni8c1AIYPcCb/njHLSZdwdtxMAIb+mj+O1KjAifdtMpju7lb7GrEE2j6D82EY8xHChWAPGhZyuhNCd5ieNAAYAn9a0ReqiNI42hFLey3Pjng6s2+P0rYJhh+NN+yAQ==
-Received: from LO4P265CA0313.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:390::15)
- by BESPR07MB12170.eurprd07.prod.outlook.com (2603:10a6:b10:fd::10)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.639.14; Tue, 24 Nov
- 2026 15:24:26 +0000
-Received: from MAD0EPF000008C2.eurprd05.prod.outlook.com
- (2603:10a6:600:390:cafe::36) by LO4P265CA0313.outlook.office365.com
- (2603:10a6:600:390::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.639.14 via Frontend Transport; Tue,
- 24 Nov 2026 15:24:26 +0000
+ bh=cKfmeKf6XwWZ+uCiJvlbJ6wJaq8lD6WI0gEaNrqcLrc=;
+ b=WplmiNIKNzMAljSmsBICBR0Q4zeZTP5gIGdfEHj3/3MqWGRXiR/Mo9V8nBs3HR86VZZESghV05DgC1Lc170L2n7EDe6TBIJoBgnmx/rTC3a9AZI0vDpYQNW8jr68xHTpBp8rN7Ut9fEXTs1lokjtHrUupS+J0lh7yDpuV0tCNkI=
+Received: from CH0PR03CA0104.namprd03.prod.outlook.com (2603:10b6:610:cd::19)
+ by DS7PR12MB5791.namprd12.prod.outlook.com (2603:10b6:8:76::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.639.13; Tue, 24 Nov
+ 2026 17:22:27 +0000
+Received: from CH3PEPF0002457E.namprd04.prod.outlook.com
+ (2603:10b6:610:cd:cafe::8c) by CH0PR03CA0104.outlook.office365.com
+ (2603:10b6:610:cd::19) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.662.6 via Frontend Transport; Tue, 24
+ Nov 2026 17:22:27 +0000
 X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 192.176.1.74)
- smtp.mailfrom=ericsson.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=ericsson.com;
-Received-SPF: Pass (protection.outlook.com: domain of ericsson.com designates
- 192.176.1.74 as permitted sender)
- receiver=protection.outlook.com; 
- client-ip=192.176.1.74; helo=oa.msg.ericsson.com; pr=C
-Received: from oa.msg.ericsson.com (192.176.1.74) by
- MAD0EPF000008C2.mail.protection.outlook.com (10.167.241.198) with Microsoft
+ is 165.204.84.17) smtp.mailfrom=amd.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ CH3PEPF0002457E.mail.protection.outlook.com (10.167.252.24) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.662.3 via Frontend Transport; Tue, 24 Nov 2026 15:24:25 +0000
-Received: from seliius19697.seli.gic.ericsson.se (153.88.142.248) by
- smtp-central.internal.ericsson.com (100.87.178.69) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.56; Tue, 24 Nov 2026 16:24:23 +0100
-Received: from seliiuvd05597.seli.gic.ericsson.se
- (seliiuvd05597.seli.gic.ericsson.se [100.77.119.51])
- by seliius19697.seli.gic.ericsson.se (Postfix) with ESMTP id C88314020A84;
- Tue, 24 Nov 2026 16:24:22 +0100 (CET)
-Received: by seliiuvd05597.seli.gic.ericsson.se (Postfix, from userid 121917)
- id 9345460DF5D3; Tue, 24 Nov 2026 16:24:22 +0100 (CET)
-From: Changwoo Kang <changwoo.kang@ericsson.com>
+ 15.21.662.3 via Frontend Transport; Tue, 24 Nov 2026 17:22:26 +0000
+Received: from cae.amd.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.57; Tue, 24 Nov
+ 2026 11:22:20 -0600
+From: Ajit Kumar <Ajit.Kumar@amd.com>
 To: <dev@dpdk.org>
-CC: Thomas Monjalon <thomas@monjalon.net>, Stephen Hemminger
- <stephen@networkplumber.org>, Changwoo Kang <changwoo.kang@ericsson.com>,
- <stable@dpdk.org>, Stefan Laesser <stefan.laesser@omicronenergy.com>
-Subject: [PATCH] net/af_packet: fix drop count error check
-Date: Tue, 24 Nov 2026 16:23:40 +0100
-Message-ID: <20261124152340.3329809-1-changwoo.kang@ericsson.com>
-X-Mailer: git-send-email 2.36.0
+CC: <stephen@networkplumber.org>
+Subject: Re: [PATCH v3] net/axgbe: wait for SFP cage I2C readiness on first
+ probe
+Date: Tue, 24 Nov 2026 22:52:06 +0530
+Message-ID: <20261124172206.664512-1-Ajit.Kumar@amd.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261123115224.2199549-1-Ajit.Kumar@amd.com>
+References: <20261123115224.2199549-1-Ajit.Kumar@amd.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
+ (10.181.42.216)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MAD0EPF000008C2:EE_|BESPR07MB12170:EE_
-X-MS-Office365-Filtering-Correlation-Id: fa1be86d-d261-485d-bbf1-08df4a3f065a
-X-SMTP-Server: smtp-central.internal.ericsson.com
+X-MS-TrafficTypeDiagnostic: CH3PEPF0002457E:EE_|DS7PR12MB5791:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2ae72372-9176-4f7d-f110-08df4a4f82e3
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|376014|23010399003|36860700016|1800799024|18002099003|261009223027099003|260925021311599003|260925021911599003|260925022911599003|10067099003|11063799006|56012099006|261028144727099003|261026140227099003|261021123027099003|261102123227099003|261021121427099003|261022105027099003;
-X-Microsoft-Antispam-Message-Info: jAClNqk0Jbb5nazisXRRwQbh9ES3tl4st+0yZkQYefgIoc26325kx3KOBuQ5YN6gnXT7vh2NmmpHQzTvRxt2NQQ+lG1WUiEaovsoRcUVWDMv0IT+vbvPP7aL/MrtuYbpk20Zr0dQPdY6RS9haWl+kHGPM3xsvVhZoDxV2C4yPEaUMAB24JmWEbd5zYt2eNgElp6c2G9+FqZMGs3wBDOrMxxzSb9Izim//UVQMdLhfGyLUp8D9y/vnSBVFrT3HJ+JwUmQ0VxtJTdmfBOPG31YYlzMh3mzKFCc9PNiggzrEUX7DnmSvSRny2UyYwDh5Ck6iZrod1066IDzWgJBptwExUBsgatgx3H2WaWv9Ezx6RbNMaQlJFAlB/CrAi/dJ7nUc5NkhL3nrJxO23nbO3+gmH1pGhqMEc7wkBDeswft3/wXm5xI5ezXxgaobn+wO1MihmSqvRO6kguftZHCDXheszLOyBngwE8JADY0IFNqN88MCfxXpp2oEzAuXEz6mcHCyRkSmSfaMyDQhfm3r6i9/Qj31onrGTwkPcJUAoyDE+GQ1PCI7BpNPhgINZAxJfKP2FQAwiQC1F/fcr5fzjOJSJkKC52CabzC5uIQkGG11nn1Uk4F6yLjIcRHMGyXS97jpaRRWj6Bn5ffkEmFsCiLyVxV5PzoBmTT51hrwOrGauv2/e8nViPifMcUZbCwTrODASiAvyg020zmS3457kn5zw==
-X-Forefront-Antispam-Report: CIP:192.176.1.74; CTRY:SE; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:oa.msg.ericsson.com; PTR:office365.se.ericsson.net;
- CAT:NONE;
- SFS:(13230040)(82310400026)(376014)(23010399003)(36860700016)(1800799024)(18002099003)(261009223027099003)(260925021311599003)(260925021911599003)(260925022911599003)(10067099003)(11063799006)(56012099006)(261028144727099003)(261026140227099003)(261021123027099003)(261102123227099003)(261021121427099003)(261022105027099003);
+ ARA:13230040|1800799024|376014|82310400026|23010399003|36860700016|22082099003|18002099003|261026121527099003|261021123027099003|261021121427099003|261102123227099003|56012099006|261022075727099003|10067099003|11063799006|5023799004;
+X-Microsoft-Antispam-Message-Info: 32neYVB6Bi8GAKqug14vGEXzHef6mW4M6K9HMSqUXBTGChJ1ojxhfd+B+vDW18ae4npAJqlactPyG7geb/Npq26D8cnRnpkG8YoWCVTTg/7C/ssU6LzXhbFJjHX1BsDemnzyLMGk8w9GytzKx/q/pdwBlWLkXu3hO6FSLwNRsMtR34bZut/tSsbjh9i/2UodFfJwiJ13g+bsOOdyiz1ZxziXgoGTJY/gZ0GrXZgKqWNaI3CYRcFd+PKStTuBideYJhMSJFGLew2S7OzqeXqoOtP7//CP1xraAIHxCX5GGpk9ShEH4AOaQ65BP5P2OniV84y6plTBvSxqfnb9ksN419Ust7q+s0tw48+1kjdvLsrHPy/JM4NCGa+2X3NS6kxqKnLAp4dZknmUowDdCo8szwx2g4odoaalVg//NNCKew/zowlsBFAITmkyKXgh5Z56P0GtO5KfL+rq46/LeRdF2bFs20bN8k0Quhi7qSpv60TE9xUlHX2QkIEVRXo6RsqjjLVz+szy5oBjk50dYvbUw4QejJpAMPupLFQT+7A1bRDvZDtOcLhLZ/JPmBzilBPTUlR/7JbO9TF5RzcrvWRd2JOSd4yuRAVeHmqdPRFVhy+MdrHzttVaWWEkAIZP6yD6z1mF4mab5LcvvubMgJP2XlSf6q3RYpdB6XeHOBkCjqT1s96BGY28gArvGixIEYDMkJzJ1w5e8xOv19ISnNNIVA==
+X-Forefront-Antispam-Report: CIP:165.204.84.17; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:satlexmb07.amd.com; PTR:InfoDomainNonexistent; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(82310400026)(23010399003)(36860700016)(22082099003)(18002099003)(261026121527099003)(261021123027099003)(261021121427099003)(261102123227099003)(56012099006)(261022075727099003)(10067099003)(11063799006)(5023799004);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 5xip9frxz6hfUlDOTYZ1W7Fr0PaUU5sRJtHYPb32UIv7UYLZv7UZYn1KK1MbUWlxQF8EEtzWJgh/k7no1xyowkUujvnvvE7xBneGMYHKJJAUGp/zRFG6ffwXAXcwo9roRiOuPh3fQyJIg4r8Lvugtr/sHodIoYCpwWGH8K9YpitJ0XlSDyd4Ug50xaxwf/Vh+JopP8GfkYNtaPDRR/0aB1b5ksXRyKwA8clc7JaDasktAg7Svs+IDP+4l4jk299299nx65EwxhEjQ0n2BAMLUr2bH7fDOaIUngvkZ8EstEjd2P5eHy3cTt6d87JbwdKZKt57LBNAUrpUqlHexeW/Ww1phzj5N6jhsbTGsBeux7SsRf0vBep7wshcpX/5I1iYSb9t8QIcahYTnJlSELdjjUKY2lMcQMJj+AaRFIcOSy4lNM6Bs+tHrhYB2qLeGbRx
-X-OriginatorOrg: ericsson.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Nov 2026 15:24:25.8658 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa1be86d-d261-485d-bbf1-08df4a3f065a
-X-MS-Exchange-CrossTenant-Id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=92e84ceb-fbfd-47ab-be52-080c6b87953f; Ip=[192.176.1.74];
- Helo=[oa.msg.ericsson.com]
-X-MS-Exchange-CrossTenant-AuthSource: MAD0EPF000008C2.eurprd05.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: CaB2RDCZDM2H0t4EPcxXrXp72mlp5u934QUSFX3v1LxJZLUTqimaPTwmwMU1UTBwEIYl4hXJ00rDOkxaMDxePfdDeZ7M0Up5tWTy5rDkNsHJUm8DdV+YPK19I7NE7D4fuH/STgUOUBGxhzJgKUDb6E2oKOH1RFy6XzneiY9v5Aw8z3G2Ksg0G1ilFLUdxCMVcXMyQ568AZW6BanqovsD4BSCCtSFNwq9ewmefJE8MMlUSvU8b1paVeHZjHXMABZZvcGz2OZxgMdeEHTREturs1ucCnroWi9xuYUcS3AVsCn0oNsNlfg9bsrGgZTwvCAMlnGjJiIPcmlY76D0VASC/GhI1UhLdtjn9iqEDhqkLXlysiBw7oNoFIuJuYwkYUdETr3f+6E6Nb93Af8o6h7s9JfaA6aEI9Eh0kGivvuVU6j6ZasA5ebrtMfp+OU/7ETG
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Nov 2026 17:22:26.8195 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2ae72372-9176-4f7d-f110-08df4a4f82e3
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d; Ip=[165.204.84.17];
+ Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: CH3PEPF0002457E.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BESPR07MB12170
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5791
 X-Mailman-Approved-At: Wed, 25 Nov 2026 11:26:12 +0100
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -111,52 +104,29 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-getsockopt() returns 0 on success and -1 on error, so the check
-"< -1" is never true. On failure the function returned an
-uninitialized value. Check for "< 0" instead.
+From: Ajit Kumar <ajit.kumar@amd.com>
 
-Fixes: 6b3246245507 ("net/af_packet: provide packet drop stats")
-Cc: stable@dpdk.org
-Cc: Stefan Laesser <stefan.laesser@omicronenergy.com>
+Follow-up on this one.
 
-Signed-off-by: Changwoo Kang <changwoo.kang@ericsson.com>
----
- .mailmap                                  | 1 +
- drivers/net/af_packet/rte_eth_af_packet.c | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+We had the customer retest the exact scenario this patch targets, but
+with only the already-merged bus-mutex patch applied, no retry logic
+at all. 30 iterations on their hardware (Advantech FWA-1081), full
+driver debug logging on: zero I2C errors, zero NACKs, zero timeouts,
+either port, every run. Link confirmed up on the switch side too.
 
-diff --git a/.mailmap b/.mailmap
-index a0096fb97a..ed6e68cc1b 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -264,6 +264,7 @@ Changchun Ouyang <changchun.ouyang@intel.com>
- Changpeng Liu <changpeng.liu@intel.com>
- Changqi Dingluo <dingluochangqi.ck@bytedance.com>
- Changqing Wu <changqingx.wu@intel.com>
-+Changwoo Kang <changwoo.kang@ericsson.com>
- Chao Zhu <chaozhu@linux.vnet.ibm.com> <bjzhuc@cn.ibm.com>
- Chaoyong He <chaoyong.he@corigine.com>
- Charles Brett <cfb@hpe.com>
-diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
-index fbaea57615..ad71582aea 100644
---- a/drivers/net/af_packet/rte_eth_af_packet.c
-+++ b/drivers/net/af_packet/rte_eth_af_packet.c
-@@ -518,7 +518,7 @@ packet_drop_count(int sockfd)
- 		return 0;
- 
- 	if (getsockopt(sockfd, SOL_PACKET, PACKET_STATISTICS, &pkt_stats,
--		&pkt_stats_len) < -1)
-+		&pkt_stats_len) < 0)
- 		return 0;
- 
- 	return pkt_stats.tp_drops;
--- 
-2.36.0
+So the condition this patch exists to catch doesn't reproduce once
+the cross-port race is fixed. Withdrawing it. The bus-mutex fix
+already in next-net is sufficient; nothing more to add here.
 
+Thanks for pushing back on the earlier versions. Better to find this
+out than ship a fix resting on a delay value that was never actually
+justified.
+
+Ajit
