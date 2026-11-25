@@ -2,29 +2,29 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E9C606A321
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 14:06:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB06606A321
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 14:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.a=rsa-sha256 header.s=dkim header.b=WJSlFtpE
+	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.a=rsa-sha256 header.s=dkim header.b=eEXPvb+v
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D2DB840611;
-	Wed, 25 Nov 2026 15:06:29 +0100 (CET)
-Received: from canpmsgout12.his.huawei.com (canpmsgout12.his.huawei.com
- [113.46.200.227])
- by mails.dpdk.org (Postfix) with ESMTPS id 4F075402B2
+	by mails.dpdk.org (Postfix) with ESMTP id B1A5340616;
+	Wed, 25 Nov 2026 15:06:30 +0100 (CET)
+Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com
+ [113.46.200.216])
+ by mails.dpdk.org (Postfix) with ESMTPS id 0EA0140284
  for <dev@dpdk.org>; Wed, 25 Nov 2026 15:06:27 +0100 (CET)
 dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=hFjkrV8Mv/IbRZcjrYGamufbRiddiHpUQ+g+djql2x4=;
- b=WJSlFtpEYJpTRC1VzZ4pYbVWjK0MNycmuHtTdTzOzPb7Va9xTCk+Wdk6W8tQPT5SYRYA932nE
- OCZabzctGFM0XAgLTfLhlRusMmrUcp1SiMj72RNCXj8f47CpLYtdAOTtrnDRRC2/zemmouVYxum
- GGGvReIaOWitzRPsvr2UoV0=
-Received: from mail.maildlp.com (unknown [172.19.162.92])
- by canpmsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4jZLzy6SHLznTVW;
+ bh=EMzCQQB2Y5Jcul2Adh4LQbwiNiBeWheYigMal+GnhjY=;
+ b=eEXPvb+vd3QqLsdzcUMM/x0rPNnOWHFkA6yl01+1DZa6kre/MCBV6mmy7o9mG/OckfjefhusH
+ 22+CUaz5UcSz5tyrlnhXAEGPb8mi8yhQTfkrEh2G7nygEUbtzsbPKcYPiwn+CIBS4BdPzW0F2C9
+ 3BDRU8l44WRinIrsZ9sjaxA=
+Received: from mail.maildlp.com (unknown [172.19.162.144])
+ by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4jZLzy4KB6z1T4H4;
  Wed, 25 Nov 2026 22:05:34 +0800 (CST)
 Received: from dggpemr100003.china.huawei.com (unknown [7.185.36.150])
- by mail.maildlp.com (Postfix) with ESMTPS id D46D940565;
- Wed, 25 Nov 2026 22:06:23 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 9D9CD40538;
+ Wed, 25 Nov 2026 22:06:24 +0800 (CST)
 Received: from localhost.localdomain (10.50.163.32) by
  dggpemr100003.china.huawei.com (7.185.36.150) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -35,9 +35,9 @@ To: Anatoly Burakov <anatoly.burakov@intel.com>, Sivaprasad Tummala
 CC: <dev@dpdk.org>, <yangshuaisong@h-partners.com>, <liuyonglong@huawei.com>, 
  <fengchengwen@huawei.com>, <yangxingui@h-partners.com>,
  <yangxingui@huawei.com>, Huisong Li <lihuisong@huawei.com>
-Subject: [PATCH 3/9] examples/l3fwd-power: extract functions for power QoS
-Date: Wed, 25 Nov 2026 22:06:09 +0800
-Message-ID: <20261125140616.3965843-4-yangshuaisong@h-partners.com>
+Subject: [PATCH 4/9] examples/l3fwd-power: add rollback in uncore init
+Date: Wed, 25 Nov 2026 22:06:10 +0800
+Message-ID: <20261125140616.3965843-5-yangshuaisong@h-partners.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20261125140616.3965843-1-yangshuaisong@h-partners.com>
 References: <20261125140616.3965843-1-yangshuaisong@h-partners.com>
@@ -65,165 +65,119 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Huisong Li <lihuisong@huawei.com>
 
-Extract the power QoS initialization and deinitialization from
-init_power_library() and deinit_power_library() into dedicated
-power_qos_init() and power_qos_uninit() helpers.
-
-power_qos_init() also gains a rollback path which restores the CPU
-resume latency of the cores that were already configured when a
-later step fails.
+Make power_uncore_init() roll back the packages and dies that were
+already initialized when a later step fails, instead of leaving
+them configured after an error return.
 
 Signed-off-by: Huisong Li <lihuisong@huawei.com>
 Signed-off-by: Shuaisong Yang <yangshuaisong@h-partners.com>
 ---
- examples/l3fwd-power/main.c | 109 ++++++++++++++++++++++++------------
- 1 file changed, 72 insertions(+), 37 deletions(-)
+ examples/l3fwd-power/main.c | 44 ++++++++++++++++++++++++++++++-------
+ 1 file changed, 36 insertions(+), 8 deletions(-)
 
 diff --git a/examples/l3fwd-power/main.c b/examples/l3fwd-power/main.c
-index dc0002982a..03d8b3f5e1 100644
+index 03d8b3f5e1..857b885f43 100644
 --- a/examples/l3fwd-power/main.c
 +++ b/examples/l3fwd-power/main.c
-@@ -2369,11 +2369,77 @@ static int power_cpufreq_uninit(void)
- }
- 
- static int
--init_power_library(void)
-+power_qos_init(void)
+@@ -2193,6 +2193,8 @@ static int
+ power_uncore_init(void)
  {
-+	int lcore_init[RTE_MAX_LCORE] = {0};
- 	unsigned int lcore_id;
+ 	unsigned int die, pkg, max_pkg, max_die;
++	unsigned int init_pkg = 0, init_die = 0;
++	bool init_done = false;
  	int ret;
  
-+	if (cpu_resume_latency == -1)
-+		return 0;
-+
-+	RTE_LCORE_FOREACH(lcore_id) {
-+		/* Back old CPU resume latency. */
-+		ret = rte_power_qos_get_cpu_resume_latency(lcore_id);
-+		if (ret < 0) {
-+			RTE_LOG(ERR, L3FWD_POWER,
-+				"Failed to get cpu resume latency on lcore-%u, ret=%d.\n",
-+				lcore_id, ret);
-+			goto uninit_qos;
+ 	if (enabled_uncore == -1)
+@@ -2210,22 +2212,28 @@ power_uncore_init(void)
+ 
+ 	for (pkg = 0; pkg < max_pkg; pkg++) {
+ 		max_die = rte_power_uncore_get_num_dies(pkg);
+-		if (max_die == 0)
+-			return -1;
++		if (max_die == 0) {
++			ret = -1;
++			goto uninit_uncore;
 +		}
-+		resume_latency_bk[lcore_id] = ret;
+ 		for (die = 0; die < max_die; die++) {
+ 			ret = rte_power_uncore_init(pkg, die);
+ 			if (ret == -1) {
+ 				RTE_LOG(INFO, L3FWD_POWER, "Unable to initialize uncore for pkg %02u die %02u\n"
+ 				, pkg, die);
+-				return ret;
++				goto uninit_uncore;
+ 			}
++			init_pkg = pkg;
++			init_die = die;
++			init_done = true;
 +
-+		/*
-+		 * Set the cpu resume latency of the worker lcore based
-+		 * on user's request. If set strict latency (0), just
-+		 * allow the CPU to enter the shallowest idle state to
-+		 * improve performance.
-+		 */
-+		ret = rte_power_qos_set_cpu_resume_latency(lcore_id, cpu_resume_latency);
-+		if (ret != 0) {
-+			RTE_LOG(ERR, L3FWD_POWER,
-+				"Failed to set cpu resume latency on lcore-%u, ret=%d.\n",
-+				lcore_id, ret);
-+			goto uninit_qos;
+ 			if (uncore_cfg.uncore_choice == UNCORE_MIN) {
+ 				ret = rte_power_uncore_freq_min(pkg, die);
+ 				if (ret == -1) {
+ 					RTE_LOG(INFO, L3FWD_POWER,
+ 					"Unable to set the uncore frequency to minimum value for pkg %02u die %02u\n"
+ 					, pkg, die);
+-					return ret;
++					goto uninit_uncore;
+ 				}
+ 			} else if (uncore_cfg.uncore_choice == UNCORE_MAX) {
+ 				ret = rte_power_uncore_freq_max(pkg, die);
+@@ -2233,32 +2241,52 @@ power_uncore_init(void)
+ 					RTE_LOG(INFO, L3FWD_POWER,
+ 					"Unable to set uncore frequency to maximum value for pkg %02u die %02u\n"
+ 					, pkg, die);
+-					return ret;
++					goto uninit_uncore;
+ 				}
+ 			} else if (uncore_cfg.uncore_choice == UNCORE_IDX) {
+ 				int freq_array_len = rte_power_uncore_get_num_freqs(pkg, die);
+ 				if (freq_array_len <= 0) {
+ 					RTE_LOG(INFO, L3FWD_POWER, "Get uncore frequency number failed.\n");
+-					return -1;
++					ret = -1;
++					goto uninit_uncore;
+ 				}
+ 				if (uncore_cfg.freq_idx > (uint32_t)(freq_array_len - 1)) {
+ 					RTE_LOG(INFO, L3FWD_POWER,
+ 					"Frequency index given out of range, please choose a value from 0 to %d.\n",
+ 					freq_array_len - 1);
+-					return -1;
++					ret = -1;
++					goto uninit_uncore;
+ 				}
+ 				ret = rte_power_set_uncore_freq(pkg, die, uncore_cfg.freq_idx);
+ 				if (ret == -1) {
+ 					RTE_LOG(INFO, L3FWD_POWER,
+ 					"Unable to set specified frequency index for pkg %02u die %02u\n",
+ 					pkg, die);
+-					return ret;
++					goto uninit_uncore;
+ 				}
+ 			}
+ 		}
+ 	}
+ 
+ 	return 0;
++
++uninit_uncore:
++	/* Roll back the pkg/die that were initialized before the failure. */
++	if (init_done) {
++		for (pkg = 0; pkg <= init_pkg; pkg++) {
++			if (pkg == init_pkg)
++				max_die = init_die + 1;
++			else {
++				max_die = rte_power_uncore_get_num_dies(pkg);
++				if (max_die == 0)
++					break;
++			}
++			for (die = 0; die < max_die; die++)
++				rte_power_uncore_exit(pkg, die);
 +		}
-+		lcore_init[lcore_id] = 1;
-+	}
-+
-+	return 0;
-+
-+uninit_qos:
-+	RTE_LCORE_FOREACH(lcore_id) {
-+		if (lcore_init[lcore_id] == 0)
-+			break;
-+
-+		/* Restore the original value. */
-+		rte_power_qos_set_cpu_resume_latency(lcore_id,
-+						     resume_latency_bk[lcore_id]);
 +	}
 +
 +	return ret;
-+}
-+
-+static void
-+power_qos_uninit(void)
-+{
-+	unsigned int lcore_id;
-+
-+	if (cpu_resume_latency == -1)
-+		return;
-+
-+	RTE_LCORE_FOREACH(lcore_id) {
-+		/* Restore the original value. */
-+		rte_power_qos_set_cpu_resume_latency(lcore_id,
-+						     resume_latency_bk[lcore_id]);
-+	}
-+}
-+
-+static int
-+init_power_library(void)
-+{
-+	int ret;
-+
- 	ret = power_cpufreq_init();
- 	if (ret != 0) {
- 		RTE_LOG(ERR, L3FWD_POWER,
-@@ -2385,34 +2451,10 @@ init_power_library(void)
- 	if (ret != 0)
- 		return ret;
- 
--	if (cpu_resume_latency != -1) {
--		RTE_LCORE_FOREACH(lcore_id) {
--			/* Back old CPU resume latency. */
--			ret = rte_power_qos_get_cpu_resume_latency(lcore_id);
--			if (ret < 0) {
--				RTE_LOG(ERR, L3FWD_POWER,
--					"Failed to get cpu resume latency on lcore-%u, ret=%d.\n",
--					lcore_id, ret);
--				return ret;
--			}
--			resume_latency_bk[lcore_id] = ret;
--
--			/*
--			 * Set the cpu resume latency of the worker lcore based
--			 * on user's request. If set strict latency (0), just
--			 * allow the CPU to enter the shallowest idle state to
--			 * improve performance.
--			 */
--			ret = rte_power_qos_set_cpu_resume_latency(lcore_id,
--							cpu_resume_latency);
--			if (ret != 0) {
--				RTE_LOG(ERR, L3FWD_POWER,
--					"Failed to set cpu resume latency on lcore-%u, ret=%d.\n",
--					lcore_id, ret);
--				return ret;
--			}
--		}
--	}
-+	ret = power_qos_init();
-+	if (ret != 0)
-+		RTE_LOG(ERR, L3FWD_POWER,
-+			"Initialize power QoS lib failed, ret = %d.\n", ret);
- 
- 	return ret;
  }
-@@ -2420,7 +2462,6 @@ init_power_library(void)
+ 
  static int
- deinit_power_library(void)
- {
--	unsigned int lcore_id, max_pkg, max_die, die, pkg;
- 	int ret = 0;
- 
- 	ret = power_cpufreq_uninit();
-@@ -2437,13 +2478,7 @@ deinit_power_library(void)
- 		return ret;
- 	}
- 
--	if (cpu_resume_latency != -1) {
--		RTE_LCORE_FOREACH(lcore_id) {
--			/* Restore the original value. */
--			rte_power_qos_set_cpu_resume_latency(lcore_id,
--						resume_latency_bk[lcore_id]);
--		}
--	}
-+	power_qos_uninit();
- 
- 	return ret;
- }
 -- 
 2.33.0
 
