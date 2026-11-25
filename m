@@ -2,44 +2,44 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22351606A323
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 17:07:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0CA606A326
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 17:07:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=Elc3VB9e
+	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=foEvW8oM
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1A39040B92;
-	Wed, 25 Nov 2026 18:06:01 +0100 (CET)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.221])
- by mails.dpdk.org (Postfix) with ESMTPS id 8A8F040656
- for <dev@dpdk.org>; Wed, 25 Nov 2026 18:05:52 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D427540B98;
+	Wed, 25 Nov 2026 18:06:02 +0100 (CET)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.4])
+ by mails.dpdk.org (Postfix) with ESMTPS id 234E740615
+ for <dev@dpdk.org>; Wed, 25 Nov 2026 18:05:51 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=HJAbbyQpG5P5IP8M6Jv1EtasT2U3ZGeXGmept1BEk2k=;
- b=Elc3VB9eh5tdsIOdR7vLDDIhBYFbi8+rewF9atBpY6Rzm3naFY1u1nsXPnKmb6
- KTeIrPGM28nE7bOiGUOnISTXeM4m6Lb01PQ8gOK5NwZekEVcHIHo0M3+TMXqvI9Z
- 8yuTXB2G1+wV2olMV1SPRVRbtVY3+pO4DWgoXDc7bN6hI=
+ MIME-Version; bh=WPfzc1kGlEbIIPzb/+moI7Y8fU8ohUIwZyLUZg+PZqs=;
+ b=foEvW8oMZy8gfzMCl7mcxPgTWn4eIMabfzQZwKb1tiIjyR4a/IPiibyBFABTJE
+ CzKo7YhKwKNQYMG4la/PD05wmTp67elL48qnvlGBKDKzNYPS3dwBVopLGgv+0iXo
+ apc4WmL8gfHzSKNQysMhKyJhRf1+ldWIchvZeQnKCT7qo=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
  Anatoly Burakov <anatoly.burakov@intel.com>,
  Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v9 16/30] net/hinic3: add mbox message recording and debug dump
-Date: Thu, 26 Nov 2026 01:04:10 +0800
-Message-ID: <20261125170425.5430-17-yejiacheng4@h-partners.com>
+Subject: [PATCH v9 12/30] net/hinic3: add SP230 Rx queue interrupt handling
+Date: Thu, 26 Nov 2026 01:04:06 +0800
+Message-ID: <20261125170425.5430-13-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.56.0.windows.2
 In-Reply-To: <20261125170425.5430-1-yejiacheng4@h-partners.com>
 References: <20261125170425.5430-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: As8vCgDn77FiFQdrEdNeBQ--.6538S18
-X-Coremail-Antispam: 1Uf129KBjvAXoW3ZFWxJFyrXF15GF18Xr4fXwb_yoW8Jw13Go
- WfXFWakF4Fgrn7A34jvFn7ZFs3Xr1DGrn8J39xCanxXa9rury5JFn8Grn3Ja4xX3yUCFnr
- AF97G3yktw47Xw4Dn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUcg4SUUUUU
+X-CM-TRANSID: As8vCgDn77FiFQdrEdNeBQ--.6538S14
+X-Coremail-Antispam: 1Uf129KBjvJXoWxKrWkKw13AFW8tFy3Zr48Xrb_yoWxGFWkpF
+ W5GFn3ArW8XF42grsxGw43uw43Xr4Sgry2g3s7Ga4jkryaqrn5uFyUJF15ZFn7CrWkA3Wa
+ vF4rCFWqg3Wjqw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jOYFAUUUUU=
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNA78B2sHFW4bPAAA3x
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiMwz8B2sHFWwajAAA3H
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,362 +56,179 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Provide recorded mbox send/receive history and a dump of it together with
-the AEQ state so mailbox timeouts and response mismatches can be diagnosed.
+SP230 raises the aggregated Rx interrupt even when the application does
+not request queue interrupts, and nothing acknowledges it. The HTN tile
+has no microcode to mask it and its RQ context has no invalid-INTR
+encoding, unlike the STN tile used by SP560.
 
-eth_dev_priv_dump is also registered for secondary processes, where
-hwdev->pci_dev is not valid. Pass the rte_pci_device obtained from the
-ethdev down to the dump instead of reading it from hwdev.
+The INTR field is a plain vector index, so 0 selects the AEQ vector and
+every Rx queue raises there. With per-queue MSI-X vectors available,
+program the queue vector and leave it disabled: Rx keeps polling and no
+interrupt is delivered. hinic3_dev_rx_queue_intr_enable() returns 0 for
+SP230 without touching the hardware, so an application that needs Rx
+interrupts must set intr_conf.rxq at configure time.
+
+If the queue count does not fit in the MSI-X vector table, fall back to
+the old behaviour: leave dp_intr_en at 0 and keep polling, with a
+warning. Only fail the configuration when the application explicitly
+requested Rx interrupts.
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- doc/guides/rel_notes/release_26_11.rst |  1 +
- drivers/net/hinic3/base/hinic3_eqs.c   | 64 ++++++++++++++++++++++++--
- drivers/net/hinic3/base/hinic3_eqs.h   |  9 +++-
- drivers/net/hinic3/base/hinic3_mbox.c  | 45 ++++++++++++++++++
- drivers/net/hinic3/base/hinic3_mbox.h  | 19 ++++++++
- drivers/net/hinic3/hinic3_ethdev.c     | 29 ++++++++++++
- 6 files changed, 161 insertions(+), 6 deletions(-)
+ drivers/net/hinic3/hinic3_ethdev.c | 88 +++++++++++++++++++++++++++++---
+ 1 file changed, 82 insertions(+), 6 deletions(-)
 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index d03f12e743..e0d042f681 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -133,6 +133,7 @@ New Features
-   * Added vport statistics, including CIR drop, and VF link
-     aggregation (LAG) support.
-   * Added FEC mode get and set support.
-+  * Added mailbox message counter reporting through the device private dump API.
- 
- * **Updated Intel iavf driver.**
- 
-diff --git a/drivers/net/hinic3/base/hinic3_eqs.c b/drivers/net/hinic3/base/hinic3_eqs.c
-index 1fc78adc85..f86188b5f5 100644
---- a/drivers/net/hinic3/base/hinic3_eqs.c
-+++ b/drivers/net/hinic3/base/hinic3_eqs.c
-@@ -553,7 +553,7 @@ hinic3_aeqs_free(struct hinic3_hwdev *hwdev)
- }
- 
- void
--hinic3_dump_aeq_info(struct hinic3_hwdev *hwdev)
-+hinic3_dump_aeq_info(struct hinic3_hwdev *hwdev, FILE *file)
- {
- 	struct hinic3_aeq_elem *aeqe_pos = NULL;
- 	struct hinic3_eq *eq = NULL;
-@@ -580,10 +580,64 @@ hinic3_dump_aeq_info(struct hinic3_hwdev *hwdev)
- 		addr = HINIC3_CSR_AEQ_PROD_IDX_ADDR;
- 		pi = hinic3_hwif_read_reg(hwdev->hwif, addr);
- 		aeqe_pos = GET_AEQ_ELEM(eq, eq->cons_idx);
--		PMD_DRV_LOG(ERR,
--			    "Aeq id: %d, idx: %u, ctrl0: 0x%08x, wrap: %d, pi: 0x%x, ci: 0x%08x, desc: 0x%x",
--			    q_id, idx, ctrl0, eq->wrapped, pi, ci,
--			    rte_be_to_cpu_32(aeqe_pos->desc));
-+		fprintf(file, "Aeq id: %d, idx: %u, ctrl0: 0x%08x, wrap: %d, pi: 0x%x, ci: 0x%08x, desc: 0x%x\n",
-+				q_id, idx, ctrl0, eq->wrapped, pi, ci,
-+				rte_be_to_cpu_32(aeqe_pos->desc));
-+	}
-+}
-+
-+void
-+hinic3_dump_aeq_mbox_info(struct hinic3_hwdev *hwdev,
-+			  struct rte_pci_device *pci_dev, FILE *file)
-+{
-+	struct save_mbox_info *save_mbox = NULL;
-+	struct hinic3_eq *aeq = NULL;
-+	struct hinic3_aeq_elem *aeqe_pos = NULL;
-+	uint32_t i, pos;
-+	uint8_t src, size, wrapped, seq_id, seg_len, msg_id, mod;
-+	uint8_t data[HINIC3_AEQE_DATA_SIZE];
-+	uint16_t src_func_idx, cmd;
-+	uint32_t aeqe_desc;
-+	uint64_t mbox_header;
-+	enum hinic3_aeq_type event;
-+
-+	save_mbox = hwdev->func_to_func->save_mbox;
-+	aeq = &hwdev->aeqs->aeq[HINIC3_MBOX_RSP_MSG_AEQ];
-+
-+	fprintf(file, "Sending the latest mbox messages:\n");
-+	for (i = 0; i < save_mbox->count; i++) {
-+		pos = (save_mbox->start + i) % HINIC3_MBOX_SAVE_NUM;
-+		fprintf(file, "send_msg_id: %u, cmd: %u, mod: %u\n",
-+			save_mbox->send_info[pos].send_msg_id, save_mbox->send_info[pos].cmd,
-+			save_mbox->send_info[pos].mod);
-+	}
-+
-+	fprintf(file, "dump aeqe info:\n");
-+	fprintf(file, "port: %u, eq cid: %u, func id: %u, bus: %u, devid: %u, wrapped: %u\n",
-+		hwdev->port_id, aeq->cons_idx, pci_dev->addr.function, pci_dev->addr.bus,
-+		pci_dev->addr.devid, aeq->wrapped);
-+	for (i = 0; i < aeq->eq_len; i++) {
-+		/* Parsing the data field. */
-+		aeqe_pos = GET_AEQ_ELEM(aeq, i);
-+		aeqe_desc = rte_be_to_cpu_32(aeqe_pos->desc);
-+		memcpy(data, aeqe_pos->aeqe_data, HINIC3_AEQE_DATA_SIZE);
-+		hinic3_be32_to_cpu(data, HINIC3_AEQE_DATA_SIZE);
-+		memcpy(&mbox_header, data, sizeof(mbox_header));
-+		seq_id = HINIC3_MSG_HEADER_GET(mbox_header, SEQID);
-+		seg_len = HINIC3_MSG_HEADER_GET(mbox_header, SEG_LEN);
-+		src_func_idx = HINIC3_MSG_HEADER_GET(mbox_header, SRC_GLB_FUNC_IDX);
-+		msg_id = HINIC3_MSG_HEADER_GET(mbox_header, MSG_ID);
-+		mod = HINIC3_MSG_HEADER_GET(mbox_header, MODULE);
-+		cmd = HINIC3_MSG_HEADER_GET(mbox_header, CMD);
-+		/* Parsing the desc field. */
-+		event = EQ_ELEM_DESC_GET(aeqe_desc, TYPE);
-+		src = EQ_ELEM_DESC_GET(aeqe_desc, SRC);
-+		size = EQ_ELEM_DESC_GET(aeqe_desc, SIZE);
-+		wrapped = EQ_ELEM_DESC_GET(aeqe_desc, WRAPPED);
-+
-+		fprintf(file, "index: %d, msg_id: %u, mod: %u, cmd: %u, seq_id: %u, seg_len: %u, src_func_idx: %u, event: %u, src: %u, size: %u, wrapped: %u\n",
-+			i, msg_id, mod, cmd, seq_id, seg_len, src_func_idx,
-+			event, src, size, wrapped);
- 	}
- }
- 
-diff --git a/drivers/net/hinic3/base/hinic3_eqs.h b/drivers/net/hinic3/base/hinic3_eqs.h
-index 365c9cbf39..4c1b03da11 100644
---- a/drivers/net/hinic3/base/hinic3_eqs.h
-+++ b/drivers/net/hinic3/base/hinic3_eqs.h
-@@ -5,6 +5,10 @@
- #ifndef _HINIC3_EQS_H_
- #define _HINIC3_EQS_H_
- 
-+#include <stdio.h>
-+
-+struct rte_pci_device;
-+
- #define HINIC3_MAX_AEQS	    4
- #define HINIC3_MIN_AEQS	    2
- #define HINIC3_EQ_MAX_PAGES 4
-@@ -83,7 +87,10 @@ int hinic3_aeqs_init(struct hinic3_hwdev *hwdev);
- 
- void hinic3_aeqs_free(struct hinic3_hwdev *hwdev);
- 
--void hinic3_dump_aeq_info(struct hinic3_hwdev *hwdev);
-+void hinic3_dump_aeq_info(struct hinic3_hwdev *hwdev, FILE *file);
-+
-+void hinic3_dump_aeq_mbox_info(struct hinic3_hwdev *hwdev,
-+			       struct rte_pci_device *pci_dev, FILE *file);
- 
- int hinic3_aeq_poll_msg(struct hinic3_eq *eq, uint32_t timeout, void *param);
- 
-diff --git a/drivers/net/hinic3/base/hinic3_mbox.c b/drivers/net/hinic3/base/hinic3_mbox.c
-index c4ca2ed7ba..6d0d4cce2b 100644
---- a/drivers/net/hinic3/base/hinic3_mbox.c
-+++ b/drivers/net/hinic3/base/hinic3_mbox.c
-@@ -711,6 +711,27 @@ send_tlp_mbox_seg(struct hinic3_mbox *func_to_func, uint64_t header, uint16_t ds
- 	return 0;
- }
- 
-+static void hinic3_record_mbox_info(struct hinic3_mbox *func_to_func,
-+				    enum hinic3_mod_type mod, uint16_t cmd,
-+				    uint8_t msg_id)
-+{
-+	struct mbox_send_info send_mbox;
-+
-+	send_mbox.cmd = cmd;
-+	send_mbox.mod = mod;
-+	send_mbox.send_msg_id = msg_id;
-+
-+	uint8_t pos = (func_to_func->save_mbox->start + func_to_func->save_mbox->count) %
-+		      HINIC3_MBOX_SAVE_NUM;
-+	func_to_func->save_mbox->send_info[pos] = send_mbox;
-+
-+	if (func_to_func->save_mbox->count < HINIC3_MBOX_SAVE_NUM)
-+		func_to_func->save_mbox->count++;
-+	else
-+		func_to_func->save_mbox->start = (func_to_func->save_mbox->start + 1) %
-+						 HINIC3_MBOX_SAVE_NUM;
-+}
-+
- static int
- send_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type mod,
- 		struct hinic3_handler_info *handler_info, struct mbox_msg_info *msg_info)
-@@ -724,6 +745,9 @@ send_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type mod,
- 
- 	rsp_aeq_id = HINIC3_MBOX_RSP_MSG_AEQ;
- 
-+	hinic3_record_mbox_info(func_to_func, mod, handler_info->cmd,
-+				msg_info->msg_id);
-+
- 	/* Set the header message. */
- 	header = HINIC3_MSG_HEADER_SET(handler_info->in_size, MSG_LEN) |
- 		 HINIC3_MSG_HEADER_SET(mod, MODULE) |
-@@ -782,6 +806,9 @@ send_tlp_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type mod
- 
- 	rsp_aeq_id = HINIC3_MBOX_RSP_MSG_AEQ;
- 
-+	hinic3_record_mbox_info(func_to_func, mod, handler_info->cmd,
-+				msg_info->msg_id);
-+
- 	/* Set the header message. */
- 	header = HINIC3_MSG_HEADER_SET(MBOX_TLP_HEADER_SZ, MSG_LEN) |
- 		 HINIC3_MSG_HEADER_SET(MBOX_TLP_HEADER_SZ, SEG_LEN) |
-@@ -873,6 +900,7 @@ hinic3_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type mod,
- 		goto send_err;
- 	}
- 
-+	func_to_func->mbox_send_cnt++;
- 	/* Wait for the response message. */
- 	time = timeout ? timeout : HINIC3_MBOX_COMP_TIME;
- 	aeq = &func_to_func->hwdev->aeqs->aeq[HINIC3_MBOX_RSP_MSG_AEQ];
-@@ -884,6 +912,7 @@ hinic3_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type mod,
- 		goto send_err;
- 	}
- 
-+	func_to_func->mbox_ack_cnt++;
- 	/* Check whether mod and command of the rsp message match the sent message. */
- 	if (mod != mbox_for_resp->mod || handler_info->cmd != mbox_for_resp->cmd) {
- 		PMD_DRV_LOG(ERR,
-@@ -917,6 +946,8 @@ hinic3_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type mod,
- 		*handler_info->out_size = mbox_for_resp->mbox_len;
- 	}
- send_err:
-+	if (err != 0)
-+		func_to_func->mbox_error = true;
- 	return err;
- }
- 
-@@ -1129,6 +1160,16 @@ hinic3_func_to_func_init(struct hinic3_hwdev *hwdev)
- 
- 	hwdev->func_to_func = func_to_func;
- 	func_to_func->hwdev = hwdev;
-+
-+	struct save_mbox_info *save_mbox = rte_zmalloc("save_mbox_info",
-+						      sizeof(struct save_mbox_info), 0);
-+	if (!save_mbox) {
-+		err = -ENOMEM;
-+		goto alloc_save_mbox_err;
-+	}
-+
-+	func_to_func->save_mbox = save_mbox;
-+
- 	rte_spinlock_init(&func_to_func->mbox_lock);
- 
- 	/* Alloc the memory required by the mailbox. */
-@@ -1170,6 +1211,9 @@ hinic3_func_to_func_init(struct hinic3_hwdev *hwdev)
- 	free_mbox_info(func_to_func->mbox_send);
- 
- alloc_mbox_for_send_err:
-+	rte_free(save_mbox);
-+alloc_save_mbox_err:
-+	hwdev->func_to_func = NULL;
- 	rte_free(func_to_func);
- 
- 	return err;
-@@ -1184,5 +1228,6 @@ hinic3_func_to_func_free(struct hinic3_hwdev *hwdev)
- 	free_mbox_tlp_buffer(func_to_func);
- 	free_mbox_info(func_to_func->mbox_resp);
- 	free_mbox_info(func_to_func->mbox_send);
-+	rte_free(func_to_func->save_mbox);
- 	rte_free(func_to_func);
- }
-diff --git a/drivers/net/hinic3/base/hinic3_mbox.h b/drivers/net/hinic3/base/hinic3_mbox.h
-index df6de062e2..8797c19697 100644
---- a/drivers/net/hinic3/base/hinic3_mbox.h
-+++ b/drivers/net/hinic3/base/hinic3_mbox.h
-@@ -15,6 +15,8 @@
- 
- #define HINIC3_MAX_PF_FUNCS 32
- 
-+#define HINIC3_MBOX_SAVE_NUM          20
-+
- /* Message header define. */
- #define HINIC3_MSG_HEADER_SRC_GLB_FUNC_IDX_SHIFT 0
- #define HINIC3_MSG_HEADER_STATUS_SHIFT		 13
-@@ -150,8 +152,21 @@ enum hinic3_mbox_cb_state {
- 	HINIC3_PPF_TO_PF_MBOX_CB_RUNNING
- };
- 
-+struct mbox_send_info {
-+	uint16_t cmd;
-+	enum hinic3_mod_type mod;
-+	uint8_t send_msg_id;
-+};
-+
-+struct save_mbox_info {
-+	struct mbox_send_info send_info[HINIC3_MBOX_SAVE_NUM];
-+	uint8_t start;
-+	uint8_t count;
-+};
-+
- struct hinic3_mbox {
- 	struct hinic3_hwdev *hwdev;
-+	struct save_mbox_info *save_mbox;
- 
- 	struct hinic3_send_mbox send_mbox;
- 
-@@ -163,6 +178,10 @@ struct hinic3_mbox {
- 	enum mbox_event_state event_flag;
- 	/* Lock for mbox event flag. */
- 	rte_spinlock_t mbox_lock;
-+
-+	uint64_t mbox_send_cnt;
-+	uint64_t mbox_ack_cnt;
-+	bool mbox_error;
- };
- 
- int hinic3_mbox_func_aeqe_handler(struct hinic3_hwdev *hwdev, uint8_t *header,
 diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index ef0ac1fdcd..4f337791fc 100644
+index e74dfa22da..432278a0f2 100644
 --- a/drivers/net/hinic3/hinic3_ethdev.c
 +++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -10,6 +10,7 @@
- #include "base/hinic3_eqs.h"
- #include "base/hinic3_cmdq.h"
- #include "base/hinic3_hwdev.h"
-+#include "base/hinic3_mbox.h"
- #include "base/hinic3_hwif.h"
- #include "base/hinic3_hw_cfg.h"
- #include "base/hinic3_hw_comm.h"
-@@ -3571,6 +3572,32 @@ hinic3_fec_capability_get(struct rte_eth_dev *dev,
- 	return HINIC3_FEC_CAPA_NUM_PER_SPEED;
- }
+@@ -1503,6 +1503,9 @@ hinic3_dev_rx_queue_intr_enable(struct rte_eth_dev *dev, uint16_t queue_id)
+ 	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
+ 	uint16_t msix_intr;
  
-+static int
-+hinic3_eth_dev_priv_dump(struct rte_eth_dev *dev, FILE *file)
-+{
-+	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
-+	struct rte_pci_device *pci_dev = RTE_CLASS_TO_BUS_DEVICE(dev, *pci_dev);
-+	struct hinic3_hwdev *hwdev;
-+
-+	if (file == NULL)
-+		return -EINVAL;
-+
-+	hwdev = nic_dev->hwdev;
-+	if (hwdev == NULL || hwdev->func_to_func == NULL)
++	if (HINIC3_IS_SP230_NIC(nic_dev) && !dev->data->dev_conf.intr_conf.rxq)
 +		return 0;
 +
-+	fprintf(file, "mbox_send_cnt: %" PRIu64 "\n",
-+		hwdev->func_to_func->mbox_send_cnt);
-+	fprintf(file, "mbox_ack_cnt: %" PRIu64 "\n",
-+		hwdev->func_to_func->mbox_ack_cnt);
+ 	if (!rte_intr_dp_is_en(intr_handle) || !intr_handle->intr_vec)
+ 		return 0;
+ 
+@@ -1765,11 +1768,8 @@ hinic3_init_rxq_msix_attr(void *hwdev, uint16_t msix_index)
+ 	info.resend_timer_cfg = HINIC3_TXRX_MSIX_RESEND_TIMER_CFG;
+ 	info.msix_index = msix_index;
+ 	err = hinic3_set_interrupt_cfg(hwdev, info);
+-	if (err) {
+-		PMD_DRV_LOG(ERR, "Set msix attr failed, msix_index %d",
+-			    msix_index);
++	if (err)
+ 		return -EFAULT;
+-	}
+ 
+ 	return 0;
+ }
+@@ -1786,6 +1786,47 @@ hinic3_deinit_rxq_intr(struct rte_eth_dev *dev)
+ 	}
+ }
+ 
++/**
++ * Check that the Rx queue vectors fit in the device MSI-X vector table.
++ *
++ * @param[in] dev
++ * Pointer to ethernet device structure.
++ * @param[in] nb_rx_queues
++ * Number of Rx queues to be given a vector.
++ * @param[in] required
++ * Whether the vectors are required (application requested Rx interrupts).
++ *
++ * @return
++ * 0 if the configuration fits, -EINVAL otherwise.
++ */
++static int
++hinic3_check_rxq_intr_vec(struct rte_eth_dev *dev, uint32_t nb_rx_queues,
++			  bool required)
++{
++	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++	uint16_t num_irqs = HINIC3_HWIF_NUM_IRQS(nic_dev->hwdev->hwif);
++	uint32_t last_vec;
 +
-+	hinic3_dump_aeq_info(hwdev, file);
-+	if (hwdev->func_to_func->mbox_error)
-+		hinic3_dump_aeq_mbox_info(hwdev, pci_dev, file);
++	if (nb_rx_queues == 0)
++		return 0;
++
++	last_vec = (uint32_t)HINIC3_RX_VEC_START + nb_rx_queues - 1;
++	if (last_vec >= (uint32_t)num_irqs) {
++		if (required)
++			PMD_DRV_LOG(ERR,
++				    "Not enough MSI-X vectors for %u Rx queues, need %u vectors, have %u",
++				    nb_rx_queues, last_vec + 1, num_irqs);
++		else
++			PMD_DRV_LOG(WARNING,
++				    "Not enough MSI-X vectors for %u Rx queues, need %u vectors, have %u; "
++				    "Rx queue interrupts stay disabled",
++				    nb_rx_queues, last_vec + 1, num_irqs);
++		return -EINVAL;
++	}
 +
 +	return 0;
 +}
 +
- static const struct eth_dev_ops hinic3_pmd_ops = {
- 	.dev_configure                 = hinic3_dev_configure,
- 	.dev_infos_get                 = hinic3_dev_infos_get,
-@@ -3620,6 +3647,7 @@ static const struct eth_dev_ops hinic3_pmd_ops = {
- 	.fec_get_capability            = hinic3_fec_capability_get,
- 	.fec_get                       = hinic3_fec_get,
- 	.fec_set                       = hinic3_fec_set,
-+	.eth_dev_priv_dump             = hinic3_eth_dev_priv_dump,
- };
+ /**
+  * Initialize RX queue interrupts by enabling MSI-X, allocate interrupt vectors,
+  * and configure interrupt attributes for each RX queue.
+@@ -1798,6 +1839,14 @@ hinic3_deinit_rxq_intr(struct rte_eth_dev *dev)
+  * - -ENOTSUP if MSI-X interrupts are not supported.
+  * - Error code if enabling event file descriptors fails.
+  * - -ENOMEM if allocating interrupt vectors fails.
++ * - -EINVAL if Rx interrupts are requested and the Rx queues do not
++ *   fit in the MSI-X vector table. When Rx interrupts are not
++ *   requested, a vector-table overflow is not fatal: the function
++ *   logs a warning and keeps Rx queue interrupts disabled.
++ *
++ * On SP230 with per-queue MSI-X vectors, when the application does not
++ * request Rx interrupts, the queue vector is named in each RQ context but
++ * never enabled, and no interrupt resources are allocated.
+  */
+ static int
+ hinic3_init_rxq_intr(struct rte_eth_dev *dev)
+@@ -1810,8 +1859,28 @@ hinic3_init_rxq_intr(struct rte_eth_dev *dev)
  
- static const struct eth_dev_ops hinic3_pmd_vf_ops = {
-@@ -3664,6 +3692,7 @@ static const struct eth_dev_ops hinic3_pmd_vf_ops = {
- 	.mac_addr_add                  = hinic3_mac_addr_add,
- 	.set_mc_addr_list              = hinic3_set_mc_addr_list,
- 	.flow_ops_get                  = hinic3_dev_filter_ctrl,
-+	.eth_dev_priv_dump             = hinic3_eth_dev_priv_dump,
- };
+ 	intr_handle = dev->intr_handle;
+ 	nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
+-	if (!dev->data->dev_conf.intr_conf.rxq)
++
++	if (!dev->data->dev_conf.intr_conf.rxq) {
++		/*
++		 * SP230 raises the Rx MSI-X vector even without Rx interrupts.
++		 * Name a valid vector in the RQ context; the vector is never
++		 * enabled, so no interrupt is reported.
++		 */
++		if (!HINIC3_IS_SP230_NIC(nic_dev) ||
++		    !rte_intr_cap_multiple(intr_handle))
++			return 0;
++
++		if (hinic3_check_rxq_intr_vec(dev, dev->data->nb_rx_queues, false))
++			return 0;
++
++		for (i = 0; i < dev->data->nb_rx_queues; i++) {
++			rxq = dev->data->rx_queues[i];
++			rxq->dp_intr_en = 1;
++			rxq->msix_entry_idx = (uint16_t)(i + HINIC3_RX_VEC_START);
++		}
++
+ 		return 0;
++	}
  
- static void hinic3_nic_tx_rx_ops_init(struct hinic3_nic_dev *nic_dev)
+ 	if (!rte_intr_cap_multiple(intr_handle)) {
+ 		PMD_DRV_LOG(ERR, "Rx queue interrupts require MSI-X interrupts (vfio-pci driver)");
+@@ -1819,6 +1888,10 @@ hinic3_init_rxq_intr(struct rte_eth_dev *dev)
+ 	}
+ 
+ 	nb_rx_queues = dev->data->nb_rx_queues;
++	err = hinic3_check_rxq_intr_vec(dev, nb_rx_queues, true);
++	if (err)
++		return err;
++
+ 	err = rte_intr_efd_enable(intr_handle, nb_rx_queues);
+ 	if (err) {
+ 		PMD_DRV_LOG(ERR,
+@@ -1829,8 +1902,8 @@ hinic3_init_rxq_intr(struct rte_eth_dev *dev)
+ 	intr_handle->intr_vec =
+ 		rte_zmalloc("hinic_intr_vec", nb_rx_queues * sizeof(int), 0);
+ 	if (intr_handle->intr_vec == NULL) {
+-		PMD_DRV_LOG(ERR, "Failed to allocate intr_vec");
+ 		rte_intr_efd_disable(intr_handle);
++		PMD_DRV_LOG(ERR, "Failed to allocate intr_vec");
+ 		return -ENOMEM;
+ 	}
+ 	intr_handle->vec_list_size = nb_rx_queues;
+@@ -1845,6 +1918,9 @@ hinic3_init_rxq_intr(struct rte_eth_dev *dev)
+ 		err = hinic3_init_rxq_msix_attr(nic_dev->hwdev,
+ 						rxq->msix_entry_idx);
+ 		if (err) {
++			PMD_DRV_LOG(ERR,
++				    "Set msix attr failed, msix_index %d",
++				    rxq->msix_entry_idx);
+ 			hinic3_deinit_rxq_intr(dev);
+ 			return err;
+ 		}
 -- 
 2.33.0
 
