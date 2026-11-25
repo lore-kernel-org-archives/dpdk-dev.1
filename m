@@ -2,50 +2,52 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64E5D606A31E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 04:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95B4606A323
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 05:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Op10+S8F
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=JXLtynal
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 28FD7402B2;
-	Wed, 25 Nov 2026 05:54:57 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTPS id 63CD84027A
- for <dev@dpdk.org>; Wed, 25 Nov 2026 05:54:54 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id C95A0402B2;
+	Wed, 25 Nov 2026 06:06:32 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+ by mails.dpdk.org (Postfix) with ESMTPS id 256B24027A
+ for <dev@dpdk.org>; Wed, 25 Nov 2026 06:06:30 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1795582494; x=1827118494;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=GerYwE3uhNFDed1HEsho6U8SO6ZDB6pb6LisqUSg0PA=;
- b=Op10+S8F37EfnjDfuXoljuPINK1tPuG15fSre/do2BybGGfkGdTIwLg1
- ymLKP4d56iMP9ZsKBwZ1tV6Nj7zwGMtwFWT63YYD9WcUryNp+PdTh7UKY
- LZuuUpaPfZDUrAclGOC1WtNSKU7nsb8jkTvzJDoDZCLuzrrBYyMviTFe3
- 466yQIFmeSde+qmAATYQ0MbEeRC267U6cLQCBTlWnCxFzx7Jkuo35/YwE
- VPgmI4+hAqoHBUIyrc1OmVcLFts2rfys9VvwSmmS8iDSPlhfC7H5CjcWj
- o3uZbp9xjx1A4SeTSbDJ7bHriMC86akovC8MqhzXoV0aIvp2GLjH0InHR A==;
-X-CSE-ConnectionGUID: Ez0B9ypnSrOF2zFcW5WTSA==
-X-CSE-MsgGUID: Sg+ugrIUTVW/BRDFTgRbAA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11976"; a="4372042"
+ t=1795583192; x=1827119192;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=hoRa3F3h/HGCNbMnVDRZaaGdIfOylxFSdKk1lIbvTQU=;
+ b=JXLtynalrrStHhUub4zrxRRNUizAtZlsVL4y1YPeMFLiNrLVTEDXAn03
+ IDGVp+iso+yc150pcQ/hMZOSiupMoKmu7f64D+n786NgAfhKjqaUVGxIn
+ v1HrEa9SrYwd1qdeoGMseAcDLTLDx2ChjXUStz7Ki426Isykypgf8zF7O
+ Va0E6QLp+AOrfHGjyrv2bg7PnojhJ+vC9o8GHo+6v1jgGL3pWtdajeh78
+ E1NhnfRcES+dz9ND4qxjnLsLmeXz+3ddzdF/FKcbZsAKikB9slsg2aB4n
+ xb4delOaOnUQKVLhf352vi1+wfg0fyARLdHEN5Qv5xfuUaqStdjoGOwd4 A==;
+X-CSE-ConnectionGUID: FMIf4h/xQQSPhgOeP0JIxw==
+X-CSE-MsgGUID: rai5ggGBSmqQQIZ0viZgNQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11976"; a="4322625"
 X-IronPort-AV: E=Sophos;i="6.27,232,1787036400"; 
-   d="scan'208";a="4372042"
-Received: from fmviesa011.fm.intel.com ([10.60.135.151])
- by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Nov 2026 20:54:52 -0800
-X-CSE-ConnectionGUID: RQIbR3v5RFmXTWmrUYBC+A==
-X-CSE-MsgGUID: ehiSbzLIT/2bPsNCWKkGbQ==
+   d="scan'208";a="4322625"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+ by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 24 Nov 2026 21:06:30 -0800
+X-CSE-ConnectionGUID: A5r5NBw8QEKgc5dRS/eFxw==
+X-CSE-MsgGUID: CfAsxBZRRNGn14PDor6CRQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,232,1787036400"; d="scan'208";a="13550436"
+X-IronPort-AV: E=Sophos;i="6.27,232,1787036400"; d="scan'208";a="11969388"
 Received: from txandevlnx321.an.intel.com ([10.123.117.43])
- by fmviesa011.fm.intel.com with ESMTP; 24 Nov 2026 20:54:52 -0800
+ by fmviesa002.fm.intel.com with ESMTP; 24 Nov 2026 21:06:29 -0800
 From: Naga Harish K S V <s.v.naga.harish.k@intel.com>
 To: dev@dpdk.org
 Cc: s.v.naga.harish.k@intel.com, abhinandan.gujjar@intel.com,
  thomas@monjalon.net, jerinj@marvell.com
-Subject: [PATCH] maintainers: update eth adpaters maintainer
-Date: Tue, 24 Nov 2026 22:54:37 -0600
-Message-Id: <20261125045437.3486804-1-s.v.naga.harish.k@intel.com>
+Subject: [PATCH v2] maintainers: update eth adapters maintainer
+Date: Tue, 24 Nov 2026 23:06:26 -0600
+Message-Id: <20261125050626.3502712-1-s.v.naga.harish.k@intel.com>
 X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20261125045437.3486804-1-s.v.naga.harish.k@intel.com>
+References: <20261125045437.3486804-1-s.v.naga.harish.k@intel.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -69,6 +71,10 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 update ethernet rx/tx adapters maintainer
 
 Signed-off-by: Naga Harish K S V <s.v.naga.harish.k@intel.com>
+
+---
+v2:
+update commit message
 ---
  MAINTAINERS | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
