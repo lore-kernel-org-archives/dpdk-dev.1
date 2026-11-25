@@ -2,97 +2,97 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A51606A688
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 15:23:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A702606A327
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 15:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=KWVtmZlP;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=WBiwVQaV
+	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=yuTWapFS;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=I0FBsNid
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EE3614027A;
-	Wed, 25 Nov 2026 16:23:24 +0100 (CET)
-Received: from fhigh-a1-smtp.messagingengine.com
- (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
- by mails.dpdk.org (Postfix) with ESMTPS id 8440640151
- for <dev@dpdk.org>; Wed, 25 Nov 2026 16:23:23 +0100 (CET)
-Received: from phl-compute-08.internal (phl-compute-08.internal [10.202.2.48])
- by mailfhigh.phl.internal (Postfix) with ESMTP id ADAAE14003B2
- for <dev@dpdk.org>; Wed, 25 Nov 2026 10:23:22 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-08.internal (MEProxy); Wed, 25 Nov 2026 10:23:22 -0500
+	by mails.dpdk.org (Postfix) with ESMTP id 83ED2402ED;
+	Wed, 25 Nov 2026 16:33:02 +0100 (CET)
+Received: from fout-a3-smtp.messagingengine.com
+ (fout-a3-smtp.messagingengine.com [103.168.172.146])
+ by mails.dpdk.org (Postfix) with ESMTPS id 6324E40274
+ for <dev@dpdk.org>; Wed, 25 Nov 2026 16:33:01 +0100 (CET)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfout.phl.internal (Postfix) with ESMTP id 58BF2EC0CDB
+ for <dev@dpdk.org>; Wed, 25 Nov 2026 10:33:00 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-02.internal (MEProxy); Wed, 25 Nov 2026 10:33:00 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1795620202;
- x=1795706602; bh=QqiMBkYownJ199Cc0JzODYupyMGaqNYCj8vg391cnG8=; b=
- KWVtmZlPaBKA1KmNkwS+wCFGBD/rB0OLKy7/fH4U6aaDYgBqt5hRIsBv8v1J4Jhl
- ulDeQxqxbT+4+6hNU3TlQI3rHs5TFaFjnIN9EBfXPYy6FENlMQZqAvrELPyeOnMi
- suRmzRUjLxGdw0Gh6Q7jU3gxu5quC/K3NrWLavUGDYrAHi7ORKKTc+Ro5n90Eq4m
- AI1/ujyAHkeVBj70Fmd0uxFx/wq0WZsN8aIMIzfrfqWWb9H7wC2J9PGAHDAe9thf
- K5CXLynW4JiR2tS6pk435uT4TmtH5HSm86DswzfhpuF9tf3M2gI4NwdHsa/MBefQ
- rMUEOrj9meeCWnEzoStNMw==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1795620780;
+ x=1795707180; bh=hJTuwn+iWsntMnm/xKX1owz9f8qm7u/OZuDVqcEHoxU=; b=
+ yuTWapFS+fUiIE0REgz3M0JE4qP2YBqNfUU9ZLx95y7zIlfIyV4yQBDE7jxS80Yv
+ EDbUF+C1UCJmjACaucEWoWo09ft53s97hh4tV4vl+wNoyQDy0tryBjPuJ/Z1U6gI
+ mFMv30q0WgXjVWqV9E3H8aecEEpjIA1lEJZamPlGeyGHEyGt/xCgCll7OpoMIUiG
+ HFA6eFr0Wy63ueiSne11JLASLBxf2ErUMsGpAB5UUsj10hldJfZEGoAr6NMoBMgE
+ hC0lI/zbEeUUGYZHi9350UVcS9qdrhkh2Tvt0t/ITcZqc5vJsfzLCqRGNEyZ0nwz
+ iOnpqmqF5RG0jgUigdnUpg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795620202; x=
- 1795706602; bh=QqiMBkYownJ199Cc0JzODYupyMGaqNYCj8vg391cnG8=; b=W
- BiwVQaV021IU5m738jjv9rQb3BcJks2sL8W6xhBEHKG6A8o21crbMbLEDyMzGWDl
- x5QTTnQkXycbpYAM431TxITu4U8ZZA6dKq+oz0V+dv8hcvrzTY6XkT6y2LNnpwrA
- 0NgrBdAg/ZuP0UbFIER7vMByLKaDbV1TozBguXiAnZMThsHY+n4cwM16lhns0YaI
- 9GlPtDneFu/EtAORGmLP/vOpzGN7NWBTGWSPxtzQg+Gg5+Lb8kBkblqvdd2ZP2gh
- bmPD6U2dJfVitTBW9pRAwU5NsxX/b5fB8pgF+K586+3Zk2AzftcMo6dPewFsBDGO
- oGeBHmowCCd3XbVPVMpyQ==
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795620780; x=
+ 1795707180; bh=hJTuwn+iWsntMnm/xKX1owz9f8qm7u/OZuDVqcEHoxU=; b=I
+ 0FBsNid2j4EILMSnIVprUDXVwk1X+oVQSgP0mAQnDgG5OCXzO/iMw0JcwJwUf8k3
+ L0N6Su3BAJ95PLQcQKk9ZRnIX+/BLVHE23OBUigHfk/96uDqG2WBkkbKDc/z3Lok
+ 2XWH7mok7nuKdMK26p91S/NzeiZi/2JN/bO3S5ajr4M8q13LNjhFQHDbH/HYAyWh
+ vSKVgaY4rBC2LB/XLxukI6DtPInh43+cR4TjZfDG9xGvSchRC1iASgA2SUYkS2rc
+ iAeFN+aq2M9RBT57NYE54wsEr2wiF925N4PCzYZtwWbz1J6Tu58Zx8jgd2WIfTdk
+ ekWSeTbW1LkTTyNJGu1fw==
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
  repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
  action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1795620202; d=monjalon.net;
+DKIM2-Signature: i=1; m=1; t=1795620780; d=monjalon.net;
  mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm3:rsa-sha256:IMu8FJ6Sop8Hs/e5XjKW6kqQndA6kaU0q/O3G9/ntTdnRFG
- wZjvKKxveNBOzeTDOI05OaYdFDFtYz6JEETuYak39dxy2b7uQEx79/1ivn0Z5h47
- dqZIHtArXlRq7f0S9tQgVgIkPv4xwsQHk3vKKJGVfEvxPwhQO/BkIpIn+2Z9Pyq1
- YTIofUfOjn7bv3GtpXhyOkOZ4UO0yhoZNC5jSPKIIHpktXH0c8/R6uM0IGs3I3s+
- KkVyH44Z/qaLNrA5NNBwJl1fGZH8yhGJbKxmoIs1ivfPSx6cYOn0kMsbHHvL/xza
- QOIJ0P6knWI5XmGKFoLD4eUdMNwNZiGtHIxD8yQ==;
+ s=fm3:rsa-sha256:0N9WRaSokRc0EVYexriwW7gXE7N85CfRnGepjqtj3QJ4g26
+ haNTjPE/eoJzjw4ZKcLhtxuF4eTHciinf9qd299zMWPJYyFZVojSVwTQkMjHgp8j
+ aCd7R1rBVqXU8ANoZBm+Q5Y6Ypdht//KQmjVEPamnlgfSzqZPHram/D4LdPhSgah
+ 9nHqWf7SYhKX28ufzEZR3E554p2iZXRTqdiBY/vPjWa4egvebuXThgfFeZj1vBsC
+ CTM+7BVEgXuiK+D7bI+hFiOkCrqifybxR7eDcatmVTCm3DMilyHMpen/tEHfK0zC
+ 0izxm4O6a69+Ykk7IpxqC1ZJghXIGtGZHCkMVzg==;
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
  repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
  action=mi-m=1; hc=12;
  hn=cc,content-transfer-encoding,content-type,date,feedback-id,
  from,in-reply-to,message-id,mime-version,references,subject,to;
 Message-Instance: m=1;
- h=sha256:pfFjtbExfsYoEpvTT0X9L7Mc/qrb7ppX8r496VurALM=:hrlEOMN3cvh480b+HplSR/lEQxDjRVZktB6XQPBKqO0=;
-X-ME-Sender: <xms:af0Ga9XbfcZkdySpofxW5b38LG20Oi50dVHJg0dQ9pWsddKtmcICfw>
- <xme:af0Gax7jC5Ph9NdC8bR9Kaf1BTI-xCClGA7Rdok3rH_U45I0zDc06QLmRNbjYi_zZ
- 8VlP22vTIuOoSz64FByrXbbxIU-t_-oc_3fJ0oVVO137Ckaz_b4HZs>
-X-ME-Received: <xmr:af0Ga4haWYkuIadlJZkzIarwCmCvTxd539L45-BqdrHG3aQ0M67_TpbzVinb9ORZW2Uw_0fQ98TSEDbB-tQTPqc>
-X-ME-Proxy-Cause: dmFkZTFl4YcUVIJxaCjw7vxqe3MnmGkZnlOvRkBTuBPTjzXpJJMsmGFoQaROGVvTrcjtTb
- c52Ei/CV7U+jhRZbDDdNVKhqn9HZf+WzMrdV/eN2lr84J4btAtKumjrXLFJXeFfn/kCpzB
- iI44gbjUBW9nF1s2FGsh9OoVxs56ZZ/R9u2dT+Y7rkdG3HzeHcfp2FKEuVVk5dATJgamsS
- jZCkNd1IBg5p0DGASgSjyRducoaiJrJTF/JH5IfF3reJQ7b+e9huOMMPk3fGQmRGclCFpd
- nTquGqBnVY4FP0Wv5heLLhcs350G8JysFEltMtEiWK6lGEifDyFgk3VttMa01jYbtRZ0Uz
- dsjw5L4YfPwQwEZKPch8Md3wkS4UciyxHb1o26cVGa7IA4P0MF9BCjTLZBmdfW4D6q4nRL
- LC54+kUXW/+gbMhuurO8ku19GOTFvbY19LS9qqmEdY17L3YbwUKrdZKT2QZDTvPmXSsIjx
- U5CNLg+e7JZS+orELPs538LG8rgruVxgDGOBAaup7/5xG2OX//Op75UyKb6pnnywJ6oiy3
- RBsEm5GLilKJU5ToKoMrJbwSfO0ip0/lPcF5tQiLXzhERzT/DDv1rFZSfw0izguEAD0F2H
- bPwGxSYAO13ndCGaeQHIb8vopprfnlQVidbA3lTHitfqK+T11kv9gaM/LscA
-X-ME-Proxy: <xmx:af0Ga4ezk9n5GC3H-F8aLsqPCm0EWuwQODOA1T8twBLGSN-OmVD61w>
- <xmx:av0Ga9fCIB6BtRMZX4_Uo2faIqIi_5z8UC-F5JBxGChfAxyZmo6NHQ>
- <xmx:av0Gay-j_jvpk9oGs2vzecYLyVeGr1_ResMi4-XOUQzNkD1KAU5bZg>
- <xmx:av0Ga5kwve3cJIfbPrfKpGOT5BqxNubHF7gNdCLyTclC5PzYHgU_Kw>
- <xmx:av0Ga8tEL4AFbXyJwRsaVUXg70yIhls0oSMq0kcY-mZedfg1vTjcu0eQ>
+ h=sha256:Z+x75BRi9AsRAv+MuIeR/aGUibNA9GieC4lgLw7beLc=:hJTuwn+iWsntMnm/xKX1owz9f8qm7u/OZuDVqcEHoxU=;
+X-ME-Sender: <xms:q_8Ga82Q9Bn3AG3PNtzhGILz9ZOjtTfTjELnXT5tUk3h7wQY4ibvJA>
+ <xme:q_8Ga7bAzaeJkrZTKemPAsw6Nje8dKkRgkgUg4FbkQVcbtV588R4aYEhx-mZXabW-
+ oNznL1hpc_4RVZHEPlJtlC50iaBr__7wkm9OKSX-Tvj2_hrctJw26c>
+X-ME-Received: <xmr:q_8Ga0BEG6U1zC491mkZ3iIHri7GJfzom4aBbByTOqrGnrOxZ_VTLeQiZnfII0UHoDB308wy2rPcULkOhEAxxUA>
+X-ME-Proxy-Cause: dmFkZTGh7i+h6xu59uYD2JxuxcRqNjqZEztp4wQE5sfQG5fPAlhc47PFD3mso/mqD42SFX
+ 5h7eTvY4fkXumQIgdrkqyL+ksbYdj/iAmkBU4h88vCibGxCT1cFpinablykp7ZutudqESz
+ a+AAAFni2Wgp3qVUagqH5AI5qR5fyh5GgdpH2dWa9YSAvgovJ7Xe9+u18Jc+jPZSJimL88
+ TQ0CVtjAQSqfkL2l2HULIg494FTRke6AvBRClKl4SuF//SpByFWR0zi7P/SWKzQRHHSV9Y
+ cig69Oe7wZBA6EDBQ5tTVUgIUpZ6i+WmOIlX2Goec3RpmV8M+pzjngSpjL5OwOg/+Y3lgh
+ F/f8plciGzO76ndJLp0jUpRiMg8yhEAse8hQeJ1lbUYgO+7cTY5gv6VTJwaA0z7OdykgUM
+ VguxEp4o3pJsXuVNB/xm6lfALzuXGWIQedkQERoEa9q5WaY+nYRFrlFau/yrshCZz2T/Ve
+ d6vvKMKneTQ1WSn/FzPJUFhCEy9k4tD4py+/FUNB2NTQm1t9W2hTU7WwPeFwZVEepromrx
+ 1EefDS4QMw2ENnjQDynnkreXvo2skbh1WcD5L2wD80vxPunS4JHQlFweWiTu2/V0iKjfSu
+ XUq5F4lQIwPAMiM8GkdiVpZ4d6aRgMV9vCA3Wi3QNEeuLop8tImlTNNIPB/Q
+X-ME-Proxy: <xmx:q_8Ga9-Gv-i8qPggFuoWhc10ljJN2tiYFOSLtzK7X0cVC8PIcGmzgg>
+ <xmx:q_8Ga0_PyhjvZW-459t0tCNWDAT-tph_-Hlyf8f5vZzItkbgE3QRAA>
+ <xmx:q_8Ga0fCOUz8O2lzslOVZ9yL8wRu8IIOL0dS8UxkIxqDf3ZFiDMjww>
+ <xmx:q_8Ga9H9-G4G8HGaTnDv37H9QsDWD56wMXajpadYAXNrZrsCJ-RnLQ>
+ <xmx:rP8Ga6MnoNFR3B-JHcM5buQ4UnOdfNjhyNa4gARnLNfxcyFEU4EjshsS>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 25 Nov 2026 10:23:21 -0500 (EST)
+ 25 Nov 2026 10:32:59 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: Marat Khalili <marat.khalili@huawei.com>
 Cc: dev@dpdk.org, bruce.richardson@intel.com
-Subject: Re: [PATCH v4 6/7] doc: add missing drivers to doxy-api.conf.in
-Date: Wed, 25 Nov 2026 16:23:19 +0100
-Message-ID: <6TrJKj8QS2WF-RPENBY-1Q@monjalon.net>
-In-Reply-To: <20260721145841.7424-7-marat.khalili@huawei.com>
+Subject: Re: [PATCH v4 7/7] doc: add missing headers to doxy-api-index.md
+Date: Wed, 25 Nov 2026 16:32:57 +0100
+Message-ID: <5vPKTCp5Sn66gfsbe2E_FQ@monjalon.net>
+In-Reply-To: <20260721145841.7424-8-marat.khalili@huawei.com>
 References: <20260707085048.15295-1-marat.khalili@huawei.com>
  <20260721145841.7424-1-marat.khalili@huawei.com>
- <20260721145841.7424-7-marat.khalili@huawei.com>
+ <20260721145841.7424-8-marat.khalili@huawei.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
@@ -114,46 +114,12 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
 21/07/2026 16:58, Marat Khalili:
-> +                          @TOPDIR@/drivers/baseband/acc \
-> +                          @TOPDIR@/drivers/baseband/fpga_5gnr_fec \
-> +                          @TOPDIR@/drivers/bus/pci \
->                            @TOPDIR@/drivers/bus/vdev \
-> +                          @TOPDIR@/drivers/bus/vmbus \
+> Make sure all public headers are listed in `doxy-api-index.md` to be
+> reachable in HTML version. Presumably each of them should contain at
+> least a general file description, though this is not checked now.
 
-There is a deprecation notice for rte_bus_vmbus.h
-
-
->                            @TOPDIR@/drivers/common/dpaax \
->                            @TOPDIR@/drivers/crypto/cnxk \
->                            @TOPDIR@/drivers/crypto/scheduler \
-> -                          @TOPDIR@/drivers/event/dlb2 \
->                            @TOPDIR@/drivers/event/cnxk \
-> +                          @TOPDIR@/drivers/event/dlb2 \
->                            @TOPDIR@/drivers/mempool/cnxk \
->                            @TOPDIR@/drivers/mempool/dpaa2 \
->                            @TOPDIR@/drivers/net/ark \
-> +                          @TOPDIR@/drivers/net/avp \
-
-rte_ files in avp driver are not supposed to be exported I think.
-
-
->                            @TOPDIR@/drivers/net/intel/iavf \
->                            @TOPDIR@/drivers/net/intel/ixgbe \
->                            @TOPDIR@/drivers/net/mlx5 \
-> +                          @TOPDIR@/drivers/net/ntnic \
-> +                          @TOPDIR@/drivers/net/ring \
->                            @TOPDIR@/drivers/net/softnic \
-> +                          @TOPDIR@/drivers/net/txgbe \
-
-There is no function in rte_pmd_txgbe.h, it looks like a mistake.
-
-> +                          @TOPDIR@/drivers/net/vhost \
-> +                          @TOPDIR@/drivers/power/kvm_vm \
-> +                          @TOPDIR@/drivers/raw/cnxk_gpio \
->                            @TOPDIR@/drivers/raw/dpaa2_cmdif \
->                            @TOPDIR@/drivers/raw/ifpga \
-> +                          @TOPDIR@/drivers/raw/ntb \
-
-The rest are good additions.
+I'm not sure having an index of all header files is convenient in this format.
+Doxygen offers a tree structure to navigate through them.
+I suggest we simplify this page to become an index of main entries only.
 
 
