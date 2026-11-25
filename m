@@ -2,44 +2,44 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6756F606A31E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 17:07:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35EB606A321
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 17:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=lXNDPEDp
+	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=k5wHnZ3i
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E9B5940664;
-	Wed, 25 Nov 2026 18:05:57 +0100 (CET)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.3])
- by mails.dpdk.org (Postfix) with ESMTPS id 1B1FE40616
- for <dev@dpdk.org>; Wed, 25 Nov 2026 18:05:50 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 49D1D40A84;
+	Wed, 25 Nov 2026 18:05:59 +0100 (CET)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.220])
+ by mails.dpdk.org (Postfix) with ESMTPS id B7C6E402ED
+ for <dev@dpdk.org>; Wed, 25 Nov 2026 18:05:51 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=/mq+9kpaWHIbCYxr4wkkpB1vCA3T/dGSu184htMereY=;
- b=lXNDPEDpfz/AZCO/oXRhePnAz8O4qwVoZleAyPnX9K6YWlc+0XGVk67h8/5RGE
- 7ekdv15IdQ99SK5NpoE1K8KAKW4z6/6810jKq4Xw5ItFrGLb7pUn4zyro1Xn2sNt
- Wohgsuhd0GM/TYgaDMj5HYOQ4102Ct+fgszw8jOx4xcVE=
+ MIME-Version; bh=TRPKYu0qsz9gXx7WlpBTmJPhWSQJ8PLtHqCfhIcmvBc=;
+ b=k5wHnZ3i42jY+fKy8JFjOmP5eJJf5NaeLqRonxWpgfSSNRySlNEcxOlDbe040g
+ xA4E77GqcjOUtxcdZQnvjFdhOzC2xEHNHQB/Qr0K9I/+KcXLQce/BuzQilboudgZ
+ 9tKXO+eTM6EsLTjNMxnr4R/KXXS6lxtVo2I2NAcaFs/pE=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
  Anatoly Burakov <anatoly.burakov@intel.com>,
  Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v9 06/30] net/hinic3: fix vport enable null dereference
-Date: Thu, 26 Nov 2026 01:04:00 +0800
-Message-ID: <20261125170425.5430-7-yejiacheng4@h-partners.com>
+Subject: [PATCH v9 14/30] net/hinic3: add vport statistics and VF LAG support
+Date: Thu, 26 Nov 2026 01:04:08 +0800
+Message-ID: <20261125170425.5430-15-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.56.0.windows.2
 In-Reply-To: <20261125170425.5430-1-yejiacheng4@h-partners.com>
 References: <20261125170425.5430-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: As8vCgDn77FiFQdrEdNeBQ--.6538S8
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Gr45XFy5XFW8CFyDZrW7twb_yoW8Jr15pF
- WUWa92kr98KFW8tw1DJw1xAas0vw1xC34UKa45A3WYvFn8XFs0y3y7trZFvFyayrW3AF47
- uF4I9FWqvryDt37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jzrWrUUUUU=
+X-CM-TRANSID: As8vCgDn77FiFQdrEdNeBQ--.6538S16
+X-Coremail-Antispam: 1Uf129KBjvJXoW3CryxKFy3XFW7uw1fuw4kJFb_yoWktw43pF
+ W5J3yDArWDXF4xXwn0g3yUua45Gwn3A347K34xGF90kF1kXr4DZayUtrWjvr1aqrZrAFy7
+ ZayFyrWDGa4jgaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jOYFAUUUUU=
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNgn7BmsHFWkfUgAA3f
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiMg38B2sHFW0aMgAA34
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,37 +56,367 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-hinic3_set_vport_enable() dereferences hwdev->dev_handle in the
-declaration block, before checking hwdev. Move the dereference below the
-hwdev check so a NULL hwdev returns an error instead of crashing during
-early PF initialization.
+Expose the CIR drop counter and the firmware rx_mtu_err_vport and
+rx_out_of_buffer counters through the per-port extended statistics, and
+select the queue COS from the VF LAG bitmap when a VF runs on an
+aggregated link.
 
-Fixes: 9204b6b7bb1a ("net/hinic3: split new/old command queue operations")
+For an even queue of a VF that is in the LAG group, the driver flips the
+COS so the queue egresses through the peer port; other queues keep the
+default COS.
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- drivers/net/hinic3/base/hinic3_nic_cfg.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ doc/guides/rel_notes/release_26_11.rst   |  5 ++
+ drivers/net/hinic3/base/hinic3_cmd.h     |  2 +
+ drivers/net/hinic3/base/hinic3_nic_cfg.c | 62 +++++++++++++++++++
+ drivers/net/hinic3/base/hinic3_nic_cfg.h | 45 +++++++++++++-
+ drivers/net/hinic3/hinic3_ethdev.c       | 76 +++++++++++++++++++++++-
+ drivers/net/hinic3/hinic3_ethdev.h       |  3 +
+ 6 files changed, 190 insertions(+), 3 deletions(-)
 
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index 10ab2355ae..b0fb72ad59 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -128,6 +128,11 @@ New Features
+   * Advertised ``RTE_ETH_DEV_CAPA_FLOW_RULE_KEEP`` capability,
+     as flow rules were already kept across device restart.
+ 
++* **Updated Huawei hinic3 ethernet driver.**
++
++  * Added vport statistics, including CIR drop, and VF link
++    aggregation (LAG) support.
++
+ * **Updated Intel iavf driver.**
+ 
+   * Runtime Rx/Tx queue setup is now automatically disabled
+diff --git a/drivers/net/hinic3/base/hinic3_cmd.h b/drivers/net/hinic3/base/hinic3_cmd.h
+index f2d5d47522..ecce94690e 100644
+--- a/drivers/net/hinic3/base/hinic3_cmd.h
++++ b/drivers/net/hinic3/base/hinic3_cmd.h
+@@ -94,6 +94,8 @@ enum hinic3_nic_cmd {
+ 	/* PORT CFG */
+ 	HINIC3_NIC_CMD_CFG_PAUSE_INFO			= 101,
+ 	HINIC3_NIC_CMD_VF_COS				= 104,
++	HINIC3_NIC_CMD_GET_CIR_DROP			= 115,
++	HINIC3_NIC_CMD_CFG_VF_LAG			= 243,
+ };
+ 
+ /* COMM commands between driver to MPU. */
 diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.c b/drivers/net/hinic3/base/hinic3_nic_cfg.c
-index 5387626b98..1520f88a1b 100644
+index fb9b6d4d19..853ca0a41b 100644
 --- a/drivers/net/hinic3/base/hinic3_nic_cfg.c
 +++ b/drivers/net/hinic3/base/hinic3_nic_cfg.c
-@@ -443,12 +443,13 @@ int
- hinic3_set_vport_enable(struct hinic3_hwdev *hwdev, bool enable)
+@@ -601,6 +601,33 @@ hinic3_get_pause_info(struct hinic3_hwdev *hwdev, struct nic_pause_config *nic_p
+ 	return hinic3_cfg_hw_pause(hwdev, HINIC3_CMD_OP_GET, nic_pause);
+ }
+ 
++int
++hinic3_get_cir_drop(void *hwdev, struct hinic3_cir_drop *stats)
++{
++	struct hinic3_port_stats_info stats_info = { 0 };
++	struct hinic3_cmd_get_dp_info_resp vport_stats = { 0 };
++	uint16_t out_size = sizeof(vport_stats);
++	int err;
++
++	if (!hwdev || !stats)
++		return -EINVAL;
++
++	stats_info.func_id = hinic3_global_func_id(hwdev);
++	err = hinic3_msg_to_mgmt_sync(hwdev, HINIC3_MOD_L2NIC,
++				      HINIC3_NIC_CMD_GET_CIR_DROP,
++				      &stats_info, sizeof(stats_info),
++				      &vport_stats, &out_size);
++	if (err || !out_size || vport_stats.msg_head.status) {
++		PMD_DRV_LOG(ERR, "Get port stats failed, err: %d, status: 0x%x, out size: 0x%x",
++			    err, vport_stats.msg_head.status, out_size);
++		return -EIO;
++	}
++
++	memcpy(stats, vport_stats.value, sizeof(*stats));
++
++	return 0;
++}
++
+ int
+ hinic3_get_vport_stats(struct hinic3_hwdev *hwdev, struct hinic3_vport_stats *stats)
  {
- 	struct hinic3_vport_state en_state;
--	struct hinic3_nic_dev *nic_dev = hwdev->dev_handle;
-+	struct hinic3_nic_dev *nic_dev;
- 	uint16_t out_size = sizeof(en_state);
- 	int err;
+@@ -1725,3 +1752,38 @@ hinic3_set_link_status_follow(struct hinic3_hwdev *hwdev,
  
- 	if (!hwdev)
- 		return -EINVAL;
-+	nic_dev = hwdev->dev_handle;
+ 	return follow.head.status;
+ }
++
++bool
++hinic3_cmd_vf_lag(void *hwdev, uint16_t func_id, uint8_t opcode)
++{
++	struct hinic3_vf_lag_cmd vf_lag_info = { 0 };
++	uint16_t out_size = sizeof(struct hinic3_vf_lag_cmd);
++	int err;
++
++	if (!hwdev || func_id >= MAX_FUNCTION_NUM)
++		return false;
++	vf_lag_info.func_id = func_id;
++	vf_lag_info.opcode = opcode;
++	vf_lag_info.en_flag = 0;
++
++	err = hinic3_msg_to_mgmt_sync(hwdev, HINIC3_MOD_L2NIC,
++				      HINIC3_NIC_CMD_CFG_VF_LAG,
++				      &vf_lag_info, sizeof(vf_lag_info),
++				      &vf_lag_info, &out_size);
++	if (vf_lag_info.msg_head.status == HINIC3_MGMT_CMD_UNSUPPORTED)
++		return false;
++
++	if (err || vf_lag_info.msg_head.status || !out_size) {
++		PMD_DRV_LOG(ERR,
++			    "Get vf_lag failed, err: %d, status: 0x%x, out size: 0x%x",
++			    err, vf_lag_info.msg_head.status, out_size);
++		return false;
++	}
++
++	if (opcode == HINIC3_CMD_OPCODE_GET) {
++		return !!(vf_lag_info.vf_lag_bitmap.vf_bit_map[func_id / VF_LAG_VF_NUM_PER_GROUP] &
++			  RTE_BIT32(func_id % VF_LAG_VF_NUM_PER_GROUP));
++	}
++
++	return false;
++}
+diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.h b/drivers/net/hinic3/base/hinic3_nic_cfg.h
+index 6d3eb433bd..6fb56fff4f 100644
+--- a/drivers/net/hinic3/base/hinic3_nic_cfg.h
++++ b/drivers/net/hinic3/base/hinic3_nic_cfg.h
+@@ -17,6 +17,7 @@
+ #define HINIC3_DCB_UP_MAX		0x8
  
- 	memset(&en_state, 0, sizeof(en_state));
- 	en_state.func_id = hinic3_global_func_id(hwdev);
+ #define HINIC3_MAX_NUM_RQ		256
++#define MAX_FUNCTION_NUM		4096
+ 
+ #define HINIC3_MAX_MTU_SIZE		9600
+ #define HINIC3_MIN_MTU_SIZE		256
+@@ -371,6 +372,18 @@ struct hinic3_port_stats_info {
+ 	uint16_t rsvd1;
+ };
+ 
++#define HINIC3_CMD_MAX_DP_DATA_NUM 50
++struct hinic3_cir_drop {
++	uint64_t rx_discard_phy;
++};
++
++struct hinic3_cmd_get_dp_info_resp {
++	struct mgmt_msg_head msg_head;
++	uint16_t length;
++	uint16_t rsvd;
++	uint64_t value[HINIC3_CMD_MAX_DP_DATA_NUM];
++};
++
+ struct hinic3_vport_stats {
+ 	uint64_t tx_unicast_pkts_vport;
+ 	uint64_t tx_unicast_bytes_vport;
+@@ -390,6 +403,8 @@ struct hinic3_vport_stats {
+ 	uint64_t rx_discard_vport;
+ 	uint64_t tx_err_vport;
+ 	uint64_t rx_err_vport;
++	uint64_t rx_mtu_err_vport;
++	uint64_t rx_out_of_buffer; /* fw: rx_nowqe */
+ };
+ 
+ struct hinic3_cmd_vport_stats {
+@@ -398,7 +413,7 @@ struct hinic3_cmd_vport_stats {
+ 	uint32_t stats_size;
+ 	uint32_t rsvd1;
+ 	struct hinic3_vport_stats stats;
+-	uint64_t rsvd2[6];
++	uint64_t rsvd2[4];
+ };
+ 
+ struct hinic3_phy_port_stats {
+@@ -1540,4 +1555,32 @@ int hinic3_set_feature_to_hw(struct hinic3_hwdev *hwdev, uint64_t *s_feature, ui
+ 
+ int hinic3_set_link_status_follow(struct hinic3_hwdev *hwdev,
+ 				  enum hinic3_link_follow_status status);
++
++/* VF LAG definitions */
++#define VF_LAG_VF_NUM_GROUP_NUM 128
++#define VF_LAG_VF_NUM_PER_GROUP 32
++#define HINIC3_CMD_OPCODE_SET 0
++#define HINIC3_CMD_OPCODE_GET 1
++
++typedef struct hinic3_vf_lag_bitmap_s {
++	uint32_t vf_bit_map[VF_LAG_VF_NUM_GROUP_NUM];
++} hinic3_vf_lag_bitmap;
++
++struct hinic3_vf_lag_cmd {
++	struct mgmt_msg_head msg_head;
++
++	uint16_t func_id;
++	uint8_t opcode; /* 0 -> set, 1 -> get */
++	uint8_t en_flag; /* 0 -> disable, 1 -> enable  */
++	uint8_t bond_active_num;
++	uint8_t bond_active_bitmap;
++	uint8_t mac_sync_flag;
++	uint8_t rsvd;
++	hinic3_vf_lag_bitmap vf_lag_bitmap;
++};
++
++int hinic3_get_cir_drop(void *hwdev, struct hinic3_cir_drop *stats);
++
++bool hinic3_cmd_vf_lag(void *hwdev, uint16_t func_id, uint8_t opcode);
++
+ #endif /* _HINIC3_NIC_CFG_H_ */
+diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
+index 5e8c143696..96c3eb4931 100644
+--- a/drivers/net/hinic3/hinic3_ethdev.c
++++ b/drivers/net/hinic3/hinic3_ethdev.c
+@@ -80,12 +80,25 @@ struct hinic3_xstats_name_off {
+ 	uint32_t offset;
+ };
+ 
++#define HINIC3_CIR_DROP_STAT(_stat_item)                                   \
++	{                                                                  \
++		.name = #_stat_item,                                       \
++		.offset = offsetof(struct hinic3_cir_drop, _stat_item),    \
++	}
++
+ #define HINIC3_FUNC_STAT(_stat_item)                                       \
+ 	{                                                                  \
+ 		.name = #_stat_item,                                       \
+ 		.offset = offsetof(struct hinic3_vport_stats, _stat_item), \
+ 	}
+ 
++
++static struct hinic3_xstats_name_off hinic3_cir_drop_stats_strings[] = {
++	HINIC3_CIR_DROP_STAT(rx_discard_phy),
++};
++
++#define HINIC3_CIR_DROP_XSTATS_NUM  RTE_DIM(hinic3_cir_drop_stats_strings)
++
+ static const struct hinic3_xstats_name_off hinic3_vport_stats_strings[] = {
+ 	HINIC3_FUNC_STAT(tx_unicast_pkts_vport),
+ 	HINIC3_FUNC_STAT(tx_unicast_bytes_vport),
+@@ -105,6 +118,8 @@ static const struct hinic3_xstats_name_off hinic3_vport_stats_strings[] = {
+ 	HINIC3_FUNC_STAT(rx_discard_vport),
+ 	HINIC3_FUNC_STAT(tx_err_vport),
+ 	HINIC3_FUNC_STAT(rx_err_vport),
++	HINIC3_FUNC_STAT(rx_mtu_err_vport),
++	HINIC3_FUNC_STAT(rx_out_of_buffer),
+ };
+ 
+ #define HINIC3_VPORT_XSTATS_NUM RTE_DIM(hinic3_vport_stats_strings)
+@@ -284,12 +299,16 @@ static const struct hinic3_xstats_name_off hinic3_txq_stats_strings[] = {
+ static uint32_t
+ hinic3_xstats_calc_num(struct hinic3_nic_dev *nic_dev)
+ {
++	uint32_t cir_drop_num = HINIC3_IS_SP620_NIC(nic_dev) ?
++				HINIC3_CIR_DROP_XSTATS_NUM : 0;
++
+ 	if (HINIC3_IS_VF(nic_dev->hwdev)) {
+-		return (HINIC3_VPORT_XSTATS_NUM +
++		return (HINIC3_VPORT_XSTATS_NUM + cir_drop_num +
+ 			HINIC3_RXQ_XSTATS_NUM * nic_dev->num_rqs +
+ 			HINIC3_TXQ_XSTATS_NUM * nic_dev->num_sqs);
+ 	} else {
+ 		return (HINIC3_VPORT_XSTATS_NUM + HINIC3_PHYPORT_XSTATS_NUM +
++			cir_drop_num +
+ 			HINIC3_RXQ_XSTATS_NUM * nic_dev->num_rqs +
+ 			HINIC3_TXQ_XSTATS_NUM * nic_dev->num_sqs);
+ 	}
+@@ -1269,7 +1288,14 @@ hinic3_tx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
+ 	txq->wqebb_size = (uint16_t)RTE_BIT32(txq->wqebb_shift);
+ 	txq->tx_free_thresh = tx_free_thresh;
+ 	txq->owner = 1;
+-	txq->cos = nic_dev->default_cos;
++
++	if (!ODD_NUMBER_QUEUE_ID(qid) &&
++		hinic3_cmd_vf_lag(nic_dev->hwdev, hinic3_global_func_id(nic_dev->hwdev),
++				  HINIC3_CMD_OPCODE_GET))
++		txq->cos = SELECT_OTHER_COS_ID(nic_dev->default_cos);
++	else
++		txq->cos = nic_dev->default_cos;
++
+ 	txq->tx_deferred_start = tx_conf->tx_deferred_start;
+ 	txq->tx_wqe_compact_task = HINIC3_SUPPORT_TX_WQE_COMPACT_TASK(nic_dev);
+ 
+@@ -2947,6 +2973,38 @@ hinic3_dev_stats_reset(struct rte_eth_dev *dev)
+ 	return 0;
+ }
+ 
++static uint16_t
++get_port_cir_drop(struct hinic3_nic_dev *nic_dev,
++		  struct rte_eth_xstat *xstats, uint32_t base)
++{
++	struct hinic3_cir_drop port_stats;
++	uint16_t i;
++	int err;
++
++	memset(&port_stats, 0, sizeof(port_stats));
++
++	err = hinic3_get_cir_drop(nic_dev->hwdev, &port_stats);
++	if (err) {
++		PMD_DRV_LOG(ERR, "Failed to get CPB cir drops from fw.");
++
++		for (i = 0; i < RTE_DIM(hinic3_cir_drop_stats_strings); i++) {
++			xstats[i].value = 0;
++			xstats[i].id = base + i;
++		}
++
++		return RTE_DIM(hinic3_cir_drop_stats_strings);
++	}
++
++	for (i = 0; i < RTE_DIM(hinic3_cir_drop_stats_strings); i++) {
++		memcpy(&xstats[i].value,
++		       (const char *)&port_stats + hinic3_cir_drop_stats_strings[i].offset,
++		       sizeof(uint64_t));
++		xstats[i].id = base + i;
++	}
++
++	return RTE_DIM(hinic3_cir_drop_stats_strings);
++}
++
+ /**
+  * Get device extended statistics.
+  *
+@@ -3035,6 +3093,10 @@ hinic3_dev_xstats_get(struct rte_eth_dev *dev, struct rte_eth_xstat *xstats,
+ 		count++;
+ 	}
+ 
++	/* Get stats from cir drop stats structure */
++	if (HINIC3_IS_SP620_NIC(nic_dev))
++		count += get_port_cir_drop(nic_dev, &xstats[count], count);
++
+ 	if (HINIC3_IS_VF(nic_dev->hwdev))
+ 		return count;
+ 
+@@ -3135,6 +3197,16 @@ hinic3_dev_xstats_get_names(struct rte_eth_dev *dev,
+ 		count++;
+ 	}
+ 
++	/* Get cir drop stats name. */
++	if (HINIC3_IS_SP620_NIC(nic_dev)) {
++		for (i = 0; i < HINIC3_CIR_DROP_XSTATS_NUM; i++) {
++			strlcpy(xstats_names[count].name,
++				hinic3_cir_drop_stats_strings[i].name,
++				sizeof(xstats_names[count].name));
++			count++;
++		}
++	}
++
+ 	if (HINIC3_IS_VF(nic_dev->hwdev))
+ 		return count;
+ 
+diff --git a/drivers/net/hinic3/hinic3_ethdev.h b/drivers/net/hinic3/hinic3_ethdev.h
+index f4d8c16640..c3384e5fd0 100644
+--- a/drivers/net/hinic3/hinic3_ethdev.h
++++ b/drivers/net/hinic3/hinic3_ethdev.h
+@@ -162,6 +162,9 @@ struct hinic3_nic_dev {
+ 
+ };
+ 
++#define SELECT_OTHER_COS_ID(cos_id) ((cos_id) ^ 4)
++#define ODD_NUMBER_QUEUE_ID(q_id) ((q_id) & 1)
++
+ #define HINIC3_IS_SP620_NIC(nic_dev) ((nic_dev)->nic_type == NIC_SP620)
+ #define HINIC3_IS_SP230_NIC(nic_dev) ((nic_dev)->nic_type == NIC_SP230)
+ 
 -- 
 2.33.0
 
