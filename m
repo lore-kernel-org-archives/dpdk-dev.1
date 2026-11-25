@@ -2,30 +2,30 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB0E606A338
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 11:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF14606A31E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 11:12:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0AB6D40374;
-	Wed, 25 Nov 2026 12:12:11 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 107D140612;
+	Wed, 25 Nov 2026 12:12:14 +0100 (CET)
 Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
- by mails.dpdk.org (Postfix) with ESMTPS id 5D52040374;
- Wed, 25 Nov 2026 12:12:07 +0100 (CET)
-X-QQ-mid: esmtpsz17t1795605121t996c9592
-X-QQ-Originating-IP: mEBEDuQqZTRWmZ/GnR8+Jn8Fw3ONKTYuddOPGWSCi6k=
+ by mails.dpdk.org (Postfix) with ESMTPS id 7F24C40374;
+ Wed, 25 Nov 2026 12:12:09 +0100 (CET)
+X-QQ-mid: esmtpsz17t1795605124tc8128adb
+X-QQ-Originating-IP: C9YLjx8zdpMXN3AL9ov/C7DoPVX2vOJF2H15AWQULus=
 Received: from DSK-zaiyuwang.trustnetic.com ( [122.235.140.99])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Wed, 25 Nov 2026 19:12:00 +0800 (CST)
+ id ; Wed, 25 Nov 2026 19:12:02 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 5006335640818521129
+X-BIZMAIL-ID: 11484980266981741526
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH 1/2] net/ngbe: mask unused internal PHY interrupts
-Date: Wed, 25 Nov 2026 19:11:04 +0800
-Message-ID: <AA0BB9361363251E+20261125111142.12226-2-zaiyuwang@trustnetic.com>
+Subject: [PATCH 2/2] net/ngbe: fix YT8531S-CA interrupt in combo mode
+Date: Wed, 25 Nov 2026 19:11:05 +0800
+Message-ID: <55290577737DDF3E+20261125111142.12226-3-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
 In-Reply-To: <20261125111142.12226-1-zaiyuwang@trustnetic.com>
 References: <20261125111142.12226-1-zaiyuwang@trustnetic.com>
@@ -34,23 +34,23 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: MGFZW3GBkY1bDuJzzawkvrd/4yMsujs3QkTv0rMwlp+GWLSbiDKyBSkY
- mci7Yzhn5YDwiDTTP7HlONgg9XIVsTx28kLjX/udtNpK+oJkLWWPP7l7SPaxej+CGfWTlE5
- qTYEaDdPtb4sKYeZNx6cN5TpFyNqasJT/Qmn3etVF961T15zxXQpk3qqE59KMj6F6ynoRxj
- oawuQsLglMDflHqM7PhHLHaeiJISTkdJ41gVV0Gn8xIE8sRwvD5ZV9jnNAtjMKptYddDGM5
- 9bsji6hc/UXiuI5RVD0xnZK4cHklwZxvEpTsL0Azc/tK6rOftxAbJ4cO396Tv/LIFjpD1Kg
- ThV/mhj3VZqF+EILFnw7oupicc1gKDEUMj03xCZtuSBljYvJIEN4784MxsWlmwgy26Z2775
- 6l+rY4utCDSI62/z5Da+nxuLnfYiOo2kV2vP1CivznpGVQaHzakINGQ5tKvaNjmgmn9t9AY
- cxF8jFHT3Y5hIYsdSZf2CFK6kxSYTW4N1WV9kvzjJgzkB/8YXGvQPuqTF5DkfM0IvDGqVhT
- 3GIZr0HwYV7UftFdnNrq3ARa9Dp3sIyk74CeDC8HfChHvSfxB94CwIK6+E/4ZKYT/irQem2
- OnQQE+DTuE/F8WpGwULhwkv6b68Vzlm8VVK7vQIbOpLQvaPNMzApaWQhyHB2WAlhlGcbpCX
- sbvFHLtojehC3d8T2zqiwk6bYR72y387AmK7p7Vdq5a84f9gPhqm1eSIBQ5WhZQCMEgg0gR
- w0sVKpa3UFCMd5fI5GW6Gh4NzjNztJlcZ7PO0fLqEAvKg3Jm5rsvMU4iNUlI5+QWKDxMzPz
- Tic3niYaiblqfvK7rQpFIyT6P0PXfcJPZH6dfJX2fPfrLSCE7Z+PlhN7YaNXWwiS0pYYz42
- D2VDC+6SewtW8mXVczVT9Fz98hbdfjP+EMRvL9fl5A+ejZfEFSI7VgMEaZ7r11U2GPoQSY0
- ZeQNK6SOQKsTZFVzbj590/GQdA2DrUBicoFarLS13CifygNhg5bOQpbBOLfEscnTiFvSj1s
- 3/Kir4iufGFvd2s8DZhQ7EeX9qrZhToJBkLEbiJw==
-X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
+X-QQ-XMAILINFO: NQR8mRxMnur9KSSJplV/+qm85ngAdV/Rd98GqLyCG8pwFu6jErC7mewV
+ I4xxGMKBixzaUHok/d+ETAoSJE/oD+D38EVBCUgPfAcwFAd61QgytpA7tGRMRITa5moVCA+
+ b+fHCQUyuryXxgohEhfVblMtBm8hDATKUL121wUHZQEoGd1je8uFXZXYErsca9nr6dnb7od
+ 0TdwK2CXkz+apfU+bOpR8NKMrILP1xo9jc7w27UFYjkpdsQpcQCXieuhktmhZilzM7XGQE0
+ 4uR/iliZX2NoGn+EhDrfcOsWI+uMNnBhVrAsOT8Iicr2peuH+Zba3pjPRhUagWZY7cPSLLI
+ yr38apsE0+JMF8xCKrvvWOUHvbNNIqJTAtWoIshvc27m7QaCj3tN+l3QrBg4MPea/cR9z5O
+ x5iASr6MUC5a6p83Df8KO/ksu0ZR15FAsKfYVUEy2I3XBVWY0CCZSQm7sAMx1u+A4xVvk+v
+ j0D4T1hRlO56k/xXpjiuP+EOcUk5J9TVwpT5WdVbSbyeefr0PXCZ4PngNR4Uk7RcGInrIGu
+ ithDIqFtHOxJIe51xkiHOx9J1rHpXTdLgQqeQiQ61xJi+YBJJMLGOWL7fkMHRcwJmJnL7kb
+ v9QQ960fRLS0gSkUNGthJE45gXC1lFtIML67u5+3+zsgm7ZIpsJ7jKPvw5zv0kEFPxcyWHc
+ 23CgkcXqeLi0VTzd5kOHG4MZCMbb2GLHkSUh1V9FfITzr3ritl0HZdubkwlauOYWNismu16
+ RVSvYY9wK+cy35rH51QUADcLplcwm/OItkk/PRij1E9dxcs5v4yUbbOS7xBdu8Af4MuX9ya
+ hS70MpwsnC2hy6CYjBP6tg030MpliCWbug3E9Ep0ZJlYrSTHekEPoFqR/QwQY+rwmUZdkrf
+ ERUgRWU4Sch3f8uMf2J/V9Wxe0tNLdKtzOgIil7GvLH+901ylNDbbFBMBV/u7DpO+CMugJy
+ fO3aBEOhhSR13x6uB1V7w86SlQfdYO12W83F1YJNgsCAJqKQ3mh/+Z77Fum6rhbIuQROqQr
+ OFt4sVb5K3gGDrLcIenriMztWveayY6+5kO7jfrat4JEGI+64h
+X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -68,34 +68,52 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The internal PHY comes out of reset with every interrupt source enabled
-in RTL_INER, and the driver rechecks the link on any PHY interrupt.
+With a YT8531S-CA PHY in UTP_FIBER_TO_RGMII combo mode, the copper port
+raises interrupts and links up, but the fiber side raises none and never
+links up.
 
-Link status change and autonegotiation complete are the only sources
-the driver acts on, so enable those two and mask the rest.
+ngbe_init_phy_yt() enables the interrupts straight away, without the
+extra configuration such a part needs. Apply that configuration first,
+and skip it for parts that read 0x31 or 0x32 in YT_INTR.
 
-Fixes: 3518df5774c7 ("net/ngbe: support device start/stop")
-Fixes: 696a82117875 ("net/ngbe: redesign internal PHY init flow")
+Fixes: 79be49dd2d65 ("net/ngbe: add special config for YT8531SH-CA PHY")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/ngbe/base/ngbe_phy_rtl.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ngbe/base/ngbe_phy_yt.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/drivers/net/ngbe/base/ngbe_phy_rtl.c b/drivers/net/ngbe/base/ngbe_phy_rtl.c
-index 9312bd300b..74f0a37b25 100644
---- a/drivers/net/ngbe/base/ngbe_phy_rtl.c
-+++ b/drivers/net/ngbe/base/ngbe_phy_rtl.c
-@@ -178,6 +178,8 @@ s32 ngbe_init_phy_rtl(struct ngbe_hw *hw)
- 	hw->phy.write_reg(hw, 0xd, 0x0, 0x4007);
- 	hw->phy.write_reg(hw, 0xe, 0x0, 0x0000);
+diff --git a/drivers/net/ngbe/base/ngbe_phy_yt.c b/drivers/net/ngbe/base/ngbe_phy_yt.c
+index ab0778d246..f9230266e9 100644
+--- a/drivers/net/ngbe/base/ngbe_phy_yt.c
++++ b/drivers/net/ngbe/base/ngbe_phy_yt.c
+@@ -100,8 +100,25 @@ s32 ngbe_write_phy_reg_sds_ext_yt(struct ngbe_hw *hw,
  
-+	hw->phy.write_reg(hw, RTL_INER, 0xa42, RTL_INER_LSC | RTL_INER_ANC);
+ s32 ngbe_init_phy_yt(struct ngbe_hw *hw)
+ {
++	u16 value = 0;
 +
- 	hw->init_phy = false;
+ 	rte_spinlock_init(&hw->phy_lock);
  
- 	return 0;
++	rte_spinlock_lock(&hw->phy_lock);
++	ngbe_write_phy_reg_ext_yt(hw, YT_SPEC_CONF, 0,
++				  YT_SPEC_CONF_8531SH_CA);
++	ngbe_write_phy_reg_ext_yt(hw, YT_SMI_PHY, 0, 0);
++	ngbe_read_phy_reg_mdi(hw, YT_INTR, 0, &value);
++
++	if (value != 0x31 && value != 0x32) {
++		ngbe_write_phy_reg_ext_yt(hw, 0xa071, 0, 0x9007);
++		ngbe_write_phy_reg_ext_yt(hw, 0x52, 0, 0x231d);
++		ngbe_write_phy_reg_ext_yt(hw, 0x51, 0, 0x04a9);
++		ngbe_write_phy_reg_ext_yt(hw, 0x57, 0, 0x274c);
++		ngbe_write_phy_reg_ext_yt(hw, YT_MISC, 0, 0x10d);
++	}
++	rte_spinlock_unlock(&hw->phy_lock);
++
+ 	if (hw->lsc) {
+ 		rte_spinlock_lock(&hw->phy_lock);
+ 		/* close sds area register */
 -- 
 2.55.0.windows.2
 
