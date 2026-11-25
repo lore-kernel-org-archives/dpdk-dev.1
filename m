@@ -2,44 +2,44 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24617606A31E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 17:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48731606A323
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 17:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=cY+7grjK
+	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=nuuB0Tkr
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B136440E39;
-	Wed, 25 Nov 2026 18:06:13 +0100 (CET)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.3])
- by mails.dpdk.org (Postfix) with ESMTPS id 9ADB8406B8
+	by mails.dpdk.org (Postfix) with ESMTP id 8767E40E27;
+	Wed, 25 Nov 2026 18:06:14 +0100 (CET)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.4])
+ by mails.dpdk.org (Postfix) with ESMTPS id 40E0740A81
  for <dev@dpdk.org>; Wed, 25 Nov 2026 18:05:58 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=GTttCGsv418V2vuMiWA2sdB51oIU0mPU4kTSHFUGOiU=;
- b=cY+7grjKPYSaDAAHP64Wde8tP20noBqc1T77ShSUNc2+ExXaTKDTkZDe/4CZCp
- tgAl0qutwRlTQbc2LHmiAy/WO5wEt7TLyLa5oaGELijbBBoj+NSEPnTP6lFGER6z
- nO7IXh0bcaX1zIx2F3Mvw6twusJIDKRVcJXehm+HNMmbU=
+ MIME-Version; bh=dvaBLBp3a+BH36iyguOr1RB1VWQIE+TaP8qLymP6y48=;
+ b=nuuB0TkrSbZRkATwhHzRIUz3xuJ6vdbprGBb4pGCIDk1TJV/2pHJcZ+V52jk/P
+ 0MQr/sUBN93kMcS+1VrdMxECRSadJyBOIPoCLGnxCdyC7oGAMNusghJn6L0yQaUx
+ QLUCRHKAPWHcXOEqGaOhhXW6lcXVsKIn8S/+FvL6dX7AY=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
  Anatoly Burakov <anatoly.burakov@intel.com>,
  Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v9 30/30] net/hinic3: expose Tx queue copied-mbuf statistics
-Date: Thu, 26 Nov 2026 01:04:24 +0800
-Message-ID: <20261125170425.5430-31-yejiacheng4@h-partners.com>
+Subject: [PATCH v9 29/30] net/hinic3: add Tx burst mode get
+Date: Thu, 26 Nov 2026 01:04:23 +0800
+Message-ID: <20261125170425.5430-30-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.56.0.windows.2
 In-Reply-To: <20261125170425.5430-1-yejiacheng4@h-partners.com>
 References: <20261125170425.5430-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: As8vCgDn77FiFQdrEdNeBQ--.6538S32
-X-Coremail-Antispam: 1Uf129KBjvJXoW7ur4kKr4DGw48JryruryUKFg_yoW8XFyDpa
- nxKFWDAF9Yqa1UAr12g3WkCryrZan8J3yjgr1xK34rZFn5CF1xZ3y5J3yIyry3t34fA3WS
- vFWI9r97AFyj9rJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jeeHDUUUUU=
+X-CM-TRANSID: As8vCgDn77FiFQdrEdNeBQ--.6538S31
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCFyUtr48AF1xXry5KryfWFg_yoW7Gr1fpF
+ s8CFWrAryDtrWUZ3Z7Gws7uF15Xw4kJ3yUKw1fJa4avFn8Xr17Z34UtFWxZr1avr17Za4I
+ vr1jg3sFkF1jg3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jz0P-UUUUU=
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiMhT+CWsHFXQaSQAA3P
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNRP9CGsHFXMf1gAA3Q
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,42 +56,132 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The Tx path copies mbufs when the segment count exceeds the inline
-limit, tracking the number of copied packets and the number of segments
-too large to inline. Expose these two counters in the per-queue extended
-statistics so they are visible to applications.
+Expose the active Tx burst mode and its offloads via the
+tx_burst_mode_get callback so applications can query how each queue
+sends packets. The string is derived from the Tx burst function actually
+installed on the device, so it reports the compact task path only when
+that path is really in use, and also lists the enabled offloads.
+Advertise the new capability in the feature matrix.
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- doc/guides/rel_notes/release_26_11.rst | 1 +
- drivers/net/hinic3/hinic3_ethdev.c     | 2 ++
- 2 files changed, 3 insertions(+)
+ doc/guides/nics/features/hinic3.ini    |  1 +
+ doc/guides/nics/hinic3.rst             |  1 +
+ doc/guides/rel_notes/release_26_11.rst |  1 +
+ drivers/net/hinic3/hinic3_ethdev.c     |  2 ++
+ drivers/net/hinic3/hinic3_tx.c         | 31 ++++++++++++++++++++++++++
+ drivers/net/hinic3/hinic3_tx.h         |  2 ++
+ 6 files changed, 38 insertions(+)
 
+diff --git a/doc/guides/nics/features/hinic3.ini b/doc/guides/nics/features/hinic3.ini
+index 81c3e85410..ba30a850e9 100644
+--- a/doc/guides/nics/features/hinic3.ini
++++ b/doc/guides/nics/features/hinic3.ini
+@@ -9,6 +9,7 @@ Link speed configuration = Y
+ Rx interrupt         = Y
+ Queue start/stop     = Y
+ Runtime queue setup  = Y
++Burst mode info      = Y
+ MTU update           = Y
+ Scattered Rx         = Y
+ TSO                  = Y
+diff --git a/doc/guides/nics/hinic3.rst b/doc/guides/nics/hinic3.rst
+index c74b86b538..f46670e79f 100644
+--- a/doc/guides/nics/hinic3.rst
++++ b/doc/guides/nics/hinic3.rst
+@@ -24,6 +24,7 @@ Features
+ - TSO offload
+ - Promiscuous mode
+ - Port hardware statistics
++- Burst mode info
+ - Jumbo frames
+ - Link state information
+ - Link flow control
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 04105af387..97e37b5f49 100644
+index 0513d09d9f..04105af387 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -145,6 +145,7 @@ New Features
+@@ -144,6 +144,7 @@ New Features
+   * Added a compact CQE receive data path.
    * Extended TCP segmentation offload (TSO) to 255 segments.
    * Added a compact task transmit data path.
-   * Added Tx burst mode reporting.
-+  * Added Tx queue copied-mbuf statistics.
++  * Added Tx burst mode reporting.
  
  * **Updated Intel iavf driver.**
  
 diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index 23d28a585c..a52f317d51 100644
+index 5c4faef83f..23d28a585c 100644
 --- a/drivers/net/hinic3/hinic3_ethdev.c
 +++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -287,6 +287,8 @@ static const struct hinic3_xstats_name_off hinic3_txq_stats_strings[] = {
- 	HINIC3_TXQ_STAT(burst_pkts),
- 	HINIC3_TXQ_STAT(sge_len0),
- 	HINIC3_TXQ_STAT(mbuf_null),
-+	HINIC3_TXQ_STAT(cpy_pkts),
-+	HINIC3_TXQ_STAT(sge_len_too_large),
+@@ -3905,6 +3905,7 @@ static const struct eth_dev_ops hinic3_pmd_ops = {
+ 	.mac_addr_add                  = hinic3_mac_addr_add,
+ 	.set_mc_addr_list              = hinic3_set_mc_addr_list,
+ 	.flow_ops_get                  = hinic3_dev_filter_ctrl,
++	.tx_burst_mode_get             = hinic3_tx_burst_mode_get,
+ 	.fec_get_capability            = hinic3_fec_capability_get,
+ 	.fec_get                       = hinic3_fec_get,
+ 	.fec_set                       = hinic3_fec_set,
+@@ -3959,6 +3960,7 @@ static const struct eth_dev_ops hinic3_pmd_vf_ops = {
+ 	.set_mc_addr_list              = hinic3_set_mc_addr_list,
+ 	.flow_ops_get                  = hinic3_dev_filter_ctrl,
+ 	.eth_dev_priv_dump             = hinic3_eth_dev_priv_dump,
++	.tx_burst_mode_get             = hinic3_tx_burst_mode_get,
+ };
  
- #ifdef HINIC3_XSTAT_PROF_TX
- 	HINIC3_TXQ_STAT(app_tsc),
+ /**
+diff --git a/drivers/net/hinic3/hinic3_tx.c b/drivers/net/hinic3/hinic3_tx.c
+index 3f44814405..0bee8a8691 100644
+--- a/drivers/net/hinic3/hinic3_tx.c
++++ b/drivers/net/hinic3/hinic3_tx.c
+@@ -1500,6 +1500,37 @@ hinic3_flush_txqs(struct hinic3_nic_dev *nic_dev)
+ 	}
+ }
+ 
++int
++hinic3_tx_burst_mode_get(struct rte_eth_dev *dev,
++			 uint16_t tx_queue_id,
++			 struct rte_eth_burst_mode *mode)
++{
++	uint64_t tx_offloads = dev->data->dev_conf.txmode.offloads;
++	struct hinic3_nic_dev *nic_dev;
++	struct hinic3_txq *txq = NULL;
++
++	nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++	txq = nic_dev->txqs[tx_queue_id];
++	if (!txq)
++		return -EINVAL;
++
++	snprintf(mode->info, sizeof(mode->info),
++		 "%s%s%s%s%s",
++		 dev->tx_pkt_burst == hinic3_xmit_pkts_compact_task ?
++			"compact task" : "scalar",
++		 (tx_offloads & RTE_ETH_TX_OFFLOAD_MULTI_SEGS) ? " + MULTI" : "",
++		 (tx_offloads & (RTE_ETH_TX_OFFLOAD_TCP_TSO |
++				 RTE_ETH_TX_OFFLOAD_VXLAN_TNL_TSO)) ? " + TSO" : "",
++		 (tx_offloads & (RTE_ETH_TX_OFFLOAD_IPV4_CKSUM |
++				 RTE_ETH_TX_OFFLOAD_UDP_CKSUM |
++				 RTE_ETH_TX_OFFLOAD_TCP_CKSUM |
++				 RTE_ETH_TX_OFFLOAD_SCTP_CKSUM |
++				 RTE_ETH_TX_OFFLOAD_OUTER_IPV4_CKSUM)) ? " + CKSUM" : "",
++		 (tx_offloads & RTE_ETH_TX_OFFLOAD_VLAN_INSERT) ? " + VLAN" : "");
++
++	return 0;
++}
++
+ /**
+  * It is responsible for sending data packets.
+  *
+diff --git a/drivers/net/hinic3/hinic3_tx.h b/drivers/net/hinic3/hinic3_tx.h
+index 51024e4e99..3a6451f69b 100644
+--- a/drivers/net/hinic3/hinic3_tx.h
++++ b/drivers/net/hinic3/hinic3_tx.h
+@@ -404,4 +404,6 @@ uint16_t hinic3_prep_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb
+ int hinic3_stop_sq(struct hinic3_txq *txq);
+ int hinic3_start_all_sqs(struct rte_eth_dev *eth_dev);
+ int hinic3_tx_done_cleanup(void *txq, uint32_t free_cnt);
++int hinic3_tx_burst_mode_get(struct rte_eth_dev *dev, uint16_t tx_queue_id,
++			     struct rte_eth_burst_mode *mode);
+ #endif /**< _HINIC3_TX_H_ */
 -- 
 2.33.0
 
