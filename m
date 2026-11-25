@@ -2,45 +2,44 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BDD606A32C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 17:07:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22351606A323
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 17:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=W7Ftw7JD
+	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=Elc3VB9e
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3975840B8C;
-	Wed, 25 Nov 2026 18:06:00 +0100 (CET)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.5])
- by mails.dpdk.org (Postfix) with ESMTPS id 88B4D402EE;
- Wed, 25 Nov 2026 18:05:49 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 1A39040B92;
+	Wed, 25 Nov 2026 18:06:01 +0100 (CET)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.221])
+ by mails.dpdk.org (Postfix) with ESMTPS id 8A8F040656
+ for <dev@dpdk.org>; Wed, 25 Nov 2026 18:05:52 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=e/zWo/t/niQ07jyxnesmctfvqKys/+H/rK6LTCEOCNo=;
- b=W7Ftw7JD4qb0B55by9rhdIl+4KkJYd3Pb7us8StRKQOGifLxOsvQiPAkuuCU1u
- nzpb3tvaOUEXDyC5GXDCNV0Vv7SYpIpY4KMwwNRGAbaKaYufj6pLL5oUZy4hIvMW
- QeHghGdNI3p1abNE6QkFUKa9SQUEI+nqdb2oUcXrST8Sc=
+ MIME-Version; bh=HJAbbyQpG5P5IP8M6Jv1EtasT2U3ZGeXGmept1BEk2k=;
+ b=Elc3VB9eh5tdsIOdR7vLDDIhBYFbi8+rewF9atBpY6Rzm3naFY1u1nsXPnKmb6
+ KTeIrPGM28nE7bOiGUOnISTXeM4m6Lb01PQ8gOK5NwZekEVcHIHo0M3+TMXqvI9Z
+ 8yuTXB2G1+wV2olMV1SPRVRbtVY3+pO4DWgoXDc7bN6hI=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
  Anatoly Burakov <anatoly.burakov@intel.com>,
- Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org
-Subject: [PATCH v9 05/30] net/hinic3: fix wildcard IPv4,
- ICMP and UDP flow items
-Date: Thu, 26 Nov 2026 01:03:59 +0800
-Message-ID: <20261125170425.5430-6-yejiacheng4@h-partners.com>
+ Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v9 16/30] net/hinic3: add mbox message recording and debug dump
+Date: Thu, 26 Nov 2026 01:04:10 +0800
+Message-ID: <20261125170425.5430-17-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.56.0.windows.2
 In-Reply-To: <20261125170425.5430-1-yejiacheng4@h-partners.com>
 References: <20261125170425.5430-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: As8vCgDn77FiFQdrEdNeBQ--.6538S7
-X-Coremail-Antispam: 1Uf129KBjvJXoWxuF1DuF45WF4UJFyUuFW7Arb_yoWrZr13pF
- s8G3s8Zrs7Wr47GwsxGr4IgF45Gw1xtry3uFZxGa43GryDJr97Cay5CFy5WF1xKr95JFya
- qr4Y9FWDu3Z8J3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jewZcUUUUU=
+X-CM-TRANSID: As8vCgDn77FiFQdrEdNeBQ--.6538S18
+X-Coremail-Antispam: 1Uf129KBjvAXoW3ZFWxJFyrXF15GF18Xr4fXwb_yoW8Jw13Go
+ WfXFWakF4Fgrn7A34jvFn7ZFs3Xr1DGrn8J39xCanxXa9rury5JFn8Grn3Ja4xX3yUCFnr
+ AF97G3yktw47Xw4Dn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+ AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUcg4SUUUUU
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNwn7BmsHFWkfvQAA3x
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNA78B2sHFW4bPAAA3x
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,123 +56,362 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Accept a wildcard IPv4 item, such as eth / ipv4 / udp, that has neither
-a spec nor a mask, so the L4 item alone constrains the rule. The fdir
-parser required both fields and rejected such a rule with -EINVAL.
+Provide recorded mbox send/receive history and a dump of it together with
+the AEQ state so mailbox timeouts and response mismatches can be diagnosed.
 
-The ICMP item was not translated, so an ICMP rule with an IPv4 spec or
-mask matched every IPv4 packet that passed the IPv4 fields, and with the
-wildcard above it would also match when the IPv4 item is empty.
-Translate the ICMP item into the IPv4 protocol key, as the TCP and UDP
-items already are, and reject a mask that selects fields the TCAM cannot
-match: the ICMP type, code, checksum, identifier or sequence number, and
-the UDP length or checksum. The TCP item already rejects its unsupported
-fields; the ICMP and UDP items silently ignored them.
-
-Fixes: efa3b9b36fc7 ("net/hinic3: add flow control and filters")
-Cc: stable@dpdk.org
+eth_dev_priv_dump is also registered for secondary processes, where
+hwdev->pci_dev is not valid. Pass the rte_pci_device obtained from the
+ethdev down to the dump instead of reading it from hwdev.
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- drivers/net/hinic3/hinic3_flow.c | 60 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 58 insertions(+), 2 deletions(-)
+ doc/guides/rel_notes/release_26_11.rst |  1 +
+ drivers/net/hinic3/base/hinic3_eqs.c   | 64 ++++++++++++++++++++++++--
+ drivers/net/hinic3/base/hinic3_eqs.h   |  9 +++-
+ drivers/net/hinic3/base/hinic3_mbox.c  | 45 ++++++++++++++++++
+ drivers/net/hinic3/base/hinic3_mbox.h  | 19 ++++++++
+ drivers/net/hinic3/hinic3_ethdev.c     | 29 ++++++++++++
+ 6 files changed, 161 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/hinic3/hinic3_flow.c b/drivers/net/hinic3/hinic3_flow.c
-index 1f686d4675..3fbed5497b 100644
---- a/drivers/net/hinic3/hinic3_flow.c
-+++ b/drivers/net/hinic3/hinic3_flow.c
-@@ -230,6 +230,14 @@ hinic3_flow_fdir_ipv4(const struct rte_flow_item *flow_item,
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index d03f12e743..e0d042f681 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -133,6 +133,7 @@ New Features
+   * Added vport statistics, including CIR drop, and VF link
+     aggregation (LAG) support.
+   * Added FEC mode get and set support.
++  * Added mailbox message counter reporting through the device private dump API.
  
- 	mask_ipv4 = (const struct rte_flow_item_ipv4 *)flow_item->mask;
- 	spec_ipv4 = (const struct rte_flow_item_ipv4 *)flow_item->spec;
-+
-+	filter->fdir_filter.ip_type = HINIC3_FDIR_IP_TYPE_IPV4;
-+	filter->fdir_filter.tunnel_type = HINIC3_FDIR_TUNNEL_MODE_NORMAL;
-+
-+	/* A wildcard IPv4 item leaves the L4 item in charge of the rule. */
-+	if (!mask_ipv4 && !spec_ipv4)
-+		return 0;
-+
- 	if (!mask_ipv4 || !spec_ipv4) {
- 		rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ITEM,
- 				   flow_item,
-@@ -252,8 +260,6 @@ hinic3_flow_fdir_ipv4(const struct rte_flow_item *flow_item,
- 	}
+ * **Updated Intel iavf driver.**
  
- 	/* Set the filter information. */
--	filter->fdir_filter.ip_type = HINIC3_FDIR_IP_TYPE_IPV4;
--	filter->fdir_filter.tunnel_type = HINIC3_FDIR_TUNNEL_MODE_NORMAL;
- 	filter->fdir_filter.key_mask.ipv4.src_ip =
- 		rte_be_to_cpu_32(mask_ipv4->hdr.src_addr);
- 	filter->fdir_filter.key_spec.ipv4.src_ip =
-@@ -381,3 +387,11 @@ hinic3_flow_fdir_udp(const struct rte_flow_item *flow_item,
- 	}
+diff --git a/drivers/net/hinic3/base/hinic3_eqs.c b/drivers/net/hinic3/base/hinic3_eqs.c
+index 1fc78adc85..f86188b5f5 100644
+--- a/drivers/net/hinic3/base/hinic3_eqs.c
++++ b/drivers/net/hinic3/base/hinic3_eqs.c
+@@ -553,7 +553,7 @@ hinic3_aeqs_free(struct hinic3_hwdev *hwdev)
+ }
  
-+	/* Only support src, dst ports, others should be masked. */
-+	if (mask_udp->hdr.dgram_len || mask_udp->hdr.dgram_cksum) {
-+		rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ITEM,
-+				   flow_item,
-+				   "Not supported by fdir filter, udp only support src port, dst port");
-+		return -rte_errno;
+ void
+-hinic3_dump_aeq_info(struct hinic3_hwdev *hwdev)
++hinic3_dump_aeq_info(struct hinic3_hwdev *hwdev, FILE *file)
+ {
+ 	struct hinic3_aeq_elem *aeqe_pos = NULL;
+ 	struct hinic3_eq *eq = NULL;
+@@ -580,10 +580,64 @@ hinic3_dump_aeq_info(struct hinic3_hwdev *hwdev)
+ 		addr = HINIC3_CSR_AEQ_PROD_IDX_ADDR;
+ 		pi = hinic3_hwif_read_reg(hwdev->hwif, addr);
+ 		aeqe_pos = GET_AEQ_ELEM(eq, eq->cons_idx);
+-		PMD_DRV_LOG(ERR,
+-			    "Aeq id: %d, idx: %u, ctrl0: 0x%08x, wrap: %d, pi: 0x%x, ci: 0x%08x, desc: 0x%x",
+-			    q_id, idx, ctrl0, eq->wrapped, pi, ci,
+-			    rte_be_to_cpu_32(aeqe_pos->desc));
++		fprintf(file, "Aeq id: %d, idx: %u, ctrl0: 0x%08x, wrap: %d, pi: 0x%x, ci: 0x%08x, desc: 0x%x\n",
++				q_id, idx, ctrl0, eq->wrapped, pi, ci,
++				rte_be_to_cpu_32(aeqe_pos->desc));
++	}
++}
++
++void
++hinic3_dump_aeq_mbox_info(struct hinic3_hwdev *hwdev,
++			  struct rte_pci_device *pci_dev, FILE *file)
++{
++	struct save_mbox_info *save_mbox = NULL;
++	struct hinic3_eq *aeq = NULL;
++	struct hinic3_aeq_elem *aeqe_pos = NULL;
++	uint32_t i, pos;
++	uint8_t src, size, wrapped, seq_id, seg_len, msg_id, mod;
++	uint8_t data[HINIC3_AEQE_DATA_SIZE];
++	uint16_t src_func_idx, cmd;
++	uint32_t aeqe_desc;
++	uint64_t mbox_header;
++	enum hinic3_aeq_type event;
++
++	save_mbox = hwdev->func_to_func->save_mbox;
++	aeq = &hwdev->aeqs->aeq[HINIC3_MBOX_RSP_MSG_AEQ];
++
++	fprintf(file, "Sending the latest mbox messages:\n");
++	for (i = 0; i < save_mbox->count; i++) {
++		pos = (save_mbox->start + i) % HINIC3_MBOX_SAVE_NUM;
++		fprintf(file, "send_msg_id: %u, cmd: %u, mod: %u\n",
++			save_mbox->send_info[pos].send_msg_id, save_mbox->send_info[pos].cmd,
++			save_mbox->send_info[pos].mod);
 +	}
 +
- 	/* Set the filter information. */
-@@ -393,6 +407,42 @@ hinic3_flow_fdir_udp(const struct rte_flow_item *flow_item,
++	fprintf(file, "dump aeqe info:\n");
++	fprintf(file, "port: %u, eq cid: %u, func id: %u, bus: %u, devid: %u, wrapped: %u\n",
++		hwdev->port_id, aeq->cons_idx, pci_dev->addr.function, pci_dev->addr.bus,
++		pci_dev->addr.devid, aeq->wrapped);
++	for (i = 0; i < aeq->eq_len; i++) {
++		/* Parsing the data field. */
++		aeqe_pos = GET_AEQ_ELEM(aeq, i);
++		aeqe_desc = rte_be_to_cpu_32(aeqe_pos->desc);
++		memcpy(data, aeqe_pos->aeqe_data, HINIC3_AEQE_DATA_SIZE);
++		hinic3_be32_to_cpu(data, HINIC3_AEQE_DATA_SIZE);
++		memcpy(&mbox_header, data, sizeof(mbox_header));
++		seq_id = HINIC3_MSG_HEADER_GET(mbox_header, SEQID);
++		seg_len = HINIC3_MSG_HEADER_GET(mbox_header, SEG_LEN);
++		src_func_idx = HINIC3_MSG_HEADER_GET(mbox_header, SRC_GLB_FUNC_IDX);
++		msg_id = HINIC3_MSG_HEADER_GET(mbox_header, MSG_ID);
++		mod = HINIC3_MSG_HEADER_GET(mbox_header, MODULE);
++		cmd = HINIC3_MSG_HEADER_GET(mbox_header, CMD);
++		/* Parsing the desc field. */
++		event = EQ_ELEM_DESC_GET(aeqe_desc, TYPE);
++		src = EQ_ELEM_DESC_GET(aeqe_desc, SRC);
++		size = EQ_ELEM_DESC_GET(aeqe_desc, SIZE);
++		wrapped = EQ_ELEM_DESC_GET(aeqe_desc, WRAPPED);
++
++		fprintf(file, "index: %d, msg_id: %u, mod: %u, cmd: %u, seq_id: %u, seg_len: %u, src_func_idx: %u, event: %u, src: %u, size: %u, wrapped: %u\n",
++			i, msg_id, mod, cmd, seq_id, seg_len, src_func_idx,
++			event, src, size, wrapped);
+ 	}
+ }
+ 
+diff --git a/drivers/net/hinic3/base/hinic3_eqs.h b/drivers/net/hinic3/base/hinic3_eqs.h
+index 365c9cbf39..4c1b03da11 100644
+--- a/drivers/net/hinic3/base/hinic3_eqs.h
++++ b/drivers/net/hinic3/base/hinic3_eqs.h
+@@ -5,6 +5,10 @@
+ #ifndef _HINIC3_EQS_H_
+ #define _HINIC3_EQS_H_
+ 
++#include <stdio.h>
++
++struct rte_pci_device;
++
+ #define HINIC3_MAX_AEQS	    4
+ #define HINIC3_MIN_AEQS	    2
+ #define HINIC3_EQ_MAX_PAGES 4
+@@ -83,7 +87,10 @@ int hinic3_aeqs_init(struct hinic3_hwdev *hwdev);
+ 
+ void hinic3_aeqs_free(struct hinic3_hwdev *hwdev);
+ 
+-void hinic3_dump_aeq_info(struct hinic3_hwdev *hwdev);
++void hinic3_dump_aeq_info(struct hinic3_hwdev *hwdev, FILE *file);
++
++void hinic3_dump_aeq_mbox_info(struct hinic3_hwdev *hwdev,
++			       struct rte_pci_device *pci_dev, FILE *file);
+ 
+ int hinic3_aeq_poll_msg(struct hinic3_eq *eq, uint32_t timeout, void *param);
+ 
+diff --git a/drivers/net/hinic3/base/hinic3_mbox.c b/drivers/net/hinic3/base/hinic3_mbox.c
+index c4ca2ed7ba..6d0d4cce2b 100644
+--- a/drivers/net/hinic3/base/hinic3_mbox.c
++++ b/drivers/net/hinic3/base/hinic3_mbox.c
+@@ -711,6 +711,27 @@ send_tlp_mbox_seg(struct hinic3_mbox *func_to_func, uint64_t header, uint16_t ds
  	return 0;
  }
  
-+static int
-+hinic3_flow_fdir_icmp(const struct rte_flow_item *flow_item,
-+		      struct hinic3_filter_t *filter,
-+		      struct rte_flow_error *error)
++static void hinic3_record_mbox_info(struct hinic3_mbox *func_to_func,
++				    enum hinic3_mod_type mod, uint16_t cmd,
++				    uint8_t msg_id)
 +{
-+	const struct rte_flow_item_icmp *spec_icmp, *mask_icmp;
++	struct mbox_send_info send_mbox;
 +
-+	mask_icmp = (const struct rte_flow_item_icmp *)flow_item->mask;
-+	spec_icmp = (const struct rte_flow_item_icmp *)flow_item->spec;
++	send_mbox.cmd = cmd;
++	send_mbox.mod = mod;
++	send_mbox.send_msg_id = msg_id;
 +
-+	filter->fdir_filter.key_mask.proto = HINIC3_UINT8_MAX;
-+	filter->fdir_filter.key_spec.proto = IPPROTO_ICMP;
++	uint8_t pos = (func_to_func->save_mbox->start + func_to_func->save_mbox->count) %
++		      HINIC3_MBOX_SAVE_NUM;
++	func_to_func->save_mbox->send_info[pos] = send_mbox;
 +
-+	if (!mask_icmp && !spec_icmp)
++	if (func_to_func->save_mbox->count < HINIC3_MBOX_SAVE_NUM)
++		func_to_func->save_mbox->count++;
++	else
++		func_to_func->save_mbox->start = (func_to_func->save_mbox->start + 1) %
++						 HINIC3_MBOX_SAVE_NUM;
++}
++
+ static int
+ send_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type mod,
+ 		struct hinic3_handler_info *handler_info, struct mbox_msg_info *msg_info)
+@@ -724,6 +745,9 @@ send_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type mod,
+ 
+ 	rsp_aeq_id = HINIC3_MBOX_RSP_MSG_AEQ;
+ 
++	hinic3_record_mbox_info(func_to_func, mod, handler_info->cmd,
++				msg_info->msg_id);
++
+ 	/* Set the header message. */
+ 	header = HINIC3_MSG_HEADER_SET(handler_info->in_size, MSG_LEN) |
+ 		 HINIC3_MSG_HEADER_SET(mod, MODULE) |
+@@ -782,6 +806,9 @@ send_tlp_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type mod
+ 
+ 	rsp_aeq_id = HINIC3_MBOX_RSP_MSG_AEQ;
+ 
++	hinic3_record_mbox_info(func_to_func, mod, handler_info->cmd,
++				msg_info->msg_id);
++
+ 	/* Set the header message. */
+ 	header = HINIC3_MSG_HEADER_SET(MBOX_TLP_HEADER_SZ, MSG_LEN) |
+ 		 HINIC3_MSG_HEADER_SET(MBOX_TLP_HEADER_SZ, SEG_LEN) |
+@@ -873,6 +900,7 @@ hinic3_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type mod,
+ 		goto send_err;
+ 	}
+ 
++	func_to_func->mbox_send_cnt++;
+ 	/* Wait for the response message. */
+ 	time = timeout ? timeout : HINIC3_MBOX_COMP_TIME;
+ 	aeq = &func_to_func->hwdev->aeqs->aeq[HINIC3_MBOX_RSP_MSG_AEQ];
+@@ -884,6 +912,7 @@ hinic3_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type mod,
+ 		goto send_err;
+ 	}
+ 
++	func_to_func->mbox_ack_cnt++;
+ 	/* Check whether mod and command of the rsp message match the sent message. */
+ 	if (mod != mbox_for_resp->mod || handler_info->cmd != mbox_for_resp->cmd) {
+ 		PMD_DRV_LOG(ERR,
+@@ -917,6 +946,8 @@ hinic3_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type mod,
+ 		*handler_info->out_size = mbox_for_resp->mbox_len;
+ 	}
+ send_err:
++	if (err != 0)
++		func_to_func->mbox_error = true;
+ 	return err;
+ }
+ 
+@@ -1129,6 +1160,16 @@ hinic3_func_to_func_init(struct hinic3_hwdev *hwdev)
+ 
+ 	hwdev->func_to_func = func_to_func;
+ 	func_to_func->hwdev = hwdev;
++
++	struct save_mbox_info *save_mbox = rte_zmalloc("save_mbox_info",
++						      sizeof(struct save_mbox_info), 0);
++	if (!save_mbox) {
++		err = -ENOMEM;
++		goto alloc_save_mbox_err;
++	}
++
++	func_to_func->save_mbox = save_mbox;
++
+ 	rte_spinlock_init(&func_to_func->mbox_lock);
+ 
+ 	/* Alloc the memory required by the mailbox. */
+@@ -1170,6 +1211,9 @@ hinic3_func_to_func_init(struct hinic3_hwdev *hwdev)
+ 	free_mbox_info(func_to_func->mbox_send);
+ 
+ alloc_mbox_for_send_err:
++	rte_free(save_mbox);
++alloc_save_mbox_err:
++	hwdev->func_to_func = NULL;
+ 	rte_free(func_to_func);
+ 
+ 	return err;
+@@ -1184,5 +1228,6 @@ hinic3_func_to_func_free(struct hinic3_hwdev *hwdev)
+ 	free_mbox_tlp_buffer(func_to_func);
+ 	free_mbox_info(func_to_func->mbox_resp);
+ 	free_mbox_info(func_to_func->mbox_send);
++	rte_free(func_to_func->save_mbox);
+ 	rte_free(func_to_func);
+ }
+diff --git a/drivers/net/hinic3/base/hinic3_mbox.h b/drivers/net/hinic3/base/hinic3_mbox.h
+index df6de062e2..8797c19697 100644
+--- a/drivers/net/hinic3/base/hinic3_mbox.h
++++ b/drivers/net/hinic3/base/hinic3_mbox.h
+@@ -15,6 +15,8 @@
+ 
+ #define HINIC3_MAX_PF_FUNCS 32
+ 
++#define HINIC3_MBOX_SAVE_NUM          20
++
+ /* Message header define. */
+ #define HINIC3_MSG_HEADER_SRC_GLB_FUNC_IDX_SHIFT 0
+ #define HINIC3_MSG_HEADER_STATUS_SHIFT		 13
+@@ -150,8 +152,21 @@ enum hinic3_mbox_cb_state {
+ 	HINIC3_PPF_TO_PF_MBOX_CB_RUNNING
+ };
+ 
++struct mbox_send_info {
++	uint16_t cmd;
++	enum hinic3_mod_type mod;
++	uint8_t send_msg_id;
++};
++
++struct save_mbox_info {
++	struct mbox_send_info send_info[HINIC3_MBOX_SAVE_NUM];
++	uint8_t start;
++	uint8_t count;
++};
++
+ struct hinic3_mbox {
+ 	struct hinic3_hwdev *hwdev;
++	struct save_mbox_info *save_mbox;
+ 
+ 	struct hinic3_send_mbox send_mbox;
+ 
+@@ -163,6 +178,10 @@ struct hinic3_mbox {
+ 	enum mbox_event_state event_flag;
+ 	/* Lock for mbox event flag. */
+ 	rte_spinlock_t mbox_lock;
++
++	uint64_t mbox_send_cnt;
++	uint64_t mbox_ack_cnt;
++	bool mbox_error;
+ };
+ 
+ int hinic3_mbox_func_aeqe_handler(struct hinic3_hwdev *hwdev, uint8_t *header,
+diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
+index ef0ac1fdcd..4f337791fc 100644
+--- a/drivers/net/hinic3/hinic3_ethdev.c
++++ b/drivers/net/hinic3/hinic3_ethdev.c
+@@ -10,6 +10,7 @@
+ #include "base/hinic3_eqs.h"
+ #include "base/hinic3_cmdq.h"
+ #include "base/hinic3_hwdev.h"
++#include "base/hinic3_mbox.h"
+ #include "base/hinic3_hwif.h"
+ #include "base/hinic3_hw_cfg.h"
+ #include "base/hinic3_hw_comm.h"
+@@ -3571,6 +3572,32 @@ hinic3_fec_capability_get(struct rte_eth_dev *dev,
+ 	return HINIC3_FEC_CAPA_NUM_PER_SPEED;
+ }
+ 
++static int
++hinic3_eth_dev_priv_dump(struct rte_eth_dev *dev, FILE *file)
++{
++	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
++	struct rte_pci_device *pci_dev = RTE_CLASS_TO_BUS_DEVICE(dev, *pci_dev);
++	struct hinic3_hwdev *hwdev;
++
++	if (file == NULL)
++		return -EINVAL;
++
++	hwdev = nic_dev->hwdev;
++	if (hwdev == NULL || hwdev->func_to_func == NULL)
 +		return 0;
 +
-+	if (!mask_icmp || !spec_icmp) {
-+		rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ITEM,
-+				   flow_item,
-+				   "Invalid fdir filter icmp mask or spec");
-+		return -rte_errno;
-+	}
++	fprintf(file, "mbox_send_cnt: %" PRIu64 "\n",
++		hwdev->func_to_func->mbox_send_cnt);
++	fprintf(file, "mbox_ack_cnt: %" PRIu64 "\n",
++		hwdev->func_to_func->mbox_ack_cnt);
 +
-+	/* Only the protocol number can be matched, others should be masked. */
-+	if (mask_icmp->hdr.icmp_type || mask_icmp->hdr.icmp_code ||
-+	    mask_icmp->hdr.icmp_cksum || mask_icmp->hdr.icmp_ident ||
-+	    mask_icmp->hdr.icmp_seq_nb) {
-+		rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ITEM,
-+				   flow_item,
-+				   "Not supported by fdir filter, icmp only support protocol number");
-+		return -rte_errno;
-+	}
++	hinic3_dump_aeq_info(hwdev, file);
++	if (hwdev->func_to_func->mbox_error)
++		hinic3_dump_aeq_mbox_info(hwdev, pci_dev, file);
 +
 +	return 0;
 +}
 +
- /**
-  * Parse the pattern of network traffic and apply the parsing result to the
-  * traffic filter.
-@@ -464,6 +514,12 @@ hinic3_flow_parse_fdir_pattern(__rte_unused struct rte_eth_dev *dev,
- 				return -rte_errno;
- 			break;
+ static const struct eth_dev_ops hinic3_pmd_ops = {
+ 	.dev_configure                 = hinic3_dev_configure,
+ 	.dev_infos_get                 = hinic3_dev_infos_get,
+@@ -3620,6 +3647,7 @@ static const struct eth_dev_ops hinic3_pmd_ops = {
+ 	.fec_get_capability            = hinic3_fec_capability_get,
+ 	.fec_get                       = hinic3_fec_get,
+ 	.fec_set                       = hinic3_fec_set,
++	.eth_dev_priv_dump             = hinic3_eth_dev_priv_dump,
+ };
  
-+		case RTE_FLOW_ITEM_TYPE_ICMP:
-+			err = hinic3_flow_fdir_icmp(flow_item, filter, error);
-+			if (err)
-+				return -rte_errno;
-+			break;
-+
- 		default:
- 			break;
- 		}
+ static const struct eth_dev_ops hinic3_pmd_vf_ops = {
+@@ -3664,6 +3692,7 @@ static const struct eth_dev_ops hinic3_pmd_vf_ops = {
+ 	.mac_addr_add                  = hinic3_mac_addr_add,
+ 	.set_mc_addr_list              = hinic3_set_mc_addr_list,
+ 	.flow_ops_get                  = hinic3_dev_filter_ctrl,
++	.eth_dev_priv_dump             = hinic3_eth_dev_priv_dump,
+ };
+ 
+ static void hinic3_nic_tx_rx_ops_init(struct hinic3_nic_dev *nic_dev)
 -- 
 2.33.0
 
