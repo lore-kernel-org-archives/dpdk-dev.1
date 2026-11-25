@@ -2,97 +2,97 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D34F606A321
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 14:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A51606A688
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 15:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=ZPqVptm3;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=O4rWPZL2
+	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=KWVtmZlP;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=WBiwVQaV
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B553A4027A;
-	Wed, 25 Nov 2026 15:57:42 +0100 (CET)
-Received: from fout-a3-smtp.messagingengine.com
- (fout-a3-smtp.messagingengine.com [103.168.172.146])
- by mails.dpdk.org (Postfix) with ESMTPS id 4EA4940151
- for <dev@dpdk.org>; Wed, 25 Nov 2026 15:57:41 +0100 (CET)
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
- by mailfout.phl.internal (Postfix) with ESMTP id 36EACEC0CBC
- for <dev@dpdk.org>; Wed, 25 Nov 2026 09:57:40 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-04.internal (MEProxy); Wed, 25 Nov 2026 09:57:40 -0500
+	by mails.dpdk.org (Postfix) with ESMTP id EE3614027A;
+	Wed, 25 Nov 2026 16:23:24 +0100 (CET)
+Received: from fhigh-a1-smtp.messagingengine.com
+ (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+ by mails.dpdk.org (Postfix) with ESMTPS id 8440640151
+ for <dev@dpdk.org>; Wed, 25 Nov 2026 16:23:23 +0100 (CET)
+Received: from phl-compute-08.internal (phl-compute-08.internal [10.202.2.48])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id ADAAE14003B2
+ for <dev@dpdk.org>; Wed, 25 Nov 2026 10:23:22 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-08.internal (MEProxy); Wed, 25 Nov 2026 10:23:22 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1795618660;
- x=1795705060; bh=4zp12ZhW35PA0y7atjdv/sUSYYATGkSSdRaKzoqV1YM=; b=
- ZPqVptm3kyXU/lKfC+UE8X4reNa/vPbgITPz2Yad85Y3Y3Ija2se6zzHV3ur26c6
- 0U2mnr87aM78dUkgv7LdAheVCekHOG5w9YOz0UG4yDGYDf0R+7wpEdqFXpQ5E+lZ
- VfgDmFSle54DSj49dtzskPRB5XXS2lVD64YVUoNa8Bytl5/udfwuZsbQd2QPezz/
- rc+xd06YoEo6lH4EhVfaGTtHl0EjDpuVkl7JcJvvvlT0spvk2c7tUKh7Y+RP0k3W
- 5cp6rfafFt/CpGHlUm8hR69z8xaxOoyCnFzaxdklXCf034kqChOOBDMIPm1lybbx
- q5Akzn7DfEYruDkRxcZdoA==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1795620202;
+ x=1795706602; bh=QqiMBkYownJ199Cc0JzODYupyMGaqNYCj8vg391cnG8=; b=
+ KWVtmZlPaBKA1KmNkwS+wCFGBD/rB0OLKy7/fH4U6aaDYgBqt5hRIsBv8v1J4Jhl
+ ulDeQxqxbT+4+6hNU3TlQI3rHs5TFaFjnIN9EBfXPYy6FENlMQZqAvrELPyeOnMi
+ suRmzRUjLxGdw0Gh6Q7jU3gxu5quC/K3NrWLavUGDYrAHi7ORKKTc+Ro5n90Eq4m
+ AI1/ujyAHkeVBj70Fmd0uxFx/wq0WZsN8aIMIzfrfqWWb9H7wC2J9PGAHDAe9thf
+ K5CXLynW4JiR2tS6pk435uT4TmtH5HSm86DswzfhpuF9tf3M2gI4NwdHsa/MBefQ
+ rMUEOrj9meeCWnEzoStNMw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795618660; x=
- 1795705060; bh=4zp12ZhW35PA0y7atjdv/sUSYYATGkSSdRaKzoqV1YM=; b=O
- 4rWPZL2AhSZt7RWgqmZqcB/LOMo8vPpRKhdF5hl7xvgobQ9Ai+LUC/slwi6Lorg7
- Y9imNSaxumdDkUqslgwfjlM5sgtChf/UT04jdn8EExgABDAB1sBl9ULz594tdA/8
- ZJAw2gL2S3bKC2hF1fMCPJQrGAPq7FYLuHw6eiLPGpSKHwtIspB1hxE6RUFW5XXa
- TkEx7v81NSV2mQCrSshnPk/yUGQ4BcqgvuB3QTxWWNefzkmnaofmnLXu6/EDDY+n
- tFZ8c43STAJYhHyvYG+69LRRB6ro89mn2uJJ1WQ2fuaNRIayXKqMbylboCMllrw0
- NmsqpCFQdyrib9Eq1ouaA==
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795620202; x=
+ 1795706602; bh=QqiMBkYownJ199Cc0JzODYupyMGaqNYCj8vg391cnG8=; b=W
+ BiwVQaV021IU5m738jjv9rQb3BcJks2sL8W6xhBEHKG6A8o21crbMbLEDyMzGWDl
+ x5QTTnQkXycbpYAM431TxITu4U8ZZA6dKq+oz0V+dv8hcvrzTY6XkT6y2LNnpwrA
+ 0NgrBdAg/ZuP0UbFIER7vMByLKaDbV1TozBguXiAnZMThsHY+n4cwM16lhns0YaI
+ 9GlPtDneFu/EtAORGmLP/vOpzGN7NWBTGWSPxtzQg+Gg5+Lb8kBkblqvdd2ZP2gh
+ bmPD6U2dJfVitTBW9pRAwU5NsxX/b5fB8pgF+K586+3Zk2AzftcMo6dPewFsBDGO
+ oGeBHmowCCd3XbVPVMpyQ==
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
  repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
  action=sign d=monjalon.net a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1795618660; d=monjalon.net;
+DKIM2-Signature: i=1; m=1; t=1795620202; d=monjalon.net;
  mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
- s=fm3:rsa-sha256:W2PEd6AqzSxl/c2bviCPegceYYyJybtFjT9hTrTnPobnUn9
- HN2KnyIrsDE4pqS+v9OgV6ziQBZ1wVvuK43kzuBK15r4qUTxY/BN0TxrP+lnb8Pv
- tCtS/8zGK0UbGrRMDfrLtS4wE6L9vmJB62IpicWGK+5Qy2KCcV2KWNU7Vo8/4Oq1
- NE6V5IfKumF93/YSPuuY6TZSuwFfJOmNbIrjquor9PZRNOV/vOv7DwbSmXEK3Bye
- 3odmXYyvwAf9XDBuMLKhNeyqaVeu0ChUlix1uygmGf/6RCKI8vhSQzwzqmscbuBZ
- U3VNY2wSA2lTaSq6wlAFGq4tZAOK8FKwb+j4UHQ==;
+ s=fm3:rsa-sha256:IMu8FJ6Sop8Hs/e5XjKW6kqQndA6kaU0q/O3G9/ntTdnRFG
+ wZjvKKxveNBOzeTDOI05OaYdFDFtYz6JEETuYak39dxy2b7uQEx79/1ivn0Z5h47
+ dqZIHtArXlRq7f0S9tQgVgIkPv4xwsQHk3vKKJGVfEvxPwhQO/BkIpIn+2Z9Pyq1
+ YTIofUfOjn7bv3GtpXhyOkOZ4UO0yhoZNC5jSPKIIHpktXH0c8/R6uM0IGs3I3s+
+ KkVyH44Z/qaLNrA5NNBwJl1fGZH8yhGJbKxmoIs1ivfPSx6cYOn0kMsbHHvL/xza
+ QOIJ0P6knWI5XmGKFoLD4eUdMNwNZiGtHIxD8yQ==;
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
  repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
  action=mi-m=1; hc=12;
  hn=cc,content-transfer-encoding,content-type,date,feedback-id,
  from,in-reply-to,message-id,mime-version,references,subject,to;
 Message-Instance: m=1;
- h=sha256:WorORjxpDoqJuqn4ML8GtDEqVD+ZU/Sg/m/jAbO+Vx8=:+f80fFrpYN8ikeSd6Be4K2NiYb8wmHsEd0KwoVSK1KU=;
-X-ME-Sender: <xms:Y_cGa728MK3HUAy3AKQG7sJ6DFnJygfqFh1MhONUrLdkPWguuINgug>
- <xme:Y_cGa-YVJgmFNtFsENMS3t2SYPUF71upMmPuQkP5rtzXy3BFrsmImumdCaGIlN4nt
- zNNaymEEPGB2nUKWypP4leQcerHh3iktZOsvVL4eFisQcqmg7KlmX8>
-X-ME-Received: <xmr:Y_cGa7CpgJwJo0SOC1dibGo1dHapN6bc16vwXSLmea2xg0z9HarIEtPMGd0EPdj74XUI5oeE5-XqwVg3B9lThis>
-X-ME-Proxy-Cause: dmFkZTEkeq5KEvMS1zDt+SUnZPZwuqVpqIFdG8GCqVhmA+IvrY2+aUSMgL38bdHKXTupiz
- W21PEK28WXO5X4Z96w6qctP+uCIFch69QiF2RKjizZ9NookQKxrQcch9Fi9iEa0LlxarEi
- TQ5M4WVcA9qphFMvDGPb1auHASk41AiKrW6cOIBVwFQqm0rxdXz49xcfcFvW5QABgB0iTy
- 0mzJrsrdq0Spe26kO9h9VHxPMoJmcgiG8oKON6kjWHvsOtCRcob9y9t1nymlNF4CNtsOKR
- Z89teIgZb46x46edQbvq6v8R7UZ887bj1EkUanOda8DmwuGKBWd+jbWm5sk6DiEriDXtEN
- OUAvKB2rbIo0KAwcK0uA5OOXOKBPvei1MBEYkIbKcMxYawiawoYziUxX/uESNGoUB5jRfb
- DjlhS5fPqXyGu4Jx20+/XYk1pOelXTVhA9T+grKQbRUYAv779zYHP8EaRKCx73gGY8wIPL
- ZRWQEiUawChxcc6mT5Z76eLvU/MCR0mBfPi4FrzFbbQyvG8xWtEvlFt6cdad2hWoHtZaLW
- s+invGvbDl+/hx62y3BRsOKkrn3ZUTaKyS9odM+tPYh7n1kPjQBf32e8lLmf79TRoBE92j
- VOiLQEmyRDniYTsUldHrney4JmWDwYvkiBnImFLJ7g8fTiSDTkBh7Dql1uMg
-X-ME-Proxy: <xmx:Y_cGa49XTvv6QTCwA_OE_LuJqXmDEEp5BfRpFSDE0xaEhnp-Sb0p0w>
- <xmx:Y_cGaz_KV1GQXrdFTOrUv0NZqFlxD07ICbZQe8PteP2etu_eLa9MzA>
- <xmx:Y_cGa3c69H7RyEdm75xEUtq6w3yWxwagOWVULtS-uJU6vnnYZ61Jsw>
- <xmx:Y_cGa0FKmfx6Eb3Sa8jdHiCYdGk774IRPzV-EMxmTwpIvHdwHCxdeg>
- <xmx:ZPcGa1M3NVc47W8qioTt5lE3PiqepddbwQWkwLptuWfKX4m14CpvPZOG>
+ h=sha256:pfFjtbExfsYoEpvTT0X9L7Mc/qrb7ppX8r496VurALM=:hrlEOMN3cvh480b+HplSR/lEQxDjRVZktB6XQPBKqO0=;
+X-ME-Sender: <xms:af0Ga9XbfcZkdySpofxW5b38LG20Oi50dVHJg0dQ9pWsddKtmcICfw>
+ <xme:af0Gax7jC5Ph9NdC8bR9Kaf1BTI-xCClGA7Rdok3rH_U45I0zDc06QLmRNbjYi_zZ
+ 8VlP22vTIuOoSz64FByrXbbxIU-t_-oc_3fJ0oVVO137Ckaz_b4HZs>
+X-ME-Received: <xmr:af0Ga4haWYkuIadlJZkzIarwCmCvTxd539L45-BqdrHG3aQ0M67_TpbzVinb9ORZW2Uw_0fQ98TSEDbB-tQTPqc>
+X-ME-Proxy-Cause: dmFkZTFl4YcUVIJxaCjw7vxqe3MnmGkZnlOvRkBTuBPTjzXpJJMsmGFoQaROGVvTrcjtTb
+ c52Ei/CV7U+jhRZbDDdNVKhqn9HZf+WzMrdV/eN2lr84J4btAtKumjrXLFJXeFfn/kCpzB
+ iI44gbjUBW9nF1s2FGsh9OoVxs56ZZ/R9u2dT+Y7rkdG3HzeHcfp2FKEuVVk5dATJgamsS
+ jZCkNd1IBg5p0DGASgSjyRducoaiJrJTF/JH5IfF3reJQ7b+e9huOMMPk3fGQmRGclCFpd
+ nTquGqBnVY4FP0Wv5heLLhcs350G8JysFEltMtEiWK6lGEifDyFgk3VttMa01jYbtRZ0Uz
+ dsjw5L4YfPwQwEZKPch8Md3wkS4UciyxHb1o26cVGa7IA4P0MF9BCjTLZBmdfW4D6q4nRL
+ LC54+kUXW/+gbMhuurO8ku19GOTFvbY19LS9qqmEdY17L3YbwUKrdZKT2QZDTvPmXSsIjx
+ U5CNLg+e7JZS+orELPs538LG8rgruVxgDGOBAaup7/5xG2OX//Op75UyKb6pnnywJ6oiy3
+ RBsEm5GLilKJU5ToKoMrJbwSfO0ip0/lPcF5tQiLXzhERzT/DDv1rFZSfw0izguEAD0F2H
+ bPwGxSYAO13ndCGaeQHIb8vopprfnlQVidbA3lTHitfqK+T11kv9gaM/LscA
+X-ME-Proxy: <xmx:af0Ga4ezk9n5GC3H-F8aLsqPCm0EWuwQODOA1T8twBLGSN-OmVD61w>
+ <xmx:av0Ga9fCIB6BtRMZX4_Uo2faIqIi_5z8UC-F5JBxGChfAxyZmo6NHQ>
+ <xmx:av0Gay-j_jvpk9oGs2vzecYLyVeGr1_ResMi4-XOUQzNkD1KAU5bZg>
+ <xmx:av0Ga5kwve3cJIfbPrfKpGOT5BqxNubHF7gNdCLyTclC5PzYHgU_Kw>
+ <xmx:av0Ga8tEL4AFbXyJwRsaVUXg70yIhls0oSMq0kcY-mZedfg1vTjcu0eQ>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 25 Nov 2026 09:57:39 -0500 (EST)
+ 25 Nov 2026 10:23:21 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: Marat Khalili <marat.khalili@huawei.com>
 Cc: dev@dpdk.org, bruce.richardson@intel.com
-Subject: Re: [PATCH v4 5/7] doc: add missing globs to doxy-api.conf.in
-Date: Wed, 25 Nov 2026 15:57:36 +0100
-Message-ID: <o5BaC-csTbqS-mz3dH7AGw@monjalon.net>
-In-Reply-To: <20260721145841.7424-6-marat.khalili@huawei.com>
+Subject: Re: [PATCH v4 6/7] doc: add missing drivers to doxy-api.conf.in
+Date: Wed, 25 Nov 2026 16:23:19 +0100
+Message-ID: <6TrJKj8QS2WF-RPENBY-1Q@monjalon.net>
+In-Reply-To: <20260721145841.7424-7-marat.khalili@huawei.com>
 References: <20260707085048.15295-1-marat.khalili@huawei.com>
  <20260721145841.7424-1-marat.khalili@huawei.com>
- <20260721145841.7424-6-marat.khalili@huawei.com>
+ <20260721145841.7424-7-marat.khalili@huawei.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
@@ -106,26 +106,54 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=4.0.1
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
 21/07/2026 16:58, Marat Khalili:
-> Public headers starting from `cmdline` (except for `cmdline.h` itself)
-> and `bpf_def.h` were not previously included in the documentation build.
-> 
-> Add missing file patterns (globs) to include all public headers.
-> 
-> Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
-> ---
->  FILE_PATTERNS           = rte_*.h \
-> -                          cmdline.h
-> +                          cmdline*.h \
-> +                          bpf_def.h
+> +                          @TOPDIR@/drivers/baseband/acc \
+> +                          @TOPDIR@/drivers/baseband/fpga_5gnr_fec \
+> +                          @TOPDIR@/drivers/bus/pci \
+>                            @TOPDIR@/drivers/bus/vdev \
+> +                          @TOPDIR@/drivers/bus/vmbus \
 
-bpf_def.h is private now.
+There is a deprecation notice for rte_bus_vmbus.h
+
+
+>                            @TOPDIR@/drivers/common/dpaax \
+>                            @TOPDIR@/drivers/crypto/cnxk \
+>                            @TOPDIR@/drivers/crypto/scheduler \
+> -                          @TOPDIR@/drivers/event/dlb2 \
+>                            @TOPDIR@/drivers/event/cnxk \
+> +                          @TOPDIR@/drivers/event/dlb2 \
+>                            @TOPDIR@/drivers/mempool/cnxk \
+>                            @TOPDIR@/drivers/mempool/dpaa2 \
+>                            @TOPDIR@/drivers/net/ark \
+> +                          @TOPDIR@/drivers/net/avp \
+
+rte_ files in avp driver are not supposed to be exported I think.
+
+
+>                            @TOPDIR@/drivers/net/intel/iavf \
+>                            @TOPDIR@/drivers/net/intel/ixgbe \
+>                            @TOPDIR@/drivers/net/mlx5 \
+> +                          @TOPDIR@/drivers/net/ntnic \
+> +                          @TOPDIR@/drivers/net/ring \
+>                            @TOPDIR@/drivers/net/softnic \
+> +                          @TOPDIR@/drivers/net/txgbe \
+
+There is no function in rte_pmd_txgbe.h, it looks like a mistake.
+
+> +                          @TOPDIR@/drivers/net/vhost \
+> +                          @TOPDIR@/drivers/power/kvm_vm \
+> +                          @TOPDIR@/drivers/raw/cnxk_gpio \
+>                            @TOPDIR@/drivers/raw/dpaa2_cmdif \
+>                            @TOPDIR@/drivers/raw/ifpga \
+> +                          @TOPDIR@/drivers/raw/ntb \
+
+The rest are good additions.
 
 
