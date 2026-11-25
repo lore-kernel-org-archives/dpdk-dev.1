@@ -2,44 +2,44 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBDC606A31E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 17:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5B9606A31E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 17:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=YXqQbrc8
+	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=DVKlM46n
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E0D20406B6;
-	Wed, 25 Nov 2026 18:05:55 +0100 (CET)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.2])
- by mails.dpdk.org (Postfix) with ESMTPS id 4AA4A40430
- for <dev@dpdk.org>; Wed, 25 Nov 2026 18:05:49 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 1B07940A6E;
+	Wed, 25 Nov 2026 18:05:57 +0100 (CET)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.222])
+ by mails.dpdk.org (Postfix) with ESMTPS id 0F84840615
+ for <dev@dpdk.org>; Wed, 25 Nov 2026 18:05:50 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=gMLc7VI/If+sEOavHaiDT82jDhZ4oBxO8HDMkN2ylHA=;
- b=YXqQbrc8h3QS2GizLhBLveZLi1pvZJcaYt9oiiuFLtN8x9dTMGn1bc3bscWS2x
- AzCyBWk5IVkc1AmXD1VKM+7TrDv1mpg0D0jp211mlgolecRZekqgsx3uYuTrU0Dk
- t90I1OGp04hq1quB7CJRM8jrOvsdmFP8oAgl5rFbLy6xs=
+ MIME-Version; bh=n2YCJRZ4g15gme7dY1J5Uq73M/6lbLVFGeOvO7OjG9I=;
+ b=DVKlM46nmdTMPs7I/b578xtCQoArY2fH57+nhKsm73arGTZRBdAL51053y6qdc
+ dPfUaPn+an1ioiX9ZALvhkayClQhiyGFXrqdslr77BR2uM6hfatqvX4mKHw2rHY5
+ GaCCnseI1iHMCa4h1kzs9uLb2pNRvLnLRRDl2HdnQXbm8=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
  Anatoly Burakov <anatoly.burakov@intel.com>,
  Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v9 07/30] net/hinic3: clear stale Rx hardware CI on queue reset
-Date: Thu, 26 Nov 2026 01:04:01 +0800
-Message-ID: <20261125170425.5430-8-yejiacheng4@h-partners.com>
+Subject: [PATCH v9 13/30] net/hinic3: fix offload and cmdq/compact CQE config
+Date: Thu, 26 Nov 2026 01:04:07 +0800
+Message-ID: <20261125170425.5430-14-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.56.0.windows.2
 In-Reply-To: <20261125170425.5430-1-yejiacheng4@h-partners.com>
 References: <20261125170425.5430-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: As8vCgDn77FiFQdrEdNeBQ--.6538S9
-X-Coremail-Antispam: 1Uf129KBjvJXoW7KF18Cw45Kr1rGr13Zr13Jwb_yoW8GrW5pF
- WDGFWDAr4kKF42qwsxAa1fZa45Jws5try7Ka95J3WY9r45AFyFya45tFW0vr4UtrZ3JF42
- vF47Jr1vg3Z0v3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jewZcUUUUU=
+X-CM-TRANSID: As8vCgDn77FiFQdrEdNeBQ--.6538S15
+X-Coremail-Antispam: 1Uf129KBjvJXoW3JF43Cw15Ar4Utw4furWrGrg_yoW7Kr4UpF
+ 4UAayxJrWDtF4UXw1kua1xCFy5Xw4fG3yjk3WFya4Y9F98ZF47Za43GFWIvr1aq3y7A3W2
+ vr1DZ39Fkr10qwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jOYFAUUUUU=
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNQr7BmsHFWoftAAA36
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiMgz8B2sHFWwaLwAA3l
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,42 +56,135 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-In compact CQE mode the driver relies on the hardware CI written back by
-the NIC to decide whether a completion is pending. The hardware does not
-clear that write-back memory on reset, so after a port stop/start the
-stale value left by the previous session makes the driver take the whole
-ring as completed and report q_depth packets that were never received
-when the next packet arrives.
+Some offload capabilities are reported based on the wrong conditions:
+VXLAN TNL TSO is never advertised, GENEVE/IPIP TSO is gated by the HTN
+cmdq flag instead of those features' own flags, and outer UDP checksum
+offload is not advertised although the Tx path handles it. The cmdq
+mode/depth are also set in the wrong helper and the compact CQE flag is
+not written to firmware at vport enable.
 
-Clear the CI write-back memory in hinic3_reset_rx_queue() so the ring is
-re-armed with a fresh CI.
+Advertise the missing offloads, gate tunnel TSO by the correct flags, set
+cmdq mode/depth in hinic3_set_cmdq_depth(), and forward the compact CQE
+flag.
 
+The stale QinQ entries are dropped from features/hinic3.ini and the
+Features list in hinic3.rst since the PMD does not advertise those
+offloads.
+
+Fixes: aa31be38544e ("net/hinic3: enhance command queue for new SPx series NIC")
 Fixes: c1537bf6c033 ("net/hinic3: support Compact CQE in init")
-
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- drivers/net/hinic3/hinic3_ethdev.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ doc/guides/nics/features/hinic3.ini      | 1 -
+ doc/guides/nics/hinic3.rst               | 2 +-
+ drivers/net/hinic3/base/hinic3_hw_comm.c | 9 +++++----
+ drivers/net/hinic3/base/hinic3_nic_cfg.c | 1 +
+ drivers/net/hinic3/hinic3_ethdev.c       | 7 +++++--
+ drivers/net/hinic3/hinic3_ethdev.h       | 1 -
+ 6 files changed, 12 insertions(+), 9 deletions(-)
 
+diff --git a/doc/guides/nics/features/hinic3.ini b/doc/guides/nics/features/hinic3.ini
+index 6cdd240a82..3405a837bf 100644
+--- a/doc/guides/nics/features/hinic3.ini
++++ b/doc/guides/nics/features/hinic3.ini
+@@ -25,7 +25,6 @@ VLAN filter          = Y
+ Flow control         = Y
+ CRC offload          = Y
+ VLAN offload         = Y
+-QinQ offload         = P
+ L3 checksum offload  = Y
+ L4 checksum offload  = Y
+ Inner L3 checksum    = P
+diff --git a/doc/guides/nics/hinic3.rst b/doc/guides/nics/hinic3.rst
+index d07e8605c0..68e67fbcff 100644
+--- a/doc/guides/nics/hinic3.rst
++++ b/doc/guides/nics/hinic3.rst
+@@ -16,7 +16,7 @@ Features
+ - Receiver Side Scaling (RSS)
+ - Flow filtering
+ - Checksum offload
+-- VLAN/QinQ stripping and inserting
++- VLAN stripping and inserting
+ - TSO offload
+ - Promiscuous mode
+ - Port hardware statistics
+diff --git a/drivers/net/hinic3/base/hinic3_hw_comm.c b/drivers/net/hinic3/base/hinic3_hw_comm.c
+index 6541bc0428..2749faeba1 100644
+--- a/drivers/net/hinic3/base/hinic3_hw_comm.c
++++ b/drivers/net/hinic3/base/hinic3_hw_comm.c
+@@ -276,10 +276,6 @@ hinic3_set_root_ctxt(struct hinic3_hwdev *hwdev, uint32_t rq_depth,
+ 	root_ctxt.rq_depth = (uint16_t)rte_log2_u32(rq_depth);
+ 	root_ctxt.rx_buf_sz = get_hw_rx_buf_size(hwdev, rx_buf_sz);
+ 	root_ctxt.sq_depth = (uint16_t)rte_log2_u32(sq_depth);
+-	root_ctxt.cmdq_mode = hwdev->cmdqs->cmdq_mode;
+-
+-	if (hwdev->cmdqs->cmdq_mode == HINIC3_ENHANCE_CMDQ)
+-		root_ctxt.cmdq_depth--;
+ 
+ 	err = hinic3_msg_to_mgmt_sync(hwdev, HINIC3_MOD_COMM,
+ 				      HINIC3_MGMT_CMD_SET_VAT,
+@@ -334,6 +330,11 @@ hinic3_set_cmdq_depth(struct hinic3_hwdev *hwdev, uint16_t cmdq_depth)
+ 	root_ctxt.set_cmdq_depth = 1;
+ 	root_ctxt.cmdq_depth = (uint8_t)rte_log2_u32(cmdq_depth);
+ 
++	root_ctxt.cmdq_mode = hwdev->cmdqs->cmdq_mode;
++
++	if (root_ctxt.cmdq_mode == HINIC3_ENHANCE_CMDQ)
++		root_ctxt.cmdq_depth--;
++
+ 	err = hinic3_msg_to_mgmt_sync(hwdev, HINIC3_MOD_COMM,
+ 				      HINIC3_MGMT_CMD_SET_VAT,
+ 				      &root_ctxt, sizeof(root_ctxt),
+diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.c b/drivers/net/hinic3/base/hinic3_nic_cfg.c
+index 1520f88a1b..fb9b6d4d19 100644
+--- a/drivers/net/hinic3/base/hinic3_nic_cfg.c
++++ b/drivers/net/hinic3/base/hinic3_nic_cfg.c
+@@ -455,6 +455,7 @@ hinic3_set_vport_enable(struct hinic3_hwdev *hwdev, bool enable)
+ 	en_state.func_id = hinic3_global_func_id(hwdev);
+ 	en_state.state = enable ? 1 : 0;
+ 	en_state.num_qps = nic_dev->num_rqs;
++	en_state.rx_compact_wqe_en = HINIC3_SUPPORT_RX_HW_COMPACT_CQE(nic_dev);
+ 
+ 	err = hinic3_msg_to_mgmt_sync(hwdev, HINIC3_MOD_L2NIC,
+ 				      HINIC3_NIC_CMD_SET_VPORT_ENABLE,
 diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index eb5ddd9de6..d9821d1c9f 100644
+index 432278a0f2..5e8c143696 100644
 --- a/drivers/net/hinic3/hinic3_ethdev.c
 +++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -884,6 +884,14 @@ hinic3_reset_rx_queue(struct rte_eth_dev *dev)
- 		rxq->prod_idx = 0;
- 		rxq->delta = rxq->q_depth;
- 		rxq->next_to_update = 0;
-+
-+		/*
-+		 * Hardware does not clear the CI write-back memory on reset, so
-+		 * the stale hw_ci must be cleared as well, otherwise the driver
-+		 * may treat queued mbufs as completed after restart.
-+		 */
-+		if (rxq->rq_ci != NULL)
-+			memset(rxq->rq_ci, 0, sizeof(*rxq->rq_ci));
- 	}
+@@ -672,6 +672,8 @@ hinic3_dev_tnl_tso_support(struct rte_eth_dev_info *info, struct hinic3_nic_dev
+ 		info->tx_offload_capa |= RTE_ETH_TX_OFFLOAD_GENEVE_TNL_TSO;
+ 	if (HINIC3_SUPPORT_IPXIP_OFFLOAD(nic_dev))
+ 		info->tx_offload_capa |= RTE_ETH_TX_OFFLOAD_IPIP_TNL_TSO;
++	if (HINIC3_SUPPORT_VXLAN_OFFLOAD(nic_dev))
++		info->tx_offload_capa |= RTE_ETH_TX_OFFLOAD_VXLAN_TNL_TSO;
  }
  
+ /**
+@@ -713,9 +715,10 @@ hinic3_dev_infos_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *info)
+ 		RTE_ETH_TX_OFFLOAD_UDP_CKSUM | RTE_ETH_TX_OFFLOAD_TCP_CKSUM |
+ 		RTE_ETH_TX_OFFLOAD_SCTP_CKSUM |
+ 		RTE_ETH_TX_OFFLOAD_OUTER_IPV4_CKSUM |
++		RTE_ETH_TX_OFFLOAD_OUTER_UDP_CKSUM |
+ 		RTE_ETH_TX_OFFLOAD_TCP_TSO | RTE_ETH_TX_OFFLOAD_MULTI_SEGS;
+-	if (nic_dev->feature_cap & NIC_F_HTN_CMDQ)
+-		hinic3_dev_tnl_tso_support(info, nic_dev);
++
++	hinic3_dev_tnl_tso_support(info, nic_dev);
+ 
+ 	info->hash_key_size = HINIC3_RSS_KEY_SIZE;
+ 	info->reta_size = HINIC3_RSS_INDIR_SIZE;
+diff --git a/drivers/net/hinic3/hinic3_ethdev.h b/drivers/net/hinic3/hinic3_ethdev.h
+index 8bbab2ad53..f4d8c16640 100644
+--- a/drivers/net/hinic3/hinic3_ethdev.h
++++ b/drivers/net/hinic3/hinic3_ethdev.h
+@@ -24,7 +24,6 @@
+ #define HINIC3_PKT_TX_TCP_CKSUM		RTE_MBUF_F_TX_TCP_CKSUM
+ #define HINIC3_PKT_TX_IP_CKSUM		RTE_MBUF_F_TX_IP_CKSUM
+ #define HINIC3_PKT_TX_VLAN_PKT		RTE_MBUF_F_TX_VLAN
+-#define HINIC3_PKT_TX_QINQ_PKT		RTE_MBUF_F_TX_QINQ
+ #define HINIC3_PKT_TX_L4_MASK		RTE_MBUF_F_TX_L4_MASK
+ #define HINIC3_PKT_TX_SCTP_CKSUM	RTE_MBUF_F_TX_SCTP_CKSUM
+ #define HINIC3_PKT_TX_IPV6		RTE_MBUF_F_TX_IPV6
 -- 
 2.33.0
 
