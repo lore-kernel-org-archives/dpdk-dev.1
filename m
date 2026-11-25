@@ -2,44 +2,100 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1152D606A31E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 17:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CACB606A31E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 18:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=KT95qdFQ
+	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=goHuQu6G;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=PMvN7ADs
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EA15740EF0;
-	Wed, 25 Nov 2026 18:06:17 +0100 (CET)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.3])
- by mails.dpdk.org (Postfix) with ESMTPS id 32BD340DF6
- for <dev@dpdk.org>; Wed, 25 Nov 2026 18:06:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=BHuzpZEFF93sFZG3DpXI+xBG7wNeRa3TuD1qcfIhPX4=;
- b=KT95qdFQpI9vLvLyoCRaWCSSUmanJsczAIw83PN5k1AP3dmd9+3B+a8tRlJC5t
- E3Kmn74E8Lbd8/YfwVe5d/ClGCBTKIVKBhKkeF3Wi6suErYgrbBq8T5fEuykTJ4u
- XXDEeef4wNdvyCgin0i1nqkSqDRW33Yc3qGeAPyG/xGpI=
-From: Jiacheng Ye <yejiacheng4@h-partners.com>
-To: dev@dpdk.org
-Cc: Feifei Wang <wangfeifei40@huawei.com>,
- Thomas Monjalon <thomas@monjalon.net>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v9 20/30] net/hinic3: update RSS hash type configuration
-Date: Thu, 26 Nov 2026 01:04:14 +0800
-Message-ID: <20261125170425.5430-21-yejiacheng4@h-partners.com>
-X-Mailer: git-send-email 2.56.0.windows.2
-In-Reply-To: <20261125170425.5430-1-yejiacheng4@h-partners.com>
-References: <20261125170425.5430-1-yejiacheng4@h-partners.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 675DB402B2;
+	Wed, 25 Nov 2026 19:02:45 +0100 (CET)
+Received: from fout-b5-smtp.messagingengine.com
+ (fout-b5-smtp.messagingengine.com [202.12.124.148])
+ by mails.dpdk.org (Postfix) with ESMTPS id 219DC40274
+ for <dev@dpdk.org>; Wed, 25 Nov 2026 19:02:44 +0100 (CET)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfout.stl.internal (Postfix) with ESMTP id 06F221D00602
+ for <dev@dpdk.org>; Wed, 25 Nov 2026 13:02:43 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-02.internal (MEProxy); Wed, 25 Nov 2026 13:02:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1795629762;
+ x=1795716162; bh=ObjWl1QS/FNhaDx7Xp8X3BiWg7cGLI6jMxCpZvnv7z4=; b=
+ goHuQu6GO9RA3afh0GDL9T2gDiJRblNVJZFf5DVL1G+RUKgkgBzL1BUjuNml/ajA
+ dfXM+rdTMaPr7ebFqYWL48dzdbo1PJLVK/DE7FVBcTFO0NrfhIpo+lvL541LMRvL
+ 3/xKbqTQ1RBzpsefVYtxTyim6CuvTC5qlFU+UHUa0H76U80Eud66HvJeoTM3F51G
+ KS77joVaXcidZmy5DhgcOnp1ANcnXfGLNBhUWGSOMzmh1hnSGgHsJ7yeXbJ0uw+3
+ OpBX/FJBILjeSRqqtR9G6hCf/0vRDDMEYlFCcJNzrSD0lDUYPvl2zxiUJwG7mtU7
+ SUpO+mXD2N0nO0d9LM+mog==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795629762; x=
+ 1795716162; bh=ObjWl1QS/FNhaDx7Xp8X3BiWg7cGLI6jMxCpZvnv7z4=; b=P
+ MvN7ADsZoHEVA8cr1lx9vcjrT8fF76PZHpVYPPFZX7EZLetX6t6eEv3s99jI9oAM
+ LwuwkS54COP5+UU+n7tiFHJcyce/jMdrlD5zagpYSjg6/7eYn+/KS4iOhTqk1tmv
+ SQb1Oob3PijIw5zyl/8a2iUfOD7v8DhNGAecgF11iZ3m5RUAYiuc/UFQfMZ8QKwl
+ zGhOvmEmdftoC4Tc6AyIOxOko0xNVqpyX11D7kiLg8moCjCXYwpa7Y4hU6SfbTFY
+ OUYVjeOO17d7gHWS29pJrHqS+vfiS5oxOgxswyMwyb1B2rM4eDPaWC+9Y9anl0ZA
+ mZnpTIW25mgdrgeF2KXxg==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+ repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+ action=sign d=monjalon.net a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1795629762; d=monjalon.net;
+ mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
+ s=fm3:rsa-sha256:y7kub0T6Ri/DzK+wf0nUXdvT3y6UVvYKf1h5+ALccWaVu+y
+ DGLQr/i8pGCmnsbLGhUIxqjCF3q+mUZNOmW/lv/SX6kL9omUwqFTeWRcRHdO1z42
+ ss1x/2w9fdI0yVo1JYXX4RU+nIlGKBRUCX+a+ulf4Fe8vhB37aE0jII2yNj+zNUE
+ zAv4aDdUUtLMXykMuOMH5iNuySIgzc3FeO9jd+fYYuiKWw9Xq9Aa0bqWD4kiT6L/
+ MUvFze9XxRXJJZhHKYnI7yaQ+C8bRtfH0O/y/3Bc8jfTHXR+5GeTtfxDbDw2sXI+
+ xsU09yxsS+r5ITnvR259nUbIJPpweSnb4PV1rcw==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+ repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+ action=mi-m=1; hc=12;
+ hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+ from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1;
+ h=sha256:ybsuKYQFSVOilCLk5WjgyxZferApDsvd9RpGprkVWqI=:DRlMiyZ6Qb3VZWjJpK0ppsfeE2rFUBqYMgjn/JuU6As=;
+X-ME-Sender: <xms:wSIHa3LUSj_jKovM2jMTmI7Th1EzkB7H6VQdJCPuImF62BHP_74bZA>
+ <xme:wSIHa_fLaoAu8nSxGE2iHFQDkgkRUbSut6Tm7NaD0F9nC4_rhDVJvn6rijJ5XQ1fV
+ oAq8iOc9r6S3S8kvNOF8TczYYOIiS4UbFRVszA7ZoRhOQ7ko8eLiZQ>
+X-ME-Received: <xmr:wSIHa-10AbbBeLBLFVIkgdTNd-eoGG1yVUV3gkFKQgC7I6hL1VXjBC8KRYJ0w6EdXTCK19joKkZarXbhRbzArQc>
+X-ME-Proxy-Cause: dmFkZTF2NphaW63xLZST4XeCtCLPiD1MZ+Wa8NvLmCyap60UG/yNkPVE5ZzwfCevEz9Bic
+ wI0ky16+CQ3A0NKC5sraC6VrvSde+4GemceXtWNutfC5L3vxHzaly2GNE2YjGpIiRu3VRs
+ rdp8uKdLa4AvijUc3iDfurqUCeEtL87s3FKYqO7iySHtZ6XGg63gEIulJ06fxPQFGFyEoO
+ 3/MNHeJZLCGG/OtzKpMT/Zc3o2w1Tg6r3movuPPuvnQ5kR5eD6mxIa+TZA83t3vh6XaEFz
+ J8LlC94C3hi2fwIsINQ/3qdxsPpkRqxZow7LHSigmTZ0di1w3LZep7s7VeDpbHYkZVZHgt
+ zSpufCG/Ddmj11D01iiENkIg7c0T8o9FjULiGIdUCWXKf1BppFzyE432e6244UMB1UeW/N
+ UcgIkAPSAgBnri5T1ygsli4da7GYmPf5CJk5pK8Tb5ia14zLw+0CjYe1qAmv0xHmuauAaJ
+ 9DMHBnKG8did8NjttMbpic7A2QgzSkQHc91xhRaUOewboFv8zB60paDdFC+HUoTMGvucLD
+ O1/2vBmS7TqHDzlXC8pvopYfgEP1OiNd2BIq0hkB450nLfXKfHJ5tngUYIJ8Or2O8qiKht
+ Y6F0TkKujLtcTuMF41BFp1fZ1pRoJDdlvGav4/EaaAzybkrxghKsCsL5NaJQ
+X-ME-Proxy: <xmx:wSIHa4iu-c8G_wjoszXgJ99CDan1Bv6SRkMZwdu6iU3UUYrrrFiQDQ>
+ <xmx:wSIHa0SI--lteL7_9ERWu2gJRyr9X1RKYw1VAK-hsn02LKK9WoQGtA>
+ <xmx:wSIHa5igABy4wRa_dddQgQJfximezSJlNAC3aTNzAsMI7c96z3YFCQ>
+ <xmx:wSIHa05sDsMGnXk-K7WZM66K6Znnx5b09SzR-ie-Pv4nzs0nCJZ3cw>
+ <xmx:wiIHa4ei2R6KwyuFJXoSvDkJgKp0M4ECCQ0YND192JeA6QKfJ0yJyDGR>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 25 Nov 2026 13:02:40 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Marat Khalili <marat.khalili@huawei.com>
+Cc: dev@dpdk.org, bruce.richardson@intel.com
+Subject: Re: [PATCH v4 0/7] doc: build for all public headers
+Date: Wed, 25 Nov 2026 19:02:38 +0100
+Message-ID: <q2aJr271QK20qbG6ukeplg@monjalon.net>
+In-Reply-To: <20260721145841.7424-1-marat.khalili@huawei.com>
+References: <20260707085048.15295-1-marat.khalili@huawei.com>
+ <20260721145841.7424-1-marat.khalili@huawei.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: As8vCgDn77FiFQdrEdNeBQ--.6538S22
-X-Coremail-Antispam: 1Uf129KBjvJXoW3Cw4UJw4fuF4UJr1xXr4ktFb_yoWDurykpa
- yUGa9rJrWDJrZ7Xwn8Cw47u3W5Wws2y3yIg3y8Xa4Y9F4kXr18Aa4jy3yDZrs0q3yxA3W2
- vay0v3s8K3WjvrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jeeHDUUUUU=
-Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNQ-8B2sHFW8fxQAA3N
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,300 +105,33 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The aggregated compact CQE does not expose a readable RSS hash flags
-field. To keep the behavior consistent with the normal CQE path, derive
-the mbuf RSS flags from the software configured rss_hf instead.
+21/07/2026 16:58, Marat Khalili:
+> Marat Khalili (7):
+>   doc: detect ignored public headers
+>   doc: fix typos in rte_avp_common.h
+>   doc: fix typos in rte_bus_pci.h
+>   doc: fix typos in rte_bus_vmbus.h
+>   doc: add missing globs to doxy-api.conf.in
+>   doc: add missing drivers to doxy-api.conf.in
+>   doc: add missing headers to doxy-api-index.md
 
-Cache the RSS enablement in struct hinic3_rxq, refresh it when a runtime
-RSS update changes rss_type, and clear rss_type when RSS is disabled so a
-reconfigure without RSS after stop does not use a stale hash setting for
-RTE_MBUF_F_RX_RSS_HASH. The flag is written by the control path and read
-by the Rx path, so use relaxed atomics.
+As explained in the thread, we need a bit more work to have a clean Doxygen,
+but it is going in the right direction.
+For now I can merge the fixes in Doxygen comments and the missing drivers.
+I make sure the drivers are added in both files .in and .md.
 
-ipv6_ext and tcp_ipv6_ext are supported on all tiles, so set them from
-rss_hf rather than gating them on the HTN cmdq flag.
+The .md file and the detection are left.
+Some headers need some addition to have a proper Doxygen,
+and we may simplify the markdown index.
+Do you want to continue this work or you prefer I propose something?
 
-Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
----
- doc/guides/rel_notes/release_26_11.rst   |  1 +
- drivers/net/hinic3/base/hinic3_nic_cfg.h | 21 +++++++----
- drivers/net/hinic3/hinic3_ethdev.c       | 27 +++++++------
- drivers/net/hinic3/hinic3_ethdev.h       |  2 +
- drivers/net/hinic3/hinic3_rx.c           | 48 +++++++++++++++++++-----
- drivers/net/hinic3/hinic3_rx.h           |  9 +++++
- 6 files changed, 77 insertions(+), 31 deletions(-)
+Thank you
 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 13c62f71ac..7bcb6a9d43 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -135,6 +135,7 @@ New Features
-   * Added FEC mode get and set support.
-   * Added Class of Service (COS) mask and map support.
-   * Added VF link up/down and promiscuous mode support.
-+  * Updated RSS hash type configuration.
-   * Added mailbox message counter reporting through the device private dump API.
- 
- * **Updated Intel iavf driver.**
-diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.h b/drivers/net/hinic3/base/hinic3_nic_cfg.h
-index b5d7ce07a1..8c48f6d8a9 100644
---- a/drivers/net/hinic3/base/hinic3_nic_cfg.h
-+++ b/drivers/net/hinic3/base/hinic3_nic_cfg.h
-@@ -72,14 +72,19 @@
- 	HINIC3_SUPPORT_FEATURE(dev, IPXIP_OFFLOAD)
- 
- struct hinic3_rss_type {
--	uint8_t tcp_ipv6_ext;
--	uint8_t ipv6_ext;
--	uint8_t tcp_ipv6;
--	uint8_t ipv6;
--	uint8_t tcp_ipv4;
--	uint8_t ipv4;
--	uint8_t udp_ipv6;
--	uint8_t udp_ipv4;
-+	union {
-+		struct {
-+			uint8_t tcp_ipv6_ext;
-+			uint8_t ipv6_ext;
-+			uint8_t tcp_ipv6;
-+			uint8_t ipv6;
-+			uint8_t tcp_ipv4;
-+			uint8_t ipv4;
-+			uint8_t udp_ipv6;
-+			uint8_t udp_ipv4;
-+		};
-+		uint64_t val;
-+	};
- };
- 
- enum hinic3_rss_hash_type {
-diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index 714533ea52..2ffebddf3a 100644
---- a/drivers/net/hinic3/hinic3_ethdev.c
-+++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -1032,6 +1032,8 @@ hinic3_reset_rx_queue(struct rte_eth_dev *dev)
- 		rxq->prod_idx = 0;
- 		rxq->delta = rxq->q_depth;
- 		rxq->next_to_update = 0;
-+		rte_atomic_store_explicit(&rxq->rss_en, 0,
-+					  rte_memory_order_relaxed);
- 
- 		/*
- 		 * Hardware does not clear the CI write-back memory on reset, so
-@@ -1816,6 +1818,7 @@ hinic3_remove_rxtx_configure(struct rte_eth_dev *dev)
- 		hinic3_rss_cfg(nic_dev->hwdev, HINIC3_RSS_DISABLE, 0, prio_tc);
- 		hinic3_rss_template_free(nic_dev->hwdev);
- 		nic_dev->rss_state = HINIC3_RSS_DISABLE;
-+		nic_dev->rss_type.val = 0;
- 	}
- }
- 
-@@ -2785,20 +2788,18 @@ hinic3_rss_hash_update(struct rte_eth_dev *dev,
- 	rss_type.tcp_ipv6 = (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_TCP) ? 1 : 0;
- 	rss_type.udp_ipv4 = (rss_hf & RTE_ETH_RSS_NONFRAG_IPV4_UDP) ? 1 : 0;
- 	rss_type.udp_ipv6 = (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_UDP) ? 1 : 0;
--
--	if (nic_dev->feature_cap & NIC_F_HTN_CMDQ) {
--		rss_type.ipv6_ext = (rss_hf & RTE_ETH_RSS_IPV6_EX) ? 1 : 0;
--		rss_type.tcp_ipv6_ext = (rss_hf & RTE_ETH_RSS_IPV6_TCP_EX) ? 1 : 0;
--	} else {
--		rss_type.ipv6_ext = 0;
--		rss_type.tcp_ipv6_ext = 0;
--	}
-+	rss_type.ipv6_ext = (rss_hf & RTE_ETH_RSS_IPV6_EX) ? 1 : 0;
-+	rss_type.tcp_ipv6_ext = (rss_hf & RTE_ETH_RSS_IPV6_TCP_EX) ? 1 : 0;
- 
- 	err = hinic3_set_rss_type(nic_dev->hwdev, rss_type);
--	if (err)
-+	if (err) {
- 		PMD_DRV_LOG(ERR, "Set RSS type failed");
-+		return err;
-+	}
- 
--	return err;
-+	nic_dev->rss_type = rss_type;
-+	hinic3_rxq_rss_en_update(dev);
-+	return 0;
- }
- 
- /**
-@@ -2853,10 +2854,8 @@ hinic3_rss_conf_get(struct rte_eth_dev *dev, struct rte_eth_rss_conf *rss_conf)
- 	rss_conf->rss_hf |= rss_type.tcp_ipv6 ? RTE_ETH_RSS_NONFRAG_IPV6_TCP : 0;
- 	rss_conf->rss_hf |= rss_type.udp_ipv4 ? RTE_ETH_RSS_NONFRAG_IPV4_UDP : 0;
- 	rss_conf->rss_hf |= rss_type.udp_ipv6 ? RTE_ETH_RSS_NONFRAG_IPV6_UDP : 0;
--	if (nic_dev->feature_cap & NIC_F_HTN_CMDQ) {
--		rss_conf->rss_hf |= rss_type.ipv6_ext ? RTE_ETH_RSS_IPV6_EX : 0;
--		rss_conf->rss_hf |= rss_type.tcp_ipv6_ext ? RTE_ETH_RSS_IPV6_TCP_EX : 0;
--	}
-+	rss_conf->rss_hf |= rss_type.ipv6_ext ? RTE_ETH_RSS_IPV6_EX : 0;
-+	rss_conf->rss_hf |= rss_type.tcp_ipv6_ext ? RTE_ETH_RSS_IPV6_TCP_EX : 0;
- 
- 	return 0;
- }
-diff --git a/drivers/net/hinic3/hinic3_ethdev.h b/drivers/net/hinic3/hinic3_ethdev.h
-index 84f9b2db0e..13c9c69e7f 100644
---- a/drivers/net/hinic3/hinic3_ethdev.h
-+++ b/drivers/net/hinic3/hinic3_ethdev.h
-@@ -9,6 +9,7 @@
- #include <rte_ethdev_core.h>
- 
- #include "hinic3_fdir.h"
-+#include "base/hinic3_nic_cfg.h"
- 
- #define HINIC3_PMD_DRV_VERSION "B106"
- 
-@@ -130,6 +131,7 @@ struct hinic3_nic_dev {
- 	uint16_t num_rss; /**< Number of RSS queues. */
- 
- 	uint32_t rx_mode;
-+	struct hinic3_rss_type rss_type;
- 	uint8_t rx_queue_list[HINIC3_MAX_QUEUE_NUM];
- 	rte_spinlock_t queue_list_lock;
- 
-diff --git a/drivers/net/hinic3/hinic3_rx.c b/drivers/net/hinic3/hinic3_rx.c
-index 90681ce15c..74dfddac9d 100644
---- a/drivers/net/hinic3/hinic3_rx.c
-+++ b/drivers/net/hinic3/hinic3_rx.c
-@@ -437,17 +437,15 @@ hinic3_init_rss_type(struct hinic3_nic_dev *nic_dev,
- 	rss_type.tcp_ipv6 = (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_TCP) ? 1 : 0;
- 	rss_type.udp_ipv4 = (rss_hf & RTE_ETH_RSS_NONFRAG_IPV4_UDP) ? 1 : 0;
- 	rss_type.udp_ipv6 = (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_UDP) ? 1 : 0;
--
--	if (nic_dev->feature_cap & NIC_F_HTN_CMDQ) {
--		rss_type.ipv6_ext = (rss_hf & RTE_ETH_RSS_IPV6_EX) ? 1 : 0;
--		rss_type.tcp_ipv6_ext = (rss_hf & RTE_ETH_RSS_IPV6_TCP_EX) ? 1 : 0;
--	} else {
--		rss_type.ipv6_ext = 0;
--		rss_type.tcp_ipv6_ext = 0;
--	}
-+	rss_type.ipv6_ext = (rss_hf & RTE_ETH_RSS_IPV6_EX) ? 1 : 0;
-+	rss_type.tcp_ipv6_ext = (rss_hf & RTE_ETH_RSS_IPV6_TCP_EX) ? 1 : 0;
- 
- 	err = hinic3_set_rss_type(nic_dev->hwdev, rss_type);
--	return err;
-+	if (err)
-+		return err;
-+
-+	nic_dev->rss_type = rss_type;
-+	return 0;
- }
- 
- int
-@@ -502,6 +500,8 @@ hinic3_update_rss_config(struct rte_eth_dev *dev,
- 	return 0;
- 
- init_rss_fail:
-+	nic_dev->rss_type.val = 0;
-+
- 	if (hinic3_rss_template_free(nic_dev->hwdev))
- 		PMD_DRV_LOG(WARNING, "Free rss template failed");
- 
-@@ -701,6 +701,8 @@ hinic3_stop_rq(struct rte_eth_dev *eth_dev, struct hinic3_rxq *rxq)
- 	uint32_t head_ci, head_done;
- 	int err;
- 
-+	rte_atomic_store_explicit(&rxq->rss_en, 0, rte_memory_order_relaxed);
-+
- 	/* Disable rxq intr. */
- 	hinic3_dev_rx_queue_intr_disable(eth_dev, rxq->q_id);
- 
-@@ -779,6 +781,11 @@ hinic3_start_rq(struct rte_eth_dev *eth_dev, struct hinic3_rxq *rxq)
- 	struct hinic3_nic_dev *nic_dev = rxq->nic_dev;
- 	int err = 0;
- 
-+	rte_atomic_store_explicit(&rxq->rss_en,
-+				  (nic_dev->rss_state == HINIC3_RSS_ENABLE) &&
-+				  (nic_dev->rss_type.val != 0),
-+				  rte_memory_order_relaxed);
-+
- 	/* Lock dev queue switch.  */
- 	rte_spinlock_lock(&nic_dev->queue_list_lock);
- 	hinic3_add_rq_to_rx_queue_list(nic_dev, rxq->q_id);
-@@ -921,6 +928,23 @@ hinic3_recv_jumbo_pkt(struct hinic3_rxq *rxq, struct rte_mbuf *head_mbuf,
- 	}
- }
- 
-+void
-+hinic3_rxq_rss_en_update(struct rte_eth_dev *eth_dev)
-+{
-+	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(eth_dev);
-+	uint8_t rss_en = (nic_dev->rss_state == HINIC3_RSS_ENABLE) &&
-+			 (nic_dev->rss_type.val != 0);
-+	uint16_t i;
-+
-+	for (i = 0; i < eth_dev->data->nb_rx_queues; i++) {
-+		struct hinic3_rxq *rxq = eth_dev->data->rx_queues[i];
-+
-+		if (rxq != NULL)
-+			rte_atomic_store_explicit(&rxq->rss_en, rss_en,
-+						  rte_memory_order_relaxed);
-+	}
-+}
-+
- int
- hinic3_start_all_rqs(struct rte_eth_dev *eth_dev)
- {
-@@ -933,6 +957,10 @@ hinic3_start_all_rqs(struct rte_eth_dev *eth_dev)
- 
- 	for (i = 0; i < nic_dev->num_rqs; i++) {
- 		rxq = eth_dev->data->rx_queues[i];
-+		rte_atomic_store_explicit(&rxq->rss_en,
-+					  (nic_dev->rss_state == HINIC3_RSS_ENABLE) &&
-+					  (nic_dev->rss_type.val != 0),
-+					  rte_memory_order_relaxed);
- 		hinic3_add_rq_to_rx_queue_list(nic_dev, rxq->q_id);
- 		err = hinic3_rearm_rxq_mbuf(rxq);
- 		if (err) {
-@@ -1056,6 +1084,8 @@ hinic3_rx_get_compact_cqe_info(struct hinic3_rxq *rxq, volatile struct hinic3_rq
- 	cqe_info->pkt_len = HINIC3_RQ_COMPACT_CQE_STATUS_GET(dw0, PKT_LEN);
- 	cqe_info->ts_flag = HINIC3_RQ_COMPACT_CQE_STATUS_GET(dw0, TS_FLAG);
- 	cqe_info->ptype = HINIC3_RQ_COMPACT_CQE_STATUS_GET(dw0, PTYPE);
-+	cqe_info->rss_type = rte_atomic_load_explicit(&rxq->rss_en,
-+						      rte_memory_order_relaxed);
- 	cqe_info->rss_hash_value = dw1;
- 
- 	if (cqe_info->cqe_len == HINIC3_RQ_COMPACT_CQE_16BYTE) {
-diff --git a/drivers/net/hinic3/hinic3_rx.h b/drivers/net/hinic3/hinic3_rx.h
-index 129c2b4a59..59a198c070 100644
---- a/drivers/net/hinic3/hinic3_rx.h
-+++ b/drivers/net/hinic3/hinic3_rx.h
-@@ -5,6 +5,8 @@
- #ifndef _HINIC3_RX_H_
- #define _HINIC3_RX_H_
- 
-+#include <rte_stdatomic.h>
-+
- #define RQ_CQE_OFFOLAD_TYPE_PTYPE_OFFLOAD_SHIFT	0
- #define RQ_CQE_OFFOLAD_TYPE_VLAN_EN_SHIFT	21
- #define RQ_CQE_OFFOLAD_TYPE_RSS_TYPE_SHIFT	24
-@@ -358,6 +360,12 @@ struct __rte_cache_aligned hinic3_rxq {
- 	rte_iova_t cqe_start_paddr;
- 	void *cqe_start_vaddr;
- 	uint8_t dp_intr_en;
-+	/**
-+	 * RSS was enabled when this queue was started. Written by the
-+	 * control path and read by the Rx data path, so it is accessed with
-+	 * relaxed atomics.
-+	 */
-+	RTE_ATOMIC(uint8_t)rss_en;
- 	uint16_t msix_entry_idx;
- 
- 	bool rx_deferred_start; /* don't start this queue in dev start */
-@@ -421,6 +429,7 @@ void hinic3_init_rx_queue_list(struct hinic3_nic_dev *nic_dev);
- void hinic3_remove_rq_from_rx_queue_list(struct hinic3_nic_dev *nic_dev,
- 					 uint16_t queue_id);
- int hinic3_start_all_rqs(struct rte_eth_dev *eth_dev);
-+void hinic3_rxq_rss_en_update(struct rte_eth_dev *eth_dev);
- 
- #ifdef HINIC3_XSTAT_RXBUF_INFO
- void hinic3_get_stats(struct hinic3_rxq *rxq);
--- 
-2.33.0
 
