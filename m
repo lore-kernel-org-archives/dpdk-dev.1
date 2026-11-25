@@ -2,44 +2,44 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D0F606A329
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 17:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D08E606A334
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 17:09:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=nSd3PTIN
+	dkim=pass (1024-bit key) header.d=vip.163.com header.i=@vip.163.com header.a=rsa-sha256 header.s=s110527 header.b=Wcv7OKCI
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4A68240E21;
-	Wed, 25 Nov 2026 18:06:11 +0100 (CET)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.3])
- by mails.dpdk.org (Postfix) with ESMTPS id 25E5E40A6F
- for <dev@dpdk.org>; Wed, 25 Nov 2026 18:05:56 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 04D1940E2A;
+	Wed, 25 Nov 2026 18:06:12 +0100 (CET)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.220])
+ by mails.dpdk.org (Postfix) with ESMTPS id 6A831406B8
+ for <dev@dpdk.org>; Wed, 25 Nov 2026 18:05:57 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=NJnqJX+9l3Irmu0lyoKuGmEttD1QrTur7qe2y2b/vBg=;
- b=nSd3PTINLtIY+dHbhv12WYroiyDB2Xf3HfBc1gQ85xxn//bxasZzPkqyOgsMfE
- d1h98ANyu0lwDpL84qHeVDI4Mv/B1plfq00DT6GdzIabvF5dzN7pqVe4GIJ6eT+Y
- UyOPyHjuND/vv1MziL0+KPaKRsSnOkPRQE1Mhcd1G0ylw=
+ MIME-Version; bh=otWO/vRRO0XRrj9T3ldnAylXQNAvqKXHw0lb2RRh5TM=;
+ b=Wcv7OKCIrp5+7p3BLcdq/kvkpaFSkozmvfQCqDToK1Ktz+hUJ/vHWxz5saziWQ
+ aP/IDdT+0P8CwfngFBNpMXH5Uny0dQDcgiGz1iRRXFfYP+fbEsSEyfIA/c9q1AUR
+ LPiG+b9kFjRRautqi8rcEw8vUcwaSDx/65y0ktLuTsXCU=
 From: Jiacheng Ye <yejiacheng4@h-partners.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>,
  Thomas Monjalon <thomas@monjalon.net>,
  Anatoly Burakov <anatoly.burakov@intel.com>,
  Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v9 25/30] net/hinic3: ensure queue depth and state consistency
-Date: Thu, 26 Nov 2026 01:04:19 +0800
-Message-ID: <20261125170425.5430-26-yejiacheng4@h-partners.com>
+Subject: [PATCH v9 28/30] net/hinic3: add SP230 VF software statistics
+Date: Thu, 26 Nov 2026 01:04:22 +0800
+Message-ID: <20261125170425.5430-29-yejiacheng4@h-partners.com>
 X-Mailer: git-send-email 2.56.0.windows.2
 In-Reply-To: <20261125170425.5430-1-yejiacheng4@h-partners.com>
 References: <20261125170425.5430-1-yejiacheng4@h-partners.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: As8vCgDn77FiFQdrEdNeBQ--.6538S27
-X-Coremail-Antispam: 1Uf129KBjvJXoW3Xw1fJw1fZF4DAw4rXw47Jwb_yoWxKw43pF
- WDKayDta47JrsF9ws8Ga1fuF13XFsay348GFySq3WYyw15XF4UZa43tF1Fvrs7J395AF4U
- Zr1vya1vgw1jgaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jz0P-UUUUU=
+X-CM-TRANSID: As8vCgDn77FiFQdrEdNeBQ--.6538S30
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Kw1UZFyUKr1UKryDXr4xJFb_yoW8tF4kpF
+ yDGa43Ar9rXFs7XwnxKayUA345Wws3Z34UGas7JayYkF4DXrn0y345KrWjyrn8GrW3Za17
+ Zws0kFsFk3yjgwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jeeHDUUUUU=
 Sender: wff_light@vip.163.com
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNxL9CGsHFXIf2wAA3f
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiMxP9CGsHFXMaogAA3n
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,218 +56,70 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The hardware tracks a single queue depth, which the root context takes
-from queue 0. A queue configured with a different depth used to be
-silently coerced to the first queue's depth; reject it with -EINVAL
-instead, since the application sized its mempool for the requested
-depth.
-
-Keep the expected depth in the per-port state, reset it in
-dev_configure() and dev_stop(), and validate in dev_start() that every
-configured queue is present and shares queue 0's depth.
-
-Reset the rx/tx queue states in dev_stop, including the tx queue status
-used by the Tx path, so the queue state reflects the stopped device
-before the next start.
+For an SP230 VF, aggregate the software queue counters to report
+ipackets/ibytes/opackets/obytes. PF ports keep using the firmware vport
+statistics.
 
 Signed-off-by: Jiacheng Ye <yejiacheng4@h-partners.com>
 ---
- drivers/net/hinic3/hinic3_ethdev.c | 88 +++++++++++++++++++++++++-----
- drivers/net/hinic3/hinic3_ethdev.h |  5 ++
- 2 files changed, 80 insertions(+), 13 deletions(-)
+ drivers/net/hinic3/hinic3_ethdev.c | 27 ++++++++++++++++++++++-----
+ 1 file changed, 22 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index 706f3b871b..127a6c42d5 100644
+index 65fd19ee0f..5c4faef83f 100644
 --- a/drivers/net/hinic3/hinic3_ethdev.c
 +++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -318,8 +318,6 @@ hinic3_xstats_calc_num(struct hinic3_nic_dev *nic_dev)
- 	}
- }
+@@ -3084,13 +3084,16 @@ hinic3_dev_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
+ 	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
+ 	struct hinic3_vport_stats vport_stats;
+ 	uint64_t rx_discards_pmd = 0;
++	bool sw_stats = HINIC3_IS_VF(nic_dev->hwdev) && HINIC3_IS_SP230_NIC(nic_dev);
+ 	int err;
  
--#define HINIC3_MAX_QUEUE_DEPTH 16384
--#define HINIC3_MIN_QUEUE_DEPTH 128
- #define HINIC3_TXD_ALIGN       1
- #define HINIC3_RXD_ALIGN       1
- 
-@@ -735,6 +733,8 @@ hinic3_dev_configure(struct rte_eth_dev *dev)
- 
- 	nic_dev->num_sqs = dev->data->nb_tx_queues;
- 	nic_dev->num_rqs = dev->data->nb_rx_queues;
-+	nic_dev->rxq_depth = 0;
-+	nic_dev->txq_depth = 0;
- 
- 	nic_dev->mtu_size =
- 		(uint16_t)HINIC3_PKTLEN_TO_MTU(HINIC3_MAX_RX_PKT_LEN(dev->data->dev_conf.rxmode));
-@@ -1116,16 +1116,8 @@ hinic3_rx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
- 
- 	nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
- 
--	/* Queue depth must be equal to queue 0 */
--	if (qid != 0 && nb_desc != nic_dev->rxqs[0]->q_depth) {
--		PMD_DRV_LOG(WARNING, "rxq%u depth:%u is not equal to queue0 depth:%u.",
--			    qid, nb_desc, nic_dev->rxqs[0]->q_depth);
--		nb_desc = nic_dev->rxqs[0]->q_depth;
--	}
--
- 	/* Queue depth must be power of 2, otherwise will be aligned up. */
--	rq_depth = (nb_desc & (nb_desc - 1))
--			? ((uint16_t)(1U << (rte_log2_u32(nb_desc) + 1))) : nb_desc;
-+	rq_depth = (uint16_t)rte_align32pow2(nb_desc);
- 
- 	/*
- 	 * Validate number of receive descriptors.
-@@ -1142,6 +1134,19 @@ hinic3_rx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
- 		return -EINVAL;
+-	err = hinic3_get_vport_stats(nic_dev->hwdev, &vport_stats);
+-	if (err) {
+-		PMD_DRV_LOG(ERR, "Get vport stats from fw failed, nic_dev: %s",
+-			    nic_dev->dev_name);
+-		return err;
++	if (!sw_stats) {
++		err = hinic3_get_vport_stats(nic_dev->hwdev, &vport_stats);
++		if (err) {
++			PMD_DRV_LOG(ERR, "Get vport stats from fw failed, nic_dev: %s",
++				    nic_dev->dev_name);
++			return err;
++		}
  	}
  
-+	/*
-+	 * The hardware tracks a single queue depth. Keep the value chosen by
-+	 * the first queue of this configuration and compare against it, so a
-+	 * runtime reconfiguration with a different depth is not rejected by
-+	 * queues that still hold the previous depth.
-+	 */
-+	if (nic_dev->rxq_depth != 0 && nic_dev->rxq_depth != rq_depth) {
-+		PMD_DRV_LOG(ERR,
-+			    "rxq%u depth:%u is not equal to the port depth:%u.",
-+			    qid, rq_depth, nic_dev->rxq_depth);
-+		return -EINVAL;
-+	}
+ 	/* Rx queue stats. */
+@@ -3111,6 +3114,12 @@ hinic3_dev_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
+ 		stats->ierrors += rxq->rxq_stats.errors;
+ 		rx_discards_pmd += rxq->rxq_stats.dropped;
+ 		dev->data->rx_mbuf_alloc_failed += rxq->rxq_stats.rx_nombuf;
 +
- 	/*
- 	 * The RX descriptor ring will be cleaned after rxq->rx_free_thresh
- 	 * descriptors are used or if the number of descriptors required
-@@ -1295,6 +1300,7 @@ hinic3_rx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
++		if (sw_stats) {
++			stats->ipackets += rxq->rxq_stats.packets;
++			stats->ibytes += rxq->rxq_stats.bytes;
++			stats->imissed += rxq->rxq_stats.dropped;
++		}
+ 	}
+ 
+ 	/* Tx queue stats. */
+@@ -3121,8 +3130,16 @@ hinic3_dev_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
+ 			qstats[i].q_opackets = txq->txq_stats.packets;
+ 			qstats[i].q_obytes = txq->txq_stats.bytes;
  		}
- 	}
- 	dev->data->rx_queues[qid] = rxq;
-+	nic_dev->rxq_depth = rq_depth;
- 
- 	return 0;
- 
-@@ -1351,8 +1357,7 @@ hinic3_tx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
- 	hwdev = nic_dev->hwdev;
- 
- 	/* Queue depth must be power of 2, otherwise will be aligned up. */
--	sq_depth = (nb_desc & (nb_desc - 1))
--				? ((uint16_t)(1U << (rte_log2_u32(nb_desc) + 1))) : nb_desc;
-+	sq_depth = (uint16_t)rte_align32pow2(nb_desc);
- 
- 	/*
- 	 * Validate number of transmit descriptors.
-@@ -1369,6 +1374,19 @@ hinic3_tx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
- 		return -EINVAL;
- 	}
- 
-+	/*
-+	 * The hardware tracks a single queue depth. Keep the value chosen by
-+	 * the first queue of this configuration and compare against it, so a
-+	 * runtime reconfiguration with a different depth is not rejected by
-+	 * queues that still hold the previous depth.
-+	 */
-+	if (nic_dev->txq_depth != 0 && nic_dev->txq_depth != sq_depth) {
-+		PMD_DRV_LOG(ERR,
-+			    "txq%u depth:%u is not equal to the port depth:%u.",
-+			    qid, sq_depth, nic_dev->txq_depth);
-+		return -EINVAL;
-+	}
 +
- 	/*
- 	 * The TX descriptor ring will be cleaned after txq->tx_free_thresh
- 	 * descriptors are used or if the number of descriptors required
-@@ -1466,6 +1484,7 @@ hinic3_tx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
- 	}
- 
- 	dev->data->tx_queues[qid] = txq;
-+	nic_dev->txq_depth = sq_depth;
- 
- 	return 0;
- 
-@@ -2121,6 +2140,33 @@ hinic3_dev_start(struct rte_eth_dev *eth_dev)
- 	int err;
- 
- 	nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(eth_dev);
-+
-+	/*
-+	 * The root context carries a single depth per direction, taken from
-+	 * queue 0, and a queue setup cannot change the other queues. A partial
-+	 * reconfiguration would therefore leave the rings sized differently
-+	 * from the root context, so refuse to start unless every configured
-+	 * queue is present and shares the depth of queue 0.
-+	 */
-+	for (i = 0; i < nic_dev->num_rqs; i++) {
-+		if (nic_dev->rxqs[i] == NULL ||
-+		    nic_dev->rxqs[i]->q_depth != nic_dev->rxqs[0]->q_depth) {
-+			PMD_DRV_LOG(ERR,
-+				    "rxq%u is missing or has a different depth than rxq0.",
-+				    i);
-+			return -EINVAL;
++		if (sw_stats) {
++			stats->opackets += txq->txq_stats.packets;
++			stats->obytes += txq->txq_stats.bytes;
 +		}
-+	}
-+	for (i = 0; i < nic_dev->num_sqs; i++) {
-+		if (nic_dev->txqs[i] == NULL ||
-+		    nic_dev->txqs[i]->q_depth != nic_dev->txqs[0]->q_depth) {
-+			PMD_DRV_LOG(ERR,
-+				    "txq%u is missing or has a different depth than txq0.",
-+				    i);
-+			return -EINVAL;
-+		}
-+	}
+ 	}
+ 
++	if (sw_stats)
++		return 0;
 +
- 	err = hinic3_copy_mempool_init(nic_dev);
- 	if (err) {
- 		PMD_DRV_LOG(ERR, "Create copy mempool failed, dev_name: %s",
-@@ -2271,6 +2317,7 @@ hinic3_dev_stop(struct rte_eth_dev *dev)
- {
- 	struct hinic3_nic_dev *nic_dev;
- 	struct rte_eth_link link;
-+	uint16_t i;
- 	int err;
- 
- 	nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
-@@ -2322,6 +2369,21 @@ hinic3_dev_stop(struct rte_eth_dev *dev)
- 
- 	/* Free mempool. */
- 	hinic3_copy_mempool_uninit(nic_dev);
-+
-+	/* A stopped device starts a new queue configuration. */
-+	nic_dev->rxq_depth = 0;
-+	nic_dev->txq_depth = 0;
-+
-+	for (i = 0; i < dev->data->nb_rx_queues; i++)
-+		dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
-+	for (i = 0; i < dev->data->nb_tx_queues; i++) {
-+		struct hinic3_txq *txq = dev->data->tx_queues[i];
-+
-+		if (txq != NULL)
-+			HINIC3_SET_TXQ_STOPPED(txq);
-+		dev->data->tx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
-+	}
-+
- 	return 0;
- }
- 
-diff --git a/drivers/net/hinic3/hinic3_ethdev.h b/drivers/net/hinic3/hinic3_ethdev.h
-index 0763665885..eff0bca29e 100644
---- a/drivers/net/hinic3/hinic3_ethdev.h
-+++ b/drivers/net/hinic3/hinic3_ethdev.h
-@@ -15,6 +15,9 @@
- 
- #define HINIC3_PMD_DRV_VERSION "B106"
- 
-+#define HINIC3_MAX_QUEUE_DEPTH         16384
-+#define HINIC3_MIN_QUEUE_DEPTH         128
-+
- #define PCI_DEV_TO_INTR_HANDLE(pci_dev) ((pci_dev)->intr_handle)
- 
- #define HINIC3_PKT_RX_L4_CKSUM_BAD	RTE_MBUF_F_RX_L4_CKSUM_BAD
-@@ -144,6 +147,8 @@ struct hinic3_nic_dev {
- 
- 	uint16_t num_sqs;
- 	uint16_t num_rqs;
-+	uint16_t rxq_depth;
-+	uint16_t txq_depth;
- 	uint16_t max_sqs;
- 	uint16_t max_rqs;
+ 	/* Vport stats. */
+ 	stats->oerrors += vport_stats.tx_discard_vport;
  
 -- 
 2.33.0
