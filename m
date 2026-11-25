@@ -2,56 +2,99 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF14606A31E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 11:12:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CFD8606A32A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 11:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=monjalon.net header.i=@monjalon.net header.a=rsa-sha256 header.s=fm3 header.b=I9NBY/5q;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=19kq6NAy
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 107D140612;
-	Wed, 25 Nov 2026 12:12:14 +0100 (CET)
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
- by mails.dpdk.org (Postfix) with ESMTPS id 7F24C40374;
- Wed, 25 Nov 2026 12:12:09 +0100 (CET)
-X-QQ-mid: esmtpsz17t1795605124tc8128adb
-X-QQ-Originating-IP: C9YLjx8zdpMXN3AL9ov/C7DoPVX2vOJF2H15AWQULus=
-Received: from DSK-zaiyuwang.trustnetic.com ( [122.235.140.99])
- by bizesmtp.qq.com (ESMTP) with 
- id ; Wed, 25 Nov 2026 19:12:02 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 11484980266981741526
-EX-QQ-RecipientCnt: 4
-From: Zaiyu Wang <zaiyuwang@trustnetic.com>
-To: dev@dpdk.org
-Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
- Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH 2/2] net/ngbe: fix YT8531S-CA interrupt in combo mode
-Date: Wed, 25 Nov 2026 19:11:05 +0800
-Message-ID: <55290577737DDF3E+20261125111142.12226-3-zaiyuwang@trustnetic.com>
-X-Mailer: git-send-email 2.55.0.windows.2
-In-Reply-To: <20261125111142.12226-1-zaiyuwang@trustnetic.com>
-References: <20261125111142.12226-1-zaiyuwang@trustnetic.com>
+	by mails.dpdk.org (Postfix) with ESMTP id A8931402B2;
+	Wed, 25 Nov 2026 12:19:03 +0100 (CET)
+Received: from fhigh-a3-smtp.messagingengine.com
+ (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+ by mails.dpdk.org (Postfix) with ESMTPS id 484DE4027A
+ for <dev@dpdk.org>; Wed, 25 Nov 2026 12:19:02 +0100 (CET)
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 418FD1400444
+ for <dev@dpdk.org>; Wed, 25 Nov 2026 06:19:01 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-05.internal (MEProxy); Wed, 25 Nov 2026 06:19:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1795605541;
+ x=1795691941; bh=8FYi0IoSgd3G/RH8EwT60WtH9K4Cjajq8gaIAvKeUX4=; b=
+ I9NBY/5qAqhlpck5gJU6xMfqqL0jl3oKhVfVDLoEeN81LuvPJc2bTgLMRwXtyyp4
+ fxrT2uF65B5+63/PNFH1EQeELM3TBIJ/LhcCN1qhZ7dYpeJMe3IYvdAQYfsmnYww
+ iZff0O+KKkgvDwXiVre9tTjHKV1jM0dSwSOzOSAh0KEJiCqk0u/B60VORButwlUa
+ B9JAMNPrzCjRPjM50IlOWmwvRiS7I58VdwBejknCNhmzbVIK0bwguVSHngqyHpQ7
+ AafevTRMKoMk/8KPSmPjfpYcqXYtuxS17Yk2RTS6zax/1yP+aeOmcd5lxGjavpiR
+ z4gHn2PKUSFohCEE0N964g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795605541; x=
+ 1795691941; bh=8FYi0IoSgd3G/RH8EwT60WtH9K4Cjajq8gaIAvKeUX4=; b=1
+ 9kq6NAyOL3e3ZI84Ev+B+saF7ud764ljCQiTosEX2WhOS5YHuHCwSBpNMJ4uyJQL
+ 7+iT88ovEeb1KSGvHrtbb/Cba19BvtK3gslHZClkgYiADCJUYpmfStBH23zOyiEh
+ QhpXcGRA5i+RyBjJB3tBJU8En0kAuiNLaSjm4TD1DlAkvRjX0VC2jHjZOQinHP11
+ ffLLfFdTYHclbMWhLUJADle/+4TYFmpVKk2c3qC8imdBAW4/s+gzwwAC0Mi/xcnS
+ GQv2jsklYUxJU6G+9EKyuusej550uSxnbxCtkVy4FdVqBpNJdf8hmmjaVrwnr2Nf
+ rqFPFOoed8fOxzPtGOqTA==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+ repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+ action=sign d=monjalon.net a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1795605541; d=monjalon.net;
+ mf=PHRob21hc0Btb25qYWxvbi5uZXQ+; rt=PGRldkBkcGRrLm9yZz4=;
+ s=fm3:rsa-sha256:aZlpneQochvQ9CqrERG1HReZ45D2PqOYOESJmnG1nvpZRed
+ 1iYoTUkSza84UWn8G3kNYict0X/+dIGYiIIBODJuCZVXrSyYinK/hYMGfQfVKm2o
+ /vz14f0r7vdjgLLpgYJTCsITY610Y9IrT/euDSyG2457KsFl1cR6TsbsUz83Wpkn
+ mHji+YD7WaRbquxTOKK4omW8kvlm/DQ7M9HCZ1cczLUGkXl2SJQqUhBfJlliV05t
+ 1gPFAMUj3wFsBo3P16Rsx+iN9HAjrBb+GTCEuCpcIXpwuVhcT9sq1xrUPQosIocg
+ Ur/kqOpjOTdTe3xvmrmpDsCVsBkSaQi72KL803A==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
+ repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
+ action=mi-m=1; hc=12;
+ hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+ from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1;
+ h=sha256:r7BK018LgA88gXjPvskiNFt//1JyuwPU3/FB04Wi8Xs=:nlCuXKyjCmJuVfziItqQSgiTTZqXHEuvoBXTdqr3dLI=;
+X-ME-Sender: <xms:JMQGa1F8FYTU5NFVcTAGIzerlRmh1l6gQCLEzPY5Z5SRsIMq_KT8zA>
+ <xme:JMQGa2qhLSWdT2IyQ3v4XrAmrgrZU2XoWfCRJ35RHwK-BUpcVbWfSmh0EFfGLngsO
+ Ydmj8OrzvM9bcXW_vQvfu3iexDlWfsvN3qTYKy2pu4Sa1LZr_HatQ>
+X-ME-Received: <xmr:JMQGa57_KZyWhsJxwHsdvEWW2akl09um1MnTuJe6Wov8qnQCnV4xZJE4UBCN0-ikUKF0kk_Z0ySaY9Qx3OnCq5E>
+X-ME-Proxy-Cause: dmFkZTGsle1/rNRHc8vtYGBlzqT0iolaVVUI0v+IY82g0Kz0UwpqVWMWDYh9dv/6HP6QK/
+ EP+me8XV/sdEMeFy+V/4nE/1CwSQIBvtjHHj3rM/nQ1BVScwfRLfsuv0IuirysfVauzsE/
+ NyvFJ+UdVtyR1619au7O935EtPCJyjjdppRrwcFkhTsciE1OsgGrlpNxExU7DzOUl4x3dH
+ ulyGLxjk/dFUqo/sfRMXni/OMG/80GRhmKh9AiJ3lBExunssYKN4ouK+nONUJE2ZpbHo92
+ LK9MErkzRWdUspM1URdBilc8jweYv5ABQ0zbBTSswvlQtoD7Ty2a8KBS8sr/3+/2wHuadu
+ viSiWvVclP+jRN4IgDj9mB5BsDxtekAxUqjnmJo4VZrb3GXN0vNte2lGBbgoecg8ABKvdd
+ p4JeFoem9L6zjmjU+AC02mi6pts7x5eJV4uyH3FESXCV62TpfhidJVwOhfrrGk18XizctI
+ j3+HohVR7F/HBiglybZfUW/It5iYYWgLcqIW1CHh/g56WChER0/xSydvjhPc4DObCxMX0k
+ WcY4ujO/F+dKYXIo551fa294u53zZtLvRoApCy/TY3wy8dyaZ5RJo2R5TX3tkVx6lePN1B
+ dhYbnp2LLL5qwcdEjdIhBa0I0Wv0NQddCo7yHp/YzE9la+e271lfth4RJ5LA
+X-ME-Proxy: <xmx:JMQGa85pxbsXTAaOVJcj94GxgETWZD-uWKH8S5928Ux6aa5NIrzqcQ>
+ <xmx:JMQGa-EWTrIrstLllcurwoqcRxI0VASKOspd25TouyjgfDJ_IQq_XA>
+ <xmx:JMQGa9QsFHGizo0xVJL20U3aKTVISAtO1CoKpUAeANtVvwNP_y6Xew>
+ <xmx:JMQGa_sLFFveGmYENbXAKoJTUlbRnOHbokRPC2OZMLsXvIeW3TMMSg>
+ <xmx:JcQGa9n4ukwlPJIhGriqyVEuBgcviQSwG-3p2N-YtpHwZzJjfBn1puPc>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 25 Nov 2026 06:19:00 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH] doc: document that fork is not supported after EAL init
+Date: Wed, 25 Nov 2026 12:18:59 +0100
+Message-ID: <tRHmK-wGRvSfdfy-XxmTYA@monjalon.net>
+In-Reply-To: <20261123182202.340811-1-stephen@networkplumber.org>
+References: <20261123182202.340811-1-stephen@networkplumber.org>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: NQR8mRxMnur9KSSJplV/+qm85ngAdV/Rd98GqLyCG8pwFu6jErC7mewV
- I4xxGMKBixzaUHok/d+ETAoSJE/oD+D38EVBCUgPfAcwFAd61QgytpA7tGRMRITa5moVCA+
- b+fHCQUyuryXxgohEhfVblMtBm8hDATKUL121wUHZQEoGd1je8uFXZXYErsca9nr6dnb7od
- 0TdwK2CXkz+apfU+bOpR8NKMrILP1xo9jc7w27UFYjkpdsQpcQCXieuhktmhZilzM7XGQE0
- 4uR/iliZX2NoGn+EhDrfcOsWI+uMNnBhVrAsOT8Iicr2peuH+Zba3pjPRhUagWZY7cPSLLI
- yr38apsE0+JMF8xCKrvvWOUHvbNNIqJTAtWoIshvc27m7QaCj3tN+l3QrBg4MPea/cR9z5O
- x5iASr6MUC5a6p83Df8KO/ksu0ZR15FAsKfYVUEy2I3XBVWY0CCZSQm7sAMx1u+A4xVvk+v
- j0D4T1hRlO56k/xXpjiuP+EOcUk5J9TVwpT5WdVbSbyeefr0PXCZ4PngNR4Uk7RcGInrIGu
- ithDIqFtHOxJIe51xkiHOx9J1rHpXTdLgQqeQiQ61xJi+YBJJMLGOWL7fkMHRcwJmJnL7kb
- v9QQ960fRLS0gSkUNGthJE45gXC1lFtIML67u5+3+zsgm7ZIpsJ7jKPvw5zv0kEFPxcyWHc
- 23CgkcXqeLi0VTzd5kOHG4MZCMbb2GLHkSUh1V9FfITzr3ritl0HZdubkwlauOYWNismu16
- RVSvYY9wK+cy35rH51QUADcLplcwm/OItkk/PRij1E9dxcs5v4yUbbOS7xBdu8Af4MuX9ya
- hS70MpwsnC2hy6CYjBP6tg030MpliCWbug3E9Ep0ZJlYrSTHekEPoFqR/QwQY+rwmUZdkrf
- ERUgRWU4Sch3f8uMf2J/V9Wxe0tNLdKtzOgIil7GvLH+901ylNDbbFBMBV/u7DpO+CMugJy
- fO3aBEOhhSR13x6uB1V7w86SlQfdYO12W83F1YJNgsCAJqKQ3mh/+Z77Fum6rhbIuQROqQr
- OFt4sVb5K3gGDrLcIenriMztWveayY6+5kO7jfrat4JEGI+64h
-X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,59 +104,18 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
 	autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-With a YT8531S-CA PHY in UTP_FIBER_TO_RGMII combo mode, the copper port
-raises interrupts and links up, but the fiber side raises none and never
-links up.
+23/11/2026 19:21, Stephen Hemminger:
+> +    A child created by ``fork()`` after ``rte_eal_init()`` must not use the DPDK.
+> +    Calling ``exec()`` in the child, or making no DPDK calls at all, is safe.
 
-ngbe_init_phy_yt() enables the interrupts straight away, without the
-extra configuration such a part needs. Apply that configuration first,
-and skip it for parts that read 0x31 or 0x32 in YT_INTR.
+It would be safe if we didn't have atexit(unlink_sockets)
+in lib/telemetry/telemetry.c
 
-Fixes: 79be49dd2d65 ("net/ngbe: add special config for YT8531SH-CA PHY")
-Cc: stable@dpdk.org
-
-Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
----
- drivers/net/ngbe/base/ngbe_phy_yt.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/drivers/net/ngbe/base/ngbe_phy_yt.c b/drivers/net/ngbe/base/ngbe_phy_yt.c
-index ab0778d246..f9230266e9 100644
---- a/drivers/net/ngbe/base/ngbe_phy_yt.c
-+++ b/drivers/net/ngbe/base/ngbe_phy_yt.c
-@@ -100,8 +100,25 @@ s32 ngbe_write_phy_reg_sds_ext_yt(struct ngbe_hw *hw,
- 
- s32 ngbe_init_phy_yt(struct ngbe_hw *hw)
- {
-+	u16 value = 0;
-+
- 	rte_spinlock_init(&hw->phy_lock);
- 
-+	rte_spinlock_lock(&hw->phy_lock);
-+	ngbe_write_phy_reg_ext_yt(hw, YT_SPEC_CONF, 0,
-+				  YT_SPEC_CONF_8531SH_CA);
-+	ngbe_write_phy_reg_ext_yt(hw, YT_SMI_PHY, 0, 0);
-+	ngbe_read_phy_reg_mdi(hw, YT_INTR, 0, &value);
-+
-+	if (value != 0x31 && value != 0x32) {
-+		ngbe_write_phy_reg_ext_yt(hw, 0xa071, 0, 0x9007);
-+		ngbe_write_phy_reg_ext_yt(hw, 0x52, 0, 0x231d);
-+		ngbe_write_phy_reg_ext_yt(hw, 0x51, 0, 0x04a9);
-+		ngbe_write_phy_reg_ext_yt(hw, 0x57, 0, 0x274c);
-+		ngbe_write_phy_reg_ext_yt(hw, YT_MISC, 0, 0x10d);
-+	}
-+	rte_spinlock_unlock(&hw->phy_lock);
-+
- 	if (hw->lsc) {
- 		rte_spinlock_lock(&hw->phy_lock);
- 		/* close sds area register */
--- 
-2.55.0.windows.2
 
