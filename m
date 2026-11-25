@@ -2,42 +2,42 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D5B606A323
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 14:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F59606A31E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Nov 2026 14:07:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.a=rsa-sha256 header.s=dkim header.b=TwXvIo9l
+	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.a=rsa-sha256 header.s=dkim header.b=qh/z1WYl
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1130D4068A;
+	by mails.dpdk.org (Postfix) with ESMTP id CF0F240696;
 	Wed, 25 Nov 2026 15:06:36 +0100 (CET)
-Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com
- [113.46.200.216])
- by mails.dpdk.org (Postfix) with ESMTPS id 054C740616
- for <dev@dpdk.org>; Wed, 25 Nov 2026 15:06:30 +0100 (CET)
+Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com
+ [113.46.200.224])
+ by mails.dpdk.org (Postfix) with ESMTPS id 2F9CB4064F
+ for <dev@dpdk.org>; Wed, 25 Nov 2026 15:06:31 +0100 (CET)
 dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=1N04s/+rasNZqbr2OibdjSetraYsQfXS2XS9fXUmkA4=;
- b=TwXvIo9l4RfeURGy4T2kv7b6+dxY+fZEfz/EvIO99lBdw6FZBZGBBqOWziIUl354pMKV9GfI3
- LFRtdYgW4F3EeEsQLrt+voAgY/ORuj4fbxmNwrrhtvbg3YdUiL0SpSKgMiV14a0710LB8hIoX0w
- 5mSAe7cwnor4TltC0gJ58+o=
-Received: from mail.maildlp.com (unknown [172.19.162.144])
- by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4jZM001hHqz1T4H4;
- Wed, 25 Nov 2026 22:05:36 +0800 (CST)
+ bh=/nk9TSky1Ybo+YfZTaDfitcQphKDGSje/Sf/nyiCcOU=;
+ b=qh/z1WYlE9FTupEnEOl8C3T5fi8n4mOz22C46h2Lubnk+vOMms9hTHKGQZlk7epyk0BCDAdde
+ 98Y6+FiAE+ybj/vtzDhBQEGYpGBAxTD7vp/kfnzFV5tnZU/MkqWebXA2S16u0FdD2LxJErzO0I6
+ MLdULcc7fSkKANO05zDa3hI=
+Received: from mail.maildlp.com (unknown [172.19.163.200])
+ by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4jZM0X41Lvz1cyQR;
+ Wed, 25 Nov 2026 22:06:04 +0800 (CST)
 Received: from dggpemr100003.china.huawei.com (unknown [7.185.36.150])
- by mail.maildlp.com (Postfix) with ESMTPS id 4318E40538;
- Wed, 25 Nov 2026 22:06:26 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id DDAD54055B;
+ Wed, 25 Nov 2026 22:06:28 +0800 (CST)
 Received: from localhost.localdomain (10.50.163.32) by
  dggpemr100003.china.huawei.com (7.185.36.150) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.56; Wed, 25 Nov 2026 22:06:25 +0800
+ 15.2.2562.56; Wed, 25 Nov 2026 22:06:28 +0800
 From: Shuaisong Yang <yangshuaisong@h-partners.com>
 To: Anatoly Burakov <anatoly.burakov@intel.com>, Sivaprasad Tummala
  <sivaprasad.tummala@amd.com>
 CC: <dev@dpdk.org>, <yangshuaisong@h-partners.com>, <liuyonglong@huawei.com>, 
  <fengchengwen@huawei.com>, <yangxingui@h-partners.com>,
  <yangxingui@huawei.com>, Huisong Li <lihuisong@huawei.com>
-Subject: [PATCH 6/9] examples/l3fwd-power: set freq for specific uncore
-Date: Wed, 25 Nov 2026 22:06:12 +0800
-Message-ID: <20261125140616.3965843-7-yangshuaisong@h-partners.com>
+Subject: [PATCH 9/9] power: add uncore frequency telemetry
+Date: Wed, 25 Nov 2026 22:06:15 +0800
+Message-ID: <20261125140616.3965843-10-yangshuaisong@h-partners.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20261125140616.3965843-1-yangshuaisong@h-partners.com>
 References: <20261125140616.3965843-1-yangshuaisong@h-partners.com>
@@ -65,474 +65,242 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Huisong Li <lihuisong@huawei.com>
 
-l3fwd-power only supports the -u/-U/-i options which apply the
-uncore frequency to all packages and dies. Add a new --uncore-freq
-option so users can set the uncore frequency for specific
-package/die pairs.
+The uncore power management API exposes frequency information that is
+useful for runtime monitoring, but currently can only be queried through
+application code calling the API directly. This makes it inconvenient
+for operators to inspect uncore frequency status on a running DPDK
+application.
+
+Add telemetry endpoints to the power library so that uncore frequency
+information can be queried externally via the standard DPDK telemetry
+interface (e.g. dpdk-telemetry tool), without writing dedicated
+application code.
+
+Two commands are registered:
+- /power/uncore/curr_freq: returns the current frequency index for a
+  given package and die.
+- /power/uncore/avail_freqs: returns the available frequencies for a
+  given package and die.
+
+Both commands take "pkg,die" as parameters and require the uncore power
+environment to be initialized.
+
+Documentation is updated to describe the new telemetry commands.
 
 Signed-off-by: Huisong Li <lihuisong@huawei.com>
 Signed-off-by: Shuaisong Yang <yangshuaisong@h-partners.com>
 ---
- .../sample_app_ug/l3_forward_power_man.rst    |  13 +
- examples/l3fwd-power/main.c                   | 309 ++++++++++++++----
- 2 files changed, 253 insertions(+), 69 deletions(-)
+ doc/guides/prog_guide/power_man.rst    |  23 +++++
+ doc/guides/rel_notes/release_26_11.rst |   6 ++
+ lib/power/meson.build                  |   3 +-
+ lib/power/rte_power_telemetry.c        | 129 +++++++++++++++++++++++++
+ 4 files changed, 160 insertions(+), 1 deletion(-)
+ create mode 100644 lib/power/rte_power_telemetry.c
 
-diff --git a/doc/guides/sample_app_ug/l3_forward_power_man.rst b/doc/guides/sample_app_ug/l3_forward_power_man.rst
-index ef3f1f1519..442d8f0c8f 100644
---- a/doc/guides/sample_app_ug/l3_forward_power_man.rst
-+++ b/doc/guides/sample_app_ug/l3_forward_power_man.rst
-@@ -108,6 +108,8 @@ where,
+diff --git a/doc/guides/prog_guide/power_man.rst b/doc/guides/prog_guide/power_man.rst
+index 40ba7850a7..1af5adeec3 100644
+--- a/doc/guides/prog_guide/power_man.rst
++++ b/doc/guides/prog_guide/power_man.rst
+@@ -302,6 +302,29 @@ Get Num Pkgs
+ Get Num Dies
+   Get the number of dies on a given package.
  
- *   -i (frequency index): set target frequency for uncore by specified frequency index.
- 
-+*   --uncore-freq=(\\(package,\\domain,\\frequency\\))(\\(package,\\domain,\\frequency\\)): optional, set target frequency for the specified uncore. <frequency> is min, max or a frequency index. If not given, -u/-U/-i apply to all uncore. May be specified multiple times.
++Uncore Telemetry
++~~~~~~~~~~~~~~~~
 +
- *   --config (port,queue,lcore)[,(port,queue,lcore)]: determines which queues from which ports are mapped to which cores.
- 
- *   --cpu-resume-latency LATENCY: set CPU resume latency to control C-state selection, 0 : just allow entering C0-state.
-@@ -333,6 +335,17 @@ Three options are available for setting uncore frequency:
-   Frequency index values are in descending order,
-   i.e., index 0 is maximum frequency index.
- 
-+``--uncore-freq``
-+  This will allow you to set the uncore frequency for specific packages and dies.
-+  Each ``(package,domain,frequency)`` group targets one uncore, where ``frequency``
-+  is ``min``, ``max`` or a frequency index. Multiple groups can be given in a single
-+  option. The ``-u``, ``-U`` and ``-i`` options apply to all packages and dies and
-+  cannot be used together with ``--uncore-freq``.
++The power library provides telemetry commands to query uncore frequency
++information for a given package and die.
++The uncore power management environment must be initialized before using
++these commands. The parameters are specified as a comma-separated pair
++``pkg,die`` (e.g. ``0,0``).
 +
- .. code-block:: console
- 
-    dpdk-l3fwd-power -l 1-3 -- -p 0x0f --config="(0,0,2),(0,1,3)" -i 1
++#. Get the current frequency index for a given package and die::
 +
-+.. code-block:: console
++     --> /power/uncore/curr_freq,0,0
++     {"/power/uncore/curr_freq": {"pkg": 0, "die": 0, "curr_freq_idx": 3}}
 +
-+   dpdk-l3fwd-power -l 1-3 -- -p 0x0f --config="(0,0,2),(0,1,3)" --uncore-freq="(0,0,max)(0,1,1)"
-diff --git a/examples/l3fwd-power/main.c b/examples/l3fwd-power/main.c
-index b6430f0c78..da44d74c0f 100644
---- a/examples/l3fwd-power/main.c
-+++ b/examples/l3fwd-power/main.c
-@@ -211,10 +211,15 @@ enum uncore_choice {
++#. Get the available frequencies for a given package and die::
++
++     --> /power/uncore/avail_freqs,0,0
++     {"/power/uncore/avail_freqs": {"pkg": 0, "die": 0, "num_freqs": 4,
++      "0": 1800000000, "1": 2000000000, "2": 2200000000, "3": 2400000000}}
++
++For more information on how to use the Telemetry interface, see
++the :doc:`../howto/telemetry`.
++
+ References
+ ----------
  
- /* flag to check if uncore option enabled */
- int enabled_uncore = -1;
-+#define MAX_UNCORE_CFG 32
- static struct uncore_cfg {
-+	uint16_t pkg;
-+	uint16_t die;
- 	enum uncore_choice uncore_choice;
- 	uint32_t freq_idx;
--} uncore_cfg;
-+} uncore_cfg[MAX_UNCORE_CFG];
-+static uint32_t nb_uncore_cfg;
-+static bool uncore_legacy;
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index dbb9cb6d93..2386f57614 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -342,6 +342,12 @@ New Features
+   Added the ``hisi_uncore`` driver for managing uncore frequency on
+   Hisilicon platforms via the Linux devfreq sysfs interface.
  
- struct __rte_cache_aligned lcore_rx_queue {
- 	uint16_t port_id;
-@@ -1494,6 +1499,7 @@ print_usage(const char *prgname)
- {
- 	printf ("%s [EAL options] -- -p PORTMASK -P"
- 		"  [--config (port,queue,lcore)[,(port,queue,lcore]]"
-+		"  [--uncore-freq (pkg,die,freq)[,(pkg,die,freq]]"
- 		"  [--high-perf-cores CORELIST"
- 		"  [--perf-config (port,queue,hi_perf,lcore_index)[,(port,queue,hi_perf,lcore_index]]"
- 		"  [--max-pkt-len PKTLEN]\n"
-@@ -1502,6 +1508,8 @@ print_usage(const char *prgname)
- 		"  -u: set min/max frequency for uncore to minimum value\n"
- 		"  -U: set min/max frequency for uncore to maximum value\n"
- 		"  -i (frequency index): set target frequency for uncore by specified frequency index\n"
-+		"  --uncore-freq (pkg,die,freq)[,(pkg,die,freq)]: set target frequency for the"
-+		" specified uncore where freq is min, max or a frequency index\n"
- 		"  --config (port,queue,lcore): rx queues configuration\n"
- 		"  --eth-link-speed: force link speed\n"
- 		"  --cpu-resume-latency LATENCY: set CPU resume latency to control C-state selection,"
-@@ -1569,6 +1577,66 @@ parse_portmask(const char *portmask)
- 	return pm;
- }
++* **Added uncore frequency telemetry.**
++
++  Added ``/power/uncore/curr_freq`` and ``/power/uncore/avail_freqs``
++  telemetry commands to query the current frequency index and the
++  available frequencies of a given uncore package and die.
++
+ * **Added graph profiling.**
  
+   Added build time configurable graph node profiling statistics
+diff --git a/lib/power/meson.build b/lib/power/meson.build
+index d89fb55514..292d31bf8a 100644
+--- a/lib/power/meson.build
++++ b/lib/power/meson.build
+@@ -20,6 +20,7 @@ sources = files(
+         'rte_power_pmd_mgmt.c',
+         'rte_power_qos.c',
+         'rte_power_uncore.c',
++        'rte_power_telemetry.c',
+ )
+ headers = files(
+         'rte_power_cpufreq.h',
+@@ -33,4 +34,4 @@ driver_sdk_headers = files(
+         'power_uncore_ops.h',
+ )
+ 
+-deps += ['timer', 'ethdev']
++deps += ['timer', 'ethdev', 'telemetry']
+diff --git a/lib/power/rte_power_telemetry.c b/lib/power/rte_power_telemetry.c
+new file mode 100644
+index 0000000000..0217c39734
+--- /dev/null
++++ b/lib/power/rte_power_telemetry.c
+@@ -0,0 +1,129 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 Huawei Technologies Co., Ltd
++ */
++
++#include <ctype.h>
++#include <errno.h>
++#include <stdio.h>
++#include <stdlib.h>
++
++#include <rte_telemetry.h>
++#include <rte_power_uncore.h>
++
++#include "power_common.h"
++
 +static int
-+parse_uncore_freq(const char *q_arg)
++parse_uncore_param(const char *params, unsigned int *pkg, unsigned int *die)
 +{
-+	unsigned long  pkg, die, freq_idx = 0;
-+	const char *p, *p0 = q_arg;
-+	enum uncore_choice choice;
-+	char s[64];
-+	char *end;
-+	int i;
++	unsigned long pkg_id, die_id;
++	char *end = NULL;
 +
-+	while ((p = strchr(p0, '(')) != NULL) {
-+		++p;
-+		p0 = strchr(p, ')');
-+		if (p0 == NULL)
-+			return -1;
++	if (params == NULL || params[0] == '\0' || !isdigit((unsigned char)params[0]))
++		return -EINVAL;
 +
-+		if ((uint32_t)(p0 - p) >= sizeof(s))
-+			return -1;
-+		snprintf(s, sizeof(s), "%.*s", (int)(p0 - p), p);
++	pkg_id = strtoul(params, &end, 0);
++	if (end == NULL || *end != ',')
++		return -EINVAL;
++	die_id = strtoul(end + 1, &end, 0);
++	if (*end != '\0')
++		return -EINVAL;
 +
-+		end = s;
-+		pkg = strtoul(end, &end, 0);
-+		if (*end != ',' || pkg > UINT16_MAX)
-+			return -1;
-+		die = strtoul(++end, &end, 0);
-+		if (*end != ',' || die > UINT16_MAX)
-+			return -1;
-+		end++;
-+		if (strncmp(end, "min", 3) == 0) {
-+			choice = UNCORE_MIN;
-+			end += 3;
-+		} else if (strncmp(end, "max", 3) == 0) {
-+			choice = UNCORE_MAX;
-+			end += 3;
-+		} else {
-+			freq_idx = strtoul(end, &end, 0);
-+			if (end == s || freq_idx > UINT32_MAX)
-+				return -1;
-+			choice = UNCORE_IDX;
-+		}
-+		if (*end != '\0')
-+			return -1;
++	if (pkg_id > UINT_MAX || die_id > UINT_MAX)
++		return -EINVAL;
 +
-+		if (nb_uncore_cfg >= MAX_UNCORE_CFG) {
-+			RTE_LOG(INFO, L3FWD_POWER, "Too many uncore freq options,"
-+				" max is %d\n", MAX_UNCORE_CFG);
-+			return -1;
-+		}
-+
-+		i = nb_uncore_cfg;
-+		uncore_cfg[i].pkg = pkg;
-+		uncore_cfg[i].die = die;
-+		uncore_cfg[i].uncore_choice = choice;
-+		uncore_cfg[i].freq_idx = freq_idx;
-+		nb_uncore_cfg++;
-+	}
++	*pkg = (unsigned int)pkg_id;
++	*die = (unsigned int)die_id;
 +
 +	return 0;
 +}
 +
- static int
- parse_config(const char *q_arg)
- {
-@@ -1671,6 +1739,7 @@ parse_pmd_mgmt_config(const char *name)
- #define CMD_LINE_OPT_SCALE_FREQ_MIN "scale-freq-min"
- #define CMD_LINE_OPT_SCALE_FREQ_MAX "scale-freq-max"
- #define CMD_LINE_OPT_CPU_RESUME_LATENCY "cpu-resume-latency"
-+#define CMD_LINE_OPT_UNCORE_FREQ "uncore-freq"
- #define CMD_LINK_OPT_ETH_LINK_SPEED "eth-link-speed"
- 
- /* Parse the argument given in the command line of the application */
-@@ -1699,6 +1768,7 @@ parse_args(int argc, char **argv)
- 		{CMD_LINE_OPT_SCALE_FREQ_MIN, 1, 0, 0},
- 		{CMD_LINE_OPT_SCALE_FREQ_MAX, 1, 0, 0},
- 		{CMD_LINK_OPT_ETH_LINK_SPEED, 1, 0, 0},
-+		{CMD_LINE_OPT_UNCORE_FREQ, 1, 0, 0},
- 		{NULL, 0, 0, 0}
- 	};
- 
-@@ -1722,21 +1792,42 @@ parse_args(int argc, char **argv)
- 			promiscuous_on = 1;
- 			break;
- 		case 'u':
-+			if (nb_uncore_cfg > 0) {
-+				RTE_LOG(INFO, L3FWD_POWER,
-+					"Option -u cannot be used together with --uncore-freq\n");
-+				print_usage(prgname);
-+				return -1;
-+			}
- 			enabled_uncore = 0;
--			uncore_cfg.uncore_choice = UNCORE_MIN;
-+			uncore_legacy = true;
-+			uncore_cfg[0].uncore_choice = UNCORE_MIN;
- 			break;
- 		case 'U':
-+			if (nb_uncore_cfg > 0) {
-+				RTE_LOG(INFO, L3FWD_POWER,
-+					"Option -U cannot be used together with --uncore-freq\n");
-+				print_usage(prgname);
-+				return -1;
-+			}
- 			enabled_uncore = 0;
--			uncore_cfg.uncore_choice = UNCORE_MAX;
-+			uncore_legacy = true;
-+			uncore_cfg[0].uncore_choice = UNCORE_MAX;
- 			break;
- 		case 'i':
-+			if (nb_uncore_cfg > 0) {
-+				RTE_LOG(INFO, L3FWD_POWER,
-+					"Option -i cannot be used together with --uncore-freq\n");
-+				print_usage(prgname);
-+				return -1;
-+			}
- 			enabled_uncore = 0;
--			if (parse_uint(optarg, UINT32_MAX, &uncore_cfg.freq_idx) != 0) {
--				RTE_LOG(INFO, L3FWD_POWER, "Index given is not a valid number.");
-+			uncore_legacy = true;
-+			if (parse_uint(optarg, UINT32_MAX, &uncore_cfg[0].freq_idx) != 0) {
-+				RTE_LOG(INFO, L3FWD_POWER, "Invalid freq index");
- 				print_usage(prgname);
- 				return -1;
- 			}
--			uncore_cfg.uncore_choice = UNCORE_IDX;
-+			uncore_cfg[0].uncore_choice = UNCORE_IDX;
- 			break;
- 		/* long options */
- 		case 0:
-@@ -1893,6 +1984,26 @@ parse_args(int argc, char **argv)
- 					port_conf.link_speeds = rte_eth_speed_bitflag(speed_num, 0);
- 			}
- 
-+			if (!strncmp(lgopts[option_index].name,
-+					CMD_LINE_OPT_UNCORE_FREQ,
-+					sizeof(CMD_LINE_OPT_UNCORE_FREQ))) {
-+				if (uncore_legacy) {
-+					RTE_LOG(INFO, L3FWD_POWER,
-+						"Option --uncore-freq cannot be used together"
-+						" with -u/-U/-i\n");
-+					print_usage(prgname);
-+					return -1;
-+				}
-+				if (parse_uncore_freq(optarg) != 0) {
-+					RTE_LOG(INFO, L3FWD_POWER,
-+						"Invalid uncore freq, expected <package>,<domain>,<frequency>\n");
-+					print_usage(prgname);
-+					return -1;
-+				}
-+				enabled_uncore = 0;
-+				uncore_legacy = false;
-+			}
-+
- 			break;
- 
- 		default:
-@@ -2189,12 +2300,60 @@ static int check_ptype(uint16_t portid)
- 
- }
- 
 +static int
-+set_uncore_freq(uint32_t pkg, uint32_t die, struct uncore_cfg *cfg)
++handle_power_uncore_curr_freq(const char *cmd __rte_unused, const char *params,
++		struct rte_tel_data *d)
 +{
-+	int freq_array_len;
++	unsigned int pkg, die;
++	uint32_t curr_idx;
 +	int ret;
 +
-+	if (cfg->uncore_choice == UNCORE_MIN) {
-+		ret = rte_power_uncore_freq_min(pkg, die);
-+		if (ret == -1) {
-+			RTE_LOG(INFO, L3FWD_POWER,
-+			"Unable to set the uncore frequency to minimum value for pkg %u die %u\n"
-+			, pkg, die);
-+			return -1;
-+		}
-+	} else if (cfg->uncore_choice == UNCORE_MAX) {
-+		ret = rte_power_uncore_freq_max(pkg, die);
-+		if (ret == -1) {
-+			RTE_LOG(INFO, L3FWD_POWER,
-+			"Unable to set uncore frequency to maximum value for pkg %u die %u\n"
-+			, pkg, die);
-+			return -1;
-+		}
-+	} else if (cfg->uncore_choice == UNCORE_IDX) {
-+		freq_array_len = rte_power_uncore_get_num_freqs(pkg, die);
-+		if (freq_array_len <= 0) {
-+			RTE_LOG(INFO, L3FWD_POWER, "Get uncore frequency number failed.\n");
-+			return -1;
-+		}
-+		if (cfg->freq_idx > (uint32_t)(freq_array_len - 1)) {
-+			RTE_LOG(INFO, L3FWD_POWER,
-+			"Invalid freq index, please choose a value from 0 to %d.\n",
-+			freq_array_len - 1);
-+			return -1;
-+		}
-+		ret = rte_power_set_uncore_freq(pkg, die, cfg->freq_idx);
-+		if (ret == -1) {
-+			RTE_LOG(INFO, L3FWD_POWER,
-+			"Unable to set specified frequency index for pkg %u die %u\n",
-+			pkg, die);
-+			return -1;
-+		}
-+	}
++	if (rte_power_get_uncore_env() == RTE_UNCORE_PM_ENV_NOT_SET)
++		return -EINVAL;
 +
++	ret = parse_uncore_param(params, &pkg, &die);
++	if (ret != 0)
++		return ret;
++
++	if (pkg >= rte_power_uncore_get_num_pkgs())
++		return -EINVAL;
++	if (die >= rte_power_uncore_get_num_dies(pkg))
++		return -EINVAL;
++
++	curr_idx = rte_power_get_uncore_freq(pkg, die);
++	if (curr_idx == (uint32_t)RTE_POWER_INVALID_FREQ_INDEX)
++		return -EINVAL;
++
++	rte_tel_data_start_dict(d);
++	rte_tel_data_add_dict_uint(d, "pkg", pkg);
++	rte_tel_data_add_dict_uint(d, "die", die);
++	rte_tel_data_add_dict_uint(d, "curr_freq_idx", curr_idx);
 +	return 0;
 +}
 +
- static int
- power_uncore_init(void)
- {
--	unsigned int die, pkg, max_pkg, max_die;
--	unsigned int init_pkg = 0, init_die = 0;
-+	uint32_t max_pkg, max_die, die, pkg;
-+	uint32_t init_pkg = 0, init_die = 0;
- 	bool init_done = false;
-+	uint32_t init_nb = 0;
-+	uint32_t i;
- 	int ret;
- 
- 	if (enabled_uncore == -1)
-@@ -2206,84 +2365,96 @@ power_uncore_init(void)
- 		return ret;
- 	}
- 
--	max_pkg = rte_power_uncore_get_num_pkgs();
--	if (max_pkg == 0)
--		return -1;
-+	if (uncore_legacy) {
-+		/* No specific uncore targeted, apply to all pkg/die. */
-+		max_pkg = rte_power_uncore_get_num_pkgs();
-+		if (max_pkg == 0)
-+			return -1;
- 
--	for (pkg = 0; pkg < max_pkg; pkg++) {
--		max_die = rte_power_uncore_get_num_dies(pkg);
--		if (max_die == 0) {
--			ret = -1;
--			goto uninit_uncore;
--		}
--		for (die = 0; die < max_die; die++) {
--			ret = rte_power_uncore_init(pkg, die);
--			if (ret == -1) {
--				RTE_LOG(INFO, L3FWD_POWER, "Unable to initialize uncore for pkg %02u die %02u\n"
--				, pkg, die);
-+		for (pkg = 0; pkg < max_pkg; pkg++) {
-+			max_die = rte_power_uncore_get_num_dies(pkg);
-+			if (max_die == 0) {
-+				ret = -1;
- 				goto uninit_uncore;
- 			}
--			init_pkg = pkg;
--			init_die = die;
--			init_done = true;
--
--			if (uncore_cfg.uncore_choice == UNCORE_MIN) {
--				ret = rte_power_uncore_freq_min(pkg, die);
--				if (ret == -1) {
--					RTE_LOG(INFO, L3FWD_POWER,
--					"Unable to set the uncore frequency to minimum value for pkg %02u die %02u\n"
--					, pkg, die);
--					goto uninit_uncore;
--				}
--			} else if (uncore_cfg.uncore_choice == UNCORE_MAX) {
--				ret = rte_power_uncore_freq_max(pkg, die);
-+			for (die = 0; die < max_die; die++) {
-+				ret = rte_power_uncore_init(pkg, die);
- 				if (ret == -1) {
--					RTE_LOG(INFO, L3FWD_POWER,
--					"Unable to set uncore frequency to maximum value for pkg %02u die %02u\n"
-+					RTE_LOG(INFO, L3FWD_POWER, "Unable to initialize uncore for pkg %u die %u\n"
- 					, pkg, die);
- 					goto uninit_uncore;
- 				}
--			} else if (uncore_cfg.uncore_choice == UNCORE_IDX) {
--				int freq_array_len = rte_power_uncore_get_num_freqs(pkg, die);
--				if (freq_array_len <= 0) {
--					RTE_LOG(INFO, L3FWD_POWER, "Get uncore frequency number failed.\n");
--					ret = -1;
--					goto uninit_uncore;
--				}
--				if (uncore_cfg.freq_idx > (uint32_t)(freq_array_len - 1)) {
--					RTE_LOG(INFO, L3FWD_POWER,
--					"Frequency index given out of range, please choose a value from 0 to %d.\n",
--					freq_array_len - 1);
--					ret = -1;
--					goto uninit_uncore;
--				}
--				ret = rte_power_set_uncore_freq(pkg, die, uncore_cfg.freq_idx);
--				if (ret == -1) {
--					RTE_LOG(INFO, L3FWD_POWER,
--					"Unable to set specified frequency index for pkg %02u die %02u\n",
--					pkg, die);
-+				init_pkg = pkg;
-+				init_die = die;
-+				init_done = true;
++static int
++handle_power_uncore_avail_freqs(const char *cmd __rte_unused, const char *params,
++		struct rte_tel_data *d)
++{
++	unsigned int pkg, die;
++	uint32_t *freqs;
++	char key[12];
++	int num_freqs;
++	int ret;
++	int i;
 +
-+				ret = set_uncore_freq(pkg, die, &uncore_cfg[0]);
-+				if (ret == -1)
- 					goto uninit_uncore;
--				}
- 			}
- 		}
-+	} else {
-+		max_pkg = rte_power_uncore_get_num_pkgs();
-+		if (max_pkg == 0)
-+			return -1;
++	if (rte_power_get_uncore_env() == RTE_UNCORE_PM_ENV_NOT_SET)
++		return -EINVAL;
 +
-+		for (i = 0; i < nb_uncore_cfg; i++) {
-+			pkg = uncore_cfg[i].pkg;
-+			die = uncore_cfg[i].die;
++	ret = parse_uncore_param(params, &pkg, &die);
++	if (ret != 0)
++		return ret;
 +
-+			if (pkg >= max_pkg) {
-+				RTE_LOG(INFO, L3FWD_POWER,
-+					"Invalid package id %u, must be less than %u\n",
-+					pkg, max_pkg);
-+				ret = -1;
-+				goto uninit_uncore;
-+			}
-+			max_die = rte_power_uncore_get_num_dies(pkg);
-+			if (die >= max_die) {
-+				RTE_LOG(INFO, L3FWD_POWER,
-+					"Invalid die id %u for pkg %u, must be less than %u\n",
-+					die, pkg, max_die);
-+				ret = -1;
-+				goto uninit_uncore;
-+			}
++	if (pkg >= rte_power_uncore_get_num_pkgs())
++		return -EINVAL;
++	if (die >= rte_power_uncore_get_num_dies(pkg))
++		return -EINVAL;
 +
-+			ret = rte_power_uncore_init(pkg, die);
-+			if (ret == -1) {
-+				RTE_LOG(INFO, L3FWD_POWER, "Unable to initialize uncore for pkg %u die %u\n"
-+				, pkg, die);
-+				goto uninit_uncore;
-+			}
-+			init_nb = i + 1;
++	num_freqs = rte_power_uncore_get_num_freqs(pkg, die);
++	if (num_freqs <= 0)
++		return -EINVAL;
 +
-+			ret = set_uncore_freq(pkg, die, &uncore_cfg[i]);
-+			if (ret == -1)
-+				goto uninit_uncore;
-+		}
- 	}
- 
- 	return 0;
- 
- uninit_uncore:
- 	/* Roll back the pkg/die that were initialized before the failure. */
--	if (init_done) {
--		for (pkg = 0; pkg <= init_pkg; pkg++) {
--			if (pkg == init_pkg)
--				max_die = init_die + 1;
--			else {
--				max_die = rte_power_uncore_get_num_dies(pkg);
--				if (max_die == 0)
--					break;
-+	if (uncore_legacy) {
-+		if (init_done) {
-+			for (pkg = 0; pkg <= init_pkg; pkg++) {
-+				if (pkg == init_pkg)
-+					max_die = init_die + 1;
-+				else {
-+					max_die = rte_power_uncore_get_num_dies(pkg);
-+					if (max_die == 0)
-+						break;
-+				}
-+				for (die = 0; die < max_die; die++)
-+					rte_power_uncore_exit(pkg, die);
- 			}
--			for (die = 0; die < max_die; die++)
--				rte_power_uncore_exit(pkg, die);
- 		}
-+	} else {
-+		/* Only uninit the targeted uncore that were initialized. */
-+		for (i = 0; i < init_nb; i++)
-+			rte_power_uncore_exit(uncore_cfg[i].pkg,
-+				uncore_cfg[i].die);
- 	}
- 
- 	return ret;
-@@ -2305,7 +2476,7 @@ power_uncore_uninit(void)
- 			ret = rte_power_uncore_exit(pkg, die);
- 			if (ret < 0)
- 				RTE_LOG(ERR, L3FWD_POWER,
--					"Failed to exit uncore for pkg %02u die %02u, ret = %d.\n",
-+					"Failed to exit uncore for pkg %u die %u, ret = %d.\n",
- 					pkg, die, ret);
- 		}
- 	}
++	freqs = malloc(sizeof(uint32_t) * num_freqs);
++	if (freqs == NULL)
++		return -ENOMEM;
++
++	if (rte_power_uncore_freqs(pkg, die, freqs, num_freqs) != num_freqs) {
++		free(freqs);
++		return -EINVAL;
++	}
++
++	rte_tel_data_start_dict(d);
++	rte_tel_data_add_dict_uint(d, "pkg", pkg);
++	rte_tel_data_add_dict_uint(d, "die", die);
++	rte_tel_data_add_dict_uint(d, "num_freqs", num_freqs);
++
++	for (i = 0; i < num_freqs; i++) {
++		snprintf(key, sizeof(key), "%d", i);
++		rte_tel_data_add_dict_uint(d, key, freqs[i]);
++	}
++
++	free(freqs);
++	return 0;
++}
++
++RTE_INIT(power_uncore_init_telemetry)
++{
++	rte_telemetry_register_cmd("/power/uncore/curr_freq", handle_power_uncore_curr_freq,
++			"Returns the current frequency index of an uncore domain. "
++			"Parameters: int pkg, int die");
++	rte_telemetry_register_cmd("/power/uncore/avail_freqs", handle_power_uncore_avail_freqs,
++			"Returns the available frequencies of an uncore domain. "
++			"Parameters: int pkg, int die");
++}
 -- 
 2.33.0
 
