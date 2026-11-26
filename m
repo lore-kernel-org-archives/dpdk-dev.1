@@ -2,54 +2,56 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3857D606A31C
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Nov 2026 18:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C917606A31C
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Nov 2026 18:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=D+ZP8gUB
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=WGe6ymGF
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B8BA740E7C;
-	Thu, 26 Nov 2026 19:15:48 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 81DFF40ED0;
+	Thu, 26 Nov 2026 19:15:49 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTPS id 34BAA40E1E
- for <dev@dpdk.org>; Thu, 26 Nov 2026 19:15:32 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id 2280E40609
+ for <dev@dpdk.org>; Thu, 26 Nov 2026 19:15:33 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1795716933; x=1827252933;
+ t=1795716934; x=1827252934;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=gNMqgMftxtxIBvwnNrnB9YZEIRzJThEZhbrTbxMEUAk=;
- b=D+ZP8gUB5bteNHzT1YWGT2bhP/wnuCpegNYdjN6I3KjACejrg//FGRXA
- uJKWqhzqUxwuR8P3cHZkdhA9SG0BwGoL+Vlnira/YU2Xeh34IOZMOylTF
- Mcos2LNy2euyQlq3tbV+EebTQnd/shYj4ftvBK8eUfvfDKRCHiLxy+FFy
- PzM49fP3JdofM7QYjZOcvZ2AAyTYn6VrhTD04qF4NgF/ZAGrDzbvwlhVB
- 0YFiCVu9Mj+Cdpst/ybiASnlQIfCipk35iH+ePY8PW2t1XSWfKihP723D
- wFSEhI2b5Iw24Mq8o1RMm5ux+bbKV9PtMHq1YDBtYtfQ2PwSsGhnvdY6p w==;
-X-CSE-ConnectionGUID: Jq3cH3zETdOaeXBI0lw7QQ==
-X-CSE-MsgGUID: AO/X3Ut7QGOpHlheGIRw8g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11978"; a="4633644"
+ bh=+VG7WvLrPFAawF46A7+9J35ojpmgYQWUB30Kj3Tpu2Q=;
+ b=WGe6ymGFY5kQRkJUKCsax64GSgovmQTMM1+ssGEgI15Iva+hAmbSkyed
+ vew3QFf5LNPCT5H2B804Ld31qW9RZ2+D3DijL1K+6ctA+sKjzogt+UF2Y
+ EBefXCmeV0yXW4Ad0aTRid2sK4omvKltX3UTBFsW7KX9Z/gNebzV+LSHN
+ ow5HFH9Dm3FMs14S0/fnwBmW6Iie0ogoYrPGCSAZCLnbICy4efG761K/7
+ L7u+UaImv8WJ79n3NgW6N51Mi8qmf48RpPVDTKyugcZXbHTWMh/D7Y9bz
+ 3rKz7LzRrE3bNCIUq3fVSveE6LnaklWVrK3LOkLpIb98D7hm/WeNmynSl A==;
+X-CSE-ConnectionGUID: PMe14P1xQd6ht/ZkafjVWw==
+X-CSE-MsgGUID: edXrlT+PSB+kKR1bHyvWpg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11978"; a="4633646"
 X-IronPort-AV: E=Sophos;i="6.27,235,1787036400"; 
-   d="scan'208";a="4633644"
+   d="scan'208";a="4633646"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 26 Nov 2026 10:15:32 -0800
-X-CSE-ConnectionGUID: cDEB8JgeQqewXCSF7Bx+Pw==
-X-CSE-MsgGUID: FTlwvTuIQle/wD9pnKmniw==
+ 26 Nov 2026 10:15:33 -0800
+X-CSE-ConnectionGUID: DdsgYS7FSWWvtkhOqzMHzQ==
+X-CSE-MsgGUID: hv6OgNpcS7yfqwUgL9dbUg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,235,1787036400"; d="scan'208";a="12733177"
+X-IronPort-AV: E=Sophos;i="6.27,235,1787036400"; d="scan'208";a="12733186"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa001.fm.intel.com with ESMTP; 26 Nov 2026 10:15:31 -0800
+ by fmviesa001.fm.intel.com with ESMTP; 26 Nov 2026 10:15:32 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v3 38/39] eal: split EAL init into two stages
-Date: Thu, 26 Nov 2026 18:14:11 +0000
-Message-ID: <20261126181414.124094-39-bruce.richardson@intel.com>
+Subject: [PATCH v3 39/39] eal: provide hooks for init with externally supplied
+ config
+Date: Thu, 26 Nov 2026 18:14:12 +0000
+Message-ID: <20261126181414.124094-40-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261126181414.124094-1-bruce.richardson@intel.com>
 References: <20260721094555.2188496-1-bruce.richardson@intel.com>
  <20261126181414.124094-1-bruce.richardson@intel.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -67,552 +69,524 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Split the rte_eal_init function into two parts, where the first part is
-handling the argument parsing and then calling the second part which
-does the actual subsystem initialization.
+Now that we have a split EAL init, where most work is done on a
+configured eal_user_cfg structure, add in hooks to allow other libraries
+to init EAL by passing in that structure pre-configured.
+
+We export an internal function that wraps the second stage init, while
+taking care of the run_once flag, before calling the main initialization
+function with a prepopulated config.
+
+Also, export internally the platform info function so that any callers
+of this new function can do any necessary validation of parameters as
+part of their setup.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/eal/common/eal_common_options.c | 69 +++++++++--------------------
- lib/eal/common/eal_options.h        |  2 +-
- lib/eal/freebsd/eal.c               | 56 +++++++++++++++++------
- lib/eal/linux/eal.c                 | 54 +++++++++++++++++-----
- lib/eal/windows/eal.c               | 55 +++++++++++++++++------
- 5 files changed, 149 insertions(+), 87 deletions(-)
+ lib/eal/common/eal_common_config.c  |  5 ++-
+ lib/eal/common/eal_common_lcore.c   |  6 +--
+ lib/eal/common/eal_common_thread.c  |  2 +-
+ lib/eal/common/eal_internal_cfg.h   |  8 +++-
+ lib/eal/freebsd/eal.c               | 57 ++++++++++++++++++++++++---
+ lib/eal/freebsd/eal_hugepage_info.c |  2 +-
+ lib/eal/freebsd/eal_memory.c        |  6 +--
+ lib/eal/linux/eal.c                 | 55 ++++++++++++++++++++++++--
+ lib/eal/linux/eal_hugepage_info.c   |  2 +-
+ lib/eal/windows/eal.c               | 60 ++++++++++++++++++++++++++++-
+ lib/eal/windows/eal_hugepages.c     |  2 +-
+ lib/eal/windows/eal_memalloc.c      |  2 +-
+ 12 files changed, 183 insertions(+), 24 deletions(-)
 
-diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
-index 7590ad9c8c..d0bea404fe 100644
---- a/lib/eal/common/eal_common_options.c
-+++ b/lib/eal/common/eal_common_options.c
-@@ -426,9 +426,8 @@ eal_clean_saved_args(void)
- #endif /* !RTE_EXEC_ENV_WINDOWS */
- 
- static int
--eal_option_device_add(enum rte_devtype type, const char *arg)
-+eal_option_device_add(struct eal_user_cfg *user_cfg, enum rte_devtype type, const char *arg)
- {
--	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
- 	struct device_option *devopt;
- 	size_t arglen;
- 	int ret;
-@@ -483,9 +482,8 @@ eal_get_hugefile_prefix(void)
+diff --git a/lib/eal/common/eal_common_config.c b/lib/eal/common/eal_common_config.c
+index 110921ae93..73074f2520 100644
+--- a/lib/eal/common/eal_common_config.c
++++ b/lib/eal/common/eal_common_config.c
+@@ -68,8 +68,9 @@ eal_get_user_configuration(void)
  }
  
- static int
--eal_plugin_path_add(const char *path)
-+eal_plugin_path_add(struct eal_user_cfg *user_cfg, const char *path)
+ /* Return a pointer to the platform state structure */
++RTE_EXPORT_INTERNAL_SYMBOL(rte_eal_get_platform_info)
+ const struct eal_platform_info *
+-eal_get_platform_info(void)
++rte_eal_get_platform_info(void)
  {
--	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
- 	struct eal_plugin_path *p;
- 
- 	p = malloc(sizeof(*p));
-@@ -1021,11 +1019,10 @@ rte_eal_parse_coremask(const char *coremask, rte_cpuset_t *cpuset, bool limit_ra
- 
- /* Changes the lcore id of the main thread */
- static int
--eal_parse_main_lcore(const char *arg)
-+eal_parse_main_lcore(struct eal_user_cfg *user_cfg, const char *arg)
+ 	/* platform-discovered and runtime EAL state */
+ 	static struct eal_platform_info eal_platform_info;
+@@ -305,7 +306,7 @@ int
+ eal_apply_hugepage_mem_sz_limits(void)
  {
- 	char *parsing_end;
- 	long main_lcore;
--	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
+ 	const struct eal_user_cfg *user_cfg = eal_get_user_configuration();
+-	const struct eal_platform_info *platform_info = eal_get_platform_info();
++	const struct eal_platform_info *platform_info = rte_eal_get_platform_info();
+ 	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
+ 	unsigned int i;
  
- 	errno = 0;
- 	main_lcore = strtol(arg, &parsing_end, 0);
-@@ -1459,10 +1456,9 @@ eal_parse_proc_type(const char *arg)
+diff --git a/lib/eal/common/eal_common_lcore.c b/lib/eal/common/eal_common_lcore.c
+index 842230e729..47a754a990 100644
+--- a/lib/eal/common/eal_common_lcore.c
++++ b/lib/eal/common/eal_common_lcore.c
+@@ -55,7 +55,7 @@ RTE_EXPORT_SYMBOL(rte_lcore_to_cpu_id)
+ int rte_lcore_to_cpu_id(int lcore_id)
+ {
+ 	const struct eal_runtime_state *runtime_state = eal_get_runtime_state();
+-	const struct eal_platform_info *platform_info = eal_get_platform_info();
++	const struct eal_platform_info *platform_info = rte_eal_get_platform_info();
+ 	unsigned int cpu;
+ 
+ 	if (unlikely(lcore_id >= RTE_MAX_LCORE))
+@@ -278,7 +278,7 @@ RTE_EXPORT_SYMBOL(rte_socket_count)
+ unsigned int
+ rte_socket_count(void)
+ {
+-	const struct eal_platform_info *platform_info = eal_get_platform_info();
++	const struct eal_platform_info *platform_info = rte_eal_get_platform_info();
+ 	return platform_info->numa_node_count;
  }
  
- static int
--eal_parse_iova_mode(const char *name)
-+eal_parse_iova_mode(struct eal_user_cfg *user_cfg, const char *name)
- {
- 	int mode;
--	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
- 
- 	if (name == NULL)
- 		return -1;
-@@ -1506,11 +1502,10 @@ eal_parse_simd_bitwidth(const char *arg)
- }
- 
- static int
--eal_parse_base_virtaddr(const char *arg)
-+eal_parse_base_virtaddr(struct eal_user_cfg *user_cfg, const char *arg)
- {
- 	char *end;
- 	uint64_t addr;
--	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
- 
- 	errno = 0;
- 	addr = strtoull(arg, &end, 16);
-@@ -1822,9 +1817,8 @@ eal_parse_pagesz_mem(char *strval, struct eal_user_cfg *user_cfg)
- }
- 
- static int
--eal_parse_vfio_intr(const char *mode)
-+eal_parse_vfio_intr(struct eal_user_cfg *user_cfg, const char *mode)
- {
--	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
- 	static struct {
- 		const char *name;
- 		enum rte_intr_mode value;
-@@ -1844,9 +1838,8 @@ eal_parse_vfio_intr(const char *mode)
- }
- 
- static int
--eal_parse_vfio_vf_token(const char *vf_token)
-+eal_parse_vfio_vf_token(struct eal_user_cfg *user_cfg, const char *vf_token)
- {
--	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
- 	rte_uuid_t uuid;
- 
- 	if (!rte_uuid_parse(vf_token, uuid)) {
-@@ -1858,13 +1851,13 @@ eal_parse_vfio_vf_token(const char *vf_token)
- }
- 
- static int
--eal_parse_huge_worker_stack(const char *arg)
-+eal_parse_huge_worker_stack(struct eal_user_cfg *user_cfg, const char *arg)
- {
- #ifdef RTE_EXEC_ENV_WINDOWS
- 	EAL_LOG(WARNING, "Cannot set worker stack size on Windows, parameter ignored");
-+	RTE_SET_USED(user_cfg);
- 	RTE_SET_USED(arg);
- #else
--	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
- 
- 	if (arg == NULL || arg[0] == '\0') {
- 		pthread_attr_t attr;
-@@ -1901,10 +1894,8 @@ eal_parse_huge_worker_stack(const char *arg)
- 
- /* Parse the arguments given in the command line of the application */
+@@ -286,7 +286,7 @@ RTE_EXPORT_SYMBOL(rte_socket_id_by_idx)
  int
--eal_parse_args(void)
-+eal_parse_args(struct eal_user_cfg *user_cfg)
+ rte_socket_id_by_idx(unsigned int idx)
  {
--	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
--
- 	/*
- 	 * Initialise user_cfg to defaults. Fields not listed here are zero,
- 	 * false or NULL, which is the correct default (RTE_PROC_PRIMARY,
-@@ -1938,17 +1929,17 @@ eal_parse_args(void)
- 
- 	/* device -a/-b/-vdev options*/
- 	TAILQ_FOREACH(arg, &args.allow, next)
--		if (eal_option_device_add(RTE_DEVTYPE_ALLOWED, arg->arg) < 0)
-+		if (eal_option_device_add(user_cfg, RTE_DEVTYPE_ALLOWED, arg->arg) < 0)
- 			return -1;
- 	TAILQ_FOREACH(arg, &args.block, next)
--		if (eal_option_device_add(RTE_DEVTYPE_BLOCKED, arg->arg) < 0)
-+		if (eal_option_device_add(user_cfg, RTE_DEVTYPE_BLOCKED, arg->arg) < 0)
- 			return -1;
- 	TAILQ_FOREACH(arg, &args.vdev, next)
--		if (eal_option_device_add(RTE_DEVTYPE_VIRTUAL, arg->arg) < 0)
-+		if (eal_option_device_add(user_cfg, RTE_DEVTYPE_VIRTUAL, arg->arg) < 0)
- 			return -1;
- 	/* driver loading options */
- 	TAILQ_FOREACH(arg, &args.driver_path, next)
--		if (eal_plugin_path_add(arg->arg) < 0)
-+		if (eal_plugin_path_add(user_cfg, arg->arg) < 0)
- 			return -1;
- 
- 	if (remap_lcores && args.remap_lcore_ids != (void *)1) {
-@@ -2038,7 +2029,7 @@ eal_parse_args(void)
- 			return -1;
- 		}
- 	}
--	if (args.main_lcore != NULL && eal_parse_main_lcore(args.main_lcore) < 0)
-+	if (args.main_lcore != NULL && eal_parse_main_lcore(user_cfg, args.main_lcore) < 0)
+-	const struct eal_platform_info *platform_info = eal_get_platform_info();
++	const struct eal_platform_info *platform_info = rte_eal_get_platform_info();
+ 	if (idx >= platform_info->numa_node_count) {
+ 		rte_errno = EINVAL;
  		return -1;
- 
- 	/* memory options */
-@@ -2241,13 +2232,13 @@ eal_parse_args(void)
- 
- 	/* other misc settings */
- 	if (args.iova_mode != NULL) {
--		if (eal_parse_iova_mode(args.iova_mode) < 0) {
-+		if (eal_parse_iova_mode(user_cfg, args.iova_mode) < 0) {
- 			EAL_LOG(ERR, "invalid iova mode parameter '%s'", args.iova_mode);
- 			return -1;
- 		}
- 	};
- 	if (args.base_virtaddr != NULL) {
--		if (eal_parse_base_virtaddr(args.base_virtaddr) < 0) {
-+		if (eal_parse_base_virtaddr(user_cfg, args.base_virtaddr) < 0) {
- 			EAL_LOG(ERR, "invalid base virtaddr '%s'", args.base_virtaddr);
- 			return -1;
- 		}
-@@ -2260,13 +2251,13 @@ eal_parse_args(void)
- 		}
- 	}
- 	if (args.vfio_intr != NULL) {
--		if (eal_parse_vfio_intr(args.vfio_intr) < 0) {
-+		if (eal_parse_vfio_intr(user_cfg, args.vfio_intr) < 0) {
- 			EAL_LOG(ERR, "invalid vfio interrupt parameter: '%s'", args.vfio_intr);
- 			return -1;
- 		}
- 	}
- 	if (args.vfio_vf_token != NULL) {
--		if (eal_parse_vfio_vf_token(args.vfio_vf_token) < 0) {
-+		if (eal_parse_vfio_vf_token(user_cfg, args.vfio_vf_token) < 0) {
- 			EAL_LOG(ERR, "invalid vfio vf token parameter: '%s'", args.vfio_vf_token);
- 			return -1;
- 		}
-@@ -2275,7 +2266,7 @@ eal_parse_args(void)
- 	if (args.huge_worker_stack != NULL) {
- 		if (args.huge_worker_stack == (void *)1)
- 			args.huge_worker_stack = NULL;
--		if (eal_parse_huge_worker_stack(args.huge_worker_stack) < 0) {
-+		if (eal_parse_huge_worker_stack(user_cfg, args.huge_worker_stack) < 0) {
- 			EAL_LOG(ERR, "invalid huge worker stack parameter");
- 			return -1;
- 		}
-@@ -2303,25 +2294,7 @@ eal_parse_args(void)
+diff --git a/lib/eal/common/eal_common_thread.c b/lib/eal/common/eal_common_thread.c
+index a2e08242bd..b56dd4f2b6 100644
+--- a/lib/eal/common/eal_common_thread.c
++++ b/lib/eal/common/eal_common_thread.c
+@@ -40,7 +40,7 @@ unsigned rte_socket_id(void)
  int
- eal_cleanup_config(void)
+ eal_cpuset_socket_id(const rte_cpuset_t *cpusetp)
  {
--	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
--	struct eal_trace_arg *ta;
--
--	/* free trace patterns list */
--	while (!STAILQ_EMPTY(&user_cfg->trace_patterns)) {
--		ta = STAILQ_FIRST(&user_cfg->trace_patterns);
--		STAILQ_REMOVE_HEAD(&user_cfg->trace_patterns, next);
--		free(ta->val);
--		free(ta);
--	}
--	free(user_cfg->trace_dir);
--	free(user_cfg->hugefile_prefix);
--	free(user_cfg->hugepage_dir);
--	free(user_cfg->user_mbuf_pool_ops_name);
--	for (unsigned int i = 0; i < RTE_MAX_LCORE; i++) {
--		free(user_cfg->lcore_cpusets[i]);
--		user_cfg->lcore_cpusets[i] = NULL;
--	}
--
-+	eal_user_cfg_cleanup(eal_get_user_configuration());
- 	return 0;
- }
+-	const struct eal_platform_info *platform_info = eal_get_platform_info();
++	const struct eal_platform_info *platform_info = rte_eal_get_platform_info();
+ 	int socket_id = SOCKET_ID_ANY;
  
-diff --git a/lib/eal/common/eal_options.h b/lib/eal/common/eal_options.h
-index 77a6a4405f..afa8449ee7 100644
---- a/lib/eal/common/eal_options.h
-+++ b/lib/eal/common/eal_options.h
-@@ -11,7 +11,7 @@ struct rte_tel_data;
- struct eal_user_cfg;
+ 	if (cpusetp == NULL)
+diff --git a/lib/eal/common/eal_internal_cfg.h b/lib/eal/common/eal_internal_cfg.h
+index 935d322345..ecc17e94e1 100644
+--- a/lib/eal/common/eal_internal_cfg.h
++++ b/lib/eal/common/eal_internal_cfg.h
+@@ -25,6 +25,7 @@
+ #include <rte_bitset.h>
+ #include <rte_stdatomic.h>
+ #include "eal_thread.h"
++#include "rte_compat.h"
  
- int eal_parse_log_options(void);
--int eal_parse_args(void);
-+int eal_parse_args(struct eal_user_cfg *user_cfg);
- int eal_option_device_parse(void);
- int eal_cleanup_config(void);
- int eal_plugins_init(void);
+ /* Forward declaration — full definition is in eal_memcfg.h */
+ struct rte_mem_config;
+@@ -390,8 +391,13 @@ struct eal_runtime_state {
+ 	struct eal_solib_list loaded_plugins; /**< all plugins loaded by eal_plugins_init() */
+ };
+ 
+-const struct eal_platform_info *eal_get_platform_info(void);
++__rte_internal
++const struct eal_platform_info *rte_eal_get_platform_info(void);
+ struct eal_user_cfg *eal_get_user_configuration(void);
+ struct eal_runtime_state *eal_get_runtime_state(void);
+ 
++__rte_internal
++int
++rte_eal_runtime_init(const char *progname, const struct eal_user_cfg *user_provided_cfg);
++
+ #endif /* EAL_INTERNAL_CFG_H */
 diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
-index e4a69e4edf..365d22f209 100644
+index 365d22f209..92588aaf91 100644
 --- a/lib/eal/freebsd/eal.c
 +++ b/lib/eal/freebsd/eal.c
-@@ -388,20 +388,16 @@ static void rte_eal_init_alert(const char *msg)
- 	EAL_LOG(ALERT, "%s", msg);
- }
+@@ -58,6 +58,9 @@
  
-+static int eal_runtime_init(const struct eal_user_cfg *user_provided_cfg);
+ #define MEMSIZE_IF_NO_HUGE_PAGE (64ULL * 1024ULL * 1024ULL)
+ 
++/* flag to prevent double-init of EAL */
++static RTE_ATOMIC(uint32_t) init_has_run;
 +
- /* Launch threads, called at application init(). */
- RTE_EXPORT_SYMBOL(rte_eal_init)
+ /* define fd variable here, because file needs to be kept open for the
+  * duration of the program, as we hold a write lock on it in the primary proc */
+ static int mem_cfg_fd = -1;
+@@ -321,7 +324,7 @@ eal_get_hugepage_mem_size(void)
+ {
+ 	uint64_t size = 0;
+ 	unsigned i, j;
+-	const struct eal_platform_info *platform_info = eal_get_platform_info();
++	const struct eal_platform_info *platform_info = rte_eal_get_platform_info();
+ 	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
+ 
+ 	for (i = 0; i < platform_info->num_hugepage_sizes; i++) {
+@@ -395,7 +398,6 @@ RTE_EXPORT_SYMBOL(rte_eal_init)
  int
  rte_eal_init(int argc, char **argv)
  {
--	int i, fctret, ret;
- 	static uint32_t run_once;
-+	struct eal_user_cfg user_cfg_from_args = EAL_USER_CFG_INITIALIZER(user_cfg_from_args);
+-	static uint32_t run_once;
+ 	struct eal_user_cfg user_cfg_from_args = EAL_USER_CFG_INITIALIZER(user_cfg_from_args);
  	uint32_t has_run = 0;
--	char cpuset[RTE_CPU_AFFINITY_STR_LEN];
--	char thread_name[RTE_THREAD_NAME_SIZE];
--	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
--	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
--	bool has_phys_addr;
--	enum rte_iova_mode iova_mode;
  
- 	/*
- 	 * platform_info is lazily initialized on first use, and that
-@@ -426,7 +422,7 @@ rte_eal_init(int argc, char **argv)
- 	/* Save and collate args at the top */
- 	eal_save_args(argc, argv);
- 
--	fctret = eal_collate_args(argc, argv);
-+	int fctret = eal_collate_args(argc, argv);
- 	if (fctret < 0) {
- 		rte_eal_init_alert("invalid command-line arguments.");
- 		rte_errno = EINVAL;
-@@ -442,6 +438,39 @@ rte_eal_init(int argc, char **argv)
- 
- 	eal_log_init(getprogname());
- 
-+	if (eal_parse_args(&user_cfg_from_args) < 0) {
-+		rte_eal_init_alert("Error parsing command-line arguments.");
-+		rte_errno = EINVAL;
-+		goto err_out;
-+	}
-+
-+	if (eal_runtime_init(&user_cfg_from_args) < 0)
-+		goto err_out;	/* log message and rte_errno set by eal_runtime_init() */
-+
-+	eal_user_cfg_cleanup(&user_cfg_from_args);
-+	return fctret;
-+
-+err_out:
-+	rte_atomic_store_explicit(&run_once, 0, rte_memory_order_relaxed);
-+	eal_clean_saved_args();
-+	eal_user_cfg_cleanup(&user_cfg_from_args);
-+	return -1;
-+}
-+
-+/**
-+ * take a provided user config, copy it to the internal user config structure
-+ * and then use it to initialize the DPDK runtime.
-+ */
-+static int
-+eal_runtime_init(const struct eal_user_cfg *user_provided_cfg)
-+{
-+	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
-+	char cpuset[RTE_CPU_AFFINITY_STR_LEN];
-+	char thread_name[RTE_THREAD_NAME_SIZE];
-+	bool has_phys_addr;
-+	enum rte_iova_mode iova_mode;
-+	int i, ret;
-+
- 	/* checks if the machine is adequate */
- 	if (!rte_cpu_is_supported()) {
- 		rte_eal_init_alert("unsupported cpu type.");
-@@ -456,8 +485,10 @@ rte_eal_init(int argc, char **argv)
- 		goto err_out;
+@@ -405,14 +407,14 @@ rte_eal_init(int argc, char **argv)
+ 	 * everything below depends on a valid platform_info, so confirm it
+ 	 * is available before doing anything else.
+ 	 */
+-	if (eal_get_platform_info() == NULL) {
++	if (rte_eal_get_platform_info() == NULL) {
+ 		rte_eal_init_alert("Cannot get platform information.");
+ 		rte_errno = ENOTSUP;
+ 		return -1;
  	}
  
--	if (eal_parse_args() < 0) {
--		rte_eal_init_alert("Error parsing command-line arguments.");
-+	/* Copy user-provided configuration to EAL global configuration */
-+	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
-+	if (eal_user_cfg_copy(user_cfg, user_provided_cfg) < 0) {
-+		rte_eal_init_alert("Cannot copy user configuration.");
- 		rte_errno = EINVAL;
- 		goto err_out;
- 	}
-@@ -757,11 +788,10 @@ rte_eal_init(int argc, char **argv)
+ 	/* first check if we have been run before */
+-	if (!rte_atomic_compare_exchange_strong_explicit(&run_once, &has_run, 1,
++	if (!rte_atomic_compare_exchange_strong_explicit(&init_has_run, &has_run, 1,
+ 					rte_memory_order_relaxed, rte_memory_order_relaxed)) {
+ 		rte_eal_init_alert("already called initialization.");
+ 		rte_errno = EALREADY;
+@@ -451,7 +453,7 @@ rte_eal_init(int argc, char **argv)
+ 	return fctret;
  
- 	eal_mcfg_complete();
- 
--	return fctret;
-+	return 0;
-+
  err_out:
 -	rte_atomic_store_explicit(&run_once, 0, rte_memory_order_relaxed);
- 	eal_cleanup_config();
--	eal_clean_saved_args();
++	rte_atomic_store_explicit(&init_has_run, 0, rte_memory_order_relaxed);
+ 	eal_clean_saved_args();
+ 	eal_user_cfg_cleanup(&user_cfg_from_args);
+ 	return -1;
+@@ -795,6 +797,51 @@ eal_runtime_init(const struct eal_user_cfg *user_provided_cfg)
  	return -1;
  }
  
++/**
++ * Initialize the DPDK runtime with a user-provided configuration.
++ * This is an alternative to rte_eal_init() that allows the caller to provide
++ * a configuration struct directly, instead of parsing command line arguments.
++ * Both parameters to the function must be non-NULL,
++ * and the user_provided_cfg must be fully initialized by the caller.
++ */
++RTE_EXPORT_INTERNAL_SYMBOL(rte_eal_runtime_init)
++int
++rte_eal_runtime_init(const char *progname, const struct eal_user_cfg *user_provided_cfg)
++{
++	uint32_t has_run = 0;
++
++	rte_errno = 0;
++	if (progname == NULL || user_provided_cfg == NULL) {
++		rte_eal_init_alert("Invalid arguments to rte_eal_runtime_init.");
++		rte_errno = EINVAL;
++		return -1;
++	}
++
++	if (rte_eal_get_platform_info() == NULL) {
++		rte_eal_init_alert("Platform information is not available.");
++		/* Set an error if previous caller has not set one.*/
++		if (rte_errno == 0)
++			rte_errno = ENOTSUP;
++		return -1;
++	}
++
++	/* first check if we have been run before */
++	if (!rte_atomic_compare_exchange_strong_explicit(&init_has_run, &has_run, 1,
++					rte_memory_order_relaxed, rte_memory_order_relaxed)) {
++		rte_eal_init_alert("already called initialization.");
++		rte_errno = EALREADY;
++		return -1;
++	}
++
++	eal_log_init(progname);
++
++	if (eal_runtime_init(user_provided_cfg) < 0) {
++		rte_atomic_store_explicit(&init_has_run, 0, rte_memory_order_relaxed);
++		return -1;
++	}
++	return 0;
++}
++
+ RTE_EXPORT_SYMBOL(rte_eal_cleanup)
+ int
+ rte_eal_cleanup(void)
+diff --git a/lib/eal/freebsd/eal_hugepage_info.c b/lib/eal/freebsd/eal_hugepage_info.c
+index 9c97897cc3..28e1a04528 100644
+--- a/lib/eal/freebsd/eal_hugepage_info.c
++++ b/lib/eal/freebsd/eal_hugepage_info.c
+@@ -87,7 +87,7 @@ eal_get_platform_hp_info(struct eal_platform_info *platform_info)
+ int
+ eal_hugepage_info_init(void)
+ {
+-	const struct eal_platform_info *platform_info = eal_get_platform_info();
++	const struct eal_platform_info *platform_info = rte_eal_get_platform_info();
+ 	int num_buffers, fd;
+ 	int64_t buffer_size;
+ 	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
+diff --git a/lib/eal/freebsd/eal_memory.c b/lib/eal/freebsd/eal_memory.c
+index b8d23a1dc8..4579da20b9 100644
+--- a/lib/eal/freebsd/eal_memory.c
++++ b/lib/eal/freebsd/eal_memory.c
+@@ -72,7 +72,7 @@ rte_eal_hugepage_init(void)
+ 	void *addr;
+ 	unsigned int i, j, seg_idx = 0;
+ 	const struct eal_user_cfg *user_cfg = eal_get_user_configuration();
+-	const struct eal_platform_info *platform_info = eal_get_platform_info();
++	const struct eal_platform_info *platform_info = rte_eal_get_platform_info();
+ 	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
+ 
+ 	/* get pointer to global configuration */
+@@ -289,7 +289,7 @@ attach_segment(const struct rte_memseg_list *msl, const struct rte_memseg *ms,
+ int
+ rte_eal_hugepage_attach(void)
+ {
+-	const struct eal_platform_info *platform_info = eal_get_platform_info();
++	const struct eal_platform_info *platform_info = rte_eal_get_platform_info();
+ 	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
+ 	struct hugepage_info *hpi;
+ 	int fd_hugepage = -1;
+@@ -358,7 +358,7 @@ memseg_primary_init(void)
+ 	int hpi_idx, msl_idx = 0;
+ 	struct rte_memseg_list *msl;
+ 	const struct eal_user_cfg *user_cfg = eal_get_user_configuration();
+-	const struct eal_platform_info *platform_info = eal_get_platform_info();
++	const struct eal_platform_info *platform_info = rte_eal_get_platform_info();
+ 	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
+ 
+ 	/* no-huge does not need this at all */
 diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c
-index 6824e0f06b..89a04d183d 100644
+index 89a04d183d..d45276e19c 100644
 --- a/lib/eal/linux/eal.c
 +++ b/lib/eal/linux/eal.c
-@@ -548,19 +548,16 @@ eal_worker_thread_create(unsigned int lcore_id)
- 	return ret;
- }
+@@ -58,6 +58,9 @@
+ #define MEMSIZE_IF_NO_HUGE_PAGE (64ULL * 1024ULL * 1024ULL)
+ #define KERNEL_IOMMU_GROUPS_PATH "/sys/kernel/iommu_groups"
  
-+static int eal_runtime_init(const struct eal_user_cfg *user_provided_cfg);
++/* flag to prevent double-init of EAL */
++static RTE_ATOMIC(uint32_t) init_has_run;
 +
- /* Launch threads, called at application init(). */
- RTE_EXPORT_SYMBOL(rte_eal_init)
+ /* define fd variable here, because file needs to be kept open for the
+  * duration of the program, as we hold a write lock on it in the primary proc */
+ static int mem_cfg_fd = -1;
+@@ -555,7 +558,6 @@ RTE_EXPORT_SYMBOL(rte_eal_init)
  int
  rte_eal_init(int argc, char **argv)
  {
--	int i, fctret, ret;
- 	static RTE_ATOMIC(uint32_t) run_once;
-+	struct eal_user_cfg user_cfg_from_args = EAL_USER_CFG_INITIALIZER(user_cfg_from_args);
+-	static RTE_ATOMIC(uint32_t) run_once;
+ 	struct eal_user_cfg user_cfg_from_args = EAL_USER_CFG_INITIALIZER(user_cfg_from_args);
  	uint32_t has_run = 0;
--	char cpuset[RTE_CPU_AFFINITY_STR_LEN];
--	char thread_name[RTE_THREAD_NAME_SIZE];
--	bool phys_addrs;
--	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
--	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
  
- 	/*
- 	 * platform_info is lazily initialized on first use, and that
-@@ -585,7 +582,7 @@ rte_eal_init(int argc, char **argv)
- 	/* clone argv to report out later in telemetry */
- 	eal_save_args(argc, argv);
- 
--	fctret = eal_collate_args(argc, argv);
-+	int fctret = eal_collate_args(argc, argv);
- 	if (fctret < 0) {
- 		rte_eal_init_alert("Invalid command line arguments.");
- 		rte_errno = EINVAL;
-@@ -601,6 +598,39 @@ rte_eal_init(int argc, char **argv)
- 
- 	eal_log_init(program_invocation_short_name);
- 
-+	if (eal_parse_args(&user_cfg_from_args) < 0) {
-+		rte_eal_init_alert("Error parsing command line arguments.");
-+		rte_errno = EINVAL;
-+		goto err_out;
-+	}
-+
-+	if (eal_runtime_init(&user_cfg_from_args) < 0)
-+		goto err_out;   /* log message and rte_errno set by eal_runtime_init() */
-+
-+	eal_user_cfg_cleanup(&user_cfg_from_args);
-+	return fctret;
-+
-+err_out:
-+	rte_atomic_store_explicit(&run_once, 0, rte_memory_order_relaxed);
-+	eal_clean_saved_args();
-+	eal_user_cfg_cleanup(&user_cfg_from_args);
-+
-+	return -1;
-+}
-+
-+/**
-+ * take a provided user config, copy it to the internal user config structure
-+ * and then use it to initialize the DPDK runtime.
-+ */
-+static int
-+eal_runtime_init(const struct eal_user_cfg *user_provided_cfg)
-+{
-+	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
-+	char cpuset[RTE_CPU_AFFINITY_STR_LEN];
-+	char thread_name[RTE_THREAD_NAME_SIZE];
-+	bool phys_addrs;
-+	int i, ret;
-+
- 	/* checks if the machine is adequate */
- 	if (!rte_cpu_is_supported()) {
- 		rte_eal_init_alert("unsupported cpu type.");
-@@ -615,8 +645,10 @@ rte_eal_init(int argc, char **argv)
- 		goto err_out;
+@@ -565,14 +567,14 @@ rte_eal_init(int argc, char **argv)
+ 	 * everything below depends on a valid platform_info, so confirm it
+ 	 * is available before doing anything else.
+ 	 */
+-	if (eal_get_platform_info() == NULL) {
++	if (rte_eal_get_platform_info() == NULL) {
+ 		rte_eal_init_alert("Cannot get platform information.");
+ 		rte_errno = ENOTSUP;
+ 		return -1;
  	}
  
--	if (eal_parse_args() < 0) {
--		rte_eal_init_alert("Error parsing command line arguments.");
-+	/* Copy user-provided configuration to EAL global configuration */
-+	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
-+	if (eal_user_cfg_copy(user_cfg, user_provided_cfg) < 0) {
-+		rte_eal_init_alert("Cannot copy user configuration.");
- 		rte_errno = EINVAL;
- 		goto err_out;
- 	}
-@@ -940,12 +972,10 @@ rte_eal_init(int argc, char **argv)
- 
- 	eal_mcfg_complete();
- 
--	return fctret;
-+	return 0;
+ 	/* first check if we have been run before */
+-	if (!rte_atomic_compare_exchange_strong_explicit(&run_once, &has_run, 1,
++	if (!rte_atomic_compare_exchange_strong_explicit(&init_has_run, &has_run, 1,
+ 					rte_memory_order_relaxed, rte_memory_order_relaxed)) {
+ 		rte_eal_init_alert("already called initialization.");
+ 		rte_errno = EALREADY;
+@@ -611,7 +613,7 @@ rte_eal_init(int argc, char **argv)
+ 	return fctret;
  
  err_out:
 -	rte_atomic_store_explicit(&run_once, 0, rte_memory_order_relaxed);
- 	eal_cleanup_config();
--	eal_clean_saved_args();
++	rte_atomic_store_explicit(&init_has_run, 0, rte_memory_order_relaxed);
+ 	eal_clean_saved_args();
+ 	eal_user_cfg_cleanup(&user_cfg_from_args);
+ 
+@@ -979,6 +981,51 @@ eal_runtime_init(const struct eal_user_cfg *user_provided_cfg)
  	return -1;
  }
  
++/**
++ * Initialize the DPDK runtime with a user-provided configuration.
++ * This is an alternative to rte_eal_init() that allows the caller to provide
++ * a configuration struct directly, instead of parsing command line arguments.
++ * Both parameters to the function must be non-NULL,
++ * and the user_provided_cfg must be fully initialized by the caller.
++ */
++RTE_EXPORT_INTERNAL_SYMBOL(rte_eal_runtime_init)
++int
++rte_eal_runtime_init(const char *progname, const struct eal_user_cfg *user_provided_cfg)
++{
++	uint32_t has_run = 0;
++
++	rte_errno = 0;
++	if (progname == NULL || user_provided_cfg == NULL) {
++		rte_eal_init_alert("Invalid arguments to rte_eal_runtime_init.");
++		rte_errno = EINVAL;
++		return -1;
++	}
++
++	if (rte_eal_get_platform_info() == NULL) {
++		rte_eal_init_alert("Platform information is not available.");
++		/* Set an error if previous caller has not set one.*/
++		if (rte_errno == 0)
++			rte_errno = ENOTSUP;
++		return -1;
++	}
++
++	/* first check if we have been run before */
++	if (!rte_atomic_compare_exchange_strong_explicit(&init_has_run, &has_run, 1,
++					rte_memory_order_relaxed, rte_memory_order_relaxed)) {
++		rte_eal_init_alert("already called initialization.");
++		rte_errno = EALREADY;
++		return -1;
++	}
++
++	eal_log_init(progname);
++
++	if (eal_runtime_init(user_provided_cfg) < 0) {
++		rte_atomic_store_explicit(&init_has_run, 0, rte_memory_order_relaxed);
++		return -1;
++	}
++	return 0;
++}
++
+ static int
+ mark_freeable(const struct rte_memseg_list *msl, const struct rte_memseg *ms,
+ 		void *arg __rte_unused)
+diff --git a/lib/eal/linux/eal_hugepage_info.c b/lib/eal/linux/eal_hugepage_info.c
+index a6bf807f90..7be3fe3b65 100644
+--- a/lib/eal/linux/eal_hugepage_info.c
++++ b/lib/eal/linux/eal_hugepage_info.c
+@@ -518,7 +518,7 @@ hugepage_info_init(void)
+ 	unsigned int reusable_pages;
+ 	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
+ 	const struct eal_user_cfg *user_cfg = eal_get_user_configuration();
+-	const struct eal_platform_info *platform_info = eal_get_platform_info();
++	const struct eal_platform_info *platform_info = rte_eal_get_platform_info();
+ 	int failed = 0;
+ 
+ 	/* platform_info->hugepage_sizes[] is already sorted largest to smallest */
 diff --git a/lib/eal/windows/eal.c b/lib/eal/windows/eal.c
-index f1a159bf48..6a93a8dd21 100644
+index 6a93a8dd21..5a8bfd1283 100644
 --- a/lib/eal/windows/eal.c
 +++ b/lib/eal/windows/eal.c
-@@ -151,19 +151,14 @@ rte_eal_cleanup(void)
- 	return 0;
- }
+@@ -33,6 +33,9 @@
  
-+static int eal_runtime_init(const struct eal_user_cfg *user_provided_cfg);
+ #define MEMSIZE_IF_NO_HUGE_PAGE (64ULL * 1024ULL * 1024ULL)
+ 
++/* flag to prevent double-init of EAL */
++static RTE_ATOMIC(uint32_t) init_has_run;
 +
- /* Launch threads, called at application init(). */
- RTE_EXPORT_SYMBOL(rte_eal_init)
- int
+ /* define fd variable here, because file needs to be kept open for the
+  * duration of the program, as we hold a write lock on it in the primary proc
+  */
+@@ -159,6 +162,7 @@ int
  rte_eal_init(int argc, char **argv)
  {
--	int i, fctret, bscan;
--	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
--	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
--	bool has_phys_addr;
--	enum rte_iova_mode iova_mode;
--	int ret;
--	char cpuset[RTE_CPU_AFFINITY_STR_LEN];
--	char thread_name[RTE_THREAD_NAME_SIZE];
-+	struct eal_user_cfg user_cfg_from_args = EAL_USER_CFG_INITIALIZER(user_cfg_from_args);
+ 	struct eal_user_cfg user_cfg_from_args = EAL_USER_CFG_INITIALIZER(user_cfg_from_args);
++	uint32_t has_run = 0;
  
  	/*
  	 * platform_info is lazily initialized on first use, and that
-@@ -180,7 +175,7 @@ rte_eal_init(int argc, char **argv)
+@@ -166,12 +170,20 @@ rte_eal_init(int argc, char **argv)
+ 	 * everything below depends on a valid platform_info, so confirm it
+ 	 * is available before doing anything else.
+ 	 */
+-	if (eal_get_platform_info() == NULL) {
++	if (rte_eal_get_platform_info() == NULL) {
+ 		rte_eal_init_alert("Cannot get platform information.");
+ 		rte_errno = ENOTSUP;
+ 		return -1;
+ 	}
+ 
++	/* first check if we have been run before */
++	if (!rte_atomic_compare_exchange_strong_explicit(&init_has_run, &has_run, 1,
++					rte_memory_order_relaxed, rte_memory_order_relaxed)) {
++		rte_eal_init_alert("already called initialization.");
++		rte_errno = EALREADY;
++		return -1;
++	}
++
  	/* clone argv to report out later in telemetry */
  	eal_save_args(argc, argv);
  
--	fctret = eal_collate_args(argc, argv);
-+	int fctret = eal_collate_args(argc, argv);
- 	if (fctret < 0) {
- 		rte_eal_init_alert("Invalid command line arguments.");
- 		rte_errno = EINVAL;
-@@ -196,6 +191,38 @@ rte_eal_init(int argc, char **argv)
+@@ -204,6 +216,7 @@ rte_eal_init(int argc, char **argv)
+ 	return fctret;
  
- 	eal_log_init(NULL);
- 
-+	if (eal_parse_args(&user_cfg_from_args) < 0) {
-+		rte_eal_init_alert("Invalid command line arguments.");
-+		rte_errno = EINVAL;
-+		goto err_out;
-+	}
-+
-+	if (eal_runtime_init(&user_cfg_from_args) < 0)
-+		goto err_out;	/* log message and rte_errno set by eal_runtime_init() */
-+
-+	eal_user_cfg_cleanup(&user_cfg_from_args);
-+	return fctret;
-+
-+err_out:
-+	eal_clean_saved_args();
-+	eal_user_cfg_cleanup(&user_cfg_from_args);
-+	return -1;
-+}
-+
-+/**
-+ * take a provided user config, copy it to the internal user config structure
-+ * and then use it to initialize the DPDK runtime.
-+ */
-+static int
-+eal_runtime_init(const struct eal_user_cfg *user_provided_cfg)
-+{
-+	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
-+	bool has_phys_addr;
-+	enum rte_iova_mode iova_mode;
-+	int i, ret, bscan;
-+	char cpuset[RTE_CPU_AFFINITY_STR_LEN];
-+	char thread_name[RTE_THREAD_NAME_SIZE];
-+
- 	/* verify if DPDK supported on architecture MMU */
- 	if (!eal_mmu_supported()) {
- 		rte_eal_init_alert("Unsupported MMU type.");
-@@ -203,8 +230,10 @@ rte_eal_init(int argc, char **argv)
- 		goto err_out;
- 	}
- 
--	if (eal_parse_args() < 0) {
--		rte_eal_init_alert("Invalid command line arguments.");
-+	/* Copy user-provided configuration to EAL global configuration */
-+	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
-+	if (eal_user_cfg_copy(user_cfg, user_provided_cfg) < 0) {
-+		rte_eal_init_alert("Cannot copy user configuration.");
- 		rte_errno = EINVAL;
- 		goto err_out;
- 	}
-@@ -423,10 +452,10 @@ rte_eal_init(int argc, char **argv)
- 
- 	eal_mcfg_complete();
- 
--	return fctret;
-+	return 0;
-+
  err_out:
- 	eal_cleanup_config();
--	eal_clean_saved_args();
++	rte_atomic_store_explicit(&init_has_run, 0, rte_memory_order_relaxed);
+ 	eal_clean_saved_args();
+ 	eal_user_cfg_cleanup(&user_cfg_from_args);
+ 	return -1;
+@@ -459,6 +472,51 @@ eal_runtime_init(const struct eal_user_cfg *user_provided_cfg)
  	return -1;
  }
+ 
++/**
++ * Initialize the DPDK runtime with a user-provided configuration.
++ * This is an alternative to rte_eal_init() that allows the caller to provide
++ * a configuration struct directly, instead of parsing command line arguments.
++ * Both parameters to the function must be non-NULL,
++ * and the user_provided_cfg must be fully initialized by the caller.
++ */
++RTE_EXPORT_INTERNAL_SYMBOL(rte_eal_runtime_init)
++int
++rte_eal_runtime_init(const char *progname, const struct eal_user_cfg *user_provided_cfg)
++{
++	uint32_t has_run = 0;
++
++	rte_errno = 0;
++	if (progname == NULL || user_provided_cfg == NULL) {
++		rte_eal_init_alert("Invalid arguments to rte_eal_runtime_init.");
++		rte_errno = EINVAL;
++		return -1;
++	}
++
++	if (rte_eal_get_platform_info() == NULL) {
++		rte_eal_init_alert("Platform information is not available.");
++		/* Set an error if previous caller has not set one.*/
++		if (rte_errno == 0)
++			rte_errno = ENOTSUP;
++		return -1;
++	}
++
++	/* first check if we have been run before */
++	if (!rte_atomic_compare_exchange_strong_explicit(&init_has_run, &has_run, 1,
++					rte_memory_order_relaxed, rte_memory_order_relaxed)) {
++		rte_eal_init_alert("already called initialization.");
++		rte_errno = EALREADY;
++		return -1;
++	}
++
++	eal_log_init(progname);
++
++	if (eal_runtime_init(user_provided_cfg) < 0) {
++		rte_atomic_store_explicit(&init_has_run, 0, rte_memory_order_relaxed);
++		return -1;
++	}
++	return 0;
++}
++
+ /* Don't use MinGW asprintf() to have identical code with all toolchains. */
+ int
+ eal_asprintf(char **buffer, const char *format, ...)
+diff --git a/lib/eal/windows/eal_hugepages.c b/lib/eal/windows/eal_hugepages.c
+index 0c62f5ff48..0870495c78 100644
+--- a/lib/eal/windows/eal_hugepages.c
++++ b/lib/eal/windows/eal_hugepages.c
+@@ -59,7 +59,7 @@ hugepage_claim_privilege(void)
+ static int
+ hugepage_info_init(void)
+ {
+-	const struct eal_platform_info *platform_info = eal_get_platform_info();
++	const struct eal_platform_info *platform_info = rte_eal_get_platform_info();
+ 	struct hugepage_info *hpi;
+ 	unsigned int socket_id;
+ 	int ret = 0;
+diff --git a/lib/eal/windows/eal_memalloc.c b/lib/eal/windows/eal_memalloc.c
+index 8a2d3966ba..97947d1bc4 100644
+--- a/lib/eal/windows/eal_memalloc.c
++++ b/lib/eal/windows/eal_memalloc.c
+@@ -319,7 +319,7 @@ eal_memalloc_alloc_seg_bulk(struct rte_memseg **ms, int n_segs,
+ 	int ret = -1;
+ 	struct alloc_walk_param wa;
+ 	const struct hugepage_info *hi = NULL;
+-	const struct eal_platform_info *platform_info = eal_get_platform_info();
++	const struct eal_platform_info *platform_info = rte_eal_get_platform_info();
+ 	const struct eal_runtime_state *runtime_state = eal_get_runtime_state();
+ 	const struct eal_user_cfg *user_cfg = eal_get_user_configuration();
  
 -- 
 2.55.0
