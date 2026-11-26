@@ -2,82 +2,100 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58268606A31E
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Nov 2026 08:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69ECF606A31C
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Nov 2026 10:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.a=rsa-sha256 header.s=pfpt0220 header.b=gEYu+59F
+	dkim=pass (2048-bit key, unprotected) header.d=kaspersky.com header.i=@kaspersky.com header.a=rsa-sha256 header.s=mail202505 header.b=h26C7mZb
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4B34F40616;
-	Thu, 26 Nov 2026 09:47:28 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTPS id E0B134027A
- for <dev@dpdk.org>; Thu, 26 Nov 2026 09:42:12 +0100 (CET)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 6AQ7DdOZ2342737; Thu, 26 Nov 2026 00:42:11 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=3
- hods+6zsUb6op6mvuXSbzuovAVfi6+poXnTYRV9sFw=; b=gEYu+59FN5PGxE2uG
- SwvtDZvnfwqGeONZoMb5Yzf4YNti89Yk0ZPhJPSg84lB6TkmmWDTV6ymwGRKzmrt
- zHgJK2Qc7emydXHR7S3u8923JfA1FEcIWwahQ4G0yVgjS40AkfQnZMigSg9PZoHA
- w+hjBrBgnJgdH32ac+rcxnz6bSI8N9kQj1Q7z2MGrxoc87pMUArmqFh6vHJh3zZS
- dzGF/pVgG5YR29f6hKDE6nWsG5HBPBB4OSS2QdyD39fpxhHFGvYY3QazQLVJCjZs
- 0Q4K9VzM+eo6fO0UFngO6ZMfPIxIgzEQyIyJL5hsl6qiWZvuQPPlncacncDSpJRt
- jLr7w==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4j5nhf6q85-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 26 Nov 2026 00:42:11 -0800 (PST)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 26 Nov 2026 00:42:10 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Thu, 26 Nov 2026 00:42:10 -0800
-Received: from cavium-PowerEdge-T110-II.. (unknown [10.28.38.34])
- by maili.marvell.com (Postfix) with ESMTP id 59B1D3F7072;
- Thu, 26 Nov 2026 00:42:08 -0800 (PST)
-From: Pratik Senapati <psenapati@marvell.com>
-To: <dev@dpdk.org>
-CC: <gakhil@marvell.com>, <kai.ji@intel.com>, <anoobj@marvell.com>,
- <gmuthukrishn@marvell.com>
-Subject: [PATCH v2 2/2] crypto/openssl: load default provider first legacy
- optional
-Date: Thu, 26 Nov 2026 14:12:01 +0530
-Message-ID: <20261126084201.1173287-3-psenapati@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 76BDC402C9;
+	Thu, 26 Nov 2026 11:17:47 +0100 (CET)
+Received: from mx16.kaspersky-labs.com (mx16.kaspersky-labs.com [5.79.125.27])
+ by mails.dpdk.org (Postfix) with ESMTPS id 30E74402BD;
+ Thu, 26 Nov 2026 11:17:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
+ s=mail202505; t=1795688265;
+ bh=ysSIy8iN3FyqKX52s1KVXE9sATT1hHxWn6s/LYApRY4=;
+ h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+ b=h26C7mZbBI4XsdyI0UGWrVflG7UoGhuqhIadXyQjiIiuOVfYekynZ3x+lYxAeGHP/
+ 1dyR5KOYraaIJXVBeuYbGQ6pndZI9bS/LeEB70ifkF30EMTXqVmF/FdBndxKYcwX09
+ wGF6mdDRthjDF7q2R9O3rIM51HrqMWWh/BWKWHF7pop+oqpyC0ZXdfO0p0zoJT5gAL
+ qKpopFosJhpEOrtpEFevwMoIm4UxuxOeXjk24I41OAzCjVVeOTCM0ALMHe7eQsdwFU
+ GOE6ttRrSr1rCZkPuDKJ3NPJOTZm6Qf/IB41rF7V3WZT7Pen6FNScQqA/8tfd2KhxA
+ 5Rzk43lTDjnFA==
+Received: from relay16.kaspersky-labs.com (localhost [127.0.0.1])
+ by relay16.kaspersky-labs.com (Postfix) with ESMTP id 9B6A5C17C09;
+ Thu, 26 Nov 2026 13:17:45 +0300 (MSK)
+Received: from mail-hq2.kaspersky.com (unknown [91.103.66.200])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (Client CN "mail-hq2.kaspersky.com",
+ Issuer "Kaspersky MailRelays CA G3" (verified OK))
+ by mailhub16.kaspersky-labs.com (Postfix) with ESMTPS id B26E2C1EB7A;
+ Thu, 26 Nov 2026 13:17:44 +0300 (MSK)
+Received: from chesnokov.avp.ru (10.16.105.7) by HQMAILSRV2.avp.ru
+ (10.64.57.52) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.57; Thu, 26 Nov
+ 2026 13:17:43 +0300
+From: <Alexander.Chesnokov@kaspersky.com>
+To: <cristian.dumitrescu@intel.com>
+CC: <dev@dpdk.org>, <stable@dpdk.org>, <jasvinder.singh@intel.com>,
+ AlexanderChesnokov <Alexander.Chesnokov@kaspersky.com>
+Subject: [PATCH v3] sched: fix infinite loop in rational approximation
+Date: Thu, 26 Nov 2026 13:17:41 +0300
+Message-ID: <20261126101741.868471-1-Alexander.Chesnokov@kaspersky.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261126084201.1173287-1-psenapati@marvell.com>
-References: <20261009112543.1766727-1-psenapati@marvell.com>
- <20261126084201.1173287-1-psenapati@marvell.com>
+In-Reply-To: <20261126065852.122143-1-Alexander.Chesnokov@kaspersky.com>
+References: <20261126065852.122143-1-Alexander.Chesnokov@kaspersky.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTI2MDAzMyBTYWx0ZWRfX3v6OrnGTpdIY
- 8YUHAgCB01QSwTo7b+NL2dR/xG68hNZhHXvzioU/L6GZz0zYGoyQZLjiJ8/DAa7sOjH8yvLfyEA
- xfv3XlVyVGZp7ZG616lPHlnCVgRJW/I=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTI2MDAzMyBTYWx0ZWRfX4tR2uH+IQLNC
- KKYpsaerzaPtjb8spSmO8OnPAZc8QO50Og7CFqf8WGzAlBlcEH8DPuxl0COgbEXCLK8maAB0Nk7
- KLR/MVasB3SG8oyOp+QVZmLlXOpbJbjSpGvmZtrJRE1IGA0jECzNWRTRx0xH6gnxa1v0uk9ZYy2
- li6ucGfqLJ4fUH7JnPgwXz8lKrbpw0L556IOtV4LPyRR/mjntBglG20Xe3VeN1ezQQ26jRlzamG
- IxFf12Yy6Eb4rDIWoimFyvYLOO45NqLVhD0GUr53w1taNOHAH5W+P5K5WDiNU4PWzuLtzw5he2w
- 4H4IN/l97B9TD8uqFhgzLVxw3qkh8NXNKelsJeZxs+n3UUepWBhtJSHrspJFpPSNtXmwluC4OPB
- ddihBjzLrhBRLzCnheOfSPIRTsZDQ/DsdJtsJMEbzb9u+q87b5eFq96I6YcPzKNhaywmS0G/Hy7
- DVb4S2wmx+FSxxq+4dQ==
-X-Proofpoint-ORIG-GUID: qxCB10mrJaHowUZxbDAOjn6BuF2pqcDq
-X-Proofpoint-GUID: qxCB10mrJaHowUZxbDAOjn6BuF2pqcDq
-X-Authority-Analysis: v=2.4 cv=GcGCDgXL c=1 sm=1 tr=0 ts=6b07f0e3 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=zJRp6_cAMcgA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=qit2iCtTFQkLgVSMPQTB:22 a=M5GUcnROAAAA:8 a=B62oVDk9Aq9Sxya1MKYA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-26_02,2026-11-25_01,2025-10-01_01
-X-Mailman-Approved-At: Thu, 26 Nov 2026 09:47:25 +0100
+X-ClientProxiedBy: HQMAILSRV5.avp.ru (10.64.57.55) To HQMAILSRV2.avp.ru
+ (10.64.57.52)
+X-KSE-ServerInfo: HQMAILSRV2.avp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 11/26/2026 10:09:11
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 0
+X-KSE-AntiSpam-Info: Lua profiles 207859 [Nov 26 2026]
+X-KSE-AntiSpam-Info: Version: 6.1.1.27
+X-KSE-AntiSpam-Info: Envelope from: Alexander.Chesnokov@kaspersky.com
+X-KSE-AntiSpam-Info: LuaCore: 136 0.3.136
+ 23736263c36d600868e9fbb7b30669123b6e1813
+X-KSE-AntiSpam-Info: {Tracking_cluster_exceptions}
+X-KSE-AntiSpam-Info: {Tracking_real_kaspersky_domains}
+X-KSE-AntiSpam-Info: {Tracking_black_eng_exceptions}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: chesnokov.avp.ru:7.1.1,5.0.1;
+ d41d8cd98f00b204e9800998ecf8427e.com:7.1.1; 127.0.0.199:7.1.2;
+ kaspersky.com:7.1.1,5.0.1
+X-KSE-AntiSpam-Info: {Tracking_white_helo}
+X-KSE-AntiSpam-Info: {Tracking_black_eng_exceptions_lk}
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: Rate: 0
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Deterministic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 11/26/2026 10:11:00
+X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
+ rules found
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 11/26/2026 9:31:00 AM
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
+ rules found
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 3.1.0.9599,
+ bases: 2026/11/26 09:06:00 #28983242
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 52
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,141 +105,182 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-A failed OSSL_PROVIDER_load() call disables OpenSSL implicit default
-provider loading. If legacy load was attempted first and failed, no
-providers would be active, causing AES, SHA, and MD5 operations to fail.
+From: Alexander Chesnokov <Alexander.Chesnokov@kaspersky.com>
 
-Load the default provider unconditionally first. A failure here is fatal
-and returns an error. Attempt legacy load second; if it is unavailable,
-log a warning and continue with default-only support.
+rte_approx() scales alpha and d by 10 until d reaches 1,
+multiplying denum by 10 on every step. For d below 1e-9 the loop
+makes 10 or more steps, denum wraps in uint32_t and no longer
+equals 10^k. The input check still passes, the search compares
+against the wrapped denum, never finds a match and spins forever.
+A fuzzer input with alpha = 2.65e-23 and d = 1.13e-23 (23 scaling
+steps, denum = 4135583744) hangs the function.
 
-Provider load is moved to the start of cryptodev_openssl_create() before
-any device resources are allocated. There is no valid use case for a PMD
-without a working default provider, so failing early avoids unnecessary
-device allocation and cleanup.
+The same wrapping breaks rte_approx_64() for d below 1e-19. Besides,
+both variants hang even with an intact denum once denum squared does
+not fit the type: the products in the search overflow and the
+comparisons produce garbage. The 32-bit variant hangs on
+alpha = 0.333333333 with d = 1.5e-9, the 64-bit variant on
+alpha = 7.38e-19 with d = 6.78e-19.
 
-On provider load failure, unload providers explicitly and return -ENOTSUP.
-On device creation failure, unload via the init_error path after
-cryptodev_openssl_remove(). This is needed because
-cryptodev_openssl_remove() returns early with -ENODEV when no device
-exists, bypassing the unload.
+Reject requests whose precision cannot be represented: stop scaling
+before denum wraps and require denum * denum to fit the type, so
+that every product in the search stays exact. Requests outside these
+bounds could hang forever, or compute against a wrapped denominator
+and return a fraction unrelated to the request. Requests within the
+bounds behave exactly as before; the sched configuration calls
+rte_approx_64() with the constant 1e-7, which keeps working. The
+smallest supported precision, 1e-4 for rte_approx() and 1e-9 for
+rte_approx_64(), is now stated in the API header.
 
-Rename ossl_legacy_provider_load/unload to ossl_providers_load/unload
-to reflect that both default and legacy providers are managed.
+Add sched_approx_autotest cases for the 32-bit variant: the two
+hanging requests are rejected, and a coarse request still returns
+the minimal fraction inside the requested interval. rte_approx_64()
+gets the same guards but is not called by the test: the symbol is
+not exported from the shared library, so an external caller cannot
+link against it.
 
-Signed-off-by: Pratik Senapati <psenapati@marvell.com>
+Fixes: de3cfa2c9823 ("sched: initial import")
+Cc: stable@dpdk.org
+Cc: jasvinder.singh@intel.com
+
+Signed-off-by: Alexander Chesnokov <Alexander.Chesnokov@kaspersky.com>
 ---
-v2:
- - Fix provider load order: default provider loaded first (always
-   required), legacy loaded second (optional); v1 loaded legacy first,
-   which on failure left no active providers breaking AES/SHA/MD5
- - Move provider load to start of cryptodev_openssl_create() before
-   device allocation so a missing default provider fails early
- - Add ossl_providers_unload() to init_error path; needed because
-   cryptodev_openssl_remove() returns -ENODEV early when no device
-   exists, bypassing the unload in cryptodev_openssl_remove()
- - Rename ossl_legacy_provider_load/unload to ossl_providers_load/unload
-   to reflect that both providers are now managed by these helpers
- - openssl_pmd_caps_init() call moved here from patch 1 as it logically
-   belongs after provider load is complete
+v3:
+- Call only rte_approx() in the test: rte_approx_64() is not
+  exported from the shared library (no RTE_EXPORT_SYMBOL since
+  its introduction), which broke the shared build of app/dpdk-test.
+  The 32-bit variant now covers both guards: the denum wrap and
+  the denum squared overflow.
+- State the smallest supported precision of both variants in the
+  API header Doxygen.
 
- drivers/crypto/openssl/rte_openssl_pmd.c | 44 ++++++++++++------------
- 1 file changed, 22 insertions(+), 22 deletions(-)
+ app/test/test_sched.c  | 35 +++++++++++++++++++++++++++++++++++
+ lib/sched/rte_approx.c | 10 ++++++++++
+ lib/sched/rte_approx.h |  6 ++++--
+ 3 files changed, 49 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/crypto/openssl/rte_openssl_pmd.c b/drivers/crypto/openssl/rte_openssl_pmd.c
-index b1ede62da2..1200f22d51 100644
---- a/drivers/crypto/openssl/rte_openssl_pmd.c
-+++ b/drivers/crypto/openssl/rte_openssl_pmd.c
-@@ -32,24 +32,26 @@ static uint8_t cryptodev_driver_id;
- OSSL_PROVIDER *legacy;
- OSSL_PROVIDER *deflt;
- 
--static void ossl_legacy_provider_load(void)
-+static int
-+ossl_providers_load(void)
- {
--	/* Load Multiple providers into the default (NULL) library context */
--	legacy = OSSL_PROVIDER_load(NULL, "legacy");
--	if (legacy == NULL) {
--		OPENSSL_LOG(ERR, "Failed to load Legacy provider");
--		return;
--	}
--
-+	/* Load default provider first -- always required */
- 	deflt = OSSL_PROVIDER_load(NULL, "default");
- 	if (deflt == NULL) {
- 		OPENSSL_LOG(ERR, "Failed to load Default provider");
--		OSSL_PROVIDER_unload(legacy);
--		return;
-+		return -ENOTSUP;
- 	}
+diff --git a/app/test/test_sched.c b/app/test/test_sched.c
+index 96b48f1897..62396766f7 100644
+--- a/app/test/test_sched.c
++++ b/app/test/test_sched.c
+@@ -22,8 +22,16 @@ test_sched(void)
+ 	printf("sched not supported on Windows, skipping test\n");
+ 	return TEST_SKIPPED;
+ }
 +
-+	/* Load legacy provider -- optional, non-fatal if unavailable */
-+	legacy = OSSL_PROVIDER_load(NULL, "legacy");
-+	if (legacy == NULL)
-+		OPENSSL_LOG(WARNING, "Legacy provider not available");
++static int
++test_sched_approx(void)
++{
++	printf("sched not supported on Windows, skipping test\n");
++	return TEST_SKIPPED;
++}
+ #else
+ 
++#include <rte_approx.h>
+ #include <rte_sched.h>
+ 
+ #define SUBPORT         0
+@@ -213,6 +221,33 @@ test_sched(void)
+ 	return 0;
+ }
+ 
++static int
++test_sched_approx(void)
++{
++	uint32_t p32 = 0;
++	uint32_t q32 = 0;
++	int err;
++
++	/* denum wraps in uint32_t during scaling */
++	err = rte_approx(2.647139521348302e-23, 1.126263171287887e-23,
++		&p32, &q32);
++	TEST_ASSERT_FAIL(err, "rte_approx accepted unrepresentable d\n");
++
++	/* denum * denum does not fit in uint32_t */
++	err = rte_approx(0.333333333, 1.5e-9, &p32, &q32);
++	TEST_ASSERT_FAIL(err, "rte_approx accepted d = 1.5e-9\n");
++
++	/* Coarse precision still succeeds */
++	err = rte_approx(0.125, 0.01, &p32, &q32);
++	TEST_ASSERT_SUCCESS(err, "rte_approx rejected d = 0.01\n");
++	TEST_ASSERT_EQUAL(p32, 1, "Wrong approximation p\n");
++	TEST_ASSERT_EQUAL(q32, 8, "Wrong approximation q\n");
 +
 +	return 0;
- }
- 
--static void ossl_legacy_provider_unload(void)
-+static void
-+ossl_providers_unload(void)
- {
- 	OSSL_PROVIDER_unload(legacy);
- 	OSSL_PROVIDER_unload(deflt);
-@@ -4169,6 +4171,12 @@ cryptodev_openssl_create(const char *name,
- 	struct rte_cryptodev *dev;
- 	struct openssl_private *internals;
- 
-+	if (ossl_providers_load() < 0) {
-+		ossl_providers_unload();
-+		return -ENOTSUP;
-+	}
-+	openssl_pmd_caps_init();
++}
 +
- 	dev = rte_cryptodev_pmd_create(name, &vdev->device, init_params);
- 	if (dev == NULL) {
- 		OPENSSL_LOG(ERR, "failed to create cryptodev vdev");
-@@ -4199,20 +4207,12 @@ cryptodev_openssl_create(const char *name,
+ #endif /* !RTE_EXEC_ENV_WINDOWS */
  
- 	rte_cryptodev_pmd_probing_finish(dev);
+ REGISTER_FAST_TEST(sched_autotest, NOHUGE_OK, ASAN_OK, test_sched);
++REGISTER_FAST_TEST(sched_approx_autotest, NOHUGE_OK, ASAN_OK,
++	test_sched_approx);
+diff --git a/lib/sched/rte_approx.c b/lib/sched/rte_approx.c
+index 86c7d1d3fb..7af4191df1 100644
+--- a/lib/sched/rte_approx.c
++++ b/lib/sched/rte_approx.c
+@@ -157,10 +157,15 @@ int rte_approx(double alpha, double d, uint32_t *p, uint32_t *q)
+ 	/* Compute alpha_num, d_num and denum */
+ 	denum = 1;
+ 	while (d < 1) {
++		if (denum > UINT32_MAX / 10)
++			return -1;
+ 		alpha *= 10;
+ 		d *= 10;
+ 		denum *= 10;
+ 	}
++	/* the search products must fit in uint32_t */
++	if (denum > UINT32_MAX / denum)
++		return -1;
+ 	alpha_num = (uint32_t) alpha;
+ 	d_num = (uint32_t) d;
  
--	/* Load legacy provider
--	 * Some algorithms are no longer available in earlier version of openssl,
--	 * unless the legacy provider explicitly loaded. e.g. DES
--	 */
--	ossl_legacy_provider_load();
--	openssl_pmd_caps_init();
--
- 	return 0;
+@@ -310,10 +315,15 @@ int rte_approx_64(double alpha, double d, uint64_t *p, uint64_t *q)
+ 	/* Compute alpha_num, d_num and denum */
+ 	denum = 1;
+ 	while (d < 1) {
++		if (denum > UINT64_MAX / 10)
++			return -1;
+ 		alpha *= 10;
+ 		d *= 10;
+ 		denum *= 10;
+ 	}
++	/* the search products must fit in uint64_t */
++	if (denum > UINT64_MAX / denum)
++		return -1;
+ 	alpha_num = (uint64_t) alpha;
+ 	d_num = (uint64_t) d;
  
- init_error:
--	OPENSSL_LOG(ERR, "driver %s: create failed",
--			init_params->name);
--
-+	OPENSSL_LOG(ERR, "driver %s: create failed", init_params->name);
- 	cryptodev_openssl_remove(vdev);
-+	ossl_providers_unload();
- 	return -EFAULT;
- }
+diff --git a/lib/sched/rte_approx.h b/lib/sched/rte_approx.h
+index 738e33a98b..4a4b047406 100644
+--- a/lib/sched/rte_approx.h
++++ b/lib/sched/rte_approx.h
+@@ -34,7 +34,8 @@ extern "C" {
+  *   Pointer to pre-allocated space where the denominator of the rational
+  *   approximation will be stored when operation is successful
+  * @return
+- *   0 upon success, error code otherwise
++ *   0 upon success, error code otherwise. The smallest supported
++ *   precision is 1e-4; a request for a smaller d returns an error
+  */
+ int rte_approx(double alpha, double d, uint32_t *p, uint32_t *q);
  
-@@ -4254,7 +4254,7 @@ cryptodev_openssl_remove(struct rte_vdev_device *vdev)
- 	if (cryptodev == NULL)
- 		return -ENODEV;
+@@ -52,7 +53,8 @@ int rte_approx(double alpha, double d, uint32_t *p, uint32_t *q);
+  *   Pointer to pre-allocated space where the denominator of the rational
+  *   approximation will be stored when operation is successful
+  * @return
+- *   0 upon success, error code otherwise
++ *   0 upon success, error code otherwise. The smallest supported
++ *   precision is 1e-9; a request for a smaller d returns an error
+  */
+ int rte_approx_64(double alpha, double d, uint64_t *p, uint64_t *q);
  
--	ossl_legacy_provider_unload();
-+	ossl_providers_unload();
- 
- 	return rte_cryptodev_pmd_destroy(cryptodev);
- }
 -- 
-2.43.0
+2.53.0
 
