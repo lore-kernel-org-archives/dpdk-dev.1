@@ -2,56 +2,58 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA661606A31E
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Nov 2026 05:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E718D606A31C
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Nov 2026 06:59:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.a=rsa-sha256 header.s=mail202505 header.b=B+xSKd9B
+	dkim=pass (2048-bit key, unprotected) header.d=kaspersky.com header.i=@kaspersky.com header.a=rsa-sha256 header.s=mail202505 header.b=FIdh37Ia
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B06EA402B2;
-	Thu, 26 Nov 2026 06:22:13 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 359A8402C4;
+	Thu, 26 Nov 2026 07:58:59 +0100 (CET)
 Received: from mx16.kaspersky-labs.com (mx16.kaspersky-labs.com [5.79.125.27])
- by mails.dpdk.org (Postfix) with ESMTPS id 0370840284;
- Thu, 26 Nov 2026 06:22:11 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id C8B8540284;
+ Thu, 26 Nov 2026 07:58:57 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
- s=mail202505; t=1795670531;
- bh=5+p6zis1vQVnFBZKpeWOcPwk8Ya0sVKku0oJkdXJuJk=;
+ s=mail202505; t=1795676337;
+ bh=guATLZlh3CUPLEyAZ6KpZ3sLyEqtsL5eeSnPuhdh5FY=;
  h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
- b=B+xSKd9BwVZpC39FqT8lGQWv3m+NYv53j1UfOIx9+APy7qlDX00hi3vzDqBnIwmQe
- dVvTAluABqj2xrFCnxDwZOAfSbnO+/H1d4ovWENgMmzp2K71XxiiUMNmnL7EPoY086
- uy6JBoylUGOpXJHprgHTKNjVXImW/OV+LIN2y4Yh645M7m6zDEw/8ey+medYQtFjOb
- YAGuESW8C8KC1Wdqipqd4VdQLRMMBSb+TZ2qvfKCwSsdM4hxTJkNOmMMiloaJPad2+
- KIK0D4hZH9/CD1jILevbUxbmprn+q10z7pRuOSK62rF5Jfs0Bxhf8UPjEW8h2Q0E6u
- ZoaNsztxQGbTw==
+ b=FIdh37IasMopGJSl75ARxWnLGTinFpln+sE6IKr4Mq4HUE6BxSCBqUtVo9/OtqULS
+ wiQ7HT/eCrU/W93TjiQYf6eK7NO21hMgZJBgZ3aqxLlZzTcYfwLx/Ohy+NMg+Bu3fL
+ +DjfrhJ6wIx7GrKS0qMEcrkgrFq1jn6s30Spnetwa1AcOXaBMt3T/K9SH3PzvZSCMM
+ BTUBRW9GkJ0Im4mZtf3bmciuOvNEB1U0Ah/xv0Skb6npfbMLGQ8GgNJRuDnGx9H4FE
+ lbARDaat+cxRisT8hj0jxu0CWLdRvxte2/eokoH0o6SCiDoMM9I4VramfPbNEwndPd
+ RT4ebLEuKGOKQ==
 Received: from relay16.kaspersky-labs.com (localhost [127.0.0.1])
- by relay16.kaspersky-labs.com (Postfix) with ESMTP id BA53BC2882C;
- Thu, 26 Nov 2026 08:22:11 +0300 (MSK)
+ by relay16.kaspersky-labs.com (Postfix) with ESMTP id 3FA20C1AB93;
+ Thu, 26 Nov 2026 09:58:57 +0300 (MSK)
 Received: from mail-hq2.kaspersky.com (unknown [91.103.66.200])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (Client CN "mail-hq2.kaspersky.com",
  Issuer "Kaspersky MailRelays CA G3" (verified OK))
- by mailhub16.kaspersky-labs.com (Postfix) with ESMTPS id 1E3D7C167BB;
- Thu, 26 Nov 2026 08:22:10 +0300 (MSK)
+ by mailhub16.kaspersky-labs.com (Postfix) with ESMTPS id 7246CC14FBF;
+ Thu, 26 Nov 2026 09:58:56 +0300 (MSK)
 Received: from chesnokov.avp.ru (10.16.105.7) by HQMAILSRV2.avp.ru
  (10.64.57.52) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.57; Thu, 26 Nov
- 2026 08:22:10 +0300
+ 2026 09:58:55 +0300
 From: <Alexander.Chesnokov@kaspersky.com>
 To: <cristian.dumitrescu@intel.com>
 CC: <dev@dpdk.org>, <stable@dpdk.org>, <jasvinder.singh@intel.com>,
  AlexanderChesnokov <Alexander.Chesnokov@kaspersky.com>
-Subject: [PATCH] sched: fix infinite loop in rational approximation
-Date: Thu, 26 Nov 2026 08:22:07 +0300
-Message-ID: <20261126052207.4051378-1-Alexander.Chesnokov@kaspersky.com>
+Subject: [PATCH v2] sched: fix infinite loop in rational approximation
+Date: Thu, 26 Nov 2026 09:58:52 +0300
+Message-ID: <20261126065852.122143-1-Alexander.Chesnokov@kaspersky.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261126052207.4051378-1-Alexander.Chesnokov@kaspersky.com>
+References: <20261126052207.4051378-1-Alexander.Chesnokov@kaspersky.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: HQMAILSRV5.avp.ru (10.64.57.55) To HQMAILSRV2.avp.ru
+X-ClientProxiedBy: HQMAILSRV1.avp.ru (10.64.57.51) To HQMAILSRV2.avp.ru
  (10.64.57.52)
 X-KSE-ServerInfo: HQMAILSRV2.avp.ru, 9
 X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 11/26/2026 05:06:33
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 11/26/2026 06:44:54
 X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
 X-KSE-AntiSpam-Method: none
 X-KSE-AntiSpam-Rate: 0
@@ -64,8 +66,8 @@ X-KSE-AntiSpam-Info: {Tracking_cluster_exceptions}
 X-KSE-AntiSpam-Info: {Tracking_real_kaspersky_domains}
 X-KSE-AntiSpam-Info: {Tracking_black_eng_exceptions}
 X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: chesnokov.avp.ru:7.1.1,5.0.1; 127.0.0.199:7.1.2;
- d41d8cd98f00b204e9800998ecf8427e.com:7.1.1; kaspersky.com:7.1.1,5.0.1
+X-KSE-AntiSpam-Info: 127.0.0.199:7.1.2; chesnokov.avp.ru:7.1.1,5.0.1;
+ kaspersky.com:7.1.1,5.0.1; d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
 X-KSE-AntiSpam-Info: {Tracking_white_helo}
 X-KSE-AntiSpam-Info: {Tracking_black_eng_exceptions_lk}
 X-KSE-AntiSpam-Info: FromAlignment: s
@@ -75,11 +77,11 @@ X-KSE-AntiSpam-Info: Method: none
 X-KSE-Antiphishing-Info: Clean
 X-KSE-Antiphishing-ScanningType: Deterministic
 X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 11/26/2026 05:14:00
+X-KSE-Antiphishing-Bases: 11/26/2026 06:46:00
 X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
  rules found
 X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 11/26/2026 4:22:00 AM
+X-KSE-Antivirus-Info: Clean, bases: 11/26/2026 5:06:00 AM
 X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
  rules found
@@ -88,7 +90,7 @@ X-KSMG-AntiPhishing: NotDetected
 X-KSMG-AntiSpam-Interceptor-Info: not scanned
 X-KSMG-AntiSpam-Status: not scanned, disabled by settings
 X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 3.1.0.9599,
- bases: 2026/11/26 02:07:00 #28981953
+ bases: 2026/11/26 06:17:00 #28982359
 X-KSMG-AntiVirus-Status: NotDetected, skipped
 X-KSMG-LinksScanning: NotDetected
 X-KSMG-Message-Action: skipped
@@ -144,23 +146,19 @@ Cc: jasvinder.singh@intel.com
 
 Signed-off-by: Alexander Chesnokov <Alexander.Chesnokov@kaspersky.com>
 ---
+v2:
+- Move the rte_approx.h include of the test into the non-Windows
+  branch, next to rte_sched.h, matching the file convention.
+
  app/test/test_sched.c  | 44 ++++++++++++++++++++++++++++++++++++++++++
  lib/sched/rte_approx.c | 10 ++++++++++
  2 files changed, 54 insertions(+)
 
 diff --git a/app/test/test_sched.c b/app/test/test_sched.c
-index 96b48f1897..528ee3462a 100644
+index 96b48f1897..71fa8fb6f9 100644
 --- a/app/test/test_sched.c
 +++ b/app/test/test_sched.c
-@@ -10,6 +10,7 @@
- 
- #include "test.h"
- 
-+#include <rte_approx.h>
- #include <rte_cycles.h>
- #include <rte_ether.h>
- #include <rte_ip.h>
-@@ -22,6 +23,13 @@ test_sched(void)
+@@ -22,8 +22,16 @@ test_sched(void)
  	printf("sched not supported on Windows, skipping test\n");
  	return TEST_SKIPPED;
  }
@@ -173,7 +171,10 @@ index 96b48f1897..528ee3462a 100644
 +}
  #else
  
++#include <rte_approx.h>
  #include <rte_sched.h>
+ 
+ #define SUBPORT         0
 @@ -213,6 +221,42 @@ test_sched(void)
  	return 0;
  }
