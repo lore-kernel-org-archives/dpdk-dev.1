@@ -2,100 +2,51 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69ECF606A31C
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Nov 2026 10:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA55606A31E
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Nov 2026 11:47:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kaspersky.com header.i=@kaspersky.com header.a=rsa-sha256 header.s=mail202505 header.b=h26C7mZb
+	dkim=pass (1024-bit key, unprotected) header.d=h-partners.com header.i=@h-partners.com header.a=rsa-sha256 header.s=dkim header.b=QmuAP/OS
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 76BDC402C9;
-	Thu, 26 Nov 2026 11:17:47 +0100 (CET)
-Received: from mx16.kaspersky-labs.com (mx16.kaspersky-labs.com [5.79.125.27])
- by mails.dpdk.org (Postfix) with ESMTPS id 30E74402BD;
- Thu, 26 Nov 2026 11:17:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
- s=mail202505; t=1795688265;
- bh=ysSIy8iN3FyqKX52s1KVXE9sATT1hHxWn6s/LYApRY4=;
- h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
- b=h26C7mZbBI4XsdyI0UGWrVflG7UoGhuqhIadXyQjiIiuOVfYekynZ3x+lYxAeGHP/
- 1dyR5KOYraaIJXVBeuYbGQ6pndZI9bS/LeEB70ifkF30EMTXqVmF/FdBndxKYcwX09
- wGF6mdDRthjDF7q2R9O3rIM51HrqMWWh/BWKWHF7pop+oqpyC0ZXdfO0p0zoJT5gAL
- qKpopFosJhpEOrtpEFevwMoIm4UxuxOeXjk24I41OAzCjVVeOTCM0ALMHe7eQsdwFU
- GOE6ttRrSr1rCZkPuDKJ3NPJOTZm6Qf/IB41rF7V3WZT7Pen6FNScQqA/8tfd2KhxA
- 5Rzk43lTDjnFA==
-Received: from relay16.kaspersky-labs.com (localhost [127.0.0.1])
- by relay16.kaspersky-labs.com (Postfix) with ESMTP id 9B6A5C17C09;
- Thu, 26 Nov 2026 13:17:45 +0300 (MSK)
-Received: from mail-hq2.kaspersky.com (unknown [91.103.66.200])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (Client CN "mail-hq2.kaspersky.com",
- Issuer "Kaspersky MailRelays CA G3" (verified OK))
- by mailhub16.kaspersky-labs.com (Postfix) with ESMTPS id B26E2C1EB7A;
- Thu, 26 Nov 2026 13:17:44 +0300 (MSK)
-Received: from chesnokov.avp.ru (10.16.105.7) by HQMAILSRV2.avp.ru
- (10.64.57.52) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.57; Thu, 26 Nov
- 2026 13:17:43 +0300
-From: <Alexander.Chesnokov@kaspersky.com>
-To: <cristian.dumitrescu@intel.com>
-CC: <dev@dpdk.org>, <stable@dpdk.org>, <jasvinder.singh@intel.com>,
- AlexanderChesnokov <Alexander.Chesnokov@kaspersky.com>
-Subject: [PATCH v3] sched: fix infinite loop in rational approximation
-Date: Thu, 26 Nov 2026 13:17:41 +0300
-Message-ID: <20261126101741.868471-1-Alexander.Chesnokov@kaspersky.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261126065852.122143-1-Alexander.Chesnokov@kaspersky.com>
-References: <20261126065852.122143-1-Alexander.Chesnokov@kaspersky.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 3F9E2402C9;
+	Thu, 26 Nov 2026 12:47:52 +0100 (CET)
+Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com
+ [113.46.200.218])
+ by mails.dpdk.org (Postfix) with ESMTPS id 946C4402BD
+ for <dev@dpdk.org>; Thu, 26 Nov 2026 12:47:49 +0100 (CET)
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=4FyBKO71ffIOZ5QIXtyt2YdOGbZBIA+rwy3PBXzKDMk=;
+ b=QmuAP/OS4RSf/1z0CyJz1SHDCubw0mWHqd1gorJw+ziqVu8N+dA4+V4jt2804b6G7MNL8T8PN
+ 8KIGJazoOvm3xq0TxB/kTleisc0SK94Qlwrafqw9h//VSDt7S4PlGsZSffIHCLyEZpVXNbkULlS
+ 3k8f/4krmMer5j5XELksbLo=
+Received: from mail.maildlp.com (unknown [172.19.163.104])
+ by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4jZvsC39kmzpSy5;
+ Thu, 26 Nov 2026 19:46:39 +0800 (CST)
+Received: from dggpemr100003.china.huawei.com (unknown [7.185.36.150])
+ by mail.maildlp.com (Postfix) with ESMTPS id BE5074057F;
+ Thu, 26 Nov 2026 19:47:43 +0800 (CST)
+Received: from [10.67.121.46] (10.67.121.46) by dggpemr100003.china.huawei.com
+ (7.185.36.150) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Thu, 26 Nov
+ 2026 19:47:43 +0800
+Message-ID: <87de364b-23b9-49bf-bc3e-5b6a79ddadc6@h-partners.com>
+Date: Thu, 26 Nov 2026 19:47:42 +0800
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: HQMAILSRV5.avp.ru (10.64.57.55) To HQMAILSRV2.avp.ru
- (10.64.57.52)
-X-KSE-ServerInfo: HQMAILSRV2.avp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 11/26/2026 10:09:11
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 0
-X-KSE-AntiSpam-Info: Lua profiles 207859 [Nov 26 2026]
-X-KSE-AntiSpam-Info: Version: 6.1.1.27
-X-KSE-AntiSpam-Info: Envelope from: Alexander.Chesnokov@kaspersky.com
-X-KSE-AntiSpam-Info: LuaCore: 136 0.3.136
- 23736263c36d600868e9fbb7b30669123b6e1813
-X-KSE-AntiSpam-Info: {Tracking_cluster_exceptions}
-X-KSE-AntiSpam-Info: {Tracking_real_kaspersky_domains}
-X-KSE-AntiSpam-Info: {Tracking_black_eng_exceptions}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: chesnokov.avp.ru:7.1.1,5.0.1;
- d41d8cd98f00b204e9800998ecf8427e.com:7.1.1; 127.0.0.199:7.1.2;
- kaspersky.com:7.1.1,5.0.1
-X-KSE-AntiSpam-Info: {Tracking_white_helo}
-X-KSE-AntiSpam-Info: {Tracking_black_eng_exceptions_lk}
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: Rate: 0
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Deterministic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 11/26/2026 10:11:00
-X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
- rules found
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 11/26/2026 9:31:00 AM
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
-X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
- rules found
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 3.1.0.9599,
- bases: 2026/11/26 09:06:00 #28983242
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 52
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/9] support uncore power management on Hisilicon platforms
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: <dev@dpdk.org>, <liuyonglong@huawei.com>, <fengchengwen@huawei.com>,
+ <yangxingui@h-partners.com>, <yangxingui@huawei.com>
+References: <20261125140616.3965843-1-yangshuaisong@h-partners.com>
+ <20261125105607.5a8c631f@phoenix.local>
+Content-Language: en-GB
+From: Shuaisong Yang <yangshuaisong@h-partners.com>
+In-Reply-To: <20261125105607.5a8c631f@phoenix.local>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ dggpemr100003.china.huawei.com (7.185.36.150)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -105,182 +56,72 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=4.0.1
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=4.0.1
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-From: Alexander Chesnokov <Alexander.Chesnokov@kaspersky.com>
+Hi Stephen,
 
-rte_approx() scales alpha and d by 10 until d reaches 1,
-multiplying denum by 10 on every step. For d below 1e-9 the loop
-makes 10 or more steps, denum wraps in uint32_t and no longer
-equals 10^k. The input check still passes, the search compares
-against the wrapped denum, never finds a match and spins forever.
-A fuzzer input with alpha = 2.65e-23 and d = 1.13e-23 (23 scaling
-steps, denum = 4135583744) hangs the function.
+The uncore options in l3fwd-power are not introduced by this series:
+-u/-U/-i have been there since 10db2a5b87 ("examples/l3fwd-power:
+add options for uncore frequency"). On the application side, this
+series only cleans up that pre-existing handling (dedicated helpers,
+rollback on failure) and lets users pick which package/die to control
+instead of always applying to all of them (--uncore-freq).
 
-The same wrapping breaks rte_approx_64() for d below 1e-19. Besides,
-both variants hang even with an intact denum once denum squared does
-not fit the type: the products in the search overflow and the
-comparisons produce garbage. The 32-bit variant hangs on
-alpha = 0.333333333 with d = 1.5e-9, the 64-bit variant on
-alpha = 7.38e-19 with d = 6.78e-19.
+The intended split is:
+- Driver/environment setup stays inside the library: the app just
+  calls rte_power_set_uncore_env(RTE_UNCORE_PM_ENV_AUTO_DETECT) and
+  the library selects the driver itself. Patch 7 adds the detect
+  callback used by that mechanism, and the Hisilicon driver registers
+  itself without any application configuration.
+- What remains in the application is the policy: which uncore domains
+  to control and which frequency to pin (min/max/index). That is a
+  per-application choice, and l3fwd-power is the sample demonstrating
+  the rte_power APIs, as it already does for cpufreq and PM QoS.
 
-Reject requests whose precision cannot be represented: stop scaling
-before denum wraps and require denum * denum to fit the type, so
-that every product in the search stays exact. Requests outside these
-bounds could hang forever, or compute against a wrapped denominator
-and return a fraction unrelated to the request. Requests within the
-bounds behave exactly as before; the sched configuration calls
-rte_approx_64() with the constant 1e-7, which keeps working. The
-smallest supported precision, 1e-4 for rte_approx() and 1e-9 for
-rte_approx_64(), is now stated in the API header.
+We kept this out of EAL because uncore pinning is a policy rather
+than environment abstraction: whether to touch uncore at all, and
+which dies and values to use, differs from application to
+application, while an EAL option would force one static policy on
+all of them.
 
-Add sched_approx_autotest cases for the 32-bit variant: the two
-hanging requests are rejected, and a coarse request still returns
-the minimal fraction inside the requested interval. rte_approx_64()
-gets the same guards but is not called by the test: the symbol is
-not exported from the shared library, so an external caller cannot
-link against it.
+That said, if you think one-shot static uncore pinning belongs in
+EAL, or a library-level "init all" helper would help, we are happy
+to discuss it as a follow-up. Would the current approach be
+acceptable for this series?
 
-Fixes: de3cfa2c9823 ("sched: initial import")
-Cc: stable@dpdk.org
-Cc: jasvinder.singh@intel.com
+Thanks,
+Shuaisong Yang
 
-Signed-off-by: Alexander Chesnokov <Alexander.Chesnokov@kaspersky.com>
----
-v3:
-- Call only rte_approx() in the test: rte_approx_64() is not
-  exported from the shared library (no RTE_EXPORT_SYMBOL since
-  its introduction), which broke the shared build of app/dpdk-test.
-  The 32-bit variant now covers both guards: the denum wrap and
-  the denum squared overflow.
-- State the smallest supported precision of both variants in the
-  API header Doxygen.
-
- app/test/test_sched.c  | 35 +++++++++++++++++++++++++++++++++++
- lib/sched/rte_approx.c | 10 ++++++++++
- lib/sched/rte_approx.h |  6 ++++--
- 3 files changed, 49 insertions(+), 2 deletions(-)
-
-diff --git a/app/test/test_sched.c b/app/test/test_sched.c
-index 96b48f1897..62396766f7 100644
---- a/app/test/test_sched.c
-+++ b/app/test/test_sched.c
-@@ -22,8 +22,16 @@ test_sched(void)
- 	printf("sched not supported on Windows, skipping test\n");
- 	return TEST_SKIPPED;
- }
-+
-+static int
-+test_sched_approx(void)
-+{
-+	printf("sched not supported on Windows, skipping test\n");
-+	return TEST_SKIPPED;
-+}
- #else
- 
-+#include <rte_approx.h>
- #include <rte_sched.h>
- 
- #define SUBPORT         0
-@@ -213,6 +221,33 @@ test_sched(void)
- 	return 0;
- }
- 
-+static int
-+test_sched_approx(void)
-+{
-+	uint32_t p32 = 0;
-+	uint32_t q32 = 0;
-+	int err;
-+
-+	/* denum wraps in uint32_t during scaling */
-+	err = rte_approx(2.647139521348302e-23, 1.126263171287887e-23,
-+		&p32, &q32);
-+	TEST_ASSERT_FAIL(err, "rte_approx accepted unrepresentable d\n");
-+
-+	/* denum * denum does not fit in uint32_t */
-+	err = rte_approx(0.333333333, 1.5e-9, &p32, &q32);
-+	TEST_ASSERT_FAIL(err, "rte_approx accepted d = 1.5e-9\n");
-+
-+	/* Coarse precision still succeeds */
-+	err = rte_approx(0.125, 0.01, &p32, &q32);
-+	TEST_ASSERT_SUCCESS(err, "rte_approx rejected d = 0.01\n");
-+	TEST_ASSERT_EQUAL(p32, 1, "Wrong approximation p\n");
-+	TEST_ASSERT_EQUAL(q32, 8, "Wrong approximation q\n");
-+
-+	return 0;
-+}
-+
- #endif /* !RTE_EXEC_ENV_WINDOWS */
- 
- REGISTER_FAST_TEST(sched_autotest, NOHUGE_OK, ASAN_OK, test_sched);
-+REGISTER_FAST_TEST(sched_approx_autotest, NOHUGE_OK, ASAN_OK,
-+	test_sched_approx);
-diff --git a/lib/sched/rte_approx.c b/lib/sched/rte_approx.c
-index 86c7d1d3fb..7af4191df1 100644
---- a/lib/sched/rte_approx.c
-+++ b/lib/sched/rte_approx.c
-@@ -157,10 +157,15 @@ int rte_approx(double alpha, double d, uint32_t *p, uint32_t *q)
- 	/* Compute alpha_num, d_num and denum */
- 	denum = 1;
- 	while (d < 1) {
-+		if (denum > UINT32_MAX / 10)
-+			return -1;
- 		alpha *= 10;
- 		d *= 10;
- 		denum *= 10;
- 	}
-+	/* the search products must fit in uint32_t */
-+	if (denum > UINT32_MAX / denum)
-+		return -1;
- 	alpha_num = (uint32_t) alpha;
- 	d_num = (uint32_t) d;
- 
-@@ -310,10 +315,15 @@ int rte_approx_64(double alpha, double d, uint64_t *p, uint64_t *q)
- 	/* Compute alpha_num, d_num and denum */
- 	denum = 1;
- 	while (d < 1) {
-+		if (denum > UINT64_MAX / 10)
-+			return -1;
- 		alpha *= 10;
- 		d *= 10;
- 		denum *= 10;
- 	}
-+	/* the search products must fit in uint64_t */
-+	if (denum > UINT64_MAX / denum)
-+		return -1;
- 	alpha_num = (uint64_t) alpha;
- 	d_num = (uint64_t) d;
- 
-diff --git a/lib/sched/rte_approx.h b/lib/sched/rte_approx.h
-index 738e33a98b..4a4b047406 100644
---- a/lib/sched/rte_approx.h
-+++ b/lib/sched/rte_approx.h
-@@ -34,7 +34,8 @@ extern "C" {
-  *   Pointer to pre-allocated space where the denominator of the rational
-  *   approximation will be stored when operation is successful
-  * @return
-- *   0 upon success, error code otherwise
-+ *   0 upon success, error code otherwise. The smallest supported
-+ *   precision is 1e-4; a request for a smaller d returns an error
-  */
- int rte_approx(double alpha, double d, uint32_t *p, uint32_t *q);
- 
-@@ -52,7 +53,8 @@ int rte_approx(double alpha, double d, uint32_t *p, uint32_t *q);
-  *   Pointer to pre-allocated space where the denominator of the rational
-  *   approximation will be stored when operation is successful
-  * @return
-- *   0 upon success, error code otherwise
-+ *   0 upon success, error code otherwise. The smallest supported
-+ *   precision is 1e-9; a request for a smaller d returns an error
-  */
- int rte_approx_64(double alpha, double d, uint64_t *p, uint64_t *q);
- 
--- 
-2.53.0
+On 2026/11/26 2:56, Stephen Hemminger wrote:
+> On Wed, 25 Nov 2026 22:06:06 +0800
+> Shuaisong Yang <yangshuaisong@h-partners.com> wrote:
+> 
+>> This series reworks the uncore frequency handling of the l3fwd-power
+>> sample and extends the power library with a Hisilicon uncore driver
+>> and uncore frequency telemetry.
+>>
+>> The first six patches restructure the power management code of
+>> l3fwd-power: the uncore and cpufreq/QoS setup and cleanup paths are
+>> extracted into dedicated helpers, the failure paths now roll back
+>> the steps already taken, and the sample can set the frequency of a
+>> specific package/die instead of applying the change to all of them.
+>>
+>> The last three patches extend the power library:
+>>
+>> - a detect callback is added to the uncore driver ops, letting a
+>>   driver report by itself whether it can manage the platform;
+>> - a new Hisilicon uncore driver is added on top of the devfreq
+>>   sysfs interface of those platforms;
+>> - the current uncore frequency is exposed through telemetry.
+>>
+>> Signed-off-by: Shuaisong Yang <yangshuaisong@h-partners.com>
+> 
+> Why does application need to handle args about uncore?
+> Seems to defeat the purpose having EAL.
+> The setup should be in EAL not the application.
 
