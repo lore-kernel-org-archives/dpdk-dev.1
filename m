@@ -2,48 +2,48 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A9F606A321
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Nov 2026 18:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF5E606A31E
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Nov 2026 18:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=MEqPY656
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=TOaoygSM
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0CB1540616;
-	Thu, 26 Nov 2026 19:14:25 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 325484065A;
+	Thu, 26 Nov 2026 19:14:27 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTPS id 3D0C1402C9
+ by mails.dpdk.org (Postfix) with ESMTPS id EC9BD402C9
  for <dev@dpdk.org>; Thu, 26 Nov 2026 19:14:23 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1795716864; x=1827252864;
+ t=1795716865; x=1827252865;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=ppQcGHU2aP6T2leHzA2TU+ERBDS7msmyS31wrzc5QQg=;
- b=MEqPY656QNsX0DNptcSnHD29GElO/2Dtj/fgS4ek/mssH0R9KFrDi9To
- lc8cbQHjO9jaX4dZh4bAw/RT7p30sdKKs3fyHest3U37hquvrG9/fUs3Y
- rKXrVXtfX+dv0qfIuVtvFTSUtMMjbG1WYcV8DvX5tuJDBWwe0qjtQSUSW
- LFLm36ww6/D/kRP6b9/eo9UkylKwHRfA5vSFyHGNPmyNEh5UbRr8kDm0X
- v/lrsllqcG/de+APJzm0IJZ5g8skIdiF2Q34fktPoZR1n5X2E2FjrCe86
- 4Twv8vnvx4zm37NVUeOtXOlhXCCW5cqVQoRADtcPs4u2y22boVT/Qi9hh w==;
-X-CSE-ConnectionGUID: wpqzdCrsTfiMthYSKok20Q==
-X-CSE-MsgGUID: tI+TIn87SVCx/ZczNaP74A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11978"; a="4633539"
+ bh=SKHSRwWKc8ytBnQiUcJ6/YorrfqpxM/WLr2FfhtZZco=;
+ b=TOaoygSMkajaeUpCRdzM2AxYZP51utlDM3faMyYQL758LjeQvFlI/Csa
+ 9KHlPKrTqlZQs/srlBOcgTVu9oM7Yp3fze4/4oRVQbzsszYIu+yqrJ6HS
+ mb6niuMZXoCw6kGTxrOenLsEDU64/IPKRUvdplaQhNzfBIu1DEpuIzQ1K
+ +7dL5fgtuCAWxrodOEdDwuCYo4I3hLjGMR3HXpMta5C5aJhillFT4vdZ1
+ YlVe4dW7zqntN/koDxUhlbr1qykLYwDA06VXYOzy22Kx8Ya+yXgH4hZQx
+ WfrrNVa2RRKdAvuE6t27JPoWNG/5l6QB0qQ/PHjHe7s06Nt33cTEztEh4 w==;
+X-CSE-ConnectionGUID: KLUCCrfNQ6OzsbKXHPIvKg==
+X-CSE-MsgGUID: mRUptCEQTAS8o2K/sDxv9w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11978"; a="4633542"
 X-IronPort-AV: E=Sophos;i="6.27,235,1787036400"; 
-   d="scan'208";a="4633539"
+   d="scan'208";a="4633542"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 26 Nov 2026 10:14:19 -0800
-X-CSE-ConnectionGUID: 9GfuqM/QQZeg7liMXzVV+w==
-X-CSE-MsgGUID: R2a6tqbGRHyHfQUeil9vqA==
+ 26 Nov 2026 10:14:21 -0800
+X-CSE-ConnectionGUID: gqe31Y3OQe+qFfojCTEuWQ==
+X-CSE-MsgGUID: EPhOmSh6T8K3XJv3lc3r8w==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,235,1787036400"; d="scan'208";a="12732839"
+X-IronPort-AV: E=Sophos;i="6.27,235,1787036400"; d="scan'208";a="12732845"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa001.fm.intel.com with ESMTP; 26 Nov 2026 10:14:18 -0800
+ by fmviesa001.fm.intel.com with ESMTP; 26 Nov 2026 10:14:19 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v3 01/39] telemetry: make cpuset init parameter const
-Date: Thu, 26 Nov 2026 18:13:34 +0000
-Message-ID: <20261126181414.124094-2-bruce.richardson@intel.com>
+Subject: [PATCH v3 03/39] eal: define new functionally distinct config structs
+Date: Thu, 26 Nov 2026 18:13:36 +0000
+Message-ID: <20261126181414.124094-4-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261126181414.124094-1-bruce.richardson@intel.com>
 References: <20260721094555.2188496-1-bruce.richardson@intel.com>
@@ -67,50 +67,120 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The cpuset parameter to telemetry_init is not modified so can be marked
-as const. This can allow callers to pass the parameter from a const
-structure rather than a modifiable one.
+Rather than having a generic internal_config structure which mixes
+system configuration, memory configuration, and user options in one
+struct, create separate structures for the platform info, system runtime
+state and the user provided config. Later patches will complete these
+with data moved from the current location.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/telemetry/telemetry.c          | 4 ++--
- lib/telemetry/telemetry_internal.h | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ lib/eal/common/eal_common_config.c | 31 ++++++++++++++++++++++++++++++
+ lib/eal/common/eal_internal_cfg.h  | 28 +++++++++++++++++++++++++++
+ 2 files changed, 59 insertions(+)
 
-diff --git a/lib/telemetry/telemetry.c b/lib/telemetry/telemetry.c
-index f5218df4b8..9b7e78dffd 100644
---- a/lib/telemetry/telemetry.c
-+++ b/lib/telemetry/telemetry.c
-@@ -54,7 +54,7 @@ static struct socket v1_socket; /* socket for v1 telemetry */
+diff --git a/lib/eal/common/eal_common_config.c b/lib/eal/common/eal_common_config.c
+index e2e69a75fb..5427b30659 100644
+--- a/lib/eal/common/eal_common_config.c
++++ b/lib/eal/common/eal_common_config.c
+@@ -5,6 +5,7 @@
+ #include <rte_string_fns.h>
  
- static const char *telemetry_version; /* save rte_version */
- static const char *socket_dir;        /* runtime directory */
--static rte_cpuset_t *thread_cpuset;
-+static const rte_cpuset_t *thread_cpuset;
+ #include <eal_export.h>
++#include "eal_internal_cfg.h"
+ #include "eal_private.h"
+ #include "eal_filesystem.h"
+ #include "eal_memcfg.h"
+@@ -27,6 +28,15 @@ static struct rte_config rte_config = {
+ /* platform-specific runtime dir */
+ static char runtime_dir[UNIX_PATH_MAX];
  
- RTE_LOG_REGISTER_DEFAULT(logtype, WARNING);
- #define RTE_LOGTYPE_TELEMETRY logtype
-@@ -656,7 +656,7 @@ telemetry_v2_init(void)
++/* user-provided EAL configuration */
++static struct eal_user_cfg eal_user_cfg;
++
++/* platform-discovered and runtime EAL state */
++static struct eal_platform_info eal_platform_info;
++
++/* internal runtime configuration */
++static struct eal_runtime_state eal_runtime_state;
++
+ /* internal configuration */
+ static struct internal_config internal_config;
  
- RTE_EXPORT_INTERNAL_SYMBOL(rte_telemetry_init)
- int32_t
--rte_telemetry_init(const char *runtime_dir, const char *rte_version, rte_cpuset_t *cpuset)
-+rte_telemetry_init(const char *runtime_dir, const char *rte_version, const rte_cpuset_t *cpuset)
- {
- 	telemetry_version = rte_version;
- 	socket_dir = runtime_dir;
-diff --git a/lib/telemetry/telemetry_internal.h b/lib/telemetry/telemetry_internal.h
-index 2fd9fbd7c1..4a6b2e9838 100644
---- a/lib/telemetry/telemetry_internal.h
-+++ b/lib/telemetry/telemetry_internal.h
-@@ -119,6 +119,6 @@ typedef int (*rte_log_fn)(uint32_t level, uint32_t logtype, const char *format,
+@@ -63,6 +73,27 @@ eal_get_internal_configuration(void)
+ 	return &internal_config;
+ }
+ 
++/* Return a pointer to the user configuration structure */
++struct eal_user_cfg *
++eal_get_user_configuration(void)
++{
++	return &eal_user_cfg;
++}
++
++/* Return a pointer to the platform state structure */
++struct eal_platform_info *
++eal_get_platform_info(void)
++{
++	return &eal_platform_info;
++}
++
++/* Return a pointer to the runtime state structure */
++struct eal_runtime_state *
++eal_get_runtime_state(void)
++{
++	return &eal_runtime_state;
++}
++
+ RTE_EXPORT_SYMBOL(rte_eal_iova_mode)
+ enum rte_iova_mode
+ rte_eal_iova_mode(void)
+diff --git a/lib/eal/common/eal_internal_cfg.h b/lib/eal/common/eal_internal_cfg.h
+index 1221e03253..cd24270f02 100644
+--- a/lib/eal/common/eal_internal_cfg.h
++++ b/lib/eal/common/eal_internal_cfg.h
+@@ -54,6 +54,31 @@ struct hugepage_file_discipline {
+ 	bool unlink_existing;
+ };
+ 
++/**
++ * User-provided EAL initialization configuration.
++ * Immutable after initialization, so no need for atomic types or locks.
++ */
++struct eal_user_cfg {
++	uint8_t reserved;
++};
++
++/**
++ * Discovered information about cores, memory, etc. on the system.
++ * Immutable after initialization, so no need for atomic types or locks.
++ */
++struct eal_platform_info {
++	uint8_t reserved;
++};
++
++/**
++ * Internal EAL runtime state
++ * May be modified at runtime, so access must be protected by locks or atomic types
++ * as appropriate.
++ */
++struct eal_runtime_state {
++	uint8_t reserved;
++};
++
+ /**
+  * internal configuration
   */
- __rte_internal
- int
--rte_telemetry_init(const char *runtime_dir, const char *rte_version, rte_cpuset_t *cpuset);
-+rte_telemetry_init(const char *runtime_dir, const char *rte_version, const rte_cpuset_t *cpuset);
+@@ -121,6 +146,9 @@ struct internal_config {
+ 	unsigned int no_auto_probing; /**< true to switch from block-listing to allow-listing */
+ };
  
- #endif
++struct eal_user_cfg *eal_get_user_configuration(void);
++struct eal_platform_info *eal_get_platform_info(void);
++struct eal_runtime_state *eal_get_runtime_state(void);
+ void eal_reset_internal_config(struct internal_config *internal_cfg);
+ 
+ #endif /* EAL_INTERNAL_CFG_H */
 -- 
 2.55.0
 
