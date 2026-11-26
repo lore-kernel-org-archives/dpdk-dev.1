@@ -2,48 +2,48 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29605606A31C
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Nov 2026 18:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF76F606A31E
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Nov 2026 18:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=dlRIyiMS
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=CQWHIXE+
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1BDCB4065A;
+	by mails.dpdk.org (Postfix) with ESMTP id EE27840E1E;
 	Thu, 26 Nov 2026 19:15:34 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTPS id 4CC6740655
- for <dev@dpdk.org>; Thu, 26 Nov 2026 19:15:23 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id 49AD740E0B
+ for <dev@dpdk.org>; Thu, 26 Nov 2026 19:15:25 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1795716924; x=1827252924;
+ t=1795716926; x=1827252926;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=hES5DfijJRPXz9fpIUuCmgQV/9EPnY49jQSIIljgcQU=;
- b=dlRIyiMSnTR2o0AuWvnMuFlfo25/eAAW6s/MVMyszsjae1TL2giWXFa3
- +xvpBN2Kdk/DeMGDDYqjyDamDhaZ/ARr+TFDIchxyeFKFkywjhmdpz8Rh
- 6DqnvG/syUvcLv5KTOlHap+NeojQWw88kQ1q11UBVFHNlYVnFcOrBuYdS
- aNQq1Dq7/ejiw1SKIl6L832Of1Xlt4byRkxIF5rQ64lVMD4FiRQGqOeyy
- 8Ny7phHnZ/p7VOOZbrtamJiTkt6WvAxhO5X72nYidVfBJJuMRa5YBUve4
- ynE1C9CwC3JKRb5k81DRzi+M1tYeOmlBTiDOg54rfYKXn2dF+F87bhpLI Q==;
-X-CSE-ConnectionGUID: sOCGifEUS5+G+IsYSv2UCg==
-X-CSE-MsgGUID: AHED/ZEzQZ6A+cX25D14wg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11978"; a="4633624"
+ bh=Dcm34GYzDIA4zUyV83TBXXyutVrghz3wo6E7pOc6Cdw=;
+ b=CQWHIXE+PnMtXXsk7P/DgQLLa2VE1zjCFNnVcu2IyNrd+ehEsYRYyytj
+ 3+8LlnN8HJjP66q+36+bL8ST8TlGN20m3ACFDur5ETp41ciGvxj4LGOzL
+ mqQXZR4TYO2t9VSzG4cRnuaeNXBpuIM5ng1NxHexigztmoc1XnVKaYH9q
+ 2Bs+UetPr3sWSft4nqlf3lrMAfhAPMD6S5CbNgvAjyltbXe2ILKiP/91m
+ tw5tRrq2yCgk7HesoiaFOh4w6oMfOQdgoUySq4o1ily9m99JmrxMlRKaC
+ LFdheY2DmQJfbmPyIU4d2lPgYcV5eV9I52QEmRXrgBydA58iaD71Isa6s Q==;
+X-CSE-ConnectionGUID: mW9bspW4S6mOEGHMYZ0JaQ==
+X-CSE-MsgGUID: VkCyUAQBTlOYz3KBQxInnA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11978"; a="4633625"
 X-IronPort-AV: E=Sophos;i="6.27,235,1787036400"; 
-   d="scan'208";a="4633624"
+   d="scan'208";a="4633625"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 26 Nov 2026 10:15:23 -0800
-X-CSE-ConnectionGUID: eTQVwugXQuayhxm02Gn5rQ==
-X-CSE-MsgGUID: DC/O+fFBR+OIfvgiXmldLg==
+ 26 Nov 2026 10:15:24 -0800
+X-CSE-ConnectionGUID: jvBXMkN8TgGOuCUWQk67pw==
+X-CSE-MsgGUID: glb3PM39QNGmaqcnB47Pkw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,235,1787036400"; d="scan'208";a="12733127"
+X-IronPort-AV: E=Sophos;i="6.27,235,1787036400"; d="scan'208";a="12733133"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa001.fm.intel.com with ESMTP; 26 Nov 2026 10:15:22 -0800
+ by fmviesa001.fm.intel.com with ESMTP; 26 Nov 2026 10:15:23 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v3 29/39] eal: move trace config into user config struct
-Date: Thu, 26 Nov 2026 18:14:02 +0000
-Message-ID: <20261126181414.124094-30-bruce.richardson@intel.com>
+Subject: [PATCH v3 30/39] eal: record service cores in user config struct
+Date: Thu, 26 Nov 2026 18:14:03 +0000
+Message-ID: <20261126181414.124094-31-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261126181414.124094-1-bruce.richardson@intel.com>
 References: <20260721094555.2188496-1-bruce.richardson@intel.com>
@@ -67,487 +67,263 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-The trace settings (pattern list, directory, buffer size, mode) were
-previously stored directly in the internal struct trace singleton during
-arg parsing, via helper functions. Move these setting into eal_user_cfg
-and drop the helper functions.
-
-NOTE: after these changes, eal_cleanup_config needs a non-const user
-config pointer to cleanup. Rather than making the pointer in
-rte_eal_cleanup non-const, make eal_cleanup_config like all the other
-functions in the cleanup chain in taking no parameters. Then it can
-define its own non-const user config pointer internally.
+The user provided service coremask or service corelist needs to be
+recorded in the user config struct, so store it there as a cpuset.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/eal/common/eal_common_options.c     |  53 ++++++++++--
- lib/eal/common/eal_common_trace.c       |  30 +++++--
- lib/eal/common/eal_common_trace_utils.c | 104 ------------------------
- lib/eal/common/eal_internal_cfg.h       |  15 ++++
- lib/eal/common/eal_options.h            |   2 +-
- lib/eal/common/eal_trace.h              |  11 ---
- lib/eal/freebsd/eal.c                   |   3 +-
- lib/eal/linux/eal.c                     |   2 +-
- lib/eal/windows/eal.c                   |   4 +-
- 9 files changed, 87 insertions(+), 137 deletions(-)
+ lib/eal/common/eal_common_options.c | 157 ++++++++--------------------
+ lib/eal/common/eal_internal_cfg.h   |   1 +
+ 2 files changed, 46 insertions(+), 112 deletions(-)
 
 diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
-index 5014eb6209..dd25c3274b 100644
+index dd25c3274b..90497d9825 100644
 --- a/lib/eal/common/eal_common_options.c
 +++ b/lib/eal/common/eal_common_options.c
-@@ -14,6 +14,7 @@
- #include <sys/queue.h>
- #ifndef RTE_EXEC_ENV_WINDOWS
- #include <dlfcn.h>
-+#include <fnmatch.h>
- #include <libgen.h>
- #endif
- #include <sys/stat.h>
-@@ -491,6 +492,7 @@ eal_reset_internal_config(void)
- 
- 	TAILQ_INIT(&user_cfg->devopt_list);
- 	TAILQ_INIT(&user_cfg->plugin_list);
-+	STAILQ_INIT(&user_cfg->trace_patterns);
- 	TAILQ_INIT(&runtime_state->loaded_plugins);
- 	user_cfg->memory = 0;
- 	user_cfg->force_nrank = 0;
-@@ -2320,28 +2322,56 @@ eal_parse_args(void)
- 		EAL_LOG(WARNING, "Tracing is not supported on Windows, ignoring tracing parameters");
- #else
- 	TAILQ_FOREACH(arg, &args.trace, next) {
--		if (eal_trace_args_save(arg->arg) < 0) {
--			EAL_LOG(ERR, "invalid trace parameter, '%s'", arg->arg);
-+		struct eal_trace_arg *ta = malloc(sizeof(*ta));
-+		if (ta == NULL) {
-+			EAL_LOG(ERR, "failed to allocate trace arg for '%s'", arg->arg);
- 			return -1;
- 		}
-+		ta->val = strdup(arg->arg);
-+		if (ta->val == NULL) {
-+			EAL_LOG(ERR, "failed to allocate trace arg for '%s'", arg->arg);
-+			free(ta);
-+			return -1;
-+		}
-+		STAILQ_INSERT_TAIL(&user_cfg->trace_patterns, ta, next);
- 	}
- 	if (args.trace_dir != NULL) {
--		if (eal_trace_dir_args_save(args.trace_dir) < 0) {
-+		if (asprintf(&user_cfg->trace_dir, "%s/", args.trace_dir) == -1) {
- 			EAL_LOG(ERR, "invalid trace directory, '%s'", args.trace_dir);
- 			return -1;
- 		}
- 	}
- 	if (args.trace_bufsz != NULL) {
--		if (eal_trace_bufsz_args_save(args.trace_bufsz) < 0) {
-+		uint64_t bufsz = rte_str_to_size(args.trace_bufsz);
-+		if (bufsz == 0) {
- 			EAL_LOG(ERR, "invalid trace buffer size, '%s'", args.trace_bufsz);
- 			return -1;
- 		}
-+		user_cfg->trace_bufsz = bufsz;
- 	}
- 	if (args.trace_mode != NULL) {
--		if (eal_trace_mode_args_save(args.trace_mode) < 0) {
-+		size_t len = strlen(args.trace_mode);
-+		char *pattern;
-+		if (len == 0) {
-+			EAL_LOG(ERR, "trace mode value is empty");
-+			return -1;
-+		}
-+		pattern = calloc(1, len + 2);
-+		if (pattern == NULL) {
-+			EAL_LOG(ERR, "failed to allocate memory for trace mode");
-+			return -1;
-+		}
-+		sprintf(pattern, "%s*", args.trace_mode);
-+		if (fnmatch(pattern, "overwrite", 0) == 0)
-+			user_cfg->trace_mode = RTE_TRACE_MODE_OVERWRITE;
-+		else if (fnmatch(pattern, "discard", 0) == 0)
-+			user_cfg->trace_mode = RTE_TRACE_MODE_DISCARD;
-+		else {
- 			EAL_LOG(ERR, "invalid trace mode, '%s'", args.trace_mode);
-+			free(pattern);
- 			return -1;
- 		}
-+		free(pattern);
- 	}
- #endif
- 
-@@ -2460,8 +2490,19 @@ compute_ctrl_threads_cpuset(void)
+@@ -545,6 +545,7 @@ eal_reset_internal_config(void)
+ 	user_cfg->user_mbuf_pool_ops_name = NULL;
+ 	CPU_ZERO(&runtime_state->ctrl_cpuset);
+ 	runtime_state->init_complete = 0;
++	CPU_ZERO(&user_cfg->service_cpuset);
+ 	user_cfg->max_simd_bitwidth.bitwidth = RTE_VECT_DEFAULT_SIMD_BITWIDTH;
+ 	user_cfg->max_simd_bitwidth.forced = 0;
+ }
+@@ -852,21 +853,20 @@ static int xdigit2val(unsigned char c)
  }
  
- int
--eal_cleanup_config(const struct eal_user_cfg *user_cfg)
-+eal_cleanup_config(void)
+ static int
+-eal_parse_service_coremask(const char *coremask)
++eal_parse_service_coremask(const char *coremask, rte_cpuset_t *cpuset)
  {
-+	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
-+	struct eal_trace_arg *ta;
-+
-+	/* free trace patterns list */
-+	while (!STAILQ_EMPTY(&user_cfg->trace_patterns)) {
-+		ta = STAILQ_FIRST(&user_cfg->trace_patterns);
-+		STAILQ_REMOVE_HEAD(&user_cfg->trace_patterns, next);
-+		free(ta->val);
-+		free(ta);
-+	}
-+	free(user_cfg->trace_dir);
- 	free(user_cfg->hugefile_prefix);
- 	free(user_cfg->hugepage_dir);
- 	free(user_cfg->user_mbuf_pool_ops_name);
-diff --git a/lib/eal/common/eal_common_trace.c b/lib/eal/common/eal_common_trace.c
-index a76dff0017..3d984ac8b1 100644
---- a/lib/eal/common/eal_common_trace.c
-+++ b/lib/eal/common/eal_common_trace.c
-@@ -24,7 +24,7 @@ RTE_DEFINE_PER_LCORE(void *, trace_mem);
- static RTE_DEFINE_PER_LCORE(char *, ctf_field);
+ 	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
+ 	int i, j, idx = 0;
+ 	unsigned int count = 0;
+ 	char c;
+ 	int val;
+-	uint32_t taken_lcore_count = 0;
  
- static struct trace_point_head tp_list = STAILQ_HEAD_INITIALIZER(tp_list);
--static struct trace trace = { .args = STAILQ_HEAD_INITIALIZER(trace.args), };
-+static struct trace trace;
+ 	EAL_LOG(WARNING, "'-s <service-coremask>' is deprecated, and will be removed in a future release.");
+ 	EAL_LOG(WARNING, "\tUse '-S <service-corelist>' option instead.");
  
- struct trace *
- trace_obj_get(void)
-@@ -41,7 +41,8 @@ trace_list_head_get(void)
- int
- eal_trace_init(void)
- {
--	struct trace_arg *arg;
-+	const struct eal_user_cfg *user_cfg = eal_get_user_configuration();
-+	const struct eal_trace_arg *arg;
- 
- 	/* Trace memory should start with 8B aligned for natural alignment */
- 	RTE_BUILD_BUG_ON((offsetof(struct __rte_trace_header, mem) % 8) != 0);
-@@ -58,14 +59,24 @@ eal_trace_init(void)
- 	if (trace_has_duplicate_entry())
- 		goto fail;
- 
-+	/* Copy trace directory from user config (trace.dir may be reallocated later) */
-+	if (user_cfg->trace_dir != NULL) {
-+		trace.dir = strdup(user_cfg->trace_dir);
-+		if (trace.dir == NULL) {
-+			rte_errno = ENOMEM;
-+			goto fail;
-+		}
-+	}
-+
-+	/* Apply buffer size from user config, then fill in default if still 0 */
-+	trace.buff_len = user_cfg->trace_bufsz;
-+	trace_bufsz_args_apply();
-+
- 	/* Generate UUID ver 4 with total size of events and number of
- 	 * events
+ 	if (coremask == NULL)
+ 		return -1;
+-	/* Remove all blank characters ahead and after .
++	/* Remove all blank characters ahead and after.
+ 	 * Remove 0x/0X if exists.
  	 */
- 	trace_uuid_generate();
- 
--	/* Apply buffer size configuration for trace output */
--	trace_bufsz_args_apply();
+ 	while (isblank(*coremask))
+@@ -888,20 +888,9 @@ eal_parse_service_coremask(const char *coremask)
+ 			return -1;
+ 		}
+ 		val = xdigit2val(c);
+-		for (j = 0; j < BITS_PER_HEX && idx < RTE_MAX_LCORE;
+-				j++, idx++) {
++		for (j = 0; j < BITS_PER_HEX && idx < RTE_MAX_LCORE; j++, idx++) {
+ 			if ((1 << j) & val) {
 -
- 	/* Generate CTF TDSL metadata */
- 	if (trace_metadata_create() < 0)
- 		goto fail;
-@@ -74,11 +85,11 @@ eal_trace_init(void)
- 	if (trace_epoch_time_save() < 0)
- 		goto free_meta;
- 
--	/* Apply global configurations */
--	STAILQ_FOREACH(arg, &trace.args, next)
-+	/* Apply trace pattern filters from user config */
-+	STAILQ_FOREACH(arg, &user_cfg->trace_patterns, next)
- 		trace_args_apply(arg->val);
- 
--	rte_trace_mode_set(trace.mode);
-+	rte_trace_mode_set(user_cfg->trace_mode);
- 
- 	return 0;
- 
-@@ -94,7 +105,8 @@ eal_trace_fini(void)
- {
- 	trace_mem_free();
- 	trace_metadata_destroy();
--	eal_trace_args_free();
-+	free(trace.dir);
-+	trace.dir = NULL;
- }
- 
- RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_trace_is_enabled, 20.05)
-diff --git a/lib/eal/common/eal_common_trace_utils.c b/lib/eal/common/eal_common_trace_utils.c
-index e1996433b7..821036b4bb 100644
---- a/lib/eal/common/eal_common_trace_utils.c
-+++ b/lib/eal/common/eal_common_trace_utils.c
-@@ -2,7 +2,6 @@
-  * Copyright(C) 2020 Marvell International Ltd.
-  */
- 
--#include <fnmatch.h>
- #include <pwd.h>
- #include <sys/stat.h>
- #include <time.h>
-@@ -132,42 +131,6 @@ trace_dir_update(const char *str)
- 	return rc;
- }
- 
--int
--eal_trace_args_save(const char *val)
--{
--	struct trace *trace = trace_obj_get();
--	struct trace_arg *arg = malloc(sizeof(*arg));
+-				if (eal_cpu_detected(idx) == 0) {
+-					EAL_LOG(ERR,
+-						"lcore %u unavailable", idx);
+-					return -1;
+-				}
 -
--	if (arg == NULL) {
--		trace_err("failed to allocate memory for %s", val);
--		return -ENOMEM;
+-				if (runtime_state->lcore_cfg[idx].role == RTE_LCORE_ROLE_RTE)
+-					taken_lcore_count++;
+-
+-				runtime_state->lcore_cfg[idx].role = RTE_LCORE_ROLE_SERVICE;
++				CPU_SET(idx, cpuset);
+ 				count++;
+ 			}
+ 		}
+@@ -913,16 +902,15 @@ eal_parse_service_coremask(const char *coremask)
+ 
+ 	rte_bitset_clear_all(runtime_state->core_indices, RTE_MAX_LCORE);
+ 
+-	if (count == 0)
+-		return -1;
+-
+-	if (taken_lcore_count != count) {
+-		EAL_LOG(WARNING,
+-			"Not all service cores are in the coremask. "
+-			"Please ensure -c or -l includes service cores");
 -	}
--
--	arg->val = strdup(val);
--	if (arg->val == NULL) {
--		trace_err("failed to allocate memory for %s", val);
--		free(arg);
--		return -ENOMEM;
--	}
--
--	STAILQ_INSERT_TAIL(&trace->args, arg, next);
++	return count > 0 ? 0 : -1;
++}
+ 
 -	return 0;
--}
--
--void
--eal_trace_args_free(void)
--{
--	struct trace *trace = trace_obj_get();
--	struct trace_arg *arg;
--
--	while (!STAILQ_EMPTY(&trace->args)) {
--		arg = STAILQ_FIRST(&trace->args);
--		STAILQ_REMOVE_HEAD(&trace->args, next);
--		free(arg->val);
--		free(arg);
--	}
--}
--
- int
- trace_args_apply(const char *arg)
- {
-@@ -179,22 +142,6 @@ trace_args_apply(const char *arg)
++static int
++eal_parse_service_corelist(const char *corelist, rte_cpuset_t *cpuset)
++{
++	if (rte_argparse_parse_type(corelist, RTE_ARGPARSE_VALUE_TYPE_CORELIST, cpuset) != 0)
++		return -1;
++	return CPU_COUNT(cpuset) > 0 ? 0 : -1;
+ }
+ 
+ static int
+@@ -1097,89 +1085,6 @@ rte_eal_parse_coremask(const char *coremask, rte_cpuset_t *cpuset, bool limit_ra
  	return 0;
  }
  
--int
--eal_trace_bufsz_args_save(char const *val)
+-static int
+-eal_parse_service_corelist(const char *corelist)
 -{
--	struct trace *trace = trace_obj_get();
--	uint64_t bufsz;
+-	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
+-	int i;
+-	unsigned count = 0;
+-	char *end = NULL;
+-	uint32_t min, max, idx;
+-	uint32_t taken_lcore_count = 0;
 -
--	bufsz = rte_str_to_size(val);
--	if (bufsz == 0) {
--		trace_err("buffer size cannot be zero");
--		return -EINVAL;
+-	if (corelist == NULL)
+-		return -1;
+-
+-	/* Remove all blank characters ahead and after */
+-	while (isblank(*corelist))
+-		corelist++;
+-	i = strlen(corelist);
+-	while ((i > 0) && isblank(corelist[i - 1]))
+-		i--;
+-
+-	/* Get list of cores */
+-	min = RTE_MAX_LCORE;
+-	do {
+-		while (isblank(*corelist))
+-			corelist++;
+-		if (*corelist == '\0')
+-			return -1;
+-		errno = 0;
+-		idx = strtoul(corelist, &end, 10);
+-		if (errno || end == NULL)
+-			return -1;
+-		if (idx >= RTE_MAX_LCORE)
+-			return -1;
+-		while (isblank(*end))
+-			end++;
+-		if (*end == '-') {
+-			min = idx;
+-		} else if ((*end == ',') || (*end == '\0')) {
+-			max = idx;
+-			if (min == RTE_MAX_LCORE)
+-				min = idx;
+-			for (idx = min; idx <= max; idx++) {
+-				if (runtime_state->lcore_cfg[idx].role != RTE_LCORE_ROLE_SERVICE) {
+-					if (runtime_state->lcore_cfg[idx].role == RTE_LCORE_ROLE_RTE)
+-						taken_lcore_count++;
+-
+-					runtime_state->lcore_cfg[idx].role = RTE_LCORE_ROLE_SERVICE;
+-					count++;
+-				}
+-			}
+-			min = RTE_MAX_LCORE;
+-		} else
+-			return -1;
+-		corelist = end + 1;
+-	} while (*end != '\0');
+-
+-	if (count == 0)
+-		return -1;
+-
+-	if (taken_lcore_count != count) {
+-		EAL_LOG(WARNING,
+-			"Not all service cores were in the coremask. "
+-			"Please ensure -c or -l includes service cores");
 -	}
 -
--	trace->buff_len = bufsz;
+-	/* log the configured service cores for debugging */
+-	rte_cpuset_t service_cpuset;
+-	CPU_ZERO(&service_cpuset);
+-	for (i = 0; i < RTE_MAX_LCORE; i++) {
+-		if (runtime_state->lcore_cfg[i].role == RTE_LCORE_ROLE_SERVICE)
+-			CPU_SET(i, &service_cpuset);
+-	}
+-	if (CPU_COUNT(&service_cpuset) > 0) {
+-		char *cpuset_str = eal_cpuset_to_str(&service_cpuset);
+-		if (cpuset_str != NULL) {
+-			EAL_LOG(DEBUG, "Service cores configured: %s", cpuset_str);
+-			free(cpuset_str);
+-		}
+-	}
+-
 -	return 0;
 -}
 -
- void
- trace_bufsz_args_apply(void)
- {
-@@ -204,57 +151,6 @@ trace_bufsz_args_apply(void)
- 		trace->buff_len = 1024 * 1024; /* 1MB */
- }
+ /* Changes the lcore id of the main thread */
+ static int
+ eal_parse_main_lcore(const char *arg)
+@@ -1196,8 +1101,8 @@ eal_parse_main_lcore(const char *arg)
+ 		return -1;
+ 	user_cfg->main_lcore = (int)main_lcore;
  
--int
--eal_trace_mode_args_save(const char *val)
--{
--	struct trace *trace = trace_obj_get();
--	size_t len = strlen(val);
--	unsigned long tmp;
--	char *pattern;
--
--	if (len == 0) {
--		trace_err("value is not provided with option");
--		return -EINVAL;
--	}
--
--	pattern = (char *)calloc(1, len + 2);
--	if (pattern == NULL) {
--		trace_err("fail to allocate memory");
--		return -ENOMEM;
--	}
--
--	sprintf(pattern, "%s*", val);
--
--	if (fnmatch(pattern, "overwrite", 0) == 0)
--		tmp = RTE_TRACE_MODE_OVERWRITE;
--	else if (fnmatch(pattern, "discard", 0) == 0)
--		tmp = RTE_TRACE_MODE_DISCARD;
--	else {
--		free(pattern);
--		return -EINVAL;
--	}
--
--	trace->mode = tmp;
--	free(pattern);
--	return 0;
--}
--
--int
--eal_trace_dir_args_save(char const *val)
--{
--	char *dir_path;
--	int rc;
--
--	if (asprintf(&dir_path, "%s/", val) == -1) {
--		trace_err("failed to copy directory: %s", strerror(errno));
--		return -ENOMEM;
--	}
--
--	rc = trace_dir_update(dir_path);
--	free(dir_path);
--	return rc;
--}
--
- int
- trace_epoch_time_save(void)
- {
-diff --git a/lib/eal/common/eal_internal_cfg.h b/lib/eal/common/eal_internal_cfg.h
-index 55900f87bf..2415ac238f 100644
---- a/lib/eal/common/eal_internal_cfg.h
-+++ b/lib/eal/common/eal_internal_cfg.h
-@@ -16,6 +16,7 @@
- #include <rte_eal.h>
- #include <rte_os_shim.h>
- #include <rte_pci_dev_feature_defs.h>
-+#include <rte_trace.h>
- #include <stdint.h>
- #include <stdbool.h>
- 
-@@ -64,6 +65,16 @@ struct hugepage_file_discipline {
- 	bool unlink_existing;
- };
- 
-+/**
-+ * A saved trace pattern string from --trace, staged during arg parsing.
-+ * Lives in user_cfg->trace_patterns; applied during eal_trace_init().
-+ */
-+struct eal_trace_arg {
-+	STAILQ_ENTRY(eal_trace_arg) next;
-+	char *val;
-+};
-+STAILQ_HEAD(eal_trace_arg_list, eal_trace_arg);
-+
- /**
-  * A plugin path provided by the user via -d, staged during arg parsing.
-  * Lives in user_cfg->plugin_list; consumed by eal_plugins_init().
-@@ -92,6 +103,10 @@ TAILQ_HEAD(eal_devopt_list, device_option);
- struct eal_user_cfg {
- 	struct eal_devopt_list devopt_list; /**< staged device options (-a/-b/--vdev) */
- 	struct eal_plugin_path_list plugin_list; /**< user-provided plugin paths (-d) */
-+	struct eal_trace_arg_list trace_patterns; /**< saved --trace patterns */
-+	char *trace_dir;        /**< trace output directory (NULL = use default) */
-+	uint64_t trace_bufsz;   /**< trace buffer size in bytes (0 = use default 1 MB) */
-+	enum rte_trace_mode trace_mode; /**< trace mode (default RTE_TRACE_MODE_OVERWRITE) */
- 	size_t memory;           /**< amount of asked memory */
- 	size_t huge_worker_stack_size; /**< worker thread stack size */
- 	enum rte_proc_type_t process_type; /**< requested process type */
-diff --git a/lib/eal/common/eal_options.h b/lib/eal/common/eal_options.h
-index eee7339e90..1ff9291170 100644
---- a/lib/eal/common/eal_options.h
-+++ b/lib/eal/common/eal_options.h
-@@ -15,7 +15,7 @@ int eal_parse_args(void);
- int eal_option_device_parse(void);
- int eal_apply_hugepage_mem_sz_limits(void);
- int eal_apply_runtime_state(void);
--int eal_cleanup_config(const struct eal_user_cfg *user_cfg);
-+int eal_cleanup_config(void);
- enum rte_proc_type_t eal_proc_type_detect(void);
- int eal_plugins_init(void);
- int eal_save_args(int argc, char **argv);
-diff --git a/lib/eal/common/eal_trace.h b/lib/eal/common/eal_trace.h
-index 55262677e0..c7ef7d12f7 100644
---- a/lib/eal/common/eal_trace.h
-+++ b/lib/eal/common/eal_trace.h
-@@ -42,11 +42,6 @@ struct thread_mem_meta {
- 	enum trace_area_e area;
- };
- 
--struct trace_arg {
--	STAILQ_ENTRY(trace_arg) next;
--	char *val;
--};
--
- struct trace {
- 	char *dir;
- 	int register_errno;
-@@ -54,7 +49,6 @@ struct trace {
- 	enum rte_trace_mode mode;
- 	rte_uuid_t uuid;
- 	uint32_t buff_len;
--	STAILQ_HEAD(, trace_arg) args;
- 	uint32_t nb_trace_points;
- 	uint32_t nb_trace_mem_list;
- 	struct thread_mem_meta *lcore_meta;
-@@ -107,10 +101,5 @@ void trace_mem_per_thread_free(void);
- /* EAL interface */
- int eal_trace_init(void);
- void eal_trace_fini(void);
--int eal_trace_args_save(const char *val);
--void eal_trace_args_free(void);
--int eal_trace_dir_args_save(const char *val);
--int eal_trace_mode_args_save(const char *val);
--int eal_trace_bufsz_args_save(const char *val);
- 
- #endif /* __EAL_TRACE_H */
-diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
-index acb650031b..9c8243fa4b 100644
---- a/lib/eal/freebsd/eal.c
-+++ b/lib/eal/freebsd/eal.c
-@@ -767,7 +767,6 @@ rte_eal_cleanup(void)
+-	/* ensure main core is not used as service core */
+-	if (runtime_state->lcore_cfg[user_cfg->main_lcore].role == RTE_LCORE_ROLE_SERVICE) {
++	/* check main core is not already down as a service core */
++	if (CPU_ISSET(user_cfg->main_lcore, &user_cfg->service_cpuset)) {
+ 		EAL_LOG(ERR, "Error: Main lcore is used as a service core");
  		return -1;
  	}
+@@ -2180,13 +2085,15 @@ eal_parse_args(void)
  
--	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
- 	rte_service_finalize();
- 	eal_bus_cleanup();
- 	rte_mp_channel_cleanup();
-@@ -776,7 +775,7 @@ rte_eal_cleanup(void)
- 	eal_trace_fini();
- 	/* after this point, any DPDK pointers will become dangling */
- 	rte_eal_memory_detach();
--	eal_cleanup_config(user_cfg);
-+	eal_cleanup_config();
- 	eal_lcore_var_cleanup();
- 	return 0;
- }
-diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c
-index 32b7206f63..8372f838e1 100644
---- a/lib/eal/linux/eal.c
-+++ b/lib/eal/linux/eal.c
-@@ -989,7 +989,7 @@ rte_eal_cleanup(void)
- 	/* after this point, any DPDK pointers will become dangling */
- 	rte_eal_memory_detach();
- 	rte_eal_malloc_heap_cleanup();
--	eal_cleanup_config(user_cfg);
-+	eal_cleanup_config();
- 	eal_lcore_var_cleanup();
- 	rte_eal_log_cleanup();
- 	return 0;
-diff --git a/lib/eal/windows/eal.c b/lib/eal/windows/eal.c
-index 51b149828b..5e3be25ed7 100644
---- a/lib/eal/windows/eal.c
-+++ b/lib/eal/windows/eal.c
-@@ -141,14 +141,12 @@ RTE_EXPORT_SYMBOL(rte_eal_cleanup)
- int
- rte_eal_cleanup(void)
- {
--	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
--
- 	eal_intr_thread_cancel();
- 	eal_mem_virt2iova_cleanup();
- 	eal_bus_cleanup();
- 	/* after this point, any DPDK pointers will become dangling */
- 	rte_eal_memory_detach();
--	eal_cleanup_config(user_cfg);
-+	eal_cleanup_config();
- 	eal_lcore_var_cleanup();
- 	return 0;
- }
+ 	/* service core options */
+ 	if (args.service_coremask != NULL) {
+-		if (eal_parse_service_coremask(args.service_coremask) < 0) {
++		if (eal_parse_service_coremask(args.service_coremask,
++				&user_cfg->service_cpuset) < 0) {
+ 			EAL_LOG(ERR, "invalid service coremask: '%s'",
+ 					args.service_coremask);
+ 			return -1;
+ 		}
+ 	} else if (args.service_corelist != NULL) {
+-		if (eal_parse_service_corelist(args.service_corelist) < 0) {
++		if (eal_parse_service_corelist(args.service_corelist,
++				&user_cfg->service_cpuset) < 0) {
+ 			EAL_LOG(ERR, "invalid service core list: '%s'",
+ 					args.service_corelist);
+ 			return -1;
+@@ -2516,6 +2423,32 @@ eal_apply_runtime_state(void)
+ 	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
+ 	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
+ 
++	/* Apply service core roles: service_cpuset bits are lcore IDs */
++	if (CPU_COUNT(&user_cfg->service_cpuset) > 0) {
++		unsigned int i;
++		char *cpuset_str;
++
++		for (i = 0; i < RTE_MAX_LCORE; i++) {
++			if (!CPU_ISSET(i, &user_cfg->service_cpuset))
++				continue;
++			if (eal_cpu_detected(i) == 0) {
++				EAL_LOG(ERR, "Requested service lcore %u unavailable", i);
++				return -1;
++			}
++			if (runtime_state->lcore_cfg[i].role != ROLE_RTE) {
++				EAL_LOG(WARNING,
++					"service lcore %u is not in the enabled lcore set; please ensure -c or -l includes service cores",
++					i);
++			}
++			runtime_state->lcore_cfg[i].role = ROLE_SERVICE;
++		}
++		cpuset_str = eal_cpuset_to_str(&user_cfg->service_cpuset);
++		if (cpuset_str != NULL) {
++			EAL_LOG(DEBUG, "Service cores configured: %s", cpuset_str);
++			free(cpuset_str);
++		}
++	}
++
+ 	/* set the main lcore */
+ 	if (user_cfg->main_lcore != -1) {
+ 		runtime_state->main_lcore = user_cfg->main_lcore;
+diff --git a/lib/eal/common/eal_internal_cfg.h b/lib/eal/common/eal_internal_cfg.h
+index 2415ac238f..998985018f 100644
+--- a/lib/eal/common/eal_internal_cfg.h
++++ b/lib/eal/common/eal_internal_cfg.h
+@@ -143,6 +143,7 @@ struct eal_user_cfg {
+ 		uint64_t limit;    /**< memory limit in bytes */
+ 	} pagesz_mem_overrides[MAX_HUGEPAGE_SIZES];
+ 	unsigned int num_pagesz_mem_overrides;  /**< number of stored overrides */
++	rte_cpuset_t service_cpuset; /**<  each bit set is one lcore ID to use as service core */
+ 	int main_lcore;          /**< ID of the main lcore */
+ };
+ 
 -- 
 2.55.0
 
