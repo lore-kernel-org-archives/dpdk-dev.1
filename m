@@ -2,32 +2,31 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE84606A31C
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Nov 2026 07:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066E0606A31C
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Nov 2026 07:35:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 61CBE40658;
-	Thu, 26 Nov 2026 08:34:46 +0100 (CET)
-Received: from out28-169.mail.aliyun.com (out28-169.mail.aliyun.com
- [115.124.28.169])
- by mails.dpdk.org (Postfix) with ESMTPS id 6577C40284
- for <dev@dpdk.org>; Thu, 26 Nov 2026 08:34:41 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 55AC740616;
+	Thu, 26 Nov 2026 08:34:47 +0100 (CET)
+Received: from out28-218.mail.aliyun.com (out28-218.mail.aliyun.com
+ [115.124.28.218])
+ by mails.dpdk.org (Postfix) with ESMTPS id 0E9D840431
+ for <dev@dpdk.org>; Thu, 26 Nov 2026 08:34:43 +0100 (CET)
 X-Alimail-AntiSpam: AC=CONTINUE; BC=0.06712908|-1; CH=green;
- DM=|CONTINUE|false|;
- DS=CONTINUE|ham_system_inform|0.00358368-0.000600558-0.995816;
- FP=15147714637909726735|0|0|0|0|-1|-1|-1;
- HT=maildocker-contentspam033040092104; MF=dimon.zhao@nebula-matrix.com; NM=1;
- PH=DS; RN=4; RT=4; SR=0; TI=SMTPD_---.kAe1Ys9_1795678478; 
+ DM=|CONTINUE|false|; DS=CONTINUE|ham_alarm|0.00372776-6.8842e-05-0.996203;
+ FP=12139378155542186573|0|0|0|0|-1|-1|-1;
+ HT=maildocker-contentspam033037028158; MF=dimon.zhao@nebula-matrix.com; NM=1;
+ PH=DS; RN=4; RT=4; SR=0; TI=SMTPD_---.kAe1YuY_1795678480; 
 Received: from
  dimonzhao-1.NEBULA-MATRIX.COM(mailfrom:dimon.zhao@nebula-matrix.com
- fp:SMTPD_---.kAe1Ys9_1795678478 cluster:ay29) by smtp.aliyun-inc.com;
- Thu, 26 Nov 2026 15:34:38 +0800
+ fp:SMTPD_---.kAe1YuY_1795678480 cluster:ay29) by smtp.aliyun-inc.com;
+ Thu, 26 Nov 2026 15:34:40 +0800
 From: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 To: dimon.zhao@nebula-matrix.com,
 	dev@dpdk.org
 Cc: Leon Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
-Subject: [PATCH v1 03/11] net/nbl: add draco channel layer
-Date: Thu, 26 Nov 2026 15:34:20 +0800
-Message-ID: <20261126073430.3168813-4-dimon.zhao@nebula-matrix.com>
+Subject: [PATCH v1 07/11] net/nbl: support draco queue setup and release
+Date: Thu, 26 Nov 2026 15:34:24 +0800
+Message-ID: <20261126073430.3168813-8-dimon.zhao@nebula-matrix.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261126073430.3168813-1-dimon.zhao@nebula-matrix.com>
 References: <20261126073430.3168813-1-dimon.zhao@nebula-matrix.com>
@@ -50,549 +49,220 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Use common channel initialization and removal callbacks for Leonis
-and draco, and remove the Leonis-specific management wrapper.
+Add draco Tx and Rx extended header definitions and initialize
+the default Tx header when setting up a queue.
 
-Add draco mailbox descriptor layouts and select descriptor field
-access according to the product type stored in the mailbox context.
-Preserve the Leonis descriptor layout and existing ACK synchronization.
+Use a 16-byte Tx header and select the Rx header length through
+rx_hash_en, which defaults to zero for a 12-byte Rx header.
+RSS hash reporting is not enabled.
 
-Move the temporary -ENOTSUP return to draco resource initialization
-until the resource layer is implemented.
+Preserve the leonis header lengths and fallback Tx header stride,
+and reuse the common queue allocation and release paths.
 
 Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 ---
- drivers/net/nbl/nbl_core.c                    |  21 +--
- drivers/net/nbl/nbl_hw/nbl_channel.c          | 135 +++++++++---------
- drivers/net/nbl/nbl_hw/nbl_channel.h          |  91 ++++++++----
- drivers/net/nbl/nbl_include/nbl_def_channel.h |   4 +-
- 4 files changed, 140 insertions(+), 111 deletions(-)
+ drivers/net/nbl/nbl_dev/nbl_dev.c         |  1 +
+ drivers/net/nbl/nbl_hw/nbl_resource.h     | 71 +++++++++++++++++++++++
+ drivers/net/nbl/nbl_hw/nbl_txrx.c         | 31 ++++++++--
+ drivers/net/nbl/nbl_include/nbl_include.h |  1 +
+ 4 files changed, 100 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/nbl/nbl_core.c b/drivers/net/nbl/nbl_core.c
-index ecc681a..263a61b 100644
---- a/drivers/net/nbl/nbl_core.c
-+++ b/drivers/net/nbl/nbl_core.c
-@@ -7,20 +7,11 @@
- static int nbl_res_init_draco(void *adapter __rte_unused,
- 			      struct rte_eth_dev *eth_dev __rte_unused)
- {
--	return 0;
--}
--
--static void nbl_res_remove_draco(void *adapter __rte_unused)
--{
--}
--
--static int nbl_chan_init_draco(void *adapter __rte_unused)
--{
--	/* Keep probing disabled until the Draco channel layer is implemented. */
-+	/* Keep probing disabled until the Draco resource layer is implemented. */
- 	return -ENOTSUP;
- }
- 
--static void nbl_chan_remove_draco(void *adapter __rte_unused)
-+static void nbl_res_remove_draco(void *adapter __rte_unused)
- {
- }
- 
-@@ -30,16 +21,16 @@ const struct nbl_product_core_ops nbl_product_core_ops[NBL_PRODUCT_MAX] = {
- 		.hw_remove	= nbl_hw_remove_leonis_snic,
- 		.res_init	= nbl_res_init_leonis,
- 		.res_remove	= nbl_res_remove_leonis,
--		.chan_init	= nbl_chan_init_leonis,
--		.chan_remove	= nbl_chan_remove_leonis,
-+		.chan_init	= nbl_chan_init,
-+		.chan_remove	= nbl_chan_remove,
- 	},
- 	[NBL_DRACO_TYPE] = {
- 		.hw_init	= nbl_hw_init_draco_snic,
- 		.hw_remove	= nbl_hw_remove_draco_snic,
- 		.res_init	= nbl_res_init_draco,
- 		.res_remove	= nbl_res_remove_draco,
--		.chan_init	= nbl_chan_init_draco,
--		.chan_remove	= nbl_chan_remove_draco,
-+		.chan_init	= nbl_chan_init,
-+		.chan_remove	= nbl_chan_remove,
- 	},
+diff --git a/drivers/net/nbl/nbl_dev/nbl_dev.c b/drivers/net/nbl/nbl_dev/nbl_dev.c
+index 643cc74..8d2195f 100644
+--- a/drivers/net/nbl/nbl_dev/nbl_dev.c
++++ b/drivers/net/nbl/nbl_dev/nbl_dev.c
+@@ -404,6 +404,7 @@ int nbl_rx_queue_setup(struct rte_eth_dev *eth_dev, u16 queue_idx,
+ 	param.conf = conf;
+ 	param.mempool = mempool;
+ 	param.product = adapter->caps.product_type;
++	param.rx_hash_en = 0;
+ 	ret =  disp_ops->start_rx_ring(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), &param, &rx_ring->dma);
+ 	if (ret) {
+ 		NBL_LOG(ERR, "start_rx_ring failed %d", ret);
+diff --git a/drivers/net/nbl/nbl_hw/nbl_resource.h b/drivers/net/nbl/nbl_hw/nbl_resource.h
+index 2d4f5d6..688dba9 100644
+--- a/drivers/net/nbl/nbl_hw/nbl_resource.h
++++ b/drivers/net/nbl/nbl_hw/nbl_resource.h
+@@ -75,6 +75,49 @@ union nbl_tx_extend_head {
+ 		u32 l3_csum_en :1;
+ 		u32 rsv1 :3;
+ 	} leonis;
++
++	struct nbl_tx_ehdr_draco {
++		/* DW0 */
++		u32 mac_len :5;
++		u32 ip_len :5;
++		u32 l4_len :4;
++		u32 l4_type :2;
++		u32 inner_ip_type :2;
++		u32 external_ip_type :2;
++		u32 external_ip_len :5;
++		u32 l4_tunnel_len :7;
++		/* DW1 */
++		u32 l4_tunnel_type :2;
++		u32 l4s_sid :15;
++		u32 l4s_sync_ind :1;
++		u32 l4s_redun_ind :1;
++		u32 l4s_redun_head_ind :1;
++		u32 l4s_hdl_ind :1;
++		u32 l4s_pbrac_mode :1;
++		u32 rsv0 :2;
++		u32 acl_tag :8;
++		/* DW2 */
++		u32 dport_info :9;
++		u32 dport_id :9;
++#define NBL_TX_DPORT_ID_LAG_OFT_DRACO	(2)
++		u32 dport :2;
++		u32 fwd :2;
++		u32 rss_lag_en :1;
++		u32 inner_l4_csum_en :1;
++		u32 inner_l3_csum_en :1;
++		u32 outer_l4_csum_en :1;
++		u32 outer_l3_csum_en :1;
++		u32 sc_idx :3;
++		u32 sc_vld :1;
++		u32 mc_en :1;
++		/* DW3 */
++		u32 vlan_tag :16;
++		u32 vlan_etype :1;
++#define NBL_TX_VLAN_ETYPE_0X8100	(0)
++#define NBL_TX_VLAN_ETYPE_0X88A8	(1)
++		u32 vlan_vld :1;
++		u32 rsv1 :14;
++	} draco;
  };
  
-diff --git a/drivers/net/nbl/nbl_hw/nbl_channel.c b/drivers/net/nbl/nbl_hw/nbl_channel.c
-index 52ad71c..3afae5b 100644
---- a/drivers/net/nbl/nbl_hw/nbl_channel.c
-+++ b/drivers/net/nbl/nbl_hw/nbl_channel.c
-@@ -21,7 +21,7 @@ static void nbl_chan_init_queue_param(union nbl_chan_info *chan_info,
- static int nbl_chan_init_tx_queue(union nbl_chan_info *chan_info)
- {
- 	struct nbl_chan_ring *txq = &chan_info->mailbox.txq;
--	size_t size = chan_info->mailbox.num_txq_entries * sizeof(struct nbl_chan_tx_desc);
-+	size_t size = chan_info->mailbox.num_txq_entries * sizeof(union nbl_chan_tx_desc);
- 	int i;
+ union nbl_rx_extend_head {
+@@ -108,6 +151,34 @@ union nbl_rx_extend_head {
+ 		u32 rsv2 :4;
+ 		u32 num_buffers :8;
+ 	} leonis;
++	struct nbl_rx_ehdr_draco {
++		/* DW0 */
++		/* 0x0:eth, 0x1:host, 0x2:emp, 0x3:bmc */
++		u32 sport :2;
++		u32 dport_info :9;
++		/* sport = 0, sport_id[3:0] = eth id,
++		 * sport = 1, sport_id[9:0] = host vsi_id,
++		 */
++		u32 sport_id :9;
++		u32 ptype :8;
++		u32 checksum_report :4;
++		/* DW1 */
++		u32 checksum_status :1;
++		u32 rsv0 :2;
++		u32 l4s_sid :11;
++		u32 l4s_hdl_ind :1;
++		u32 l4s_tcp_offset :14;
++		u32 l4s_resync_ind :1;
++		u32 l4s_check_ind :1;
++		u32 l4s_dec_ind :1;
++		/* DW2 */
++		u32 error_code :4;
++		u32 rsv1 :4;
++		u32 vlan:16;
++		u32 num_buffers :8;
++		/* DW3 */
++		u32 udf_value_l :32;
++	} draco;
+ 	struct nbl_rx_ehdr_common {
+ 		u32 dw0;
+ 		u32 dw1;
+diff --git a/drivers/net/nbl/nbl_hw/nbl_txrx.c b/drivers/net/nbl/nbl_hw/nbl_txrx.c
+index 7beae85..8a1669e 100644
+--- a/drivers/net/nbl/nbl_hw/nbl_txrx.c
++++ b/drivers/net/nbl/nbl_hw/nbl_txrx.c
+@@ -111,6 +111,13 @@ static inline u16 nbl_prep_tx_ehdr_leonis(union nbl_tx_extend_head *head, struct
+ 	return 0;
+ }
  
- 	txq->desc = nbl_alloc_dma_mem(&txq->desc_mem, size);
-@@ -63,7 +63,7 @@ static int nbl_chan_init_tx_queue(union nbl_chan_info *chan_info)
- static int nbl_chan_init_rx_queue(union nbl_chan_info *chan_info)
- {
- 	struct nbl_chan_ring *rxq = &chan_info->mailbox.rxq;
--	size_t size = chan_info->mailbox.num_rxq_entries * sizeof(struct nbl_chan_rx_desc);
-+	size_t size = chan_info->mailbox.num_rxq_entries * sizeof(union nbl_chan_rx_desc);
++static inline u16 nbl_prep_tx_ehdr_draco(union nbl_tx_extend_head *head, struct rte_mbuf *mbuf)
++{
++	RTE_SET_USED(head);
++	RTE_SET_USED(mbuf);
++	return 0;
++}
++
+ static int nbl_res_txrx_start_tx_ring(void *priv,
+ 				      struct nbl_start_tx_ring_param *param,
+ 				      u64 *dma_addr)
+@@ -125,6 +132,7 @@ static int nbl_res_txrx_start_tx_ring(void *priv,
+ 	const struct rte_memzone *net_hdr_mz;
+ 	char vq_hdr_name[NBL_VQ_HDR_NAME_MAXSIZE];
+ 	struct nbl_tx_ehdr_leonis ext_hdr = {0};
++	struct nbl_tx_ehdr_draco draco_hdr = {0};
+ 	uint64_t offloads;
+ 	u32 size;
  
- 	rxq->desc = nbl_alloc_dma_mem(&rxq->desc_mem, size);
- 	if (!rxq->desc) {
-@@ -158,7 +158,7 @@ static int nbl_chan_prepare_rx_bufs(struct nbl_channel_mgt *chan_mgt,
- {
- 	const struct nbl_hw_ops *hw_ops;
- 	struct nbl_chan_ring *rxq = &chan_info->mailbox.rxq;
--	struct nbl_chan_rx_desc *desc;
-+	union nbl_chan_rx_desc *desc;
- 	void *hw_priv;
- 	u16 rx_tail_ptr;
- 	u32 retry_times = 0;
-@@ -167,9 +167,10 @@ static int nbl_chan_prepare_rx_bufs(struct nbl_channel_mgt *chan_mgt,
- 	hw_ops = NBL_CHAN_MGT_TO_HW_OPS(chan_mgt);
- 	desc = rxq->desc;
- 	for (i = 0; i < chan_info->mailbox.num_rxq_entries - 1; i++) {
--		desc[i].flags = NBL_CHAN_RX_DESC_AVAIL;
--		desc[i].buf_addr = rxq->buf_mem.pa + (u64)i * (u64)chan_info->mailbox.rxq_buf_size;
--		desc[i].buf_len = chan_info->mailbox.rxq_buf_size;
-+		DESC_W(&desc[i], flags, NBL_CHAN_RX_DESC_AVAIL);
-+		DESC_W(&desc[i], buf_addr, rxq->buf_mem.pa +
-+		       (u64)i * (u64)chan_info->mailbox.rxq_buf_size);
-+		DESC_W(&desc[i], buf_len, chan_info->mailbox.rxq_buf_size);
- 	}
- 
- 	rxq->next_to_clean = 0;
-@@ -217,7 +218,7 @@ static int nbl_chan_kick_tx_ring(struct nbl_channel_mgt *chan_mgt,
- {
- 	const struct nbl_hw_ops *hw_ops;
- 	struct nbl_chan_ring *txq;
--	struct nbl_chan_tx_desc *tx_desc;
-+	union nbl_chan_tx_desc *tx_desc;
- 	int i;
- 
- 	hw_ops = NBL_CHAN_MGT_TO_HW_OPS(chan_mgt);
-@@ -230,7 +231,7 @@ static int nbl_chan_kick_tx_ring(struct nbl_channel_mgt *chan_mgt,
- 	tx_desc = NBL_CHAN_TX_DESC(txq, txq->next_to_clean);
- 
- 	i = 0;
--	while (!(tx_desc->flags & NBL_CHAN_TX_DESC_USED)) {
-+	while (!(DESC_R(tx_desc, flags) & NBL_CHAN_TX_DESC_USED)) {
- 		rte_delay_us(NBL_CHAN_TX_WAIT_US);
- 		i++;
- 
-@@ -239,7 +240,7 @@ static int nbl_chan_kick_tx_ring(struct nbl_channel_mgt *chan_mgt,
- 
- 		if (i == NBL_CHAN_TX_WAIT_TIMES) {
- 			NBL_LOG(ERR, "chan send message type: %d timeout",
--				tx_desc->msg_type);
-+				DESC_R(tx_desc, msg_type));
- 			return -1;
+@@ -149,6 +157,15 @@ static int nbl_res_txrx_start_tx_ring(void *priv,
+ 		ext_hdr.fwd = NBL_TX_FWD_TYPE_NORMAL;
+ 		memcpy(&tx_ring->default_hdr, &ext_hdr, sizeof(struct nbl_tx_ehdr_leonis));
+ 		break;
++	case NBL_DRACO_TYPE:
++		tx_ring->exthdr_len = sizeof(struct nbl_tx_ehdr_draco);
++		tx_ring->prep_tx_ehdr = nbl_prep_tx_ehdr_draco;
++		draco_hdr.mac_len = RTE_ETHER_HDR_LEN >> 1;
++		draco_hdr.ip_len = sizeof(struct rte_ipv4_hdr) >> 2;
++		draco_hdr.l4_len = sizeof(struct rte_tcp_hdr) >> 2;
++		draco_hdr.fwd = NBL_TX_FWD_TYPE_NORMAL;
++		memcpy(&tx_ring->default_hdr, &draco_hdr, sizeof(draco_hdr));
++		break;
+ 	default:
+ 		tx_ring->exthdr_len = sizeof(union nbl_tx_extend_head);
+ 		break;
+@@ -358,6 +375,11 @@ static int nbl_res_txrx_start_rx_ring(void *priv,
+ 	case NBL_LEONIS_TYPE:
+ 		rx_ring->exthdr_len = sizeof(struct nbl_rx_ehdr_leonis);
+ 		break;
++	case NBL_DRACO_TYPE:
++		rx_ring->exthdr_len = sizeof(struct nbl_rx_ehdr_draco);
++		if (!param->rx_hash_en)
++			rx_ring->exthdr_len -= sizeof(u32);
++		break;
+ 	default:
+ 		rx_ring->exthdr_len = sizeof(union nbl_rx_extend_head);
+ 	};
+@@ -563,14 +585,16 @@ nbl_res_txrx_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, u16 nb_pkts, u
+ 						    -required_headroom);
+ 		} else {
+ 			can_push = 0;
+-			u = (union nbl_tx_extend_head *)(&tx_region[desc_index]);
++			u = RTE_PTR_ADD(tx_region,
++				       (size_t)desc_index * txq->exthdr_len);
  		}
- 	}
-@@ -312,27 +313,28 @@ static void nbl_chan_recv_ack_msg(void *priv, uint16_t srcid, uint16_t msgid,
- static void nbl_chan_recv_msg(struct nbl_channel_mgt *chan_mgt, void *data)
- {
- 	struct nbl_chan_ack_info chan_ack;
--	struct nbl_chan_tx_desc *tx_desc;
-+	union nbl_chan_info *chan_info = NBL_CHAN_MGT_TO_CHAN_INFO(chan_mgt);
-+	union nbl_chan_tx_desc *tx_desc;
- 	struct nbl_chan_msg_handler *msg_handler;
- 	u16 msg_type, payload_len, srcid, msgid;
- 	void *payload;
  
- 	tx_desc = data;
--	msg_type = tx_desc->msg_type;
-+	msg_type = DESC_R(tx_desc, msg_type);
- 
--	srcid = tx_desc->srcid;
--	msgid = tx_desc->msgid;
-+	srcid = DESC_R(tx_desc, srcid);
-+	msgid = DESC_R(tx_desc, msgid);
- 	if (msg_type >= NBL_CHAN_MSG_MAX) {
- 		NBL_LOG(ERR, "Invalid chan message type %hu", msg_type);
- 		return;
- 	}
- 
--	if (tx_desc->data_len) {
--		payload = (void *)tx_desc->data;
--		payload_len = tx_desc->data_len;
-+	if (DESC_R(tx_desc, data_len)) {
-+		payload = (void *)DESC_R(tx_desc, data);
-+		payload_len = DESC_R(tx_desc, data_len);
- 	} else {
- 		payload = (void *)(tx_desc + 1);
--		payload_len = tx_desc->buf_len;
-+		payload_len = DESC_R(tx_desc, buf_len);
- 	}
- 
- 	msg_handler = &chan_mgt->msg_handler[msg_type];
-@@ -351,7 +353,7 @@ static void nbl_chan_advance_rx_ring(struct nbl_channel_mgt *chan_mgt,
- 				     struct nbl_chan_ring *rxq)
- {
- 	const struct nbl_hw_ops *hw_ops;
--	struct nbl_chan_rx_desc *rx_desc;
-+	union nbl_chan_rx_desc *rx_desc;
- 	u16 next_to_use;
- 
- 	hw_ops = NBL_CHAN_MGT_TO_HW_OPS(chan_mgt);
-@@ -359,10 +361,10 @@ static void nbl_chan_advance_rx_ring(struct nbl_channel_mgt *chan_mgt,
- 	next_to_use = rxq->next_to_use;
- 	rx_desc = NBL_CHAN_RX_DESC(rxq, next_to_use);
- 
--	rx_desc->flags = NBL_CHAN_RX_DESC_AVAIL;
--	rx_desc->buf_addr = rxq->buf_mem.pa +
--				(u64)chan_info->mailbox.rxq_buf_size * (u64)next_to_use;
--	rx_desc->buf_len = chan_info->mailbox.rxq_buf_size;
-+	DESC_W(rx_desc, flags, NBL_CHAN_RX_DESC_AVAIL);
-+	DESC_W(rx_desc, buf_addr, rxq->buf_mem.pa +
-+				(u64)chan_info->mailbox.rxq_buf_size * (u64)next_to_use);
-+	DESC_W(rx_desc, buf_len, chan_info->mailbox.rxq_buf_size);
- 
- 	rte_wmb();
- 	rxq->next_to_use++;
-@@ -378,14 +380,14 @@ static void nbl_chan_clean_queue(void *priv)
- 	struct nbl_channel_mgt *chan_mgt = (struct nbl_channel_mgt *)priv;
- 	union nbl_chan_info *chan_info = NBL_CHAN_MGT_TO_CHAN_INFO(chan_mgt);
- 	struct nbl_chan_ring *rxq = &chan_info->mailbox.rxq;
--	struct nbl_chan_rx_desc *rx_desc;
-+	union nbl_chan_rx_desc *rx_desc;
- 	u8 *data;
- 	u16 next_to_clean;
- 
- 	next_to_clean = rxq->next_to_clean;
- 	rx_desc = NBL_CHAN_RX_DESC(rxq, next_to_clean);
- 	data = (u8 *)rxq->buf + (u64)next_to_clean * (u64)chan_info->mailbox.rxq_buf_size;
--	while (rx_desc->flags & NBL_CHAN_RX_DESC_USED) {
-+	while (DESC_R(rx_desc, flags) & NBL_CHAN_RX_DESC_USED) {
- 		rte_rmb();
- 		nbl_chan_recv_msg(chan_mgt, data);
- 
-@@ -406,7 +408,7 @@ static uint16_t nbl_chan_update_txqueue(union nbl_chan_info *chan_info,
- 					void *arg, size_t arg_len)
- {
- 	struct nbl_chan_ring *txq;
--	struct nbl_chan_tx_desc *tx_desc;
-+	union nbl_chan_tx_desc *tx_desc;
- 	struct nbl_chan_waitqueue_head *wait_head;
- 	uint64_t pa;
- 	void *va;
-@@ -432,21 +434,21 @@ static uint16_t nbl_chan_update_txqueue(union nbl_chan_info *chan_info,
- 	pa = txq->buf_mem.pa + (u64)next_to_use * (u64)chan_info->mailbox.txq_buf_size;
- 	tx_desc = NBL_CHAN_TX_DESC(txq, next_to_use);
- 
--	tx_desc->dstid = dstid;
--	tx_desc->msg_type = msg_type;
--	tx_desc->msgid = next_to_use;
-+	DESC_W(tx_desc, dstid, dstid);
-+	DESC_W(tx_desc, msg_type, msg_type);
-+	DESC_W(tx_desc, msgid, next_to_use);
- 
- 	if (arg_len > NBL_CHAN_TX_DESC_EMBEDDED_DATA_LEN) {
- 		memcpy(va, arg, arg_len);
--		tx_desc->buf_addr = pa;
--		tx_desc->buf_len = arg_len;
--		tx_desc->data_len = 0;
-+		DESC_W(tx_desc, buf_addr, pa);
-+		DESC_W(tx_desc, buf_len, arg_len);
-+		DESC_W(tx_desc, data_len, 0);
- 	} else {
--		memcpy(tx_desc->data, arg, arg_len);
--		tx_desc->buf_len = 0;
--		tx_desc->data_len = arg_len;
-+		memcpy(DESC_R(tx_desc, data), arg, arg_len);
-+		DESC_W(tx_desc, buf_len, 0);
-+		DESC_W(tx_desc, data_len, arg_len);
- 	}
--	tx_desc->flags = NBL_CHAN_TX_DESC_AVAIL;
-+	DESC_W(tx_desc, flags, NBL_CHAN_TX_DESC_AVAIL);
- 
- 	rte_wmb();
- 	txq->next_to_use++;
-@@ -926,7 +928,7 @@ static void nbl_chan_remove_state_bitmap(void *priv)
- }
- 
- static int nbl_chan_setup_chan_mgt(struct nbl_adapter *adapter,
--				   struct nbl_channel_mgt_leonis **chan_mgt_leonis)
-+				   struct nbl_channel_mgt **chan_mgt)
- {
- 	struct nbl_hw_ops_tbl *hw_ops_tbl;
- 	union nbl_chan_info *mailbox;
-@@ -934,38 +936,41 @@ static int nbl_chan_setup_chan_mgt(struct nbl_adapter *adapter,
- 
- 	hw_ops_tbl = NBL_ADAPTER_TO_HW_OPS_TBL(adapter);
- 
--	*chan_mgt_leonis = rte_zmalloc("nbl_chan_mgt", sizeof(struct nbl_channel_mgt_leonis), 0);
--	if (!*chan_mgt_leonis)
--		goto alloc_channel_mgt_leonis_fail;
-+	*chan_mgt = rte_zmalloc("nbl_chan_mgt", sizeof(struct nbl_channel_mgt), 0);
-+	if (!*chan_mgt)
-+		goto alloc_channel_mgt_fail;
- 
--	(*chan_mgt_leonis)->chan_mgt.hw_ops_tbl = hw_ops_tbl;
-+	(*chan_mgt)->hw_ops_tbl = hw_ops_tbl;
- 
- 	mailbox = rte_zmalloc("nbl_mailbox", sizeof(union nbl_chan_info), 0);
- 	if (!mailbox)
- 		goto alloc_mailbox_fail;
- 
--	NBL_CHAN_MGT_TO_CHAN_INFO(&(*chan_mgt_leonis)->chan_mgt) = mailbox;
--	NBL_CHAN_MGT_TO_COMMON(&(*chan_mgt_leonis)->chan_mgt) = &adapter->common;
-+	NBL_CHAN_MGT_TO_CHAN_INFO(*chan_mgt) = mailbox;
-+	NBL_CHAN_MGT_TO_COMMON(*chan_mgt) = &adapter->common;
-+	mailbox->mailbox.product_type = adapter->caps.product_type;
- 
--	ret = nbl_chan_init_state_bitmap(*chan_mgt_leonis);
-+	ret = nbl_chan_init_state_bitmap(*chan_mgt);
- 	if (ret)
- 		goto state_bitmap_init_fail;
- 
- 	return 0;
- 
- state_bitmap_init_fail:
-+	rte_free(mailbox);
- alloc_mailbox_fail:
--	rte_free(*chan_mgt_leonis);
--alloc_channel_mgt_leonis_fail:
-+	rte_free(*chan_mgt);
-+	*chan_mgt = NULL;
-+alloc_channel_mgt_fail:
- 	return -ENOMEM;
- }
- 
--static void nbl_chan_remove_chan_mgt(struct nbl_channel_mgt_leonis **chan_mgt_leonis)
-+static void nbl_chan_remove_chan_mgt(struct nbl_channel_mgt **chan_mgt)
- {
--	nbl_chan_remove_state_bitmap(*chan_mgt_leonis);
--	rte_free(NBL_CHAN_MGT_TO_CHAN_INFO(&(*chan_mgt_leonis)->chan_mgt));
--	rte_free(*chan_mgt_leonis);
--	*chan_mgt_leonis = NULL;
-+	nbl_chan_remove_state_bitmap(*chan_mgt);
-+	rte_free(NBL_CHAN_MGT_TO_CHAN_INFO(*chan_mgt));
-+	rte_free(*chan_mgt);
-+	*chan_mgt = NULL;
- }
- 
- static void nbl_chan_remove_ops(struct nbl_channel_ops_tbl **chan_ops_tbl)
-@@ -975,7 +980,7 @@ static void nbl_chan_remove_ops(struct nbl_channel_ops_tbl **chan_ops_tbl)
- }
- 
- static int nbl_chan_setup_ops(struct nbl_channel_ops_tbl **chan_ops_tbl,
--			      struct nbl_channel_mgt_leonis *chan_mgt_leonis)
-+			      struct nbl_channel_mgt *chan_mgt)
- {
- 	struct nbl_common_info *common;
- 
-@@ -983,54 +988,54 @@ static int nbl_chan_setup_ops(struct nbl_channel_ops_tbl **chan_ops_tbl,
- 	if (!*chan_ops_tbl)
- 		return -ENOMEM;
- 
--	common = NBL_CHAN_MGT_TO_COMMON(&chan_mgt_leonis->chan_mgt);
-+	common = NBL_CHAN_MGT_TO_COMMON(chan_mgt);
- 	if (NBL_IS_NOT_COEXISTENCE(common))
- 		NBL_CHAN_OPS_TBL_TO_OPS(*chan_ops_tbl) = &nbl_chan_ops;
- 	else
- 		NBL_CHAN_OPS_TBL_TO_OPS(*chan_ops_tbl) = &nbl_userdev_ops;
--	NBL_CHAN_OPS_TBL_TO_PRIV(*chan_ops_tbl) = chan_mgt_leonis;
-+	NBL_CHAN_OPS_TBL_TO_PRIV(*chan_ops_tbl) = chan_mgt;
- 
--	chan_mgt_leonis->chan_mgt.msg_handler[NBL_CHAN_MSG_ACK].func = nbl_chan_recv_ack_msg;
--	chan_mgt_leonis->chan_mgt.msg_handler[NBL_CHAN_MSG_ACK].priv = chan_mgt_leonis;
-+	chan_mgt->msg_handler[NBL_CHAN_MSG_ACK].func = nbl_chan_recv_ack_msg;
-+	chan_mgt->msg_handler[NBL_CHAN_MSG_ACK].priv = chan_mgt;
- 
- 	return 0;
- }
- 
--int nbl_chan_init_leonis(void *p)
-+int nbl_chan_init(void *p)
- {
- 	struct nbl_adapter *adapter = (struct nbl_adapter *)p;
--	struct nbl_channel_mgt_leonis **chan_mgt_leonis;
-+	struct nbl_channel_mgt **chan_mgt;
- 	struct nbl_channel_ops_tbl **chan_ops_tbl;
- 	int ret = 0;
- 
--	chan_mgt_leonis = (struct nbl_channel_mgt_leonis **)&NBL_ADAPTER_TO_CHAN_MGT(adapter);
-+	chan_mgt = (struct nbl_channel_mgt **)&NBL_ADAPTER_TO_CHAN_MGT(adapter);
- 	chan_ops_tbl = &NBL_ADAPTER_TO_CHAN_OPS_TBL(adapter);
- 
--	ret = nbl_chan_setup_chan_mgt(adapter, chan_mgt_leonis);
-+	ret = nbl_chan_setup_chan_mgt(adapter, chan_mgt);
- 	if (ret)
- 		goto setup_mgt_fail;
- 
--	ret = nbl_chan_setup_ops(chan_ops_tbl, *chan_mgt_leonis);
-+	ret = nbl_chan_setup_ops(chan_ops_tbl, *chan_mgt);
- 	if (ret)
- 		goto setup_ops_fail;
- 
- 	return 0;
- 
- setup_ops_fail:
--	nbl_chan_remove_chan_mgt(chan_mgt_leonis);
-+	nbl_chan_remove_chan_mgt(chan_mgt);
- setup_mgt_fail:
- 	return ret;
- }
- 
--void nbl_chan_remove_leonis(void *p)
-+void nbl_chan_remove(void *p)
- {
- 	struct nbl_adapter *adapter = (struct nbl_adapter *)p;
--	struct nbl_channel_mgt_leonis **chan_mgt_leonis;
-+	struct nbl_channel_mgt **chan_mgt;
- 	struct nbl_channel_ops_tbl **chan_ops_tbl;
- 
--	chan_mgt_leonis = (struct nbl_channel_mgt_leonis **)&NBL_ADAPTER_TO_CHAN_MGT(adapter);
-+	chan_mgt = (struct nbl_channel_mgt **)&NBL_ADAPTER_TO_CHAN_MGT(adapter);
- 	chan_ops_tbl = &NBL_ADAPTER_TO_CHAN_OPS_TBL(adapter);
- 
--	nbl_chan_remove_chan_mgt(chan_mgt_leonis);
-+	nbl_chan_remove_chan_mgt(chan_mgt);
- 	nbl_chan_remove_ops(chan_ops_tbl);
- }
-diff --git a/drivers/net/nbl/nbl_hw/nbl_channel.h b/drivers/net/nbl/nbl_hw/nbl_channel.h
-index 21fce74..7768cc7 100644
---- a/drivers/net/nbl/nbl_hw/nbl_channel.h
-+++ b/drivers/net/nbl/nbl_hw/nbl_channel.h
-@@ -17,9 +17,9 @@
- #define NBL_CHAN_MGT_TO_CHAN_INFO(chan_mgt)	((chan_mgt)->chan_info)
- 
- #define NBL_CHAN_TX_DESC(tx_ring, i) \
--	(&(((struct nbl_chan_tx_desc *)((tx_ring)->desc))[i]))
-+	(&(((union nbl_chan_tx_desc *)((tx_ring)->desc))[i]))
- #define NBL_CHAN_RX_DESC(rx_ring, i) \
--	(&(((struct nbl_chan_rx_desc *)((rx_ring)->desc))[i]))
-+	(&(((union nbl_chan_rx_desc *)((rx_ring)->desc))[i]))
- 
- #define NBL_CHAN_QUEUE_LEN			64
- #define NBL_CHAN_BUF_LEN			4096
-@@ -36,6 +36,24 @@
- #define NBL_CHAN_RX_DESC_AVAIL			BIT(3)
- #define NBL_CHAN_RX_DESC_USED			BIT(4)
- 
-+/* These macros require an existing chan_info variable. */
-+#define DESC_R(desc, field)									\
-+	({											\
-+		typeof(desc) _desc = (desc);							\
-+		chan_info->mailbox.product_type == NBL_LEONIS_TYPE ? _desc->NBL_NAME(field)	\
-+							   : _desc->draco.NBL_NAME(field##_v2);	\
-+	})
-+
-+#define DESC_W(desc, field, val)								\
-+	({											\
-+		typeof(val) _val = (val);							\
-+		typeof(desc) _desc = (desc);							\
-+		if (chan_info->mailbox.product_type == NBL_LEONIS_TYPE)				\
-+			_desc->NBL_NAME(field) = _val;						\
-+		else										\
-+			_desc->draco.NBL_NAME(field##_v2) = _val;				\
-+	})
-+
- enum {
- 	NBL_MB_RX_QID = 0,
- 	NBL_MB_TX_QID = 1,
-@@ -49,25 +67,47 @@ enum {
- 	NBL_MBX_STATUS_TIMEOUT,
+ 		if (tx_pkt->ol_flags & RTE_MBUF_F_TX_VLAN) {
+ 			if (likely(can_push)) {
+ 				if (rte_vlan_insert(&tx_pkt)) {
+ 					can_push = 0;
+-					u = (union nbl_tx_extend_head *)(&tx_region[desc_index]);
++					u = RTE_PTR_ADD(tx_region,
++						       (size_t)desc_index * txq->exthdr_len);
+ 				}
+ 			}
+ 			if (unlikely(!can_push)) {
+@@ -607,8 +631,7 @@ nbl_res_txrx_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, u16 nb_pkts, u
+ 			head_flags |= NBL_VRING_DESC_F_NEXT;
+ 			txe->mbuf = NULL;
+ 			/* padding */
+-			head_desc->addr = net_hdr_mem +
+-					RTE_PTR_DIFF(&tx_region[desc_index], tx_region);
++			head_desc->addr = net_hdr_mem + (size_t)desc_index * txq->exthdr_len;
+ 			head_desc->len = tx_extend_len;
+ 			txe->first_id = head_index;
+ 			desc_index++;
+diff --git a/drivers/net/nbl/nbl_include/nbl_include.h b/drivers/net/nbl/nbl_include/nbl_include.h
+index 0203e43..09b73c1 100644
+--- a/drivers/net/nbl/nbl_include/nbl_include.h
++++ b/drivers/net/nbl/nbl_include/nbl_include.h
+@@ -87,6 +87,7 @@ struct nbl_start_rx_ring_param {
+ 	enum nbl_product_type product;
+ 	const struct rte_eth_rxconf *conf;
+ 	struct rte_mempool *mempool;
++	bool rx_hash_en;
  };
  
--struct __rte_packed_begin nbl_chan_tx_desc {
--	uint16_t flags;
--	uint16_t srcid;
--	uint16_t dstid;
--	uint16_t data_len;
--	uint16_t buf_len;
--	uint64_t buf_addr;
--	uint16_t msg_type;
--	uint8_t data[16];
--	uint16_t msgid;
--	uint8_t rsv[26];
--} __rte_packed_end;
--
--struct __rte_packed_begin nbl_chan_rx_desc {
--	uint16_t flags;
--	uint32_t buf_len;
--	uint16_t buf_id;
--	uint64_t buf_addr;
--} __rte_packed_end;
-+union nbl_chan_tx_desc {
-+	struct __rte_packed_begin {
-+		uint16_t flags;
-+		uint16_t srcid;
-+		uint16_t dstid;
-+		uint16_t data_len;
-+		uint16_t buf_len;
-+		uint64_t buf_addr;
-+		uint16_t msg_type;
-+		uint8_t data[16];
-+		uint16_t msgid;
-+		uint8_t rsv[26];
-+	} __rte_packed_end;
-+	struct __rte_packed_begin draco_chan_tx_desc {
-+		uint16_t flags_v2;
-+		uint16_t srcid_v2;
-+		uint16_t dstid_v2;
-+		uint16_t data_len_v2;
-+		uint64_t buf_addr_v2;
-+		uint16_t buf_len_v2;
-+		uint16_t msg_type_v2;
-+		uint8_t data_v2[16];
-+		uint16_t msgid_v2;
-+		uint8_t rsv_v2[26];
-+	} __rte_packed_end draco;
-+};
-+
-+union nbl_chan_rx_desc {
-+	struct __rte_packed_begin {
-+		uint16_t flags;
-+		uint32_t buf_len;
-+		uint16_t buf_id;
-+		uint64_t buf_addr;
-+	} __rte_packed_end;
-+	struct __rte_packed_begin draco_chan_rx_desc {
-+		uint16_t flags_v2;
-+		uint16_t buf_id_v2;
-+		uint32_t buf_len_v2;
-+		uint64_t buf_addr_v2;
-+	} __rte_packed_end draco;
-+};
- 
- struct nbl_chan_ring {
- 	struct nbl_dma_mem desc_mem;
-@@ -105,6 +145,7 @@ union nbl_chan_info {
- 		struct rte_bitmap *state_bmp;
- 		rte_thread_t tid;
- 		int fd[2];
-+		enum nbl_product_type product_type;
- 	} mailbox;
- 
- 	struct {
-@@ -128,12 +169,4 @@ struct nbl_channel_mgt {
- 	enum nbl_chan_state state;
- };
- 
--/* Mgt structure for each product.
-- * Every individual mgt must have the common mgt as its first member, and contains its unique
-- * data structure in the reset of it.
-- */
--struct nbl_channel_mgt_leonis {
--	struct nbl_channel_mgt chan_mgt;
--};
--
- #endif
-diff --git a/drivers/net/nbl/nbl_include/nbl_def_channel.h b/drivers/net/nbl/nbl_include/nbl_def_channel.h
-index 257c81e..9e36dfa 100644
---- a/drivers/net/nbl/nbl_include/nbl_def_channel.h
-+++ b/drivers/net/nbl/nbl_include/nbl_def_channel.h
-@@ -464,7 +464,7 @@ struct nbl_channel_ops_tbl {
- 	void *priv;
- };
- 
--int nbl_chan_init_leonis(void *p);
--void nbl_chan_remove_leonis(void *p);
-+int nbl_chan_init(void *p);
-+void nbl_chan_remove(void *p);
- 
- #endif
+ struct nbl_start_tx_ring_param {
 -- 
 2.53.0
 
