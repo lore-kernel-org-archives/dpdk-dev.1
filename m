@@ -2,49 +2,50 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85CE6606A31C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Nov 2026 13:15:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D0E606A321
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Nov 2026 13:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=PusI3Nte
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=eStDR9QX
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9A9E940A75;
-	Fri, 27 Nov 2026 14:14:36 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 671EF40A7D;
+	Fri, 27 Nov 2026 14:14:37 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
- by mails.dpdk.org (Postfix) with ESMTPS id 02828409FA
- for <dev@dpdk.org>; Fri, 27 Nov 2026 14:14:33 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id 49AA740A6E
+ for <dev@dpdk.org>; Fri, 27 Nov 2026 14:14:35 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1795785275; x=1827321275;
+ t=1795785276; x=1827321276;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=yGNnxoEPilzZZmbIK6fU36TniZQqHlgpUUqU4CPZY/I=;
- b=PusI3NteNXBnYzByVhaQL8pB+5WcKVl6Fs/+/YawrdT8pZL2Pwa6i54f
- O6ZdrZbAYahuajnSqi/lwdczTS6QviP+XKP+gXw0vUVaCMLbLDawhfwij
- ZGu6PojnxLH9YjCfL3dYhEDhkqRLAFxG5sH9kTbyPoWbCelq2QSdvBdCO
- ChfYruIy1zeNk2w/HV4gK3PnQfPsiaPdKN+t8KH5oHInKQs8gNJ0fFjdU
- GedvkvP90RDPxnFxxYTvQz/7c8hTwHfvZKnvVWgy0FXYvytkQoSgeMAPT
- LC58M6Crl63zpBbTBIm+jNPdM76hIqBIC8Iy8S6ggSJFRs2Fb1S5PgJ7d A==;
-X-CSE-ConnectionGUID: vhkdZP8iRBC+xhb/1PfA+w==
-X-CSE-MsgGUID: m05Aom9BRSSUJSydVkQXEA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11979"; a="4787579"
+ bh=QLMD4msuLzYWLyFVF82K7lqvZ91Eq/ydJV8Z01pH0I0=;
+ b=eStDR9QX06qS1QJVama25V0ImANQ2qHxJ/ZW0zxGmmrCysgx+W0OBO1Z
+ vBfosBDEyPSVX8ukq0ZbLD0vOHKSpPdLrzEiqzX7G7AiheH6Z9P9HVIKA
+ LRO8Ttl9mvd5DJTHHtA5gKb2g+DAgWEbr6WFhq17HL1c2v3IcLtSEjKfb
+ UT4HuzFT1h7DdiORZ00V4dr/prkNoRLtjIkwZqyHXATGjZyCIJQoGjz7E
+ orcDmfvw+9OqIdPxma68QUFYZj+jS8tH3jUYXG5kgDEI2cj2sGt++OcjL
+ 8mDQt4AAbxNwlULe6SHO2NbLgQr/b3msDxdvx3nU0WAhcMy5fjUIoBUxh Q==;
+X-CSE-ConnectionGUID: 19FMuIPfRoKZg2mWOslNxA==
+X-CSE-MsgGUID: xWxjXje/QxmvnZ4AAGlB2Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11979"; a="4787584"
 X-IronPort-AV: E=Sophos;i="6.27,236,1787036400"; 
-   d="scan'208";a="4787579"
+   d="scan'208";a="4787584"
 Received: from fmviesa002.fm.intel.com ([10.60.135.142])
  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 Nov 2026 05:14:34 -0800
-X-CSE-ConnectionGUID: Rf+biAdXTY6a65sN3xOqTQ==
-X-CSE-MsgGUID: U44l3kfIRZq51uJxEMTawg==
+ 27 Nov 2026 05:14:35 -0800
+X-CSE-ConnectionGUID: o223M9AQQquulVdZC010Ig==
+X-CSE-MsgGUID: Y69BOMnBTDyF3SBCEoJb+Q==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,236,1787036400"; d="scan'208";a="12656062"
+X-IronPort-AV: E=Sophos;i="6.27,236,1787036400"; d="scan'208";a="12656064"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa002.fm.intel.com with ESMTP; 27 Nov 2026 05:14:32 -0800
+ by fmviesa002.fm.intel.com with ESMTP; 27 Nov 2026 05:14:34 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Chenbo Xia <chenbox@nvidia.com>,
- Nipun Gupta <nipun.gupta@amd.com>, Miao Li <miao.li@intel.com>,
- Sunil Kumar Kori <skori@marvell.com>, Yahui Cao <yahui.cao@intel.com>
-Subject: [PATCH v2 12/13] bus/pci: fix BAR area list free in secondary process
-Date: Fri, 27 Nov 2026 13:14:12 +0000
-Message-ID: <44f9082c39c954fba9e3fad8cf80fa80666ea0b2.1795785194.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org, Vijay Kumar Srivastava <vsrivast@xilinx.com>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ Maxime Coquelin <maxime.coquelin@redhat.com>,
+ Abhimanyu Saini <absaini@amd.com>
+Subject: [PATCH v2 13/13] vdpa/sfc: fix doorbell address in notify area query
+Date: Fri, 27 Nov 2026 13:14:13 +0000
+Message-ID: <f31d1e6bafd94c21e332434260308283e1efc0cc.1795785194.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1795785194.git.anatoly.burakov@intel.com>
  <cover.1795785194.git.anatoly.burakov@intel.com>
@@ -68,60 +69,61 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Currently, when we unmap a device in a secondary process, we free the
-mmap area lists of its BARs. These lists are allocated by the primary
-process in shared memory and are referenced from the mapped resource
-entry, which stays in the shared list after a secondary process unmaps
-the device. As a result, we have use-after-free (if another process
-references the list) as well as a double-free (if another process, primary
-or secondary, tries to free it).
+Currently, when vhost asks for the notify area of a queue, we return
+its offset within the VFIO device fd, which is the offset of the BAR
+region within the fd plus the doorbell offset within the BAR. We then
+also write to the doorbell ourselves, but we compute its address by
+adding that same fd offset to the address the BAR is mapped at. This is
+only correct when the region happens to be at offset zero within the fd:
+otherwise, the address ends up far outside of the BAR mapping.
 
-Fix it by freeing the area lists only in the primary process, where the
-mapped resource entry itself is freed.
+Fix it by adding only the doorbell offset within the BAR, and check that
+the doorbell is within the BAR before writing to it.
 
-Fixes: f60abf9757f2 ("bus/pci: add VFIO sparse mmap")
-Cc: miao.li@intel.com
+Fixes: 2eb13ddea384 ("vdpa/sfc: fix sync between QEMU and vhost-user")
+Cc: absaini@amd.com
 Cc: stable@dpdk.org
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/bus/pci/linux/pci_vfio.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/vdpa/sfc/sfc_vdpa_ops.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/bus/pci/linux/pci_vfio.c b/drivers/bus/pci/linux/pci_vfio.c
-index 1c88d403d25..f4f9cad7409 100644
---- a/drivers/bus/pci/linux/pci_vfio.c
-+++ b/drivers/bus/pci/linux/pci_vfio.c
-@@ -1057,9 +1057,6 @@ find_and_unmap_vfio_resource(struct mapped_pci_res_list *vfio_res_list,
- 				pci_addr, maps[i].addr);
- 			pci_unmap_resource(maps[i].addr, maps[i].size);
- 		}
--
--		if (maps[i].nr_areas > 0)
--			rte_free(maps[i].areas);
+diff --git a/drivers/vdpa/sfc/sfc_vdpa_ops.c b/drivers/vdpa/sfc/sfc_vdpa_ops.c
+index 84ba141b348..778cde115f8 100644
+--- a/drivers/vdpa/sfc/sfc_vdpa_ops.c
++++ b/drivers/vdpa/sfc/sfc_vdpa_ops.c
+@@ -815,6 +815,7 @@ sfc_vdpa_get_notify_area(int vid, int qid, uint64_t *offset, uint64_t *size)
+ 	struct vfio_region_info reg = { .argsz = sizeof(reg) };
+ 	const efx_nic_cfg_t *encp;
+ 	int max_vring_cnt;
++	uint64_t bar_offset;
+ 	int64_t len;
+ 	void *dev;
+ 
+@@ -847,7 +848,8 @@ sfc_vdpa_get_notify_area(int vid, int qid, uint64_t *offset, uint64_t *size)
  	}
  
- 	return vfio_res;
-@@ -1072,7 +1069,7 @@ pci_vfio_unmap_resource_primary(struct rte_pci_device *dev)
- 	struct rte_pci_addr *loc = &dev->addr;
- 	struct mapped_pci_resource *vfio_res = NULL;
- 	struct mapped_pci_res_list *vfio_res_list;
--	int ret, vfio_dev_fd;
-+	int i, ret, vfio_dev_fd;
+ 	/* Use bar_offset that was cached during sfc_vdpa_virtq_start() */
+-	*offset = reg.offset + (uint64_t)ops_data->vq_cxt[qid].doorbell;
++	bar_offset = (uintptr_t)ops_data->vq_cxt[qid].doorbell;
++	*offset = reg.offset + bar_offset;
  
- 	/* store PCI address string */
- 	snprintf(pci_addr, sizeof(pci_addr), PCI_PRI_FMT,
-@@ -1113,6 +1110,10 @@ pci_vfio_unmap_resource_primary(struct rte_pci_device *dev)
- 		return -1;
- 	}
+ 	len = (1U << encp->enc_vi_window_shift) / 2;
+ 	if (len >= sysconf(_SC_PAGESIZE)) {
+@@ -861,7 +863,11 @@ sfc_vdpa_get_notify_area(int vid, int qid, uint64_t *offset, uint64_t *size)
+ 		      *offset);
  
-+	/* area lists are shared with secondaries, so only the primary frees them */
-+	for (i = 0; i < vfio_res->nb_maps; i++)
-+		rte_free(vfio_res->maps[i].areas);
-+
- 	TAILQ_REMOVE(vfio_res_list, vfio_res, next);
- 	rte_free(vfio_res);
- 	return 0;
+ 	pci_dev = sfc_vdpa_adapter_by_dev_handle(dev)->pdev;
+-	doorbell = (uint8_t *)pci_dev->mem_resource[reg.index].addr + *offset;
++	if (bar_offset + sizeof(uint16_t) > pci_dev->mem_resource[reg.index].len) {
++		sfc_vdpa_err(dev, "invalid doorbell offset : 0x%" PRIx64, bar_offset);
++		return -1;
++	}
++	doorbell = (uint8_t *)pci_dev->mem_resource[reg.index].addr + bar_offset;
+ 
+ 	/*
+ 	 * virtio-net driver in VM sends queue notifications before
 -- 
 2.52.0
 
