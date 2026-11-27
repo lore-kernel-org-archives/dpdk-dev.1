@@ -2,20 +2,20 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7571C606A31C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Nov 2026 17:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A94606A31E
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Nov 2026 17:32:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A4F09402C1;
-	Fri, 27 Nov 2026 18:28:47 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id AF0F8402C1;
+	Fri, 27 Nov 2026 18:32:51 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTPS id A45844026F
- for <dev@dpdk.org>; Fri, 27 Nov 2026 18:28:46 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTPS id 34BC94026F
+ for <dev@dpdk.org>; Fri, 27 Nov 2026 18:32:50 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 5E7174D2B3; Fri, 27 Nov 2026 18:28:46 +0100 (CET)
+ id 034764CF8C; Fri, 27 Nov 2026 18:32:49 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 2162] net/cnxk: using /tmp for control socket
-Date: Fri, 27 Nov 2026 17:28:46 +0000
+Subject: [DPDK/ethdev Bug 2163] net/nfp: puts control file in /tmp
+Date: Fri, 27 Nov 2026 17:32:50 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -33,8 +33,8 @@ X-Bugzilla-Target-Milestone: ---
 X-Bugzilla-Flags: 
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-2162-3@https.bugs.dpdk.org/>
+ target_milestone attachments.created
+Message-ID: <bug-2163-3@https.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: https://bugs.dpdk.org/
@@ -56,10 +56,10 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D2162
+https://bugs.dpdk.org/show_bug.cgi?id=3D2163
 
-            Bug ID: 2162
-           Summary: net/cnxk: using /tmp for control socket
+            Bug ID: 2163
+           Summary: net/nfp: puts control file in /tmp
            Product: DPDK
            Version: 26.11
           Hardware: All
@@ -72,10 +72,13 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D2162
           Reporter: stephen@networkplumber.org
   Target Milestone: ---
 
-The eswitch control message socket is created at a fixed path in
-/tmp, which is world-writable and shared across DPDK instances.
+Created attachment 483
+  --> https://bugs.dpdk.org/attachment.cgi?id=3D483&action=3Dedit
+proposed fix
 
-Build the path under the EAL runtime directory (e.g. /run/dpdk/<prefix>)
+The CPP bridge service creates its unix socket at a fixed /tmp/<pci>
+path, which is world-writable and shared across DPDK instances. Build
+the path under the EAL runtime directory (e.g. /run/dpdk/<prefix>)
 instead, so it follows the configured prefix and is isolated per
 instance.
 
