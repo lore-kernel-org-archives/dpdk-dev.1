@@ -2,48 +2,49 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B187606A31C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Nov 2026 04:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE15606A31C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Nov 2026 04:41:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kaspersky.com header.i=@kaspersky.com header.a=rsa-sha256 header.s=mail202505 header.b=aoMDRRUt
+	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.a=rsa-sha256 header.s=mail202505 header.b=U1ARNGsf
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A1117402B2;
-	Fri, 27 Nov 2026 05:41:02 +0100 (CET)
-Received: from mx15.kaspersky-labs.com (mx15.kaspersky-labs.com
- [46.165.235.169])
- by mails.dpdk.org (Postfix) with ESMTPS id 65B7F40291;
- Fri, 27 Nov 2026 05:41:00 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D92F74065A;
+	Fri, 27 Nov 2026 05:41:05 +0100 (CET)
+Received: from mx16.kaspersky-labs.com (mx16.kaspersky-labs.com [5.79.125.27])
+ by mails.dpdk.org (Postfix) with ESMTPS id 01B41402CE;
+ Fri, 27 Nov 2026 05:41:02 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
- s=mail202505; t=1795754460;
- bh=RKHK6hpCpRNO8B6f6M8jFYaJumJNyIXx3C0/BahvKk8=;
+ s=mail202505; t=1795754462;
+ bh=k+Oo5Pt+DeqrLc3fsLsQhTk9taETXQVgLL1f8st4BAg=;
  h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
- b=aoMDRRUt7Bu0k2BnDbWi38ga8P8Aoj9U/ZVaErHA0ltClB9rC03Zh25KmBpk7cUaj
- 4NR2JTXZ3UlsV+TUoAUj6Fxla3AlNSXmmVqDOvH3ELA+yjgzWQO9ssO8V7cZjsqkvf
- H1Egtt/87/1c27wjJWfQBIMUxc8HskBmfzxmGX+Jwz6/3bfC29t4LnPUYAQDsyn3QC
- jLxavM7gVCn8tmqnVCnCZgclBSZpTTs2+sCEq9dZNHJofmA1ioyPr1TipPTEPEfRLM
- epg1tvUonnlP3I2SELWkjD7z4vJLkamLpN45bE8uMZenUhONuo6TxzJpziss70us7q
- blsJsc5Yh9orw==
-Received: from relay15.kaspersky-labs.com (localhost [127.0.0.1])
- by relay15.kaspersky-labs.com (Postfix) with ESMTP id 2AD6FE70D4;
- Fri, 27 Nov 2026 07:41:00 +0300 (MSK)
+ b=U1ARNGsfzq8zFg3rvw9NTWjUAbO2bz1nMxjUh+SsCxsKBqVWISIkhh3ubdFYUF0nz
+ KMrgVlRK7dHrxutE/K3fzTBYCc+gp0Z1EBwg3lXF78HDF/l/OdDLWCQYtECey/hif2
+ bABfVag5qd3f/LonOLDSGnG8KwbWla/ac8hS5HLt2s8oVlDv9eI6d7efiecK8FZ8aq
+ Xp5K+4umW+IQvgqXf7FCIsvV/Akx5ZAGt9maWeX9HuBgzKJT4LcvTMnWutPDRRaMFf
+ AuOfvwuWl6GyCMdvQ4hu02HYKE4yXHTmXumiCEQ4pam1GA0pn7if4gcWnmMi4xCUTN
+ lH0+gtWY+sFDw==
+Received: from relay16.kaspersky-labs.com (localhost [127.0.0.1])
+ by relay16.kaspersky-labs.com (Postfix) with ESMTP id B6F08C63CC5;
+ Fri, 27 Nov 2026 07:41:02 +0300 (MSK)
 Received: from mail-hq2.kaspersky.com (unknown [91.103.66.200])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (Client CN "mail-hq2.kaspersky.com",
  Issuer "Kaspersky MailRelays CA G3" (verified OK))
- by mailhub15.kaspersky-labs.com (Postfix) with ESMTPS id 02D71E6B1A;
- Fri, 27 Nov 2026 07:40:59 +0300 (MSK)
+ by mailhub16.kaspersky-labs.com (Postfix) with ESMTPS id DDC59C657ED;
+ Fri, 27 Nov 2026 07:41:01 +0300 (MSK)
 Received: from chesnokov.avp.ru (10.16.105.7) by HQMAILSRV2.avp.ru
  (10.64.57.52) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.57; Fri, 27 Nov
- 2026 07:40:58 +0300
+ 2026 07:41:01 +0300
 From: <Alexander.Chesnokov@kaspersky.com>
 To: <cristian.dumitrescu@intel.com>
 CC: <dev@dpdk.org>, <stable@dpdk.org>, <jasvinder.singh@intel.com>,
  AlexanderChesnokov <Alexander.Chesnokov@kaspersky.com>
-Subject: [PATCH 1/3] sched: keep port valid on subport and pipe config failure
-Date: Fri, 27 Nov 2026 07:40:54 +0300
-Message-ID: <20261127044056.2869218-1-Alexander.Chesnokov@kaspersky.com>
+Subject: [PATCH 2/3] sched: reject API calls on unconfigured subport
+Date: Fri, 27 Nov 2026 07:40:55 +0300
+Message-ID: <20261127044056.2869218-2-Alexander.Chesnokov@kaspersky.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261127044056.2869218-1-Alexander.Chesnokov@kaspersky.com>
+References: <20261127044056.2869218-1-Alexander.Chesnokov@kaspersky.com>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -65,8 +66,8 @@ X-KSE-AntiSpam-Info: {Tracking_cluster_exceptions}
 X-KSE-AntiSpam-Info: {Tracking_real_kaspersky_domains}
 X-KSE-AntiSpam-Info: {Tracking_black_eng_exceptions}
 X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;
- kaspersky.com:5.0.1,7.1.1; chesnokov.avp.ru:5.0.1,7.1.1; 127.0.0.199:7.1.2
+X-KSE-AntiSpam-Info: chesnokov.avp.ru:5.0.1,7.1.1; 127.0.0.199:7.1.2;
+ kaspersky.com:5.0.1,7.1.1; d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
 X-KSE-AntiSpam-Info: {Tracking_white_helo}
 X-KSE-AntiSpam-Info: {Tracking_black_eng_exceptions_lk}
 X-KSE-AntiSpam-Info: FromAlignment: s
@@ -112,307 +113,138 @@ X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 
 From: Alexander Chesnokov <Alexander.Chesnokov@kaspersky.com>
 
-rte_sched_subport_config() and rte_sched_pipe_config() release the
-whole port through rte_sched_free_memory() when a parameter check
-fails: the port, its subport profile table, and every subport
-already configured, together with the packets enqueued in them.
-The caller gets an error code and keeps the port handle, so the
-next API call on the port reads freed memory. The API announces no
-such ownership change: rte_sched_port_config() hands the port out
-under __rte_dealloc(rte_sched_port_free, 1), and
-rte_sched_port_free() is documented as the only way to release it.
+rte_sched_pipe_config(), rte_sched_subport_read_stats(),
+rte_sched_queue_read_stats(), rte_sched_subport_tc_ov_config() and
+rte_sched_subport_pipe_profile_add() dereference the subport slot
+of the port without checking it. A subport whose
+rte_sched_subport_config() has not completed leaves the slot NULL,
+and the call crashes on the NULL pointer. The pipe profile add
+also accepts subport_id equal to the number of subports and reads
+one slot past the end of the array.
 
-A bad parameter for one subport also destroys unrelated work: the
-failure frees the other subports of the same port and drains the
-packets queued in them.
+Return -EINVAL for an unconfigured subport in these calls and fix
+the subport id check in the pipe profile add. Statistics of the
+configured subports of the same port keep working, so a failed
+subport configuration no longer poisons the statistics of the
+whole port.
 
-Keep the port and the configured subports untouched when a
-configuration call fails. The subport whose configuration failed
-is rolled back to the unconfigured state: its memory is released
-and port->subports[subport_id] is reset to NULL, so the call can
-be repeated with corrected parameters. No packet can sit in the
-queues of a subport whose configuration has not completed, so the
-rollback releases the subport memory directly, without the queue
-drain loop. The out-of-range subport id paths no longer walk the
-subport array at all, which also removes the out of bounds read
-of port->subports[] on those paths.
-
-The port handle stays valid after any configuration error; the
-caller releases it with rte_sched_port_free() as on success.
-Document this in both functions.
-
-Fixes: 44c730b0e379 ("sched: add PIE based congestion management")
 Fixes: 34a90f86657c ("sched: modify pipe functions for config flexibility")
 Fixes: ce7c4fd7c2ac ("sched: add pipe config to subport level")
+Fixes: f5e60154adec ("sched: enable traffic class oversubscription conditionally")
 Cc: stable@dpdk.org
-Cc: jasvinder.singh@intel.com
 
 Signed-off-by: Alexander Chesnokov <Alexander.Chesnokov@kaspersky.com>
 ---
- lib/sched/rte_sched.c | 87 +++++++++++--------------------------------
- lib/sched/rte_sched.h | 14 ++++++-
- 2 files changed, 33 insertions(+), 68 deletions(-)
+ lib/sched/rte_sched.c | 27 ++++++++++++++++++++++++++-
+ lib/sched/rte_sched.h |  9 ++++++---
+ 2 files changed, 32 insertions(+), 4 deletions(-)
 
 diff --git a/lib/sched/rte_sched.c b/lib/sched/rte_sched.c
-index daa31e8b99..f7df0886c4 100644
+index f7df0886c4..861efb4b37 100644
 --- a/lib/sched/rte_sched.c
 +++ b/lib/sched/rte_sched.c
-@@ -1066,26 +1066,9 @@ rte_sched_port_free(struct rte_sched_port *port)
- 	rte_free(port);
- }
- 
--static void
--rte_sched_free_memory(struct rte_sched_port *port, uint32_t n_subports)
--{
--	uint32_t i;
--
--	for (i = 0; i < n_subports; i++) {
--		struct rte_sched_subport *subport = port->subports[i];
--
--		rte_sched_subport_free(port, subport);
--	}
--
--	rte_free(port->subport_profiles);
--	rte_free(port);
--}
--
- static int
--rte_sched_red_config(struct rte_sched_port *port,
--	struct rte_sched_subport *s,
--	struct rte_sched_subport_params *params,
--	uint32_t n_subports)
-+rte_sched_red_config(struct rte_sched_subport *s,
-+	struct rte_sched_subport_params *params)
- {
- 	uint32_t i;
- 
-@@ -1105,8 +1088,6 @@ rte_sched_red_config(struct rte_sched_port *port,
- 				params->cman_params->red_params[i][j].min_th,
- 				params->cman_params->red_params[i][j].max_th,
- 				params->cman_params->red_params[i][j].maxp_inv) != 0) {
--				rte_sched_free_memory(port, n_subports);
--
- 				SCHED_LOG(NOTICE,
- 				"%s: RED configuration init fails", __func__);
- 				return -EINVAL;
-@@ -1118,10 +1099,8 @@ rte_sched_red_config(struct rte_sched_port *port,
- }
- 
- static int
--rte_sched_pie_config(struct rte_sched_port *port,
--	struct rte_sched_subport *s,
--	struct rte_sched_subport_params *params,
--	uint32_t n_subports)
-+rte_sched_pie_config(struct rte_sched_subport *s,
-+	struct rte_sched_subport_params *params)
- {
- 	uint32_t i;
- 
-@@ -1137,8 +1116,6 @@ rte_sched_pie_config(struct rte_sched_port *port,
- 			params->cman_params->pie_params[i].dp_update_interval,
- 			params->cman_params->pie_params[i].max_burst,
- 			params->cman_params->pie_params[i].tailq_th) != 0) {
--			rte_sched_free_memory(port, n_subports);
--
- 			SCHED_LOG(NOTICE,
- 			"%s: PIE configuration init fails", __func__);
- 			return -EINVAL;
-@@ -1149,16 +1126,14 @@ rte_sched_pie_config(struct rte_sched_port *port,
- }
- 
- static int
--rte_sched_cman_config(struct rte_sched_port *port,
--	struct rte_sched_subport *s,
--	struct rte_sched_subport_params *params,
--	uint32_t n_subports)
-+rte_sched_cman_config(struct rte_sched_subport *s,
-+	struct rte_sched_subport_params *params)
- {
- 	if (params->cman_params->cman_mode == RTE_SCHED_CMAN_RED)
--		return rte_sched_red_config(port, s, params, n_subports);
-+		return rte_sched_red_config(s, params);
- 
- 	else if (params->cman_params->cman_mode == RTE_SCHED_CMAN_PIE)
--		return rte_sched_pie_config(port, s, params, n_subports);
-+		return rte_sched_pie_config(s, params);
- 
- 	return -EINVAL;
- }
-@@ -1197,12 +1172,10 @@ rte_sched_subport_config(struct rte_sched_port *port,
- 	uint32_t subport_profile_id)
- {
- 	struct rte_sched_subport *s = NULL;
--	uint32_t n_subports = subport_id;
- 	struct rte_sched_subport_profile *profile;
- 	uint32_t n_subport_pipe_queues, i;
- 	uint32_t size0, size1, bmp_mem_size;
- 	int status;
--	int ret;
- 
- 	/* Check user parameters */
- 	if (port == NULL) {
-@@ -1214,16 +1187,14 @@ rte_sched_subport_config(struct rte_sched_port *port,
- 	if (subport_id >= port->n_subports_per_port) {
- 		SCHED_LOG(ERR,
- 			"%s: Incorrect value for subport id", __func__);
--		ret = -EINVAL;
--		goto out;
-+		return -EINVAL;
- 	}
- 
- 	if (subport_profile_id >= port->n_max_subport_profiles) {
- 		SCHED_LOG(ERR, "%s: "
- 			"Number of subport profile exceeds the max limit",
- 			__func__);
--		ret = -EINVAL;
--		goto out;
-+		return -EINVAL;
- 	}
- 
- 	/** Memory is allocated only on first invocation of the api for a
-@@ -1239,8 +1210,7 @@ rte_sched_subport_config(struct rte_sched_port *port,
- 			SCHED_LOG(NOTICE,
- 				"%s: Port scheduler params check failed (%d)",
- 				__func__, status);
--			ret = -EINVAL;
--			goto out;
-+			return -EINVAL;
- 		}
- 
- 		/* Determine the amount of memory to allocate */
-@@ -1254,12 +1224,9 @@ rte_sched_subport_config(struct rte_sched_port *port,
- 		if (s == NULL) {
- 			SCHED_LOG(ERR,
- 				"%s: Memory allocation fails", __func__);
--			ret = -ENOMEM;
--			goto out;
-+			return -ENOMEM;
- 		}
- 
--		n_subports++;
--
- 		/* Port */
- 		port->subports[subport_id] = s;
- 
-@@ -1282,10 +1249,12 @@ rte_sched_subport_config(struct rte_sched_port *port,
- 
- 		if (params->cman_params != NULL) {
- 			s->cman_enabled = true;
--			status = rte_sched_cman_config(port, s, params, n_subports);
-+			status = rte_sched_cman_config(s, params);
- 			if (status) {
- 				SCHED_LOG(NOTICE,
- 					"%s: CMAN configuration fails", __func__);
-+				port->subports[subport_id] = NULL;
-+				rte_free(s);
- 				return status;
- 			}
- 		} else {
-@@ -1334,8 +1303,9 @@ rte_sched_subport_config(struct rte_sched_port *port,
- 		if (s->bmp == NULL) {
- 			SCHED_LOG(ERR,
- 				"%s: Subport bitmap init error", __func__);
--			ret = -EINVAL;
--			goto out;
-+			port->subports[subport_id] = NULL;
-+			rte_free(s);
-+			return -EINVAL;
- 		}
- 
- 		for (i = 0; i < RTE_SCHED_PORT_N_GRINDERS; i++)
-@@ -1376,11 +1346,6 @@ rte_sched_subport_config(struct rte_sched_port *port,
- 	rte_sched_port_log_subport_profile(port, subport_profile_id);
- 
- 	return 0;
--
--out:
--	rte_sched_free_memory(port, n_subports);
--
--	return ret;
- }
- 
- RTE_EXPORT_SYMBOL(rte_sched_pipe_config)
-@@ -1394,9 +1359,7 @@ rte_sched_pipe_config(struct rte_sched_port *port,
- 	struct rte_sched_subport_profile *sp;
- 	struct rte_sched_pipe *p;
- 	struct rte_sched_pipe_profile *params;
--	uint32_t n_subports = subport_id + 1;
- 	uint32_t deactivate, profile, i;
--	int ret;
- 
- 	/* Check user parameters */
- 	profile = (uint32_t) pipe_profile;
-@@ -1411,23 +1374,20 @@ rte_sched_pipe_config(struct rte_sched_port *port,
- 	if (subport_id >= port->n_subports_per_port) {
- 		SCHED_LOG(ERR,
- 			"%s: Incorrect value for parameter subport id", __func__);
--		ret = -EINVAL;
--		goto out;
-+		return -EINVAL;
+@@ -1159,6 +1159,11 @@ rte_sched_subport_tc_ov_config(struct rte_sched_port *port,
  	}
  
  	s = port->subports[subport_id];
++	if (s == NULL) {
++		SCHED_LOG(ERR,
++			"%s: Subport is not configured", __func__);
++		return -EINVAL;
++	}
+ 	s->tc_ov_enabled = tc_ov_enable ? 1 : 0;
+ 
+ 	return 0;
+@@ -1378,6 +1383,11 @@ rte_sched_pipe_config(struct rte_sched_port *port,
+ 	}
+ 
+ 	s = port->subports[subport_id];
++	if (s == NULL) {
++		SCHED_LOG(ERR,
++			"%s: Subport is not configured", __func__);
++		return -EINVAL;
++	}
  	if (pipe_id >= s->n_pipes_per_subport_enabled) {
  		SCHED_LOG(ERR,
  			"%s: Incorrect value for parameter pipe id", __func__);
--		ret = -EINVAL;
--		goto out;
-+		return -EINVAL;
+@@ -1483,13 +1493,18 @@ rte_sched_subport_pipe_profile_add(struct rte_sched_port *port,
  	}
  
- 	if (!deactivate && profile >= s->n_pipe_profiles) {
+ 	/* Subport id not exceeds the max limit */
+-	if (subport_id > port->n_subports_per_port) {
++	if (subport_id >= port->n_subports_per_port) {
  		SCHED_LOG(ERR,
- 			"%s: Incorrect value for parameter pipe profile", __func__);
--		ret = -EINVAL;
--		goto out;
+ 			"%s: Incorrect value for subport id", __func__);
+ 		return -EINVAL;
+ 	}
+ 
+ 	s = port->subports[subport_id];
++	if (s == NULL) {
++		SCHED_LOG(ERR,
++			"%s: Subport is not configured", __func__);
 +		return -EINVAL;
++	}
+ 
+ 	/* Pipe profiles exceeds the max limit */
+ 	if (s->n_pipe_profiles >= s->n_max_pipe_profiles) {
+@@ -1683,6 +1698,11 @@ rte_sched_subport_read_stats(struct rte_sched_port *port,
  	}
  
- 	sp = port->subport_profiles + s->profile;
-@@ -1501,11 +1461,6 @@ rte_sched_pipe_config(struct rte_sched_port *port,
- 	}
+ 	s = port->subports[subport_id];
++	if (s == NULL) {
++		SCHED_LOG(ERR,
++			"%s: Subport is not configured", __func__);
++		return -EINVAL;
++	}
  
- 	return 0;
--
--out:
--	rte_sched_free_memory(port, n_subports);
--
--	return ret;
- }
+ 	/* Copy subport stats and clear */
+ 	memcpy(stats, &s->stats, sizeof(struct rte_sched_subport_stats));
+@@ -1734,6 +1754,11 @@ rte_sched_queue_read_stats(struct rte_sched_port *port,
+ 	subport_id = (queue_id >> subport_qmask) & (port->n_subports_per_port - 1);
  
- RTE_EXPORT_SYMBOL(rte_sched_subport_pipe_profile_add)
+ 	s = port->subports[subport_id];
++	if (s == NULL) {
++		SCHED_LOG(ERR,
++			"%s: Subport is not configured", __func__);
++		return -EINVAL;
++	}
+ 	subport_qindex = ((1 << subport_qmask) - 1) & queue_id;
+ 	q = s->queue + subport_qindex;
+ 	qe = s->queue_extra + subport_qindex;
 diff --git a/lib/sched/rte_sched.h b/lib/sched/rte_sched.h
-index e98f43072d..b839392250 100644
+index b839392250..53798ce3ee 100644
 --- a/lib/sched/rte_sched.h
 +++ b/lib/sched/rte_sched.h
-@@ -390,7 +390,12 @@ rte_sched_port_subport_profile_add(struct rte_sched_port *port,
-  * @param subport_profile_id
-  *   ID of subport bandwidth profile
-  * @return
-- *   0 upon success, error code otherwise
-+ *   0 upon success, negative error code otherwise. On error, the port
-+ *   scheduler instance stays valid and is released by
-+ *   rte_sched_port_free() as usual. The subport whose configuration
-+ *   failed stays unconfigured and the call can be repeated with
-+ *   corrected parameters. The subports configured before the failed
-+ *   call keep their configuration, statistics and queued packets.
-  */
- int
- rte_sched_subport_config(struct rte_sched_port *port,
-@@ -410,7 +415,12 @@ rte_sched_subport_config(struct rte_sched_port *port,
-  * @param pipe_profile
-  *   ID of subport-level pre-configured pipe profile
-  * @return
-- *   0 upon success, error code otherwise
-+ *   0 upon success, negative error code otherwise. On error, the port
-+ *   scheduler instance stays valid and is released by
-+ *   rte_sched_port_free() as usual. The subport whose configuration
-+ *   failed stays unconfigured and the call can be repeated with
-+ *   corrected parameters. The subports configured before the failed
-+ *   call keep their configuration, statistics and queued packets.
+@@ -420,7 +420,8 @@ rte_sched_subport_config(struct rte_sched_port *port,
+  *   rte_sched_port_free() as usual. The subport whose configuration
+  *   failed stays unconfigured and the call can be repeated with
+  *   corrected parameters. The subports configured before the failed
+- *   call keep their configuration, statistics and queued packets.
++ *   call keep their configuration, statistics and queued packets. A
++ *   call on a subport that is not configured returns -EINVAL.
   */
  int
  rte_sched_pipe_config(struct rte_sched_port *port,
+@@ -461,7 +462,8 @@ rte_sched_port_get_memory_footprint(struct rte_sched_port_params *port_params,
+  *   where the oversubscription status for each of the subport traffic classes
+  *   should be stored.
+  * @return
+- *   0 upon success, error code otherwise
++ *   0 upon success, error code otherwise; -EINVAL if the subport
++ *   is not configured
+  */
+ int
+ rte_sched_subport_read_stats(struct rte_sched_port *port,
+@@ -483,7 +485,8 @@ rte_sched_subport_read_stats(struct rte_sched_port *port,
+  *   Pointer to pre-allocated variable where the current queue length
+  *   should be stored.
+  * @return
+- *   0 upon success, error code otherwise
++ *   0 upon success, error code otherwise; -EINVAL if the subport
++ *   is not configured
+  */
+ int
+ rte_sched_queue_read_stats(struct rte_sched_port *port,
 -- 
 2.53.0
 
