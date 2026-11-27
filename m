@@ -2,30 +2,30 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2464C606A31C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Nov 2026 20:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3D1606A31C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Nov 2026 20:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.a=rsa-sha256 header.s=mail header.b=vp9g3sNI
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.a=rsa-sha256 header.s=mail header.b=p0iRRYI+
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0F1C94060C;
+	by mails.dpdk.org (Postfix) with ESMTP id CCCD74064C;
 	Fri, 27 Nov 2026 21:31:08 +0100 (CET)
-Received: from forward500a.mail.yandex.net (forward500a.mail.yandex.net
- [37.230.174.40])
- by mails.dpdk.org (Postfix) with ESMTPS id 0BEEB402B9
+Received: from forward501a.mail.yandex.net (forward501a.mail.yandex.net
+ [37.230.174.41])
+ by mails.dpdk.org (Postfix) with ESMTPS id 30A84402C4
  for <dev@dpdk.org>; Fri, 27 Nov 2026 21:31:07 +0100 (CET)
 Received: from mail-nwsmtp-smtp-production-main-53
  (mail-nwsmtp-smtp-production-main-53.yp-c.yandex.net)
- by forward500a.mail.yandex.net (postfix) with ESMTPS id 2D5D9C0132;
- Fri, 27 Nov 2026 23:31:06 +0300 (MSK)
+ by forward501a.mail.yandex.net (postfix) with ESMTPS id DB7C7807EA;
+ Fri, 27 Nov 2026 23:31:04 +0300 (MSK)
 Received: by mail-nwsmtp-smtp-production-main-53 with ESMTPSA id
- sUqcKleZaiE0-wkej5OvK; Fri, 27 Nov 2026 23:31:05 +0300
+ sUqcKleZaiE0-CBJPdEyk; Fri, 27 Nov 2026 23:31:04 +0300
 X-Yandex-Fwd: 1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
- t=1795811465; bh=uXBZpCioxLwMK8mBoKcLHm4iV8V9yrXO1O1eNgrQNcI=;
+ t=1795811464; bh=JLgwM+C4FZkywqqekN5AoMNX2g+KGfPE5hSqxltAiV4=;
  h=Message-ID:Date:In-Reply-To:Cc:Subject:References:To:From;
- b=vp9g3sNIOS0OKjB25nJYDNMWF3yyiA4OpMwbvWVdwlfUj9RiUgJj3Du6PleXVEQH8
- rjbBMD//BDMS5jXpTdcsMAoTnBDb5fay/rv4uUxz14fpxZS5jN7r17lP8FqZ433oqm
- /MOKVsxpYEjeD8AaARJKVZqo3Z8e1TUV0RkhMd94=
+ b=p0iRRYI+pqTw6FUV22mHrFw1ky1Eoon1UtG96ntuYB7/7/f1gFX9AoNm5OAN4d3XR
+ 5T+7QKNGXQGdYcl2S02eKp/xNJ+SSVJnIB5UWCHZUO18f31ClCUPAw05XlNpZjC16I
+ ZsItUVnlwwbM3J1LPAMuewvl4o3MAvujoruTIhdQ=
 Authentication-Results: mail-nwsmtp-smtp-production-main-53;
  dkim=pass header.i=@yandex.ru
 From: Roman Khromenok <roma55592@yandex.ru>
@@ -33,9 +33,9 @@ To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Thomas Monjalon <thomas@monjalon.net>,
  Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: [PATCH v2 2/4] test/transceiver: move module EEPROM decoding tests
-Date: Fri, 27 Nov 2026 22:30:51 +0200
-Message-ID: <3876ca378f0a7773440f90c88fd0ad41061b49e6.1795810230.git.roma55592@yandex.ru>
+Subject: [PATCH v2 1/4] transceiver: introduce module EEPROM decoding library
+Date: Fri, 27 Nov 2026 22:30:50 +0200
+Message-ID: <d1b3f8f1ef27215c8c6edb314bca9505bc0d420c.1795810230.git.roma55592@yandex.ru>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1795810230.git.roma55592@yandex.ru>
 References: <20261029181511.1736967-1-roma55592@yandex.ru>
@@ -61,526 +61,650 @@ X-Spam-Status: No, score=-20.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Move the module EEPROM decoding tests to the transceiver library,
-use rte_transceiver_decode() and the RTE_TRANSCEIVER_SFF_* types,
-and rename the test from ethdev_module_eeprom_autotest
-to transceiver_autotest.
+The SFF module EEPROM decoders in ethdev do not depend on any device
+or driver: drivers only return the raw EEPROM bytes, and the decoding
+follows the SFF specifications. The same decoding is also needed for
+ports which are not ethdev ports, for example kernel ports read with
+the ethtool ioctls.
 
-Keep one test for rte_eth_module_eeprom_parse(), which is now
-a wrapper of the library, with the RTE_ETH_MODULE_SFF_* types.
+Move the SFF-8079, SFF-8472 and SFF-8636 decoders to a new transceiver
+library with its own rte_transceiver_decode() API, which depends only
+on EAL headers. ethdev depends on it, as it does on the net and meter
+libraries: the telemetry command and rte_eth_module_eeprom_parse()
+call the library. The ethdev wrapper is kept for now, so that its
+users can be moved to the library in the next patches.
+
+The module type values are the same as the RTE_ETH_MODULE_SFF_* ones,
+which is checked at build time in ethdev.
+
+Add the library to the programmer's guide and to the API
+documentation, and add myself as its maintainer.
 
 Signed-off-by: Roman Khromenok <roma55592@yandex.ru>
 ---
- MAINTAINERS                                   |   1 +
- app/test/meson.build                          |   2 +-
- ...dev_module_eeprom.c => test_transceiver.c} | 156 ++++++++++--------
- 3 files changed, 93 insertions(+), 66 deletions(-)
- rename app/test/{test_ethdev_module_eeprom.c => test_transceiver.c} (80%)
+ MAINTAINERS                               |   6 ++
+ doc/api/doxy-api-index.md                 |   1 +
+ doc/api/doxy-api.conf.in                  |   1 +
+ doc/guides/prog_guide/index.rst           |   1 +
+ doc/guides/prog_guide/transceiver_lib.rst |  83 ++++++++++++++++++
+ doc/guides/rel_notes/release_27_03.rst    |   7 ++
+ lib/ethdev/meson.build                    |   6 +-
+ lib/ethdev/rte_ethdev.c                   |   9 +-
+ lib/ethdev/rte_ethdev.h                   |   3 +
+ lib/ethdev/sff_telemetry.c                |   7 +-
+ lib/meson.build                           |   2 +
+ lib/transceiver/meson.build               |  11 +++
+ lib/transceiver/rte_transceiver.c         |  24 +++++
+ lib/transceiver/rte_transceiver.h         | 102 ++++++++++++++++++++++
+ lib/{ethdev => transceiver}/sff_8079.c    |   2 +-
+ lib/{ethdev => transceiver}/sff_8472.c    |   0
+ lib/{ethdev => transceiver}/sff_8636.c    |   4 +-
+ lib/{ethdev => transceiver}/sff_8636.h    |   0
+ lib/{ethdev => transceiver}/sff_common.c  |  28 +++---
+ lib/{ethdev => transceiver}/sff_common.h  |  10 ++-
+ 20 files changed, 276 insertions(+), 31 deletions(-)
+ create mode 100644 doc/guides/prog_guide/transceiver_lib.rst
+ create mode 100644 lib/transceiver/meson.build
+ create mode 100644 lib/transceiver/rte_transceiver.c
+ create mode 100644 lib/transceiver/rte_transceiver.h
+ rename lib/{ethdev => transceiver}/sff_8079.c (99%)
+ rename lib/{ethdev => transceiver}/sff_8472.c (100%)
+ rename lib/{ethdev => transceiver}/sff_8636.c (99%)
+ rename lib/{ethdev => transceiver}/sff_8636.h (100%)
+ rename lib/{ethdev => transceiver}/sff_common.c (95%)
+ rename lib/{ethdev => transceiver}/sff_common.h (96%)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 5de8f5bbb0..7ca731b1db 100644
+index 096232e5d3..5de8f5bbb0 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -451,6 +451,7 @@ Transceiver module EEPROM
- M: Roman Khromenok <roma55592@yandex.ru>
- T: git://dpdk.org/next/dpdk-next-net
- F: lib/transceiver/
-+F: app/test/test_transceiver.c
- F: doc/guides/prog_guide/transceiver_lib.rst
+@@ -447,6 +447,12 @@ F: app/test/test_ethdev*
+ F: devtools/test-null.sh
+ F: doc/guides/prog_guide/ethdev/switch_representation.rst
  
++Transceiver module EEPROM
++M: Roman Khromenok <roma55592@yandex.ru>
++T: git://dpdk.org/next/dpdk-next-net
++F: lib/transceiver/
++F: doc/guides/prog_guide/transceiver_lib.rst
++
  Flow API
-diff --git a/app/test/meson.build b/app/test/meson.build
-index 2f1cd817cd..254ee36de2 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -79,7 +79,6 @@ source_file_deps = {
-     'test_ethdev_api.c': ['ethdev'],
-     'test_ethdev_flow_conv.c': ['ethdev'],
-     'test_ethdev_link.c': ['ethdev'],
--    'test_ethdev_module_eeprom.c': ['ethdev'],
-     'test_event_crypto_adapter.c': ['cryptodev', 'eventdev', 'bus_vdev'],
-     'test_event_dma_adapter.c': ['dmadev', 'eventdev', 'bus_vdev'],
-     'test_event_eth_rx_adapter.c': ['ethdev', 'eventdev', 'bus_vdev'],
-@@ -216,6 +215,7 @@ source_file_deps = {
-     'test_trace.c': [],
-     'test_trace_perf.c': [],
-     'test_trace_register.c': [],
-+    'test_transceiver.c': ['transceiver', 'ethdev'],
-     'test_vdev.c': ['kvargs', 'bus_vdev', 'net_null'],
-     'test_version.c': [],
- }
-diff --git a/app/test/test_ethdev_module_eeprom.c b/app/test/test_transceiver.c
-similarity index 80%
-rename from app/test/test_ethdev_module_eeprom.c
-rename to app/test/test_transceiver.c
-index 5f7e5db403..b37126ed08 100644
---- a/app/test/test_ethdev_module_eeprom.c
-+++ b/app/test/test_transceiver.c
-@@ -10,6 +10,7 @@
+ M: Ori Kam <orika@nvidia.com>
+ T: git://dpdk.org/next/dpdk-next-net
+diff --git a/doc/api/doxy-api-index.md b/doc/api/doxy-api-index.md
+index 974f2d48ab..130b39fe1b 100644
+--- a/doc/api/doxy-api-index.md
++++ b/doc/api/doxy-api-index.md
+@@ -15,6 +15,7 @@ The public API headers are grouped by topics:
+   [rte_flow](@ref rte_flow.h),
+   [rte_tm](@ref rte_tm.h),
+   [rte_mtr](@ref rte_mtr.h),
++  [transceiver](@ref rte_transceiver.h),
+   [bbdev](@ref rte_bbdev.h),
+   [cryptodev](@ref rte_cryptodev.h),
+   [security](@ref rte_security.h),
+diff --git a/doc/api/doxy-api.conf.in b/doc/api/doxy-api.conf.in
+index 6b42c50424..3d78e6a02d 100644
+--- a/doc/api/doxy-api.conf.in
++++ b/doc/api/doxy-api.conf.in
+@@ -95,6 +95,7 @@ INPUT                   = @TOPDIR@/doc/api/doxy-api-index.md \
+                           @TOPDIR@/lib/table \
+                           @TOPDIR@/lib/telemetry \
+                           @TOPDIR@/lib/timer \
++                          @TOPDIR@/lib/transceiver \
+                           @TOPDIR@/lib/vhost
+ INPUT                   += @API_EXAMPLES@
+ FILE_PATTERNS           = rte_*.h \
+diff --git a/doc/guides/prog_guide/index.rst b/doc/guides/prog_guide/index.rst
+index b9c0d59728..6023f483fa 100644
+--- a/doc/guides/prog_guide/index.rst
++++ b/doc/guides/prog_guide/index.rst
+@@ -76,6 +76,7 @@ Device Libraries
+     devargs
+     device_hotplug
+     ethdev/index
++    transceiver_lib
+     link_bonding_poll_mode_drv_lib
+     vhost_lib
+     cryptodev_lib
+diff --git a/doc/guides/prog_guide/transceiver_lib.rst b/doc/guides/prog_guide/transceiver_lib.rst
+new file mode 100644
+index 0000000000..45bcf4302c
+--- /dev/null
++++ b/doc/guides/prog_guide/transceiver_lib.rst
+@@ -0,0 +1,83 @@
++..  SPDX-License-Identifier: BSD-3-Clause
++    Copyright(c) 2026 Roman Khromenok
++
++Transceiver Library
++===================
++
++The transceiver library decodes the EEPROM of pluggable transceiver modules
++(SFP, QSFP) according to the SFF specifications,
++for example the vendor, the transceiver type and the digital diagnostics.
++
++The decoding does not depend on any device or driver,
++and the library does not need EAL to be initialized.
++The EEPROM data may come from different sources:
++
++ethdev ports
++   ``rte_eth_dev_get_module_info()`` gives the module type and EEPROM length,
++   and ``rte_eth_dev_get_module_eeprom()`` reads the EEPROM.
++
++Kernel ports
++   The Linux ethtool ioctls ``ETHTOOL_GMODULEINFO`` and ``ETHTOOL_GMODULEEEPROM``
++   give the same module types and EEPROM layout.
++
++
++Supported Specifications
++------------------------
++
++The module type is one of the ``RTE_TRANSCEIVER_SFF_*`` values,
++which are the same as the ``RTE_ETH_MODULE_SFF_*`` values of ethdev.
++
++``RTE_TRANSCEIVER_SFF_8079``
++   SFP identification, page A0h (256 bytes).
++
++``RTE_TRANSCEIVER_SFF_8472``
++   SFP identification and digital diagnostics, pages A0h and A2h (512 bytes).
++   With external calibration, the calibrated values are reported.
++   The Rx loss of signal and Tx fault state are reported
++   if the module advertises them.
++
++``RTE_TRANSCEIVER_SFF_8436`` and ``RTE_TRANSCEIVER_SFF_8636``
++   QSFP+ and QSFP28 identification, diagnostics and per-lane status flags,
++   lower page and page 00h (256 bytes).
++   The thresholds and the alarm and warning flags are reported
++   if page 03h is also provided (640 bytes).
++   The channel status flags are latched and cleared on read by the module,
++   so they report the events since the previous read of the module.
++
++
++Usage
++-----
++
++``rte_transceiver_decode()`` calls a callback for each decoded field,
++with the field name and the value as human readable strings.
++The same name may be reported more than once,
++for example when a module complies with several transceiver types.
++
++The names and value formats follow the output of ethtool and are intended for display,
++so applications should not parse them.
++
++.. code-block:: c
++
++   static void
++   print_field(const char *name, const char *value, void *arg)
++   {
++           RTE_SET_USED(arg);
++           printf("%-41s : %s\n", name, value);
++   }
++
++   struct rte_eth_dev_module_info info;
++   struct rte_dev_eeprom_info eeprom = { 0 };
++   uint8_t data[RTE_TRANSCEIVER_SFF_8636_MAX_LEN];
++
++   if (rte_eth_dev_get_module_info(port_id, &info) == 0 &&
++           info.eeprom_len <= sizeof(data)) {
++           eeprom.length = info.eeprom_len;
++           eeprom.data = data;
++           if (rte_eth_dev_get_module_eeprom(port_id, &eeprom) == 0)
++                   rte_transceiver_decode(info.type, data, eeprom.length,
++                                   print_field, NULL);
++   }
++
++The decoded module EEPROM of an ethdev port is also available
++with the telemetry command ``/ethdev/module_eeprom``
++and the testpmd command ``show port (port_id) module_eeprom decode``.
+diff --git a/doc/guides/rel_notes/release_27_03.rst b/doc/guides/rel_notes/release_27_03.rst
+index a91813faca..73cab0cad2 100644
+--- a/doc/guides/rel_notes/release_27_03.rst
++++ b/doc/guides/rel_notes/release_27_03.rst
+@@ -56,6 +56,13 @@ New Features
+      =======================================================
  
- #include <rte_common.h>
- #include <rte_ethdev.h>
+ 
++* **Restructured module EEPROM transceiver support.**
++
++  Module EEPROM decoding moved from ethdev to the new transceiver library,
++  ``rte_eth_module_eeprom_parse()`` is replaced by
++  ``rte_transceiver_decode()``.
++
++
+ Removed Items
+ -------------
+ 
+diff --git a/lib/ethdev/meson.build b/lib/ethdev/meson.build
+index 069bb7ec79..cf82df6028 100644
+--- a/lib/ethdev/meson.build
++++ b/lib/ethdev/meson.build
+@@ -15,10 +15,6 @@ sources = files(
+         'rte_mtr.c',
+         'rte_tm.c',
+         'sff_telemetry.c',
+-        'sff_common.c',
+-        'sff_8079.c',
+-        'sff_8472.c',
+-        'sff_8636.c',
+ )
+ 
+ headers = files(
+@@ -55,7 +51,7 @@ if is_linux
+     )
+ endif
+ 
+-deps += ['net', 'kvargs', 'meter', 'telemetry']
++deps += ['net', 'kvargs', 'meter', 'telemetry', 'transceiver']
+ 
+ if is_freebsd
+     annotate_locks = false
+diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
+index 13c82a2783..6cabef0b9d 100644
+--- a/lib/ethdev/rte_ethdev.c
++++ b/lib/ethdev/rte_ethdev.c
+@@ -33,7 +33,7 @@
+ #include "ethdev_profile.h"
+ #include "ethdev_private.h"
+ #include "ethdev_trace.h"
+-#include "sff_common.h"
 +#include <rte_transceiver.h>
- #include <rte_string_fns.h>
  
- #include "test.h"
-@@ -55,7 +56,7 @@ static int
- parse(uint32_t type, const uint8_t *data, uint32_t length)
+ #define ETH_XSTATS_ITER_NUM	0x100
+ 
+@@ -7064,7 +7064,10 @@ int
+ rte_eth_module_eeprom_parse(uint32_t type, const uint8_t *data, uint32_t length,
+ 		rte_eth_module_eeprom_field_cb cb, void *arg)
  {
- 	memset(&fields, 0, sizeof(fields));
--	return rte_eth_module_eeprom_parse(type, data, length, collect_field, &fields);
-+	return rte_transceiver_decode(type, data, length, collect_field, &fields);
- }
+-	struct sff_output out = { .field_cb = cb, .arg = arg };
++	RTE_BUILD_BUG_ON(RTE_ETH_MODULE_SFF_8079 != RTE_TRANSCEIVER_SFF_8079);
++	RTE_BUILD_BUG_ON(RTE_ETH_MODULE_SFF_8472 != RTE_TRANSCEIVER_SFF_8472);
++	RTE_BUILD_BUG_ON(RTE_ETH_MODULE_SFF_8636 != RTE_TRANSCEIVER_SFF_8636);
++	RTE_BUILD_BUG_ON(RTE_ETH_MODULE_SFF_8436 != RTE_TRANSCEIVER_SFF_8436);
  
- #define CHECK_FIELD(name, expected) do { \
-@@ -100,9 +101,9 @@ put_u16(uint8_t *data, unsigned int offset, uint16_t value)
- static void
- fill_sfp(uint8_t *data)
- {
--	uint8_t *a2 = data + RTE_ETH_MODULE_SFF_8079_LEN;
-+	uint8_t *a2 = data + RTE_TRANSCEIVER_SFF_8079_LEN;
- 
--	memset(data, 0, RTE_ETH_MODULE_SFF_8472_LEN);
-+	memset(data, 0, RTE_TRANSCEIVER_SFF_8472_LEN);
- 	data[0] = 0x03;		/* identifier: SFP */
- 	data[1] = 0x04;		/* extended identifier */
- 	data[2] = 0x07;		/* connector: LC */
-@@ -131,7 +132,7 @@ fill_sfp(uint8_t *data)
- static void
- fill_qsfp(uint8_t *data)
- {
--	memset(data, 0, RTE_ETH_MODULE_SFF_8636_LEN);
-+	memset(data, 0, RTE_TRANSCEIVER_SFF_8636_LEN);
- 	data[0] = 0x11;		/* identifier: QSFP28 */
- 	put_u16(data, 22, 0x3040);	/* temperature: 48.25 C */
- 	put_u16(data, 26, 32638);	/* voltage: 3.2638 V */
-@@ -169,10 +170,10 @@ check_sfp_identity(void)
- static int
- test_module_eeprom_sfp_8079(void)
- {
--	uint8_t data[RTE_ETH_MODULE_SFF_8472_LEN];
-+	uint8_t data[RTE_TRANSCEIVER_SFF_8472_LEN];
- 
- 	fill_sfp(data);
--	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8079, data, RTE_ETH_MODULE_SFF_8079_LEN),
-+	TEST_ASSERT_SUCCESS(parse(RTE_TRANSCEIVER_SFF_8079, data, RTE_TRANSCEIVER_SFF_8079_LEN),
- 		"Failed to parse SFF-8079 data");
- 	TEST_ASSERT_SUCCESS(check_sfp_identity(), "Wrong SFF-8079 base information");
- 	CHECK_NO_FIELD("Optical diagnostics support");
-@@ -182,10 +183,10 @@ test_module_eeprom_sfp_8079(void)
- static int
- test_module_eeprom_sfp_8472(void)
- {
--	uint8_t data[RTE_ETH_MODULE_SFF_8472_LEN];
-+	uint8_t data[RTE_TRANSCEIVER_SFF_8472_LEN];
- 
- 	fill_sfp(data);
--	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8472, data, sizeof(data)),
-+	TEST_ASSERT_SUCCESS(parse(RTE_TRANSCEIVER_SFF_8472, data, sizeof(data)),
- 		"Failed to parse SFF-8472 data");
- 	TEST_ASSERT_SUCCESS(check_sfp_identity(), "Wrong SFF-8472 base information");
- 	CHECK_FIELD("Optical diagnostics support", "Yes");
-@@ -200,16 +201,16 @@ test_module_eeprom_sfp_8472(void)
- static int
- test_module_eeprom_sfp_8472_short(void)
- {
--	uint8_t data[RTE_ETH_MODULE_SFF_8472_LEN];
-+	uint8_t data[RTE_TRANSCEIVER_SFF_8472_LEN];
- 	const uint32_t lengths[] = {
--		RTE_ETH_MODULE_SFF_8079_LEN,
--		RTE_ETH_MODULE_SFF_8472_LEN - 1,
-+		RTE_TRANSCEIVER_SFF_8079_LEN,
-+		RTE_TRANSCEIVER_SFF_8472_LEN - 1,
- 	};
- 	unsigned int i;
- 
- 	fill_sfp(data);
- 	for (i = 0; i < RTE_DIM(lengths); i++) {
--		TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8472, data, lengths[i]),
-+		TEST_ASSERT_SUCCESS(parse(RTE_TRANSCEIVER_SFF_8472, data, lengths[i]),
- 			"Failed to parse SFF-8472 data of %u bytes", lengths[i]);
- 		TEST_ASSERT_SUCCESS(check_sfp_identity(),
- 			"Wrong SFF-8472 base information from %u bytes", lengths[i]);
-@@ -223,10 +224,10 @@ test_module_eeprom_sfp_8472_short(void)
- static int
- test_module_eeprom_qsfp_8636(void)
- {
--	uint8_t data[RTE_ETH_MODULE_SFF_8636_LEN];
-+	uint8_t data[RTE_TRANSCEIVER_SFF_8636_LEN];
- 
- 	fill_qsfp(data);
--	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8636, data, sizeof(data)),
-+	TEST_ASSERT_SUCCESS(parse(RTE_TRANSCEIVER_SFF_8636, data, sizeof(data)),
- 		"Failed to parse SFF-8636 data");
- 	CHECK_FIELD("Identifier", "0x11 (QSFP28)");
- 	CHECK_FIELD("Connector", "0x07 (LC)");
-@@ -249,14 +250,14 @@ test_module_eeprom_qsfp_8636(void)
- static int
- test_module_eeprom_qsfp_8636_thresholds(void)
- {
--	uint8_t data[RTE_ETH_MODULE_SFF_8636_MAX_LEN];
-+	uint8_t data[RTE_TRANSCEIVER_SFF_8636_MAX_LEN];
- 
- 	memset(data, 0, sizeof(data));
- 	/* paging is supported (flat memory bit is clear), page 03h is at 0x200 */
- 	fill_qsfp(data);
- 	put_u16(data, 0x200, 0x5000);	/* temperature high alarm: 80 C */
- 
--	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8636, data, sizeof(data)),
-+	TEST_ASSERT_SUCCESS(parse(RTE_TRANSCEIVER_SFF_8636, data, sizeof(data)),
- 		"Failed to parse SFF-8636 data with page 03h");
- 	CHECK_FIELD("Vendor name", "FINISAR CORP.");
- 	CHECK_FIELD("Alarm/warning flags implemented", "Yes");
-@@ -268,30 +269,30 @@ test_module_eeprom_qsfp_8636_thresholds(void)
- static int
- test_module_eeprom_sfp_compliance(void)
- {
--	uint8_t data[RTE_ETH_MODULE_SFF_8472_LEN];
-+	uint8_t data[RTE_TRANSCEIVER_SFF_8472_LEN];
- 
- 	/* one bit at a time, so that swapped bits are detected */
- 	fill_sfp(data);
- 	data[10] = 0x20;	/* FC speed: 1600 MBytes/s */
--	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8472, data, sizeof(data)),
-+	TEST_ASSERT_SUCCESS(parse(RTE_TRANSCEIVER_SFF_8472, data, sizeof(data)),
- 		"Failed to parse SFF-8472 data with FC 1600");
- 	CHECK_FIELD_VALUE("Transceiver type", "FC: 1600 MBytes/sec");
- 	CHECK_NO_FIELD_VALUE("Transceiver type", "FC: 3200 MBytes/sec");
- 
- 	data[10] = 0x08;	/* FC speed: 3200 MBytes/s */
--	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8472, data, sizeof(data)),
-+	TEST_ASSERT_SUCCESS(parse(RTE_TRANSCEIVER_SFF_8472, data, sizeof(data)),
- 		"Failed to parse SFF-8472 data with FC 3200");
- 	CHECK_FIELD_VALUE("Transceiver type", "FC: 3200 MBytes/sec");
- 	CHECK_NO_FIELD_VALUE("Transceiver type", "FC: 1600 MBytes/sec");
- 
- 	data[10] = 0;
- 	data[62] = 0x01;	/* 64GFC, without the byte 10 bit 1 pointer */
--	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8472, data, sizeof(data)),
-+	TEST_ASSERT_SUCCESS(parse(RTE_TRANSCEIVER_SFF_8472, data, sizeof(data)),
- 		"Failed to parse SFF-8472 data with byte 62 only");
- 	CHECK_NO_FIELD_VALUE("Transceiver type", "FC: 6400 MBytes/sec");
- 
- 	data[10] = 0x02;	/* see byte 62, Fibre Channel Speed 2 */
--	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8472, data, sizeof(data)),
-+	TEST_ASSERT_SUCCESS(parse(RTE_TRANSCEIVER_SFF_8472, data, sizeof(data)),
- 		"Failed to parse SFF-8472 data with Fibre Channel Speed 2");
- 	CHECK_FIELD_VALUE("Transceiver type", "FC: 6400 MBytes/sec");
- 	return TEST_SUCCESS;
-@@ -300,25 +301,25 @@ test_module_eeprom_sfp_compliance(void)
- static int
- test_module_eeprom_qsfp_compliance(void)
- {
--	uint8_t data[RTE_ETH_MODULE_SFF_8636_LEN];
-+	uint8_t data[RTE_TRANSCEIVER_SFF_8636_LEN];
- 
- 	/* one bit at a time, so that swapped bits are detected */
- 	fill_qsfp(data);
- 	data[133] = 0x80;	/* SAS 24.0G */
--	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8636, data, sizeof(data)),
-+	TEST_ASSERT_SUCCESS(parse(RTE_TRANSCEIVER_SFF_8636, data, sizeof(data)),
- 		"Failed to parse SFF-8636 data with SAS 24.0G");
- 	CHECK_FIELD_VALUE("Transceiver type", "SAS 24.0G");
- 	CHECK_NO_FIELD_VALUE("Transceiver type", "SAS 12.0G");
- 
- 	data[133] = 0x40;	/* SAS 12.0G */
--	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8636, data, sizeof(data)),
-+	TEST_ASSERT_SUCCESS(parse(RTE_TRANSCEIVER_SFF_8636, data, sizeof(data)),
- 		"Failed to parse SFF-8636 data with SAS 12.0G");
- 	CHECK_FIELD_VALUE("Transceiver type", "SAS 12.0G");
- 	CHECK_NO_FIELD_VALUE("Transceiver type", "SAS 24.0G");
- 
- 	data[133] = 0;
- 	data[138] = 0x08;	/* FC speed: 3200 MBytes/s */
--	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8636, data, sizeof(data)),
-+	TEST_ASSERT_SUCCESS(parse(RTE_TRANSCEIVER_SFF_8636, data, sizeof(data)),
- 		"Failed to parse SFF-8636 data with FC 3200");
- 	CHECK_FIELD_VALUE("Transceiver type", "FC: 3200 MBytes/sec");
- 	CHECK_NO_FIELD_VALUE("Transceiver type", "FC: 1600 MBytes/sec");
-@@ -332,32 +333,32 @@ test_module_eeprom_qsfp_compliance(void)
- static int
- test_module_eeprom_sfp_8472_status(void)
- {
--	uint8_t data[RTE_ETH_MODULE_SFF_8472_LEN];
--	uint8_t *a2 = data + RTE_ETH_MODULE_SFF_8079_LEN;
-+	uint8_t data[RTE_TRANSCEIVER_SFF_8472_LEN];
-+	uint8_t *a2 = data + RTE_TRANSCEIVER_SFF_8079_LEN;
- 
- 	/* state is raised but the module does not advertise it */
- 	fill_sfp(data);
- 	a2[SFP_A2_STATUS] = 0x06;
--	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8472, data, sizeof(data)),
-+	TEST_ASSERT_SUCCESS(parse(RTE_TRANSCEIVER_SFF_8472, data, sizeof(data)),
- 		"Failed to parse SFF-8472 data");
- 	CHECK_NO_FIELD("Rx loss of signal");
- 	CHECK_NO_FIELD("Tx fault");
- 
- 	data[SFP_ENH_OPTIONS] |= 0x30;	/* soft Tx fault and Rx LOS monitoring */
- 	a2[SFP_A2_STATUS] = 0;
--	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8472, data, sizeof(data)),
-+	TEST_ASSERT_SUCCESS(parse(RTE_TRANSCEIVER_SFF_8472, data, sizeof(data)),
- 		"Failed to parse SFF-8472 data without status bits");
- 	CHECK_FIELD("Rx loss of signal", "None");
- 	CHECK_FIELD("Tx fault", "None");
- 
- 	a2[SFP_A2_STATUS] = 0x02;	/* Rx LOS */
--	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8472, data, sizeof(data)),
-+	TEST_ASSERT_SUCCESS(parse(RTE_TRANSCEIVER_SFF_8472, data, sizeof(data)),
- 		"Failed to parse SFF-8472 data with Rx LOS");
- 	CHECK_FIELD("Rx loss of signal", "[ Yes ]");
- 	CHECK_FIELD("Tx fault", "None");
- 
- 	a2[SFP_A2_STATUS] = 0x04;	/* Tx fault */
--	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8472, data, sizeof(data)),
-+	TEST_ASSERT_SUCCESS(parse(RTE_TRANSCEIVER_SFF_8472, data, sizeof(data)),
- 		"Failed to parse SFF-8472 data with Tx fault");
- 	CHECK_FIELD("Rx loss of signal", "None");
- 	CHECK_FIELD("Tx fault", "[ Yes ]");
-@@ -384,7 +385,7 @@ fill_qsfp_signals(uint8_t *data)
- static int
- test_module_eeprom_qsfp_8636_signals_not_implemented(void)
- {
--	uint8_t data[RTE_ETH_MODULE_SFF_8636_LEN];
-+	uint8_t data[RTE_TRANSCEIVER_SFF_8636_LEN];
- 
- 	/* flags are raised but the module does not advertise them */
- 	fill_qsfp(data);
-@@ -392,7 +393,7 @@ test_module_eeprom_qsfp_8636_signals_not_implemented(void)
- 	data[QSFP_FAULT_FLAGS] = 0xff;
- 	data[QSFP_LOL_FLAGS] = 0xff;
- 
--	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8636, data, sizeof(data)),
-+	TEST_ASSERT_SUCCESS(parse(RTE_TRANSCEIVER_SFF_8636, data, sizeof(data)),
- 		"Failed to parse SFF-8636 data");
- 	/* Rx LOS has no implemented bit and is always reported */
- 	CHECK_FIELD("Rx loss of signal", "[ Yes, Yes, Yes, Yes ]");
-@@ -407,10 +408,10 @@ test_module_eeprom_qsfp_8636_signals_not_implemented(void)
- static int
- test_module_eeprom_qsfp_8636_signals(void)
- {
--	uint8_t data[RTE_ETH_MODULE_SFF_8636_LEN];
-+	uint8_t data[RTE_TRANSCEIVER_SFF_8636_LEN];
- 
- 	fill_qsfp_signals(data);
--	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8636, data, sizeof(data)),
-+	TEST_ASSERT_SUCCESS(parse(RTE_TRANSCEIVER_SFF_8636, data, sizeof(data)),
- 		"Failed to parse SFF-8636 data without flags");
- 	CHECK_FIELD("Rx loss of signal", "None");
- 	CHECK_FIELD("Tx loss of signal", "None");
-@@ -423,7 +424,7 @@ test_module_eeprom_qsfp_8636_signals(void)
- 	data[QSFP_LOS_FLAGS] = 0x21;	/* Rx lane 1, Tx lane 2 */
- 	data[QSFP_FAULT_FLAGS] = 0x84;	/* Tx fault lane 3, Tx adaptive eq lane 4 */
- 	data[QSFP_LOL_FLAGS] = 0x18;	/* Rx lane 4, Tx lane 1 */
--	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8636, data, sizeof(data)),
-+	TEST_ASSERT_SUCCESS(parse(RTE_TRANSCEIVER_SFF_8636, data, sizeof(data)),
- 		"Failed to parse SFF-8636 data with flags");
- 	CHECK_FIELD("Rx loss of signal", "[ Yes, No, No, No ]");
- 	CHECK_FIELD("Tx loss of signal", "[ No, Yes, No, No ]");
-@@ -433,7 +434,7 @@ test_module_eeprom_qsfp_8636_signals(void)
- 	CHECK_FIELD("Tx adaptive eq fault", "[ No, No, No, Yes ]");
- 
- 	data[QSFP_LOS_FLAGS] = 0x0f;	/* Rx on all lanes, no Tx */
--	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8636, data, sizeof(data)),
-+	TEST_ASSERT_SUCCESS(parse(RTE_TRANSCEIVER_SFF_8636, data, sizeof(data)),
- 		"Failed to parse SFF-8636 data with Rx LOS on all lanes");
- 	CHECK_FIELD("Rx loss of signal", "[ Yes, Yes, Yes, Yes ]");
- 	CHECK_FIELD("Tx loss of signal", "None");
-@@ -444,9 +445,9 @@ static int
- test_module_eeprom_sfp_8472_ext_cal_unaligned(void)
- {
- 	/* the SFF-8472 calibration floats must be readable from any address */
--	uint8_t alignas(8) buf[RTE_ETH_MODULE_SFF_8472_LEN + 1];
-+	uint8_t alignas(8) buf[RTE_TRANSCEIVER_SFF_8472_LEN + 1];
- 	uint8_t *data = buf + 1;
--	uint8_t *a2 = data + RTE_ETH_MODULE_SFF_8079_LEN;
-+	uint8_t *a2 = data + RTE_TRANSCEIVER_SFF_8079_LEN;
- 	const uint8_t two[4] = { 0x40, 0x00, 0x00, 0x00 };	/* 2.0f big endian */
- 
- 	fill_sfp(data);
-@@ -459,7 +460,7 @@ test_module_eeprom_sfp_8472_ext_cal_unaligned(void)
- 	a2[88] = 1;	/* voltage slope */
- 	memcpy(&a2[68], two, sizeof(two));
- 
--	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8472, data, RTE_ETH_MODULE_SFF_8472_LEN),
-+	TEST_ASSERT_SUCCESS(parse(RTE_TRANSCEIVER_SFF_8472, data, RTE_TRANSCEIVER_SFF_8472_LEN),
- 		"Failed to parse externally calibrated SFF-8472 data");
- 	CHECK_FIELD("Laser bias current", "39.580 mA");
- 	CHECK_FIELD("Receiver signal average optical power", "1.3448 mW / 1.29 dBm");
-@@ -478,8 +479,8 @@ put_be_float(uint8_t *data, unsigned int offset, uint32_t bits)
- static int
- test_module_eeprom_sfp_8472_rx_power_polynomial(void)
- {
--	uint8_t data[RTE_ETH_MODULE_SFF_8472_LEN];
--	uint8_t *a2 = data + RTE_ETH_MODULE_SFF_8079_LEN;
-+	uint8_t data[RTE_TRANSCEIVER_SFF_8472_LEN];
-+	uint8_t *a2 = data + RTE_TRANSCEIVER_SFF_8079_LEN;
- 
- 	fill_sfp(data);
- 	/* diagnostics implemented, externally calibrated, average RX power */
-@@ -496,7 +497,7 @@ test_module_eeprom_sfp_8472_rx_power_polynomial(void)
- 	put_be_float(a2, 68, 0x3f800000);	/* RX_PWR(1) = 1.0 */
- 	put_be_float(a2, 72, 0);		/* RX_PWR(0) = 0 */
- 
--	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8472, data, sizeof(data)),
-+	TEST_ASSERT_SUCCESS(parse(RTE_TRANSCEIVER_SFF_8472, data, sizeof(data)),
- 		"Failed to parse externally calibrated SFF-8472 data");
- 	CHECK_FIELD("Receiver signal average optical power", "0.1560 mW / -8.07 dBm");
- 	return TEST_SUCCESS;
-@@ -506,7 +507,7 @@ test_module_eeprom_sfp_8472_rx_power_polynomial(void)
- static void
- fill_sfp_ext_cal(uint8_t *data)
- {
--	uint8_t *a2 = data + RTE_ETH_MODULE_SFF_8079_LEN;
-+	uint8_t *a2 = data + RTE_TRANSCEIVER_SFF_8079_LEN;
- 
- 	fill_sfp(data);
- 	/* diagnostics implemented, externally calibrated, average RX power */
-@@ -521,8 +522,8 @@ fill_sfp_ext_cal(uint8_t *data)
- static int
- test_module_eeprom_sfp_8472_cal_saturate_max(void)
- {
--	uint8_t data[RTE_ETH_MODULE_SFF_8472_LEN];
--	uint8_t *a2 = data + RTE_ETH_MODULE_SFF_8079_LEN;
-+	uint8_t data[RTE_TRANSCEIVER_SFF_8472_LEN];
-+	uint8_t *a2 = data + RTE_TRANSCEIVER_SFF_8079_LEN;
- 
- 	fill_sfp_ext_cal(data);
- 	/* results above the 16-bit range must saturate */
-@@ -537,7 +538,7 @@ test_module_eeprom_sfp_8472_cal_saturate_max(void)
- 	put_u16(a2, 104, 65535);	/* raw RX power */
- 	put_be_float(a2, 56, 0x3f800000);	/* RX_PWR(4) = 1.0 */
- 
--	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8472, data, sizeof(data)),
-+	TEST_ASSERT_SUCCESS(parse(RTE_TRANSCEIVER_SFF_8472, data, sizeof(data)),
- 		"Failed to parse externally calibrated SFF-8472 data");
- 	CHECK_FIELD("Laser bias current", "131.070 mA");
- 	CHECK_FIELD("Laser output power", "6.5535 mW / 8.16 dBm");
-@@ -550,8 +551,8 @@ test_module_eeprom_sfp_8472_cal_saturate_max(void)
- static int
- test_module_eeprom_sfp_8472_cal_saturate_min(void)
- {
--	uint8_t data[RTE_ETH_MODULE_SFF_8472_LEN];
--	uint8_t *a2 = data + RTE_ETH_MODULE_SFF_8079_LEN;
-+	uint8_t data[RTE_TRANSCEIVER_SFF_8472_LEN];
-+	uint8_t *a2 = data + RTE_TRANSCEIVER_SFF_8079_LEN;
- 
- 	fill_sfp_ext_cal(data);
- 	/* results below the 16-bit range must saturate */
-@@ -565,7 +566,7 @@ test_module_eeprom_sfp_8472_cal_saturate_min(void)
- 	put_u16(a2, 90, -1000);		/* voltage offset */
- 	put_be_float(a2, 68, 0xbf800000);	/* RX_PWR(1) = -1.0 */
- 
--	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8472, data, sizeof(data)),
-+	TEST_ASSERT_SUCCESS(parse(RTE_TRANSCEIVER_SFF_8472, data, sizeof(data)),
- 		"Failed to parse externally calibrated SFF-8472 data");
- 	CHECK_FIELD("Laser bias current", "0.000 mA");
- 	CHECK_FIELD("Laser output power", "0.0000 mW / -inf dBm");
-@@ -578,8 +579,8 @@ test_module_eeprom_sfp_8472_cal_saturate_min(void)
- static int
- test_module_eeprom_sfp_8472_cal_round(void)
- {
--	uint8_t data[RTE_ETH_MODULE_SFF_8472_LEN];
--	uint8_t *a2 = data + RTE_ETH_MODULE_SFF_8079_LEN;
-+	uint8_t data[RTE_TRANSCEIVER_SFF_8472_LEN];
-+	uint8_t *a2 = data + RTE_TRANSCEIVER_SFF_8079_LEN;
- 
- 	fill_sfp_ext_cal(data);
- 	/* calibrated values must be rounded to the nearest, not truncated */
-@@ -588,7 +589,7 @@ test_module_eeprom_sfp_8472_cal_round(void)
- 	put_u16(a2, 104, 1000);		/* raw RX power */
- 	put_be_float(a2, 68, 0x3f333333);	/* RX_PWR(1) = 0.7, stored as 0.69999999 */
- 
--	TEST_ASSERT_SUCCESS(parse(RTE_ETH_MODULE_SFF_8472, data, sizeof(data)),
-+	TEST_ASSERT_SUCCESS(parse(RTE_TRANSCEIVER_SFF_8472, data, sizeof(data)),
- 		"Failed to parse externally calibrated SFF-8472 data");
- 	CHECK_FIELD("Laser bias current", "0.010 mA");
- 	CHECK_FIELD("Receiver signal average optical power", "0.0700 mW / -11.55 dBm");
-@@ -598,12 +599,12 @@ test_module_eeprom_sfp_8472_cal_round(void)
- static int
- test_module_eeprom_invalid(void)
- {
--	uint8_t data[RTE_ETH_MODULE_SFF_8636_MAX_LEN] = {0};
-+	uint8_t data[RTE_TRANSCEIVER_SFF_8636_MAX_LEN] = {0};
- 	const uint32_t types[] = {
--		RTE_ETH_MODULE_SFF_8079,
--		RTE_ETH_MODULE_SFF_8472,
--		RTE_ETH_MODULE_SFF_8436,
--		RTE_ETH_MODULE_SFF_8636,
-+		RTE_TRANSCEIVER_SFF_8079,
-+		RTE_TRANSCEIVER_SFF_8472,
-+		RTE_TRANSCEIVER_SFF_8436,
-+		RTE_TRANSCEIVER_SFF_8636,
- 	};
- 	unsigned int i;
- 	int ret;
-@@ -620,23 +621,47 @@ test_module_eeprom_invalid(void)
- 
- 	ret = parse(0, data, sizeof(data));
- 	TEST_ASSERT_EQUAL(ret, -ENOTSUP, "Type 0: expected %d, got %d", -ENOTSUP, ret);
--	ret = parse(RTE_ETH_MODULE_SFF_8436 + 1, data, sizeof(data));
-+	ret = parse(RTE_TRANSCEIVER_SFF_8436 + 1, data, sizeof(data));
- 	TEST_ASSERT_EQUAL(ret, -ENOTSUP, "Unknown type: expected %d, got %d", -ENOTSUP, ret);
- 	TEST_ASSERT_EQUAL(fields.count, 0, "Unknown type: callback called %u times",
- 		fields.count);
- 
--	ret = rte_eth_module_eeprom_parse(RTE_ETH_MODULE_SFF_8079, NULL,
--		RTE_ETH_MODULE_SFF_8079_LEN, collect_field, &fields);
-+	ret = rte_transceiver_decode(RTE_TRANSCEIVER_SFF_8079, NULL,
-+		RTE_TRANSCEIVER_SFF_8079_LEN, collect_field, &fields);
- 	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL data: expected %d, got %d", -EINVAL, ret);
--	ret = rte_eth_module_eeprom_parse(RTE_ETH_MODULE_SFF_8079, data,
--		RTE_ETH_MODULE_SFF_8079_LEN, NULL, NULL);
-+	ret = rte_transceiver_decode(RTE_TRANSCEIVER_SFF_8079, data,
-+		RTE_TRANSCEIVER_SFF_8079_LEN, NULL, NULL);
- 	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL callback: expected %d, got %d", -EINVAL, ret);
- 
- 	return TEST_SUCCESS;
- }
- 
-+/* rte_eth_module_eeprom_parse() is kept as a wrapper of the library */
-+static int
-+test_module_eeprom_ethdev_wrapper(void)
-+{
-+	uint8_t data[RTE_ETH_MODULE_SFF_8472_LEN];
-+	int ret;
-+
-+	fill_sfp(data);
-+	memset(&fields, 0, sizeof(fields));
-+	TEST_ASSERT_SUCCESS(rte_eth_module_eeprom_parse(RTE_ETH_MODULE_SFF_8472, data,
-+		sizeof(data), collect_field, &fields),
-+		"Failed to parse SFF-8472 data with the ethdev API");
-+	TEST_ASSERT_SUCCESS(check_sfp_identity(), "Wrong SFF-8472 base information");
-+	CHECK_FIELD("Laser bias current", "39.580 mA");
-+
-+	ret = rte_eth_module_eeprom_parse(RTE_ETH_MODULE_SFF_8472, NULL,
-+		sizeof(data), collect_field, &fields);
-+	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL data: expected %d, got %d", -EINVAL, ret);
-+	ret = rte_eth_module_eeprom_parse(RTE_ETH_MODULE_SFF_8472, data,
-+		sizeof(data), NULL, NULL);
-+	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL callback: expected %d, got %d", -EINVAL, ret);
-+	return TEST_SUCCESS;
-+}
-+
- static struct unit_test_suite module_eeprom_testsuite = {
--	.suite_name = "ethdev module EEPROM decoding",
-+	.suite_name = "transceiver module EEPROM decoding",
- 	.setup = NULL,
- 	.teardown = NULL,
- 	.unit_test_cases = {
-@@ -656,6 +681,7 @@ static struct unit_test_suite module_eeprom_testsuite = {
- 		TEST_CASE(test_module_eeprom_qsfp_8636_signals_not_implemented),
- 		TEST_CASE(test_module_eeprom_qsfp_8636_signals),
- 		TEST_CASE(test_module_eeprom_invalid),
-+		TEST_CASE(test_module_eeprom_ethdev_wrapper),
- 		TEST_CASES_END()
+ 	if (data == NULL) {
+ 		RTE_ETHDEV_LOG_LINE(ERR, "Cannot parse module EEPROM from NULL data");
+@@ -7076,7 +7079,7 @@ rte_eth_module_eeprom_parse(uint32_t type, const uint8_t *data, uint32_t length,
+ 		return -EINVAL;
  	}
- };
-@@ -666,4 +692,4 @@ test_module_eeprom(void)
- 	return unit_test_suite_runner(&module_eeprom_testsuite);
+ 
+-	return sff_decode_module_eeprom(type, data, length, &out);
++	return rte_transceiver_decode(type, data, length, cb, arg);
  }
  
--REGISTER_FAST_TEST(ethdev_module_eeprom_autotest, NOHUGE_OK, ASAN_OK, test_module_eeprom);
-+REGISTER_FAST_TEST(transceiver_autotest, NOHUGE_OK, ASAN_OK, test_module_eeprom);
+ RTE_EXPORT_SYMBOL(rte_eth_dev_get_dcb_info)
+diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
+index 599299a781..e021cc97b2 100644
+--- a/lib/ethdev/rte_ethdev.h
++++ b/lib/ethdev/rte_ethdev.h
+@@ -5260,6 +5260,9 @@ typedef void (*rte_eth_module_eeprom_field_cb)(const char *name,
+  *
+  * Decode pluggable module EEPROM data according to the SFF specifications.
+  *
++ * This is a wrapper of rte_transceiver_decode()
++ * for the RTE_ETH_MODULE_SFF_* module types.
++ *
+  * The data may come from rte_eth_dev_get_module_eeprom()
+  * or from any other source using the same layout,
+  * for example the Linux ethtool ioctls ETHTOOL_GMODULEINFO
+diff --git a/lib/ethdev/sff_telemetry.c b/lib/ethdev/sff_telemetry.c
+index 46533a9fc5..758e1dc7f2 100644
+--- a/lib/ethdev/sff_telemetry.c
++++ b/lib/ethdev/sff_telemetry.c
+@@ -8,7 +8,8 @@
+ 
+ #include "rte_ethdev.h"
+ #include <rte_common.h>
+-#include "sff_common.h"
++#include <rte_string_fns.h>
++#include <rte_transceiver.h>
+ #include "sff_telemetry.h"
+ #include <telemetry_data.h>
+ 
+@@ -43,7 +44,6 @@ sff_tel_add_field(const char *name_str, const char *value_str, void *arg)
+ static void
+ sff_port_module_eeprom_parse(uint16_t port_id, struct rte_tel_data *d)
+ {
+-	struct sff_output out = { .field_cb = sff_tel_add_field, .arg = d };
+ 	struct rte_eth_dev_module_info minfo;
+ 	struct rte_dev_eeprom_info einfo;
+ 	int ret;
+@@ -100,7 +100,8 @@ sff_port_module_eeprom_parse(uint16_t port_id, struct rte_tel_data *d)
+ 		return;
+ 	}
+ 
+-	ret = sff_decode_module_eeprom(minfo.type, einfo.data, einfo.length, &out);
++	ret = rte_transceiver_decode(minfo.type, einfo.data, einfo.length,
++				     sff_tel_add_field, d);
+ 	if (ret == -ENOTSUP)
+ 		RTE_ETHDEV_LOG_LINE(NOTICE, "Unsupported module type: %u", minfo.type);
+ 	else if (ret != 0)
+diff --git a/lib/meson.build b/lib/meson.build
+index 458951054c..f64b994c46 100644
+--- a/lib/meson.build
++++ b/lib/meson.build
+@@ -22,6 +22,7 @@ libraries = [
+         'mbuf',
+         'net',
+         'meter',
++        'transceiver',
+         'ethdev',
+         'pci', # core
+         'cmdline',
+@@ -85,6 +86,7 @@ always_enable = [
+         'rcu',
+         'ring',
+         'telemetry',
++        'transceiver',
+ ]
+ 
+ enable_deprecated_libs = []
+diff --git a/lib/transceiver/meson.build b/lib/transceiver/meson.build
+new file mode 100644
+index 0000000000..895f117909
+--- /dev/null
++++ b/lib/transceiver/meson.build
+@@ -0,0 +1,11 @@
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2026 Roman Khromenok
++
++sources = files(
++        'rte_transceiver.c',
++        'sff_8079.c',
++        'sff_8472.c',
++        'sff_8636.c',
++        'sff_common.c',
++)
++headers = files('rte_transceiver.h')
+diff --git a/lib/transceiver/rte_transceiver.c b/lib/transceiver/rte_transceiver.c
+new file mode 100644
+index 0000000000..9a85bb5a8e
+--- /dev/null
++++ b/lib/transceiver/rte_transceiver.c
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 Roman Khromenok
++ */
++
++#include <errno.h>
++#include <stddef.h>
++
++#include <eal_export.h>
++
++#include "rte_transceiver.h"
++#include "sff_common.h"
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_transceiver_decode, 27.03)
++int
++rte_transceiver_decode(uint32_t type, const uint8_t *data, uint32_t length,
++		rte_transceiver_field_cb cb, void *arg)
++{
++	struct sff_output out = { .field_cb = cb, .arg = arg };
++
++	if (data == NULL || cb == NULL)
++		return -EINVAL;
++
++	return sff_decode_module_eeprom(type, data, length, &out);
++}
+diff --git a/lib/transceiver/rte_transceiver.h b/lib/transceiver/rte_transceiver.h
+new file mode 100644
+index 0000000000..cc112f3913
+--- /dev/null
++++ b/lib/transceiver/rte_transceiver.h
+@@ -0,0 +1,102 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 Roman Khromenok
++ */
++
++#ifndef RTE_TRANSCEIVER_H
++#define RTE_TRANSCEIVER_H
++
++/**
++ * @file
++ *
++ * Pluggable transceiver module EEPROM decoding.
++ *
++ * Decode the EEPROM of pluggable transceiver modules (SFP, QSFP)
++ * according to the SFF specifications.
++ * The decoding does not depend on any device or driver:
++ * the EEPROM data may be read with rte_eth_dev_get_module_eeprom()
++ * or from any other source using the same layout,
++ * for example the Linux ethtool ioctls ETHTOOL_GMODULEINFO
++ * and ETHTOOL_GMODULEEEPROM.
++ */
++
++#include <stdint.h>
++
++#include <rte_compat.h>
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++/*
++ * Module EEPROM layouts.
++ * The values are the same as the RTE_ETH_MODULE_SFF_* values
++ * reported by rte_eth_dev_get_module_info().
++ */
++#define RTE_TRANSCEIVER_SFF_8079		0x1 /**< SFF-8079 (SFP), page A0h */
++#define RTE_TRANSCEIVER_SFF_8079_LEN		256 /**< SFF-8079 EEPROM length */
++#define RTE_TRANSCEIVER_SFF_8472		0x2 /**< SFF-8472 (SFP), pages A0h and A2h */
++#define RTE_TRANSCEIVER_SFF_8472_LEN		512 /**< SFF-8472 EEPROM length */
++#define RTE_TRANSCEIVER_SFF_8636		0x3 /**< SFF-8636 (QSFP28) */
++#define RTE_TRANSCEIVER_SFF_8636_LEN		256 /**< SFF-8636 lower and page 00h length */
++#define RTE_TRANSCEIVER_SFF_8636_MAX_LEN	640 /**< SFF-8636 length with page 03h */
++#define RTE_TRANSCEIVER_SFF_8436		0x4 /**< SFF-8436 (QSFP+) */
++#define RTE_TRANSCEIVER_SFF_8436_LEN		256 /**< SFF-8436 lower and page 00h length */
++#define RTE_TRANSCEIVER_SFF_8436_MAX_LEN	640 /**< SFF-8436 length with page 03h */
++
++/**
++ * Callback invoked by rte_transceiver_decode() for each decoded field.
++ *
++ * @param name
++ *   Field name, for example "Vendor name" or "Laser bias current".
++ *   The same name may be reported more than once,
++ *   for example when a module complies with several transceiver types.
++ * @param value
++ *   Field value as a human readable string, including the unit if any.
++ * @param arg
++ *   The opaque argument passed to rte_transceiver_decode().
++ *
++ * @note The field names and the value formats are intended for display.
++ *   They follow the ethtool output and may change in future releases,
++ *   so they should not be parsed or matched by applications.
++ */
++typedef void (*rte_transceiver_field_cb)(const char *name, const char *value,
++		void *arg);
++
++/**
++ * @warning
++ * @b EXPERIMENTAL: this API may change without prior notice.
++ *
++ * Decode pluggable module EEPROM data according to the SFF specifications.
++ *
++ * The function does not access any device
++ * and can be called without EAL initialization.
++ *
++ * @param type
++ *   Module EEPROM layout, one of RTE_TRANSCEIVER_SFF_*.
++ * @param data
++ *   Module EEPROM data starting at offset 0.
++ * @param length
++ *   Length of the data in bytes.
++ *   SFF-8472 diagnostics are decoded only if at least
++ *   RTE_TRANSCEIVER_SFF_8472_LEN bytes are provided.
++ *   SFF-8436 and SFF-8636 thresholds and alarm flags are decoded
++ *   only if at least RTE_TRANSCEIVER_SFF_8636_MAX_LEN bytes are provided.
++ * @param cb
++ *   Callback invoked for each decoded field.
++ * @param arg
++ *   Opaque argument passed to the callback.
++ * @return
++ *   - (0) if successful.
++ *   - (-EINVAL) if bad parameter or data is too short for the module type.
++ *   - (-ENOTSUP) if the module type is not supported.
++ */
++__rte_experimental
++int
++rte_transceiver_decode(uint32_t type, const uint8_t *data, uint32_t length,
++		rte_transceiver_field_cb cb, void *arg);
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* RTE_TRANSCEIVER_H */
+diff --git a/lib/ethdev/sff_8079.c b/lib/transceiver/sff_8079.c
+similarity index 99%
+rename from lib/ethdev/sff_8079.c
+rename to lib/transceiver/sff_8079.c
+index c8db5c0975..916486e9a9 100644
+--- a/lib/ethdev/sff_8079.c
++++ b/lib/transceiver/sff_8079.c
+@@ -236,7 +236,7 @@ static void sff_8079_show_transceiver(const uint8_t *data, struct sff_output *d)
+ 
+ static void sff_8079_show_encoding(const uint8_t *data, struct sff_output *d)
+ {
+-	sff_8024_show_encoding(data, 11, RTE_ETH_MODULE_SFF_8472, d);
++	sff_8024_show_encoding(data, 11, RTE_TRANSCEIVER_SFF_8472, d);
+ }
+ 
+ static void sff_8079_show_rate_identifier(const uint8_t *data, struct sff_output *d)
+diff --git a/lib/ethdev/sff_8472.c b/lib/transceiver/sff_8472.c
+similarity index 100%
+rename from lib/ethdev/sff_8472.c
+rename to lib/transceiver/sff_8472.c
+diff --git a/lib/ethdev/sff_8636.c b/lib/transceiver/sff_8636.c
+similarity index 99%
+rename from lib/ethdev/sff_8636.c
+rename to lib/transceiver/sff_8636.c
+index 5e77f1b855..3f583f1c5b 100644
+--- a/lib/ethdev/sff_8636.c
++++ b/lib/transceiver/sff_8636.c
+@@ -447,7 +447,7 @@ static void sff_8636_show_transceiver(const uint8_t *data, struct sff_output *d)
+ static void sff_8636_show_encoding(const uint8_t *data, struct sff_output *d)
+ {
+ 	sff_8024_show_encoding(data, SFF_8636_ENCODING_OFFSET,
+-			       RTE_ETH_MODULE_SFF_8636, d);
++			       RTE_TRANSCEIVER_SFF_8636, d);
+ }
+ 
+ static void sff_8636_show_rate_identifier(const uint8_t *data, struct sff_output *d)
+@@ -695,7 +695,7 @@ static void sff_8636_show_dom(const uint8_t *data, uint32_t eeprom_len, struct s
+ 	 * If pagging support exists, then supports_alarms is marked as 1
+ 	 */
+ 
+-	if (eeprom_len >= RTE_ETH_MODULE_SFF_8636_MAX_LEN) {
++	if (eeprom_len >= RTE_TRANSCEIVER_SFF_8636_MAX_LEN) {
+ 		if (!(data[SFF_8636_STATUS_2_OFFSET] &
+ 					SFF_8636_STATUS_PAGE_3_PRESENT)) {
+ 			sd.supports_alarms = 1;
+diff --git a/lib/ethdev/sff_8636.h b/lib/transceiver/sff_8636.h
+similarity index 100%
+rename from lib/ethdev/sff_8636.h
+rename to lib/transceiver/sff_8636.h
+diff --git a/lib/ethdev/sff_common.c b/lib/transceiver/sff_common.c
+similarity index 95%
+rename from lib/ethdev/sff_common.c
+rename to lib/transceiver/sff_common.c
+index 0fc498edb0..321fe63e05 100644
+--- a/lib/ethdev/sff_common.c
++++ b/lib/transceiver/sff_common.c
+@@ -19,22 +19,22 @@ int sff_decode_module_eeprom(uint32_t type, const uint8_t *data, uint32_t length
+ 			     struct sff_output *d)
+ {
+ 	switch (type) {
+-	case RTE_ETH_MODULE_SFF_8079:
+-		if (length < RTE_ETH_MODULE_SFF_8079_LEN)
++	case RTE_TRANSCEIVER_SFF_8079:
++		if (length < RTE_TRANSCEIVER_SFF_8079_LEN)
+ 			return -EINVAL;
+ 		sff_8079_show_all(data, d);
+ 		break;
+-	case RTE_ETH_MODULE_SFF_8472:
+-		if (length < RTE_ETH_MODULE_SFF_8079_LEN)
++	case RTE_TRANSCEIVER_SFF_8472:
++		if (length < RTE_TRANSCEIVER_SFF_8079_LEN)
+ 			return -EINVAL;
+ 		sff_8079_show_all(data, d);
+ 		/* diagnostics are in the second page (A2h) */
+-		if (length >= RTE_ETH_MODULE_SFF_8472_LEN)
++		if (length >= RTE_TRANSCEIVER_SFF_8472_LEN)
+ 			sff_8472_show_all(data, d);
+ 		break;
+-	case RTE_ETH_MODULE_SFF_8436:
+-	case RTE_ETH_MODULE_SFF_8636:
+-		if (length < RTE_ETH_MODULE_SFF_8636_LEN)
++	case RTE_TRANSCEIVER_SFF_8436:
++	case RTE_TRANSCEIVER_SFF_8636:
++		if (length < RTE_TRANSCEIVER_SFF_8636_LEN)
+ 			return -EINVAL;
+ 		sff_8636_show_all(data, length, d);
+ 		break;
+@@ -299,21 +299,21 @@ void sff_8024_show_encoding(const uint8_t *data, int encoding_offset,
+ 		strlcat(val_string, " (NRZ)", sizeof(val_string));
+ 		break;
+ 	case SFF_8024_ENCODING_4h:
+-		if (sff_type == RTE_ETH_MODULE_SFF_8472)
++		if (sff_type == RTE_TRANSCEIVER_SFF_8472)
+ 			strlcat(val_string, " (Manchester)", sizeof(val_string));
+-		else if (sff_type == RTE_ETH_MODULE_SFF_8636)
++		else if (sff_type == RTE_TRANSCEIVER_SFF_8636)
+ 			strlcat(val_string, " (SONET Scrambled)", sizeof(val_string));
+ 		break;
+ 	case SFF_8024_ENCODING_5h:
+-		if (sff_type == RTE_ETH_MODULE_SFF_8472)
++		if (sff_type == RTE_TRANSCEIVER_SFF_8472)
+ 			strlcat(val_string, " (SONET Scrambled)", sizeof(val_string));
+-		else if (sff_type == RTE_ETH_MODULE_SFF_8636)
++		else if (sff_type == RTE_TRANSCEIVER_SFF_8636)
+ 			strlcat(val_string, " (64B/66B)", sizeof(val_string));
+ 		break;
+ 	case SFF_8024_ENCODING_6h:
+-		if (sff_type == RTE_ETH_MODULE_SFF_8472)
++		if (sff_type == RTE_TRANSCEIVER_SFF_8472)
+ 			strlcat(val_string, " (64B/66B)", sizeof(val_string));
+-		else if (sff_type == RTE_ETH_MODULE_SFF_8636)
++		else if (sff_type == RTE_TRANSCEIVER_SFF_8636)
+ 			strlcat(val_string, " (Manchester)", sizeof(val_string));
+ 		break;
+ 	case SFF_8024_ENCODING_256B:
+diff --git a/lib/ethdev/sff_common.h b/lib/transceiver/sff_common.h
+similarity index 96%
+rename from lib/ethdev/sff_common.h
+rename to lib/transceiver/sff_common.h
+index 9041f8ed17..015c59d261 100644
+--- a/lib/ethdev/sff_common.h
++++ b/lib/transceiver/sff_common.h
+@@ -10,14 +10,18 @@
+ 
+ #include <stdio.h>
+ 
+-#include "rte_ethdev.h"
++#include <rte_bitops.h>
++#include <rte_common.h>
++#include <rte_string_fns.h>
++
++#include "rte_transceiver.h"
+ 
+ #define SFF_ITEM_VAL_COMPOSE_SIZE 64
+ 
+ /* Consumer of decoded module EEPROM fields */
+ struct sff_output {
+ 	/* Called once per decoded field, name may repeat */
+-	rte_eth_module_eeprom_field_cb field_cb;
++	rte_transceiver_field_cb field_cb;
+ 	void *arg;
+ };
+ 
+@@ -35,7 +39,7 @@ void sff_8472_show_all(const uint8_t *data, struct sff_output *d);
+ void sff_8636_show_all(const uint8_t *data, uint32_t eeprom_len, struct sff_output *d);
+ 
+ /*
+- * Decode module EEPROM of the given type (RTE_ETH_MODULE_SFF_*).
++ * Decode module EEPROM of the given type (RTE_TRANSCEIVER_SFF_*).
+  * Returns 0 on success, -EINVAL if the data is too short for the type,
+  * -ENOTSUP if the type is unknown.
+  */
 -- 
 2.47.3
 
