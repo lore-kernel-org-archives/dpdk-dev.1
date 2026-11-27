@@ -2,74 +2,75 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B038606A31C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Nov 2026 17:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0738F606A31C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Nov 2026 18:44:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=e2XpTmgc
+	dkim=pass (2048-bit key, unprotected) header.d=networkplumber-org.20260707.gappssmtp.com header.i=@networkplumber-org.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=PvK4jrbD
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8B3C6402C4;
-	Fri, 27 Nov 2026 18:47:29 +0100 (CET)
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com
- [209.85.215.182])
- by mails.dpdk.org (Postfix) with ESMTPS id 4ED84402C1
- for <dev@dpdk.org>; Fri, 27 Nov 2026 18:47:27 +0100 (CET)
-Received: by mail-pg1-f182.google.com with SMTP id
- 41be03b00d2f7-cde84cb8803so2343835a12.1
- for <dev@dpdk.org>; Fri, 27 Nov 2026 09:47:27 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 782E5402C4;
+	Fri, 27 Nov 2026 19:44:15 +0100 (CET)
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com
+ [209.85.215.172])
+ by mails.dpdk.org (Postfix) with ESMTPS id D7F70402C1
+ for <dev@dpdk.org>; Fri, 27 Nov 2026 19:44:13 +0100 (CET)
+Received: by mail-pg1-f172.google.com with SMTP id
+ 41be03b00d2f7-cd69954c755so6073984a12.3
+ for <dev@dpdk.org>; Fri, 27 Nov 2026 10:44:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1795801645;
- x=1796406445; darn=dpdk.org; 
+ d=networkplumber-org.20260707.gappssmtp.com; s=20260707; t=1795805052;
+ x=1796409852; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=Ie6r14gI/Vc4SNV1rowd4/3eR5XgzMcaiwdgfDTSLTs=;
- b=e2XpTmgc883SGiIvAvnWTrveg7U0yUr+472xY4uQ8f8boFn5A9PXzoj1fC5jVWgC2o
- MEYKQ1fCL0qwoQMW8bFnwEdAWQwWyC2zbsJUVkT5TXTUGX26Mf3ttLs+4JQtZ5ewfdqq
- /n08MRmk+wD7EoRQQLCxNIT0x8kQJLfD77Jw3W/p6qOlRbVUZiiBnGq9Xntw7rapLn3u
- y6Ey5wFsefJMPslVv21DNpSYr7/1h1NtHJXcmqJGV2P9hoAE3NWgs0ss8AlG/kPCcS4p
- 1D0ja9NAyjrDTBrSGKnTsy0S9L/4wNR8+/+1p9zjma1l2qo5q7Gggm9stZPvzM6LkEUO
- E2iQ==
+ bh=7+/48N93dVeeElupiQaqmJR7bj7623E5RURgSS/0BUs=;
+ b=PvK4jrbDF4IxybVZ39o+g3EyTpriYzwIKBlJ/HBjIqaTku281FoaKlnXP5i/8w1tCx
+ STZKx7VfjrpGf1k08zrYqZsLG3FZoTYb7ycq6cZBePREt2nVUy1c13myTorkeFgu8rQz
+ Coa4sPxuz2PTC9degVw7sxUt+yNzyeTlt1oBxP/c+rgkisVhJLuxirRkkNwY+lvrD8j2
+ aFmSlITYAPjEO7PtfWLZLATm9L4Ae5oCs1wdIQj6o++S+piCdsXciFkrlzN7y2eB9cWy
+ NBAwbqTA+/JZfkyeg9hwLwq9qf2Az3Y+xUiYLmlORThUQd3sBTuoHwt6TKcorp8Xxga4
+ guhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1795801645; x=1796406445;
+ d=1e100.net; s=20260707; t=1795805052; x=1796409852;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=Ie6r14gI/Vc4SNV1rowd4/3eR5XgzMcaiwdgfDTSLTs=;
- b=m8kpoU1tXvKxdKCTd/TnGfeBOAuEWS7Lj8H6ojEwFPqtSxpoda/dCYO31Ds0zwDEQz
- P2TMhF6zgx0rqMUSLl971jZn3AWUWY0Mh/Sf48dTaOlmxX7aTeeTC5X+AGOXxp5ZTSTO
- 77a77eGJ4rdu94JFTJDy5QHKOJnjqB0M/yzZYyL5qHUtZf6MWrQ87PR+JfmtZ6DsrMOc
- gkyxZYr5X2jQBI2twhaRv9Qv7cVnl4AzT8WtEuyxuYZn0qUu+BUcx+N1jRyUKD9JokaB
- 8Nss5u8GOrSWehLdLpEa6V4Ax+JoIJ0Tk+qOo5KxT8T13FIzdJLREWEk2JstkW1xHNLv
- eKYA==
-X-Gm-Message-State: APuU4Z89VS+nS9IEtvu1XCKUN34wxBwVmo0bvUeXi2BBZGqiA7Mcb4KJ
- LIEUk3ns/yqx6GgqxbbW62tGbC/gdlkoGXVLbufUDg4oW2eAFvKxJCJNM206RJgyikTeoeUkQGp
- cziSc8Os=
-X-Gm-Gg: AZFdTZeBq99J31WUZmYHQkkkUvm9Umw0Ob/BsyWrLEZEog4BD29nEMEoyuqB/4m6tii
- bK0I0wrJebVPUIJ3OXz9F2+Ma+AV+bD6fLpCOeGwMPdWykRmhim6yToFOj7wdaCD6rl5FM6mFZu
- 4f82CdUJKD3Ew8wlwP3zDf+pBfKus7xqLfyXJZ2rFgNXVYfdEpmQvUbPUp6J7L6jZZQ2JWKcfK3
- oTuhazB2MMPlqXcIxQK6ZJCMf4cY/Frj0PFNRxmHdjfsEvM8o6480zJQz+EL1ZZPuqqXyGAmoQw
- WiJ10itXW1OoEYpuag4HDHdqGZbpVBJ8EOo24sOxxOgMqeKw64zlMZ3OwzjdvE2yaqVzr8Ylgee
- 7+YvOfoE/XOLPYMZK81CYwhDu73NQVlSm4Tyys1VYgrzS29Ibvg3/8VPQ/8fO6i6XNExj2N+hnl
- R22SC26l3vm1Ejf/hNbVZYF1lLlf1oNX0lYf+vXMta+k0yzTcmTAuRH+M9v9PSDygTYug3y4hri
- 3fdg7yZ6udFSKmv6T2EjFDWGkO09XtzJnEYgomKedx4ZhWaaMkkPgc/yE4xXfE90jiyRvAXazrC
- FmrT1z2MNAWzSVx9maBdH+mlwlObpC72CLHIv/ctSbkAahOlFLLyOpq3nL1TghOaRpnxWMA=
-X-Received: by 2002:a17:90b:2c86:b0:3ac:b44c:2d84 with SMTP id
- 98e67ed59e1d1-3b41c8d5579mr25266680a91.13.1795801645465; 
- Fri, 27 Nov 2026 09:47:25 -0800 (PST)
+ bh=7+/48N93dVeeElupiQaqmJR7bj7623E5RURgSS/0BUs=;
+ b=EyBKhtwR7L3/6VVXApxB7BZ6EaNBZ/SDMpLYa8DQH5kZHTaybF20Cg8PXyVcKj2LG/
+ I/lBlzPK0U5L/mxw9rby7N909oJZFYBzBsaDkGo+VZhoujTm9AKchxLMCY0EXiAAvc5U
+ HheIWLywyUE8IG4WH04z0CC7qZJYtG1zHp4C7xQ15JnBW7FaPl7neK0WvU91MvQiX5ba
+ XZSnF8+GlrkxJsVJid05EbQyWz7yHqT0UHGxqhbu0SbhoYoExwecSbDsv9chMgSeaswL
+ y651kMVUdsiJXS6aTuny7ZiEzbjxNBkh69XBcZ8aZv01klsdUKm0qRnWDL2ZjnTYfZ8l
+ gZBQ==
+X-Gm-Message-State: APuU4Z+OgiPBpxwitmJdupJ5GM1OyOIK6siA7f1MNJnPeZrcy7NeUKB6
+ UCrq0YJ1g7ghkVBdFAK6EcEwjErQqHOg5zU42CQ/9rt43xYyEac3GXvslIz1WJE4ZHY=
+X-Gm-Gg: AZFdTZdGiiqaxi49b5fD2mwM1EIQLHhLogXgepKt/F5No5lDo4gLoBwGvk0z44DvJpj
+ 3J4p8HaKk2SKjBJISvad2AsNvZiHcadX7ro/BakkDesF7JvJYG1GLCIlHIJ0JaJO+0uAb6Cl9Fj
+ VD9y+DqHmRk34HiyAWVAN1KcXok9yE/WnercUNIfK5dUyi8Y+JvAtixwwUVwgmsYkSFuCs5alO9
+ I6Rf/bLw8T6EPNpTom8Rv68Sy0j9oYEIH7zDkzxXs/AZKAKwy+4e3U1ODII84HqgHG1dbwO2muH
+ GT8i48ey31HwWO/PTO6lpTZv3FZKWOTKxhCJN8U3YlMHMzyd1QqTLO3xPK7/IyI0u17YgcEfux8
+ iVv1FUnYIRqtgCb60ABsAUi40XGJX29x8VNuHkQ5mL6LAjChzh3TWhUV8f4s9X9x7kyBy07MTIe
+ PFh1OCsYdfSQZHDPZyASYFHoq7osORt1eoKEOMzfwUFCgucZ8sC2KMeqAcgXsPSSYEb/yIg3PjB
+ aSdlhS8mVlRja86Cgmm1DZcXfYIwYPdE5HkJM17NW84K9XTVUi51pz2+qrOGxcFTiSSyawty3ma
+ c2GweO7TlGCL5qcK9dHpU3LvFTmfDdUCYzxZQo/C3L+7QgLKoL3LYXIDAJ+5vsXsc+VXB4k=
+X-Received: by 2002:a05:6a20:430a:b0:3f9:bcb9:30f1 with SMTP id
+ adf61e73a8af0-4014c3508ccmr29464701637.44.1795805052075; 
+ Fri, 27 Nov 2026 10:44:12 -0800 (PST)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3b40a878d50sm41820130a91.11.2026.11.27.09.47.24
+ 41be03b00d2f7-cde6cfec090sm13759358a12.14.2026.11.27.10.44.11
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 27 Nov 2026 09:47:25 -0800 (PST)
-Date: Fri, 27 Nov 2026 09:47:22 -0800
+ Fri, 27 Nov 2026 10:44:11 -0800 (PST)
+Date: Fri, 27 Nov 2026 10:44:09 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Zaiyu Wang <zaiyuwang@trustnetic.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH 0/2] ngbe PHY interrupt configuration
-Message-ID: <20261127094722.44f08014@phoenix.local>
-In-Reply-To: <A3DA76B5B04DDFD1+20261125111142.12226-1-zaiyuwang@trustnetic.com>
-References: <A3DA76B5B04DDFD1+20261125111142.12226-1-zaiyuwang@trustnetic.com>
+To: Roman Khromenok <roma55592@yandex.ru>
+Cc: dev@dpdk.org, thomas@monjalon.net, andrew.rybchenko@oktetlabs.ru,
+ aman.deep.singh@intel.com
+Subject: Re: [PATCH 0/4] move module EEPROM decoding to a transceiver library
+Message-ID: <20261127104409.5580b294@phoenix.local>
+In-Reply-To: <20261029181511.1736967-1-roma55592@yandex.ru>
+References: <20261014071245.2323258-1-roma55592@yandex.ru>
+ <20261029181511.1736967-1-roma55592@yandex.ru>
 X-Archived-By: <archiver.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -90,72 +91,89 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-On Wed, 25 Nov 2026 19:11:03 +0800
-Zaiyu Wang <zaiyuwang@trustnetic.com> wrote:
+On Thu, 29 Oct 2026 20:15:07 +0200
+Roman Khromenok <roma55592@yandex.ru> wrote:
 
-> Two PHYs have interrupt-related configuration issues, each fixed by an
-> independent patch in this series.
+> This is the follow-up of the RFC, for 27.03.
 > 
-> Zaiyu Wang (2):
->   net/ngbe: mask unused internal PHY interrupts
->   net/ngbe: fix YT8531S-CA interrupt in combo mode
+> The SFF module EEPROM decoders do not depend on any device or driver,
+> and they are also useful for ports which are not ethdev ports, such as
+> kernel ports read with the ethtool ioctls. This series moves them from
+> ethdev to a new transceiver library with the rte_transceiver_decode()
+> API. ethdev depends on the library for its telemetry command.
 > 
->  drivers/net/ngbe/base/ngbe_phy_rtl.c |  2 ++
->  drivers/net/ngbe/base/ngbe_phy_yt.c  | 17 +++++++++++++++++
->  2 files changed, 19 insertions(+)
+> Changes since the RFC, as discussed with Thomas:
+> - rte_eth_module_eeprom_parse(), added as experimental in 26.11,
+>   is removed instead of being kept as a wrapper.
+> - testpmd calls rte_transceiver_decode() directly.
+> - The tests no longer depend on ethdev.
+> - The ethdev guide links to the library guide instead of
+>   duplicating the example.
+> 
+> The library name is still "transceiver", as it reads better than
+> "xcvr". It can be renamed if preferred.
+> 
+> Release notes will be added when the 27.03 release notes exist.
+> 
+> The dpdk-proc-info module EEPROM decoding (series 39575) will be
+> sent as a v2 on top of this series.
+> 
+> Tested with gcc, and clang with ASan and UBSan: every patch builds
+> without warnings, transceiver_autotest passes, the documentation
+> builds without warnings, and the testpmd command decodes a module.
+> 
+> RFC: https://mails.dpdk.org/archives/dev/2026-October/348542.html
+> 
+> Roman Khromenok (4):
+>   transceiver: introduce module EEPROM decoding library
+>   test/transceiver: move module EEPROM decoding tests
+>   app/testpmd: decode module EEPROM with transceiver library
+>   ethdev: remove module EEPROM decoding wrapper
+> 
+>  MAINTAINERS                                   |   7 +
+>  app/test-pmd/config.c                         |   3 +-
+>  app/test-pmd/meson.build                      |   2 +-
+>  app/test/meson.build                          |   2 +-
+>  ...dev_module_eeprom.c => test_transceiver.c} | 132 +++++++++---------
+>  doc/api/doxy-api-index.md                     |   1 +
+>  doc/api/doxy-api.conf.in                      |   1 +
+>  doc/guides/prog_guide/ethdev/ethdev.rst       |  39 +-----
+>  doc/guides/prog_guide/index.rst               |   1 +
+>  doc/guides/prog_guide/transceiver_lib.rst     |  86 ++++++++++++
+>  lib/ethdev/meson.build                        |   6 +-
+>  lib/ethdev/rte_ethdev.c                       |  21 ---
+>  lib/ethdev/rte_ethdev.h                       |  57 --------
+>  lib/ethdev/sff_telemetry.c                    |  13 +-
+>  lib/meson.build                               |   2 +
+>  lib/transceiver/meson.build                   |  11 ++
+>  lib/transceiver/rte_transceiver.c             |  24 ++++
+>  lib/transceiver/rte_transceiver.h             | 102 ++++++++++++++
+>  lib/{ethdev => transceiver}/sff_8079.c        |   2 +-
+>  lib/{ethdev => transceiver}/sff_8472.c        |   0
+>  lib/{ethdev => transceiver}/sff_8636.c        |   4 +-
+>  lib/{ethdev => transceiver}/sff_8636.h        |   0
+>  lib/{ethdev => transceiver}/sff_common.c      |  28 ++--
+>  lib/{ethdev => transceiver}/sff_common.h      |  10 +-
+>  24 files changed, 341 insertions(+), 213 deletions(-)
+>  rename app/test/{test_ethdev_module_eeprom.c => test_transceiver.c} (83%)
+>  create mode 100644 doc/guides/prog_guide/transceiver_lib.rst
+>  create mode 100644 lib/transceiver/meson.build
+>  create mode 100644 lib/transceiver/rte_transceiver.c
+>  create mode 100644 lib/transceiver/rte_transceiver.h
+>  rename lib/{ethdev => transceiver}/sff_8079.c (99%)
+>  rename lib/{ethdev => transceiver}/sff_8472.c (100%)
+>  rename lib/{ethdev => transceiver}/sff_8636.c (99%)
+>  rename lib/{ethdev => transceiver}/sff_8636.h (100%)
+>  rename lib/{ethdev => transceiver}/sff_common.c (95%)
+>  rename lib/{ethdev => transceiver}/sff_common.h (96%)
 > 
 
-AI review spotted some issues here.
+Needs rebase, and release note.
+Something short like:
 
-Subject: Re: [PATCH 2/2] net/ngbe: fix YT8531S-CA interrupt in combo mode
 
-Series applies to main and builds with -Dwerror=true. Patch 1/2 has
-no findings.
+    * **Restructured module EEPROM transceiver support.**
 
-[PATCH 2/2] net/ngbe: fix YT8531S-CA interrupt in combo mode
-
-Warning: the new block runs for every YT PHY in every chip mode, not
-only YT8531S-CA in UTP_FIBER_TO_RGMII mode.
-
-    ngbe_write_phy_reg_ext_yt(hw, YT_SPEC_CONF, 0,
-                              YT_SPEC_CONF_8531SH_CA);
-    ...
-    ngbe_write_phy_reg_ext_yt(hw, YT_MISC, 0, 0x10d);
-
-ngbe_init_phy_yt() is the init_hw hook for both ngbe_phy_yt8521s and
-ngbe_phy_yt8521s_sfi, so UTP-only (mode 0), fiber-to-RGMII (mode 1)
-and SGMII (mode 4) boards now get the 8531SH-CA config, and
-YT_MISC = 0x10d sets YT_MISC_FIBER_PRIO on UTP-only parts. The
-existing YT_SPEC_CONF write in ngbe_setup_phy_link_yt() is limited
-to the mode 2 branch. Gate the new code the same way:
-
-    rte_spinlock_lock(&hw->phy_lock);
-    ngbe_read_phy_reg_ext_yt(hw, YT_CHIP, 0, &value);
-    if ((value & YT_CHIP_MODE_MASK) == YT_CHIP_MODE_SEL(2)) {
-            ngbe_write_phy_reg_ext_yt(hw, YT_SPEC_CONF, 0,
-                                      YT_SPEC_CONF_8531SH_CA);
-            ...
-    }
-    rte_spinlock_unlock(&hw->phy_lock);
-
-Warning: YT_INTR is not a stable way to identify the part.
-
-    ngbe_read_phy_reg_mdi(hw, YT_INTR, 0, &value);
-
-    if (value != 0x31 && value != 0x32) {
-
-YT_INTR is the interrupt enable register, and this same function
-writes YT_INTR_ENA_MASK | YT_SDS_INTR_ENA_MASK (0x0c0c) to it when
-hw->lsc is set. ngbe_dev_start() calls phy.init_hw() on every start,
-so on a stop/start cycle with LSC enabled the read returns 0x0c0c
-unless something resets the PHY in between, and a 0x31/0x32 part
-then gets the extra config. If a chip ID or revision register
-exists, use it; otherwise decide once at first init and cache the
-result in hw.
-
-Also say what 0x31/0x32 identify, and give 0xa071, 0x52, 0x51, 0x57
-and the 0x10d value names or at least a comment. As written,
-nobody can tell from the code or the commit message which parts are
-excluded or why.
-
-Review-Result: WARNING
+      Module EEPROM decoding moved from ethdev to the new
+      transceiver library, ``rte_eth_module_eeprom_parse()``
+      is replaced by ``rte_transceiver_decode()``.
