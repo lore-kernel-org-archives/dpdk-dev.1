@@ -2,39 +2,39 @@ Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DD9606A31E
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Nov 2026 20:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C231606A31E
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Nov 2026 20:31:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.a=rsa-sha256 header.s=mail header.b=Rs0wD4oM
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.a=rsa-sha256 header.s=mail header.b=I7CkOcKL
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1007140671;
+	by mails.dpdk.org (Postfix) with ESMTP id E3DB74067C;
 	Fri, 27 Nov 2026 21:31:10 +0100 (CET)
-Received: from forward501e.mail.yandex.net (forward501e.mail.yandex.net
- [93.77.172.86]) by mails.dpdk.org (Postfix) with ESMTPS id 2574C40615
- for <dev@dpdk.org>; Fri, 27 Nov 2026 21:31:08 +0100 (CET)
+Received: from forward500e.mail.yandex.net (forward500e.mail.yandex.net
+ [93.77.172.85]) by mails.dpdk.org (Postfix) with ESMTPS id 4481240653
+ for <dev@dpdk.org>; Fri, 27 Nov 2026 21:31:09 +0100 (CET)
 Received: from mail-nwsmtp-smtp-production-main-53
  (mail-nwsmtp-smtp-production-main-53.yp-c.yandex.net)
- by forward501e.mail.yandex.net (postfix) with ESMTPS id 80625C00CC;
- Fri, 27 Nov 2026 23:31:07 +0300 (MSK)
+ by forward500e.mail.yandex.net (postfix) with ESMTPS id A829DC0207;
+ Fri, 27 Nov 2026 23:31:08 +0300 (MSK)
 Received: by mail-nwsmtp-smtp-production-main-53 with ESMTPSA id
- sUqcKleZaiE0-BceWLub2; Fri, 27 Nov 2026 23:31:07 +0300
+ sUqcKleZaiE0-2wKr5V3r; Fri, 27 Nov 2026 23:31:08 +0300
 X-Yandex-Fwd: 1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
- t=1795811467; bh=bf9A1Np8KAA/ajVCEkBzn4xO/pIgxTakUGde2HxflG4=;
+ t=1795811468; bh=lguhR01ntsJ8BrSzU40K4efT/lhlz98+690UjtNI/KQ=;
  h=Message-ID:Date:In-Reply-To:Cc:Subject:References:To:From;
- b=Rs0wD4oMNcs62xQqsH7iRxodhDSVlndkcnJIRsroCh1OAZoVKeqT8npOP81hVrZ3g
- ub3qvpCJpUSjToEuG1NwTXSnBiL1Ns5kGSegvwMiRL08dYLLgZ/isDCNdU/cSIhc43
- ZtaqONTeDaArR8qz9djCvDsRwguAXnOjwbvCv5t0=
+ b=I7CkOcKLJeWn6hW7sRPnCmJr6TcKmORho7V/Im6+o+VxA1kPV8WJM73dTeYbeKxzW
+ lhDeBeTKjIaVJpaM7RlKrJi8QOBt7W5Rk8xyhTpMD8iz3FlShCZe6/GFl7BnAVT4lB
+ QjfOmProGvo0x+UYHiVU5k8+KHrTG/nOL1aplmnk=
 Authentication-Results: mail-nwsmtp-smtp-production-main-53;
  dkim=pass header.i=@yandex.ru
 From: Roman Khromenok <roma55592@yandex.ru>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Aman Singh <aman.deep.singh@intel.com>
-Subject: [PATCH v2 3/4] app/testpmd: decode module EEPROM with transceiver
- library
-Date: Fri, 27 Nov 2026 22:30:52 +0200
-Message-ID: <1d099f5e05b3c31e1374902e40607daad0ee8bdf.1795810230.git.roma55592@yandex.ru>
+ Thomas Monjalon <thomas@monjalon.net>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: [PATCH v2 4/4] ethdev: remove module EEPROM decoding wrapper
+Date: Fri, 27 Nov 2026 22:30:53 +0200
+Message-ID: <0e0d07a4f285b8611193decb7d2364403dd774c2.1795810230.git.roma55592@yandex.ru>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1795810230.git.roma55592@yandex.ru>
 References: <20261029181511.1736967-1-roma55592@yandex.ru>
@@ -59,51 +59,283 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 X-Spam-Checker-Version: SpamAssassin 4.0.1 (2024-03-26) on
 	aws-us-west-2-korg-listserv-alma10-1
 
-Call rte_transceiver_decode() directly instead of the ethdev
-wrapper rte_eth_module_eeprom_parse(), which is going to be removed.
-The module type reported by ethdev has the same values as the
-transceiver library ones.
+rte_eth_module_eeprom_parse() was added in 26.11 as an experimental
+API and is now only a wrapper of rte_transceiver_decode().
+Remove it, as discussed on the mailing list, so that applications
+use the transceiver library directly.
+
+The build time check of the module type values moves to the telemetry
+command, which is the remaining ethdev user of the library.
+The transceiver tests no longer depend on ethdev.
 
 Signed-off-by: Roman Khromenok <roma55592@yandex.ru>
 ---
- app/test-pmd/config.c    | 3 ++-
- app/test-pmd/meson.build | 2 +-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ app/test/meson.build                      |  2 +-
+ app/test/test_transceiver.c               | 26 ----------
+ doc/guides/prog_guide/ethdev/ethdev.rst   | 39 +--------------
+ doc/guides/prog_guide/transceiver_lib.rst |  3 ++
+ lib/ethdev/rte_ethdev.c                   | 24 ---------
+ lib/ethdev/rte_ethdev.h                   | 60 -----------------------
+ lib/ethdev/sff_telemetry.c                |  6 +++
+ 7 files changed, 11 insertions(+), 149 deletions(-)
 
-diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
-index 8986d6998f..a2810c81bd 100644
---- a/app/test-pmd/config.c
-+++ b/app/test-pmd/config.c
-@@ -55,6 +55,7 @@
- #include <rte_gro.h>
- #endif
- #include <rte_hexdump.h>
-+#include <rte_transceiver.h>
+diff --git a/app/test/meson.build b/app/test/meson.build
+index 254ee36de2..bcdc72cc6f 100644
+--- a/app/test/meson.build
++++ b/app/test/meson.build
+@@ -215,7 +215,7 @@ source_file_deps = {
+     'test_trace.c': [],
+     'test_trace_perf.c': [],
+     'test_trace_register.c': [],
+-    'test_transceiver.c': ['transceiver', 'ethdev'],
++    'test_transceiver.c': ['transceiver'],
+     'test_vdev.c': ['kvargs', 'bus_vdev', 'net_null'],
+     'test_version.c': [],
+ }
+diff --git a/app/test/test_transceiver.c b/app/test/test_transceiver.c
+index b37126ed08..b7ec2b95e8 100644
+--- a/app/test/test_transceiver.c
++++ b/app/test/test_transceiver.c
+@@ -9,7 +9,6 @@
+ #include <string.h>
  
- #include "testpmd.h"
- #include "cmdline_mtr.h"
-@@ -1249,7 +1250,7 @@ port_module_eeprom_decode_display(portid_t port_id)
+ #include <rte_common.h>
+-#include <rte_ethdev.h>
+ #include <rte_transceiver.h>
+ #include <rte_string_fns.h>
  
- 	printf("Port %u module EEPROM (type 0x%x, %u bytes):\n",
- 		port_id, minfo.type, einfo.length);
--	ret = rte_eth_module_eeprom_parse(minfo.type, einfo.data, einfo.length,
-+	ret = rte_transceiver_decode(minfo.type, einfo.data, einfo.length,
- 			port_module_eeprom_field_print, NULL);
- 	if (ret == -ENOTSUP)
- 		fprintf(stderr, "Unsupported module type: 0x%x\n", minfo.type);
-diff --git a/app/test-pmd/meson.build b/app/test-pmd/meson.build
-index 83163a5406..3b726164c2 100644
---- a/app/test-pmd/meson.build
-+++ b/app/test-pmd/meson.build
-@@ -34,7 +34,7 @@ if dpdk_conf.has('RTE_HAS_JANSSON')
-     ext_deps += jansson_dep
- endif
+@@ -636,30 +635,6 @@ test_module_eeprom_invalid(void)
+ 	return TEST_SUCCESS;
+ }
  
--deps += ['ethdev', 'cmdline', 'pci']
-+deps += ['ethdev', 'cmdline', 'pci', 'transceiver']
- if dpdk_conf.has('RTE_CRYPTO_SCHEDULER')
-     deps += 'crypto_scheduler'
- endif
+-/* rte_eth_module_eeprom_parse() is kept as a wrapper of the library */
+-static int
+-test_module_eeprom_ethdev_wrapper(void)
+-{
+-	uint8_t data[RTE_ETH_MODULE_SFF_8472_LEN];
+-	int ret;
+-
+-	fill_sfp(data);
+-	memset(&fields, 0, sizeof(fields));
+-	TEST_ASSERT_SUCCESS(rte_eth_module_eeprom_parse(RTE_ETH_MODULE_SFF_8472, data,
+-		sizeof(data), collect_field, &fields),
+-		"Failed to parse SFF-8472 data with the ethdev API");
+-	TEST_ASSERT_SUCCESS(check_sfp_identity(), "Wrong SFF-8472 base information");
+-	CHECK_FIELD("Laser bias current", "39.580 mA");
+-
+-	ret = rte_eth_module_eeprom_parse(RTE_ETH_MODULE_SFF_8472, NULL,
+-		sizeof(data), collect_field, &fields);
+-	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL data: expected %d, got %d", -EINVAL, ret);
+-	ret = rte_eth_module_eeprom_parse(RTE_ETH_MODULE_SFF_8472, data,
+-		sizeof(data), NULL, NULL);
+-	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL callback: expected %d, got %d", -EINVAL, ret);
+-	return TEST_SUCCESS;
+-}
+-
+ static struct unit_test_suite module_eeprom_testsuite = {
+ 	.suite_name = "transceiver module EEPROM decoding",
+ 	.setup = NULL,
+@@ -681,7 +656,6 @@ static struct unit_test_suite module_eeprom_testsuite = {
+ 		TEST_CASE(test_module_eeprom_qsfp_8636_signals_not_implemented),
+ 		TEST_CASE(test_module_eeprom_qsfp_8636_signals),
+ 		TEST_CASE(test_module_eeprom_invalid),
+-		TEST_CASE(test_module_eeprom_ethdev_wrapper),
+ 		TEST_CASES_END()
+ 	}
+ };
+diff --git a/doc/guides/prog_guide/ethdev/ethdev.rst b/doc/guides/prog_guide/ethdev/ethdev.rst
+index ff2ab69b0f..cad7d3e7f4 100644
+--- a/doc/guides/prog_guide/ethdev/ethdev.rst
++++ b/doc/guides/prog_guide/ethdev/ethdev.rst
+@@ -812,43 +812,6 @@ and diagnostic data in an EEPROM with a layout defined by the SFF specifications
+ Use ``rte_eth_dev_get_module_info()`` to get the module type and the EEPROM size,
+ then ``rte_eth_dev_get_module_eeprom()`` to read the raw EEPROM data.
+ 
+-The raw data can be decoded with ``rte_eth_module_eeprom_parse()``.
+-It supports the SFF-8079, SFF-8472, SFF-8436 and SFF-8636 layouts,
+-and reports each decoded field, such as the vendor name, the serial number
+-or the measured optical power, through an application callback
+-as a pair of human readable strings.
+-The field names and value formats are intended for display
+-and may change in future releases:
+-
+-.. code-block:: c
+-
+-   static void
+-   print_field(const char *name, const char *value, void *arg)
+-   {
+-       RTE_SET_USED(arg);
+-       printf("%s: %s\n", name, value);
+-   }
+-
+-   struct rte_eth_dev_module_info info;
+-   struct rte_dev_eeprom_info eeprom = {0};
+-
+-   if (rte_eth_dev_get_module_info(port_id, &info) == 0) {
+-       eeprom.data = malloc(info.eeprom_len);
+-       eeprom.length = info.eeprom_len;
+-       if (eeprom.data != NULL &&
+-               rte_eth_dev_get_module_eeprom(port_id, &eeprom) == 0)
+-           rte_eth_module_eeprom_parse(info.type, eeprom.data, eeprom.length,
+-                   print_field, NULL);
+-       free(eeprom.data);
+-   }
+-
+-The decoding function does not access the device,
+-so it can also decode EEPROM data obtained from other sources.
+-For ports managed by the Linux kernel, the ethtool ioctls
+-``ETHTOOL_GMODULEINFO`` and ``ETHTOOL_GMODULEEEPROM``
+-return the same module types and data layout.
+-The ethtool netlink request ``ETHTOOL_MSG_MODULE_EEPROM_GET``
+-is page addressed and does not report the module type,
+-so its data has to be assembled into this layout first.
++The raw data can be decoded with the :doc:`../transceiver_lib`.
+ The same decoding is available through the telemetry command
+ ``/ethdev/module_eeprom``.
+diff --git a/doc/guides/prog_guide/transceiver_lib.rst b/doc/guides/prog_guide/transceiver_lib.rst
+index 45bcf4302c..f146a0deef 100644
+--- a/doc/guides/prog_guide/transceiver_lib.rst
++++ b/doc/guides/prog_guide/transceiver_lib.rst
+@@ -19,6 +19,9 @@ ethdev ports
+ Kernel ports
+    The Linux ethtool ioctls ``ETHTOOL_GMODULEINFO`` and ``ETHTOOL_GMODULEEEPROM``
+    give the same module types and EEPROM layout.
++   The ethtool netlink request ``ETHTOOL_MSG_MODULE_EEPROM_GET``
++   is page addressed and does not report the module type,
++   so its data has to be assembled into this layout first.
+ 
+ 
+ Supported Specifications
+diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
+index 6cabef0b9d..3a3c05ba50 100644
+--- a/lib/ethdev/rte_ethdev.c
++++ b/lib/ethdev/rte_ethdev.c
+@@ -33,7 +33,6 @@
+ #include "ethdev_profile.h"
+ #include "ethdev_private.h"
+ #include "ethdev_trace.h"
+-#include <rte_transceiver.h>
+ 
+ #define ETH_XSTATS_ITER_NUM	0x100
+ 
+@@ -7059,29 +7058,6 @@ rte_eth_dev_get_module_eeprom(uint16_t port_id,
+ 	return ret;
+ }
+ 
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_module_eeprom_parse, 26.11)
+-int
+-rte_eth_module_eeprom_parse(uint32_t type, const uint8_t *data, uint32_t length,
+-		rte_eth_module_eeprom_field_cb cb, void *arg)
+-{
+-	RTE_BUILD_BUG_ON(RTE_ETH_MODULE_SFF_8079 != RTE_TRANSCEIVER_SFF_8079);
+-	RTE_BUILD_BUG_ON(RTE_ETH_MODULE_SFF_8472 != RTE_TRANSCEIVER_SFF_8472);
+-	RTE_BUILD_BUG_ON(RTE_ETH_MODULE_SFF_8636 != RTE_TRANSCEIVER_SFF_8636);
+-	RTE_BUILD_BUG_ON(RTE_ETH_MODULE_SFF_8436 != RTE_TRANSCEIVER_SFF_8436);
+-
+-	if (data == NULL) {
+-		RTE_ETHDEV_LOG_LINE(ERR, "Cannot parse module EEPROM from NULL data");
+-		return -EINVAL;
+-	}
+-
+-	if (cb == NULL) {
+-		RTE_ETHDEV_LOG_LINE(ERR, "Cannot parse module EEPROM with NULL callback");
+-		return -EINVAL;
+-	}
+-
+-	return rte_transceiver_decode(type, data, length, cb, arg);
+-}
+-
+ RTE_EXPORT_SYMBOL(rte_eth_dev_get_dcb_info)
+ int
+ rte_eth_dev_get_dcb_info(uint16_t port_id,
+diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
+index e021cc97b2..939bbed734 100644
+--- a/lib/ethdev/rte_ethdev.h
++++ b/lib/ethdev/rte_ethdev.h
+@@ -5235,66 +5235,6 @@ int
+ rte_eth_dev_get_module_eeprom(uint16_t port_id, struct rte_dev_eeprom_info *info)
+ 	__rte_warn_unused_result;
+ 
+-/**
+- * Callback invoked by rte_eth_module_eeprom_parse() for each decoded field.
+- *
+- * @param name
+- *   Field name, for example "Vendor name" or "Laser bias current".
+- *   The same name may be reported more than once,
+- *   for example when a module complies with several transceiver types.
+- * @param value
+- *   Field value as a human readable string, including the unit if any.
+- * @param arg
+- *   The opaque argument passed to rte_eth_module_eeprom_parse().
+- *
+- * @note The field names and the value formats are intended for display.
+- *   They follow the ethtool output and may change in future releases,
+- *   so they should not be parsed or matched by applications.
+- */
+-typedef void (*rte_eth_module_eeprom_field_cb)(const char *name,
+-		const char *value, void *arg);
+-
+-/**
+- * @warning
+- * @b EXPERIMENTAL: this API may change without prior notice.
+- *
+- * Decode pluggable module EEPROM data according to the SFF specifications.
+- *
+- * This is a wrapper of rte_transceiver_decode()
+- * for the RTE_ETH_MODULE_SFF_* module types.
+- *
+- * The data may come from rte_eth_dev_get_module_eeprom()
+- * or from any other source using the same layout,
+- * for example the Linux ethtool ioctls ETHTOOL_GMODULEINFO
+- * and ETHTOOL_GMODULEEEPROM.
+- * The function does not access any device
+- * and can be called without EAL initialization.
+- *
+- * @param type
+- *   Module type, one of RTE_ETH_MODULE_SFF_*,
+- *   as reported by rte_eth_dev_get_module_info().
+- * @param data
+- *   Module EEPROM data starting at offset 0.
+- * @param length
+- *   Length of the data in bytes.
+- *   SFF-8472 diagnostics are decoded only if at least
+- *   RTE_ETH_MODULE_SFF_8472_LEN bytes are provided.
+- *   SFF-8436 and SFF-8636 thresholds and alarm flags are decoded
+- *   only if at least RTE_ETH_MODULE_SFF_8636_MAX_LEN bytes are provided.
+- * @param cb
+- *   Callback invoked for each decoded field.
+- * @param arg
+- *   Opaque argument passed to the callback.
+- * @return
+- *   - (0) if successful.
+- *   - (-EINVAL) if bad parameter or data is too short for the module type.
+- *   - (-ENOTSUP) if the module type is not supported.
+- */
+-__rte_experimental
+-int
+-rte_eth_module_eeprom_parse(uint32_t type, const uint8_t *data, uint32_t length,
+-		rte_eth_module_eeprom_field_cb cb, void *arg);
+-
+ /**
+  * Set the list of multicast addresses to filter on an Ethernet device.
+  *
+diff --git a/lib/ethdev/sff_telemetry.c b/lib/ethdev/sff_telemetry.c
+index 758e1dc7f2..bc5c0eea9e 100644
+--- a/lib/ethdev/sff_telemetry.c
++++ b/lib/ethdev/sff_telemetry.c
+@@ -48,6 +48,12 @@ sff_port_module_eeprom_parse(uint16_t port_id, struct rte_tel_data *d)
+ 	struct rte_dev_eeprom_info einfo;
+ 	int ret;
+ 
++	/* The module type is passed as is to the transceiver library. */
++	RTE_BUILD_BUG_ON(RTE_ETH_MODULE_SFF_8079 != RTE_TRANSCEIVER_SFF_8079);
++	RTE_BUILD_BUG_ON(RTE_ETH_MODULE_SFF_8472 != RTE_TRANSCEIVER_SFF_8472);
++	RTE_BUILD_BUG_ON(RTE_ETH_MODULE_SFF_8636 != RTE_TRANSCEIVER_SFF_8636);
++	RTE_BUILD_BUG_ON(RTE_ETH_MODULE_SFF_8436 != RTE_TRANSCEIVER_SFF_8436);
++
+ 	if (d == NULL) {
+ 		RTE_ETHDEV_LOG_LINE(ERR, "Dict invalid");
+ 		return;
 -- 
 2.47.3
 
